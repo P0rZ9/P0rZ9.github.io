@@ -7,22 +7,22 @@
   
   <title>代码审计之Day2 - filter_var函数缺陷 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="###最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波 ##Day 2 - Twig ###题目名字:Twig ###代码大意:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.ht">
+  <meta name="description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波 Day 2 - Twig题目名字:Twig 代码大意:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html 漏洞产生:这里考察">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计之Day2 - filter_var函数缺陷">
 <meta property="og:url" content="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="###最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波 ##Day 2 - Twig ###题目名字:Twig ###代码大意:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.ht">
+<meta property="og:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波 Day 2 - Twig题目名字:Twig 代码大意:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html 漏洞产生:这里考察">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/36d1fhnqk45hoxmjz55p0rya/image_1cmn8bi0j13r79fvd85to7p05p.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/7gmkdgry3l238wu19n9jti2s/image_1cmndbk64bioafv1kih1lm8uhq16.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/7rjo70x4enrxtfm0su3w0fbh/image_1cmnjdbvppef19no1akip5acj7m.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/6tmfahno1m39g0k806q0wtlj/image_1cmnkgim5qjv1hh0hbqr7e1tb013.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/cxbyhnaq15qc2li0wa8rl95i/image_1cmnku1271fjr1bii1jggoa2lbr4t.png">
-<meta property="og:updated_time" content="2018-09-06T16:02:09.625Z">
+<meta property="og:updated_time" content="2018-09-06T16:11:53.116Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计之Day2 - filter_var函数缺陷">
-<meta name="twitter:description" content="###最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波 ##Day 2 - Twig ###题目名字:Twig ###代码大意:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.ht">
+<meta name="twitter:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波 Day 2 - Twig题目名字:Twig 代码大意:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html 漏洞产生:这里考察">
 <meta name="twitter:image" content="http://static.zybuluo.com/chhyx/36d1fhnqk45hoxmjz55p0rya/image_1cmn8bi0j13r79fvd85to7p05p.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -92,12 +92,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>###最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
-<p>##<strong>Day 2 - Twig</strong></p>
-<p>###题目名字:Twig<br><img src="http://static.zybuluo.com/chhyx/36d1fhnqk45hoxmjz55p0rya/image_1cmn8bi0j13r79fvd85to7p05p.png" alt="image_1cmn8bi0j13r79fvd85to7p05p.png-211.8kB"></p>
-<p>###<strong>代码大意</strong>:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html</p>
-<p>###<strong>漏洞产生</strong>:这里考察的是xss漏洞,导致这一漏洞产生的原因是题中代码使用的escape过滤器跟filter_car()函数两个过滤方法并不安全,导致攻击者可构造js语句 造成xss(跨站脚本攻击)漏洞</p>
-<p>###<strong>漏洞解析</strong>: escape过滤器(本质是htmlspecialchars函数)与filter_var()过滤函数的缺陷:并不能捕捉到jacascript伪协议构造的xss语句</p>
+        <p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+<p><strong>Day 2 - Twig</strong><br>题目名字:Twig<br><img src="http://static.zybuluo.com/chhyx/36d1fhnqk45hoxmjz55p0rya/image_1cmn8bi0j13r79fvd85to7p05p.png" alt="image_1cmn8bi0j13r79fvd85to7p05p.png-211.8kB"></p>
+<p><strong>代码大意</strong>:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html</p>
+<p><strong>漏洞产生</strong>:这里考察的是xss漏洞,导致这一漏洞产生的原因是题中代码使用的escape过滤器跟filter_car()函数两个过滤方法并不安全,导致攻击者可构造js语句 造成xss(跨站脚本攻击)漏洞</p>
+<p><strong>漏洞解析</strong>: escape过滤器(本质是htmlspecialchars函数)与filter_var()过滤函数的缺陷:并不能捕捉到jacascript伪协议构造的xss语句</p>
 <p>题目中使用了<a href="https://twig.symfony.com/" target="_blank" rel="noopener">Twig</a>定义的escape过滤器跟filter_car()函数两个过滤方法，下面我们先讲一下这两种过滤的规则是怎样的</p>
 <p>1.<a href="https://twig.symfony.com/doc/2.x/filters/escape.html" target="_blank" rel="noopener"><strong>escape</strong></a><br>在默认情况下 escape使用html转义策略</p>
 <blockquote>
@@ -105,14 +104,13 @@
 </blockquote>
 <p>我们接着看下<strong>htmlspecialchars()</strong>函数</p>
 <blockquote>
-<p><a href="http://php.net/manual/zh/function.htmlspecialchars.php" target="_blank" rel="noopener">htmlspecialchars()</a><br>(PHP 4, PHP 5, PHP 7)<br><strong>作用:</strong> 将特殊字符转换为 HTML 实体</p>
-<p>#####<strong>定义:</strong> string htmlspecialchars ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get(“default_charset”) [, bool $double_encode = TRUE ]]] )</p>
+<p><a href="http://php.net/manual/zh/function.htmlspecialchars.php" target="_blank" rel="noopener">htmlspecialchars()</a><br>(PHP 4, PHP 5, PHP 7)<br><strong>作用:</strong> 将特殊字符转换为 HTML 实体<br><strong>定义:</strong> string htmlspecialchars ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get(“default_charset”) [, bool $double_encode = TRUE ]]] )</p>
 </blockquote>
 <p>转义前后字符:<br><img src="http://static.zybuluo.com/chhyx/7gmkdgry3l238wu19n9jti2s/image_1cmndbk64bioafv1kih1lm8uhq16.png" alt="image_1cmndbk64bioafv1kih1lm8uhq16.png-8.5kB"></p>
 <p>2.<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>这里使用<strong>filter_var</strong>函数来过滤<strong>\$nextSlide</strong>变量 且用了<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>FILTER_VALIDATE_URL</strong></a>过滤器来判断是否一个合法的url。</p>
 <blockquote>
-<p>#####<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>(PHP 5 &gt;= 5.2.0, PHP 7)<br><strong>作用:</strong> 使用特定的过滤器过滤一个变量</p>
-<p>#####<strong>定义:</strong> mixed filter_var ( mixed \$variable [, int \$filter = FILTER_DEFAULT [, mixed \$options ]] )</p>
+<p><a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>(PHP 5 &gt;= 5.2.0, PHP 7)<br><strong>作用:</strong> 使用特定的过滤器过滤一个变量</p>
+<p><strong>定义:</strong> mixed filter_var ( mixed \$variable [, int \$filter = FILTER_DEFAULT [, mixed \$options ]] )</p>
 </blockquote>
 <p>针对这两处的过滤,我们可以使用javascript://伪协议来绕过:</p>
 <pre><code>javascript://P0rZ9%250aalert(1);
@@ -127,7 +125,7 @@ alert(1);  执行的js代码
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" data-id="cjlqrfq1y0001q4v80pqinn0e" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" data-id="cjlqrrzx10000ggv8093bhfqt" class="article-share-link">Share</a>
       
       
     </footer>
