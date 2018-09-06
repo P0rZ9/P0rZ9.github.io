@@ -5,17 +5,17 @@
   
 
   
-  <title>P0rZ9's blog</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="P0rZ9's blog">
+<meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="P0rZ9's blog">
+<meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="P0rZ9's blog">
+<meta name="twitter:title" content="Hexo">
   
-    <link rel="alternate" href="/atom.xml" title="P0rZ9's blog" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +34,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">P0rZ9's blog</a>
+        <a href="/" id="logo">Hexo</a>
       </h1>
       
     </div>
@@ -61,6 +61,106 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-代码审计之Day2 - filter_var函数缺陷" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" class="article-date">
+  <time datetime="2018-09-06T15:23:36.302Z" itemprop="datePublished">2018-09-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="代码审计之Day2-filter-var函数缺陷"><a href="#代码审计之Day2-filter-var函数缺陷" class="headerlink" title="代码审计之Day2 - filter_var函数缺陷"></a>代码审计之Day2 - filter_var函数缺陷</h2><p>标签： 代码审计</p>
+<hr>
+<p>###最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+<p>##<strong>Day 2 - Twig</strong></p>
+<p>###题目名字:Twig<br><img src="http://static.zybuluo.com/chhyx/36d1fhnqk45hoxmjz55p0rya/image_1cmn8bi0j13r79fvd85to7p05p.png" alt="image_1cmn8bi0j13r79fvd85to7p05p.png-211.8kB"></p>
+<p>###<strong>代码大意</strong>:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html</p>
+<p>###<strong>漏洞产生</strong>:这里考察的是xss漏洞,导致这一漏洞产生的原因是题中代码使用的escape过滤器跟filter_car()函数两个过滤方法并不安全,导致攻击者可构造js语句 造成xss(跨站脚本攻击)漏洞</p>
+<p>###<strong>漏洞解析</strong>: escape过滤器(本质是htmlspecialchars函数)与filter_var()过滤函数的缺陷:并不能捕捉到jacascript伪协议构造的xss语句</p>
+<p>题目中使用了<a href="https://twig.symfony.com/" target="_blank" rel="noopener">Twig</a>定义的escape过滤器跟filter_car()函数两个过滤方法，下面我们先讲一下这两种过滤的规则是怎样的</p>
+<p>1.<a href="https://twig.symfony.com/doc/2.x/filters/escape.html" target="_blank" rel="noopener"><strong>escape</strong></a><br>在默认情况下 escape使用html转义策略</p>
+<blockquote>
+<p>在内部，escape使用PHP本机htmlspecialchars函数进行HTML转义策略。</p>
+</blockquote>
+<p>我们接着看下<strong>htmlspecialchars()</strong>函数</p>
+<blockquote>
+<p><a href="http://php.net/manual/zh/function.htmlspecialchars.php" target="_blank" rel="noopener">htmlspecialchars()</a><br>(PHP 4, PHP 5, PHP 7)<br><strong>作用:</strong> 将特殊字符转换为 HTML 实体</p>
+<p>#####<strong>定义:</strong> string htmlspecialchars ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get(“default_charset”) [, bool $double_encode = TRUE ]]] )</p>
+</blockquote>
+<p>转义前后字符:<br><img src="http://static.zybuluo.com/chhyx/7gmkdgry3l238wu19n9jti2s/image_1cmndbk64bioafv1kih1lm8uhq16.png" alt="image_1cmndbk64bioafv1kih1lm8uhq16.png-8.5kB"></p>
+<p>2.<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>这里使用<strong>filter_var</strong>函数来过滤<strong>\$nextSlide</strong>变量 且用了<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>FILTER_VALIDATE_URL</strong></a>过滤器来判断是否一个合法的url。</p>
+<blockquote>
+<p>#####<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>(PHP 5 &gt;= 5.2.0, PHP 7)<br><strong>作用:</strong> 使用特定的过滤器过滤一个变量</p>
+<p>#####<strong>定义:</strong> mixed filter_var ( mixed \$variable [, int \$filter = FILTER_DEFAULT [, mixed \$options ]] )</p>
+</blockquote>
+<p>针对这两处的过滤,我们可以使用javascript://伪协议来绕过:</p>
+<pre><code>javascript://P0rZ9%250aalert(1);
+</code></pre><p>我们来本地测试一下：<br><img src="http://static.zybuluo.com/chhyx/7rjo70x4enrxtfm0su3w0fbh/image_1cmnjdbvppef19no1akip5acj7m.png" alt="image_1cmnjdbvppef19no1akip5acj7m.png-27.6kB"><br><img src="http://static.zybuluo.com/chhyx/6tmfahno1m39g0k806q0wtlj/image_1cmnkgim5qjv1hh0hbqr7e1tb013.png" alt="image_1cmnkgim5qjv1hh0hbqr7e1tb013.png-63.6kB"></p>
+<p>成功执行alert(1)<br>代码实际意思:</p>
+<pre><code>//         表示单行注释 注释掉后面的P0rZ9
+%250a      %0a(换行符)经过url编码
+alert(1);  执行的js代码
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/cxbyhnaq15qc2li0wa8rl95i/image_1cmnku1271fjr1bii1jggoa2lbr4t.png" alt="image_1cmnku1271fjr1bii1jggoa2lbr4t.png-8.2kB"></p>
+<p>所以php脚本程序在接到浏览器传输过来的<strong>payload:</strong> <code>javascript://P0rZ9%250aalert(1);</code> 会先解码成 <code>javascript://P0rZ9%0aalert(1);</code> 然后赋值给\$url,我们点击a标签的链接就会触发alert()函数。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" data-id="cjlqq39av0001zwv8hm4f1jsl" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-代码审计之Day1 - in_array函数缺陷" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/" class="article-date">
+  <time datetime="2018-09-06T15:23:23.599Z" itemprop="datePublished">2018-09-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="代码审计之Day1-in-array函数缺陷"><a href="#代码审计之Day1-in-array函数缺陷" class="headerlink" title="代码审计之Day1 - in_array函数缺陷"></a>代码审计之Day1 - in_array函数缺陷</h2><p>标签： 代码审计</p>
+<hr>
+<p>###最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+<p>##<strong>Day 1 - Wish List</strong></p>
+<p>###题目名字:愿望清单<br><img src="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png" alt="image_1cmmmhtm01cn4nastlume1tso20.png-148.8kB"></p>
+<p>###<strong>代码大意</strong>:检查文件名file[‘name’]是否在白名单$whitelist里–&gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIRECTORY</p>
+<p>###<strong>漏洞产生</strong>:这里考察的是任意文件上传漏洞,导致这一漏洞产生的原因是弱类型比较和in_array()的不规范使用,攻击者可通过构造的文件名(1.php)来绕过服务端的检测,造成文件上传漏洞</p>
+<p>###<strong>漏洞解析</strong>:因为未将in_array()函数的第三个参数设置为TRUE且目标数组$whitelist的元素类型为数字类型,所以在进行in_array()判断时1.php会强制转化为1,而1在rand(1,24)数组中,最终绕过in_array()判断。</p>
+<blockquote>
+<p><strong>in_array()</strong><br>作用:检查数组中是否存在某个值<br>定义:bool in_array ( mixed \$needle , array \$haystack [, bool \$strict = FALSE ] )</p>
+</blockquote>
+<blockquote>
+<p>在\$haystack数组中搜索\$needle,如果\$strict参数的值为True,则in_array()函数会进行强检查(检查值、类型是否相同),如果没有设置,则默认为FALSE 进行弱检查(只检查值是否相同)。如果成功搜索到\$needle,则返回TRUE 否则返回FALSE。</p>
+</blockquote>
+<p>###<strong>本地测试:</strong><br><img src="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png" alt="image_1cmmo17sncmevnor4a10hp1rm73d.png-35.3kB"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/" data-id="cjlqq399g0000zwv8ifwxgaku" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-用hexo+girhub部署博客" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -130,52 +230,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/05/用hexo+girhub部署博客/" data-id="cjlpbc5km000124v8ygrax8zr" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/09/05/hello-world/" class="article-date">
-  <time datetime="2018-09-05T03:05:48.229Z" itemprop="datePublished">2018-09-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/05/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/05/hello-world/" data-id="cjlpbc5k1000024v89lzgmclv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/09/05/用hexo+girhub部署博客/" data-id="cjlqq39ay0002zwv8wic7ec9n" class="article-share-link">Share</a>
       
       
     </footer>
@@ -216,11 +271,15 @@
       <ul>
         
           <li>
-            <a href="/2018/09/05/用hexo+girhub部署博客/">用hexo+github部署博客</a>
+            <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/">(no title)</a>
           </li>
         
           <li>
-            <a href="/2018/09/05/hello-world/">Hello World</a>
+            <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/05/用hexo+girhub部署博客/">用hexo+github部署博客</a>
           </li>
         
       </ul>
