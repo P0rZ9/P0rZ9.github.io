@@ -5,17 +5,17 @@
   
 
   
-  <title>Hexo</title>
+  <title>P0rZ9&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="P0rZ9&#39;s blog">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="P0rZ9&#39;s blog">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="P0rZ9&#39;s blog" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +34,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">P0rZ9&#39;s blog</a>
       </h1>
       
     </div>
@@ -62,10 +62,87 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/07/test/" class="article-date">
+  <time datetime="2018-09-07T02:15:41.000Z" itemprop="datePublished">2018-09-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/07/test/">test</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>this is zhengwen </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/07/test/" data-id="cjlrde0g70000e4v8siz0v0up" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/test-tag/">test_tag</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-代码审计之Day1 - in_array函数缺陷" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/" class="article-date">
+  <time datetime="2018-09-06T15:23:23.599Z" itemprop="datePublished">2018-09-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>title: 代码审计之Day1 - in_array函数缺陷<br>date: 2018-09-06 10:15:41</p>
+<h2 id="tags-代码审计"><a href="#tags-代码审计" class="headerlink" title="tags: 代码审计"></a>tags: 代码审计</h2><p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+<p><strong>Day 1 - Wish List</strong><br>题目名字:愿望清单<br><img src="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png" alt="image_1cmmmhtm01cn4nastlume1tso20.png-148.8kB"><br><strong>代码大意</strong>:检查文件名file[‘name’]是否在白名单$whitelist里–&gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIRECTORY</p>
+<p><strong>漏洞产生</strong>:这里考察的是任意文件上传漏洞,导致这一漏洞产生的原因是弱类型比较和in_array()的不规范使用,攻击者可通过构造的文件名(1.php)来绕过服务端的检测,造成文件上传漏洞<br><strong>漏洞解析</strong>:因为未将in_array()函数的第三个参数设置为TRUE且目标数组$whitelist的元素类型为数字类型,所以在进行in_array()判断时1.php会强制转化为1,而1在rand(1,24)数组中,最终绕过in_array()判断。</p>
+<blockquote>
+<p><strong>in_array()</strong><br>作用:检查数组中是否存在某个值<br>定义:bool in_array ( mixed \$needle , array \$haystack [, bool \$strict = FALSE ] )</p>
+</blockquote>
+<blockquote>
+<p>在\$haystack数组中搜索\$needle,如果\$strict参数的值为True,则in_array()函数会进行强检查(检查值、类型是否相同),如果没有设置,则默认为FALSE 进行弱检查(只检查值是否相同)。如果成功搜索到\$needle,则返回TRUE 否则返回FALSE。</p>
+</blockquote>
+<p><strong>本地测试:</strong><br><img src="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png" alt="image_1cmmo17sncmevnor4a10hp1rm73d.png-35.3kB"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/" data-id="cjlrdd8up0000dcv8cpny7o39" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-代码审计之Day2 - filter_var函数缺陷" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" class="article-date">
-  <time datetime="2018-09-06T15:23:36.302Z" itemprop="datePublished">2018-09-06</time>
+  <time datetime="2018-09-06T02:15:41.000Z" itemprop="datePublished">2018-09-06</time>
 </a>
     
   </div>
@@ -117,55 +194,11 @@ alert(1);  执行的js代码
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" data-id="cjlqrrzx10000ggv8093bhfqt" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" data-id="cjlrdd8uz0001dcv8ohjh7nt7" class="article-share-link">Share</a>
       
       
-    </footer>
-  </div>
-  
-</article>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
 
-
-  
-    <article id="post-代码审计之Day1 - in_array函数缺陷" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/" class="article-date">
-  <time datetime="2018-09-06T15:23:23.599Z" itemprop="datePublished">2018-09-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/">代码审计之Day1 - in_array函数缺陷</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
-<p><strong>Day 1 - Wish List</strong><br>题目名字:愿望清单<br><img src="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png" alt="image_1cmmmhtm01cn4nastlume1tso20.png-148.8kB"><br><strong>代码大意</strong>:检查文件名file[‘name’]是否在白名单$whitelist里–&gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIRECTORY</p>
-<p><strong>漏洞产生</strong>:这里考察的是任意文件上传漏洞,导致这一漏洞产生的原因是弱类型比较和in_array()的不规范使用,攻击者可通过构造的文件名(1.php)来绕过服务端的检测,造成文件上传漏洞<br><strong>漏洞解析</strong>:因为未将in_array()函数的第三个参数设置为TRUE且目标数组$whitelist的元素类型为数字类型,所以在进行in_array()判断时1.php会强制转化为1,而1在rand(1,24)数组中,最终绕过in_array()判断。</p>
-<blockquote>
-<p><strong>in_array()</strong><br>作用:检查数组中是否存在某个值<br>定义:bool in_array ( mixed \$needle , array \$haystack [, bool \$strict = FALSE ] )</p>
-</blockquote>
-<blockquote>
-<p>在\$haystack数组中搜索\$needle,如果\$strict参数的值为True,则in_array()函数会进行强检查(检查值、类型是否相同),如果没有设置,则默认为FALSE 进行弱检查(只检查值是否相同)。如果成功搜索到\$needle,则返回TRUE 否则返回FALSE。</p>
-</blockquote>
-<p><strong>本地测试:</strong><br><img src="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png" alt="image_1cmmo17sncmevnor4a10hp1rm73d.png-35.3kB"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/" data-id="cjlqrpc2n00009cv8wgivg0qj" class="article-share-link">Share</a>
-      
-      
     </footer>
   </div>
   
@@ -183,19 +216,11 @@ alert(1);  执行的js代码
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/05/用hexo+girhub部署博客/">用hexo+github部署博客</a>
-    </h1>
-  
-
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
         <hr>
+<p>title: 用hexo+github部署博客<br>date: 2018-09-05 10:15:41</p>
+<h2 id="tags-博客搭建"><a href="#tags-博客搭建" class="headerlink" title="tags: 博客搭建"></a>tags: 博客搭建</h2><hr>
 <p> 不多说，先上图:<br><img src="http://static.zybuluo.com/chhyx/a0dhagjvyliwehbr6ems59ab/image_1cmkl94jtni51q3n1jbuhk6agt51.png" alt="image_1cmkl94jtni51q3n1jbuhk6agt51.png-1345.8kB"></p>
 <p> <strong>一. 准备部分：</strong><br>   1.下载安装<a href="https://nodejs.org/en/" target="_blank" rel="noopener">node.js</a><br><img src="http://static.zybuluo.com/chhyx/315m63hcb115ks6k69ibg56k/image_1cmklc598a3c1upgo1c18021bdu6e.png" alt="image_1cmklc598a3c1upgo1c18021bdu6e.png-20.5kB"><br>直接默认下一步安装即可,待安装完成后,在cmd运行：</p>
 <p>   node -v</p>
@@ -241,7 +266,7 @@ alert(1);  执行的js代码
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/05/用hexo+girhub部署博客/" data-id="cjlqrpc2v00019cv8rmuo7fzd" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/09/05/用hexo+girhub部署博客/" data-id="cjlrdd8v20002dcv88cxxjiue" class="article-share-link">Share</a>
       
       
     </footer>
@@ -258,12 +283,14 @@ alert(1);  执行的js代码
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/test-tag/">test_tag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
+    </div>
+  </div>
 
-  
-    
 
-  
-    
   
     
   <div class="widget-wrap">
@@ -282,15 +309,19 @@ alert(1);  执行的js代码
       <ul>
         
           <li>
+            <a href="/2018/09/07/test/">test</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/">代码审计之Day2 - filter_var函数缺陷</a>
           </li>
         
           <li>
-            <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/">代码审计之Day1 - in_array函数缺陷</a>
-          </li>
-        
-          <li>
-            <a href="/2018/09/05/用hexo+girhub部署博客/">用hexo+github部署博客</a>
+            <a href="/2018/09/05/用hexo+girhub部署博客/">(no title)</a>
           </li>
         
       </ul>
@@ -305,7 +336,7 @@ alert(1);  执行的js代码
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 John Doe<br>
+      &copy; 2018 P0rZ9<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
