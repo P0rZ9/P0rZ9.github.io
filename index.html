@@ -419,6 +419,7 @@ protected function parseData($data, $options)
 </code></pre><p>而<code>floatval($val[2])</code>的结果为1<br>所以我们最后返回到<code>Query.php</code>的<code>insert()</code>方法执行的sql语句是:</p>
 <p><img src="http://static.zybuluo.com/chhyx/okk46bobgycn159pb8a1pbdn/image_1cne41cqcfq1djq1lei18d65173t.png" alt="image_1cne41cqcfq1djq1lei18d65173t.png-114.8kB"></p>
 <p>SQL注入成功。</p>
+<p>另一处的update()造成的注入与这个类似,这里就不再赘述了。小伙伴们如果想复现的话,只需改index.php文件insert为update即可。</p>
 <hr>
 <p>1.搭建thinkphp遇到个坑:<br>在保存index.php后 url查看，发现提示命名空间必须在首行:<br><img src="http://static.zybuluo.com/chhyx/wroy49bujchf58dmq6s8f477/image_1cndv2tcvafm1erc6vj19vp148r16.png" alt="image_1cndv2tcvafm1erc6vj19vp148r16.png-37.3kB"></p>
 <p>填坑:<br>用记事本打开相关文件,在保存时选择ANSI编码即可解决<br><img src="http://static.zybuluo.com/chhyx/c21h6hvf69psufq1uk5jeat0/image_1cndv1f2v1ol81a3km1j1i21l4vp.png" alt="image_1cndv1f2v1ol81a3km1j1i21l4vp.png-56.6kB"></p>
