@@ -93,7 +93,8 @@
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/8f08wcjbsngdwizmbb7xudjj/image.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/17x7tdldon5dbxedadlkq2vl/image.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/3m78ae1hfa152s73s73of0xc/image.png">
-<meta property="og:updated_time" content="2018-09-17T12:07:55.441Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/j7ho82m627t9qpqfrmcxcbao/image.png">
+<meta property="og:updated_time" content="2018-09-18T09:40:47.607Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计 | ThinkPHP3.x&#x2F;5.x框架任意文件包含">
 <meta name="twitter:description" content="最近学习thinkphp框架审计 网上找了几个例子去复现,看到关于这个漏洞的文章不是很多,所以在大佬的payload的基础上自己试着审计了一波,记录一下。   审计cms：Thinkphp 5.0.10漏洞原理: ThinkPHP在加载模版解析变量时存在变量覆盖的问题，且没有对 $cacheFile 进行相应的消毒处理，导致模板文件的路径可以被覆盖，从而导致任意文件包含漏洞的发生。 ##1.基础">
@@ -462,7 +463,7 @@ public function fetch($template, $vars = [], $config = [])
             echo $content;
         }
     }
-</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br>![image.png-75.5kB][9]<br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
+</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br><img src="http://static.zybuluo.com/chhyx/j7ho82m627t9qpqfrmcxcbao/image.png" alt="image.png-75.5kB"><br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
 <pre><code>#thinkphp5_0_10\thinkphp\library\think\template\driver\File.php 43行
 public function read($cacheFile, $vars = [])
     {   
@@ -519,6 +520,10 @@ fetch:index.php-&gt;Controller.php-&gt;View.php-&gt;Think.php-&gt;Template.php-&
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/18/echo写马技巧/" rel="prev" title="echo写马技巧">
+                echo写马技巧 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -586,7 +591,7 @@ fetch:index.php-&gt;Controller.php-&gt;View.php-&gt;Think.php-&gt;Template.php-&
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

