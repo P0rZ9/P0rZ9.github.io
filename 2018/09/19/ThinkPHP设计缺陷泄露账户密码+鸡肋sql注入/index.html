@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="代码审计," />
 
 
 
@@ -79,22 +79,23 @@
 
 
 
-<meta name="description" content="title: 代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入date: 2018-09-19 08:15:41tags: 代码审计  1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5">
+<meta name="description" content="ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入   1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\In">
+<meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="P0rZ9&#39;s blog">
+<meta property="og:title" content="代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入">
 <meta property="og:url" content="http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="title: 代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入date: 2018-09-19 08:15:41tags: 代码审计  1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5">
+<meta property="og:description" content="ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入   1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\In">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/0zcysigiatdabqegxix5iwhj/image_1cnoariv0mgh17d11mfk1k52t0036.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/u6zwd3bbanwd7vefq952id1a/image_1cno7um1g11q71p2213001b9psbf1p.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/g0wkga74rhoc97bjywwbbe38/image_1cnol50m31iepu3usdb8epq99.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/0zcysigiatdabqegxix5iwhj/image_1cnoariv0mgh17d11mfk1k52t0036.png">
-<meta property="og:updated_time" content="2018-09-19T10:43:36.358Z">
+<meta property="og:updated_time" content="2018-09-19T10:47:31.238Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="P0rZ9&#39;s blog">
-<meta name="twitter:description" content="title: 代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入date: 2018-09-19 08:15:41tags: 代码审计  1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5">
+<meta name="twitter:title" content="代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入">
+<meta name="twitter:description" content="ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入   1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\In">
 <meta name="twitter:image" content="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png">
 
 
@@ -131,7 +132,7 @@
 
 
 
-  <title> | P0rZ9's blog</title>
+  <title>代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入 | P0rZ9's blog</title>
   
 
 
@@ -259,7 +260,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</h1>
         
 
         <div class="post-meta">
@@ -271,7 +272,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T18:43:36+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T08:15:41+08:00">
                 2018-09-19
               </time>
             
@@ -314,8 +315,9 @@
       
 
       
-        <hr>
-<p>title: 代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入<br>date: 2018-09-19 08:15:41<br>tags: 代码审计</p>
+        <blockquote>
+<p>ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</p>
+</blockquote>
 <hr>
 <p><strong>1.基础知识</strong><br>A.Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png" alt="image_1cnoln6a46g715koj3o6rcpbhm.png-71.9kB"><br>更多基础知识可参考文章：<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a><br><strong>2.环境搭建</strong><br>A.</p>
 <pre><code>#application\index\controller\Index.php
@@ -563,6 +565,12 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+          
+        </div>
       
 
       
