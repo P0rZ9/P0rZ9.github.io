@@ -315,8 +315,7 @@
 <blockquote>
 <p><strong>class_exists()</strong>  (PHP 4, PHP 5, PHP 7)<br>定义:class_exists — 检查指定的类是否已定义。<br>参数:bool class_exists ( string \$class_name [, bool \$autoload = true ] )</p>
 </blockquote>
-<p>class_exists() 默认将会尝试调用 <strong>autoload，如果不想让 class_exists() 调用 </strong>autoload，可以将 autoload 参数设为 FALSE。</p>
-<p>2.在代码中的第九行 由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类SimpleXMLElement来执行xxe攻击读取任意文件</p>
+<p>class_exists() 默认将会尝试调用 <code>__autoload</code>，如果不想让 class_exists() 调用 <code>__autoload</code>，可以将 <code>autoload</code> 参数设为 FALSE。<br>2.在代码中的第九行,由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类<code>SimpleXMLElement</code>来执行xxe攻击读取任意文件</p>
 <p>测试代码:</p>
 <pre><code> &lt;?php
 

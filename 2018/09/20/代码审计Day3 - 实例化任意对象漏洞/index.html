@@ -89,7 +89,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/gl70z7his5l5e30ssvenwdwl/image_1cnrhc09s50p1f7311rv9k8ah51l.png">
-<meta property="og:updated_time" content="2018-09-20T13:37:17.496Z">
+<meta property="og:updated_time" content="2018-09-20T13:43:32.319Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计Day3 - 实例化任意对象漏洞">
 <meta name="twitter:description" content="##Day 3 - Snow Flake ###题目名字:雪花代码如下: ###漏洞产生:这里的代码存在两个问题1.文件包含漏洞 class_exists($controllerName)当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含 我们看下class_exists()函数  class_exists()  (PHP">
@@ -320,8 +320,7 @@
 <blockquote>
 <p><strong>class_exists()</strong>  (PHP 4, PHP 5, PHP 7)<br>定义:class_exists — 检查指定的类是否已定义。<br>参数:bool class_exists ( string \$class_name [, bool \$autoload = true ] )</p>
 </blockquote>
-<p>class_exists() 默认将会尝试调用 <strong>autoload，如果不想让 class_exists() 调用 </strong>autoload，可以将 autoload 参数设为 FALSE。</p>
-<p>2.在代码中的第九行 由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类SimpleXMLElement来执行xxe攻击读取任意文件</p>
+<p>class_exists() 默认将会尝试调用 <code>__autoload</code>，如果不想让 class_exists() 调用 <code>__autoload</code>，可以将 <code>autoload</code> 参数设为 FALSE。<br>2.在代码中的第九行,由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类<code>SimpleXMLElement</code>来执行xxe攻击读取任意文件</p>
 <p>测试代码:</p>
 <pre><code> &lt;?php
 
