@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="代码审计," />
 
 
 
@@ -79,16 +79,21 @@
 
 
 
-<meta name="description" content="找回当年那个被寄予厚望的自己">
-<meta property="og:type" content="website">
-<meta property="og:title" content="P0rZ9&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/tags/博客搭建/index.html">
+<meta name="description" content="##Day 3 - Snow Flake ###题目名字:雪花代码如下: ###漏洞产生:这里的代码存在两个问题1.文件包含漏洞 class_exists($controllerName)当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含 我们看下class_exists()函数  class_exists()  (PHP">
+<meta name="keywords" content="代码审计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码审计Day3 - 实例化任意对象漏洞">
+<meta property="og:url" content="http://yoursite.com/2018/09/06/代码审计Day3 - 实例化任意对象漏洞/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="找回当年那个被寄予厚望的自己">
+<meta property="og:description" content="##Day 3 - Snow Flake ###题目名字:雪花代码如下: ###漏洞产生:这里的代码存在两个问题1.文件包含漏洞 class_exists($controllerName)当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含 我们看下class_exists()函数  class_exists()  (PHP">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/gl70z7his5l5e30ssvenwdwl/image_1cnrhc09s50p1f7311rv9k8ah51l.png">
+<meta property="og:updated_time" content="2018-09-20T13:32:43.170Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="P0rZ9&#39;s blog">
-<meta name="twitter:description" content="找回当年那个被寄予厚望的自己">
+<meta name="twitter:title" content="代码审计Day3 - 实例化任意对象漏洞">
+<meta name="twitter:description" content="##Day 3 - Snow Flake ###题目名字:雪花代码如下: ###漏洞产生:这里的代码存在两个问题1.文件包含漏洞 class_exists($controllerName)当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含 我们看下class_exists()函数  class_exists()  (PHP">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png">
 
 
 
@@ -118,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/博客搭建/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/06/代码审计Day3 - 实例化任意对象漏洞/"/>
 
 
 
 
 
-  <title>Tag: 博客搭建 | P0rZ9's blog</title>
+  <title>代码审计Day3 - 实例化任意对象漏洞 | P0rZ9's blog</title>
   
 
 
@@ -143,7 +148,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -221,54 +226,175 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>博客搭建<small>Tag</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计Day3 - 实例化任意对象漏洞/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/09/05/用hexo+girhub部署博客/" itemprop="url">
-              
-                <span itemprop="name">用hexo+github部署博客</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">代码审计Day3 - 实例化任意对象漏洞</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-09-05T10:15:41+08:00"
-              content="2018-09-05" >
-          09-05
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T10:15:41+08:00">
+                2018-09-06
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<p>##<strong>Day 3 - Snow Flake</strong></p>
+<p>###题目名字:雪花<br>代码如下:<br><img src="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png" alt="image_1cnrfif3p1clakuvd7p1s0g1muv9.png-213.8kB"></p>
+<p>###<strong>漏洞产生</strong>:这里的代码存在两个问题<br>1.文件包含漏洞 <code>class_exists($controllerName)</code>当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含</p>
+<p>我们看下class_exists()函数</p>
+<blockquote>
+<p><strong>class_exists()</strong>  (PHP 4, PHP 5, PHP 7)<br>定义:class_exists — 检查指定的类是否已定义。<br>参数:bool class_exists ( string \$class_name [, bool \$autoload = true ] )</p>
+</blockquote>
+<p>class_exists() 默认将会尝试调用 <strong>autoload，如果不想让 class_exists() 调用 </strong>autoload，可以将 autoload 参数设为 FALSE。</p>
+<p>2.在代码中的第九行 由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类SimpleXMLElement来执行xxe攻击读取任意文件</p>
+<p>测试代码:</p>
+<pre><code> &lt;?php
+
+$xml = &apos;&lt;?xml version=&quot;1.0&quot;?&gt;&lt;!DOCTYPE foo [&lt;!ELEMENT methodName ANY &gt;&lt;!ENTITY xxe SYSTEM &quot;file:///C:/sec/1.txt&quot;&gt;]&gt;&lt;methodCall&gt; &lt;methodName&gt;&amp;xxe;&lt;/methodName&gt;&lt;/methodCall&gt;&apos;;
+
+$xml_class = new SimpleXMLElement($xml,LIBXML_NOENT);
+var_dump($xml_class);
+
+?&gt;
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/gl70z7his5l5e30ssvenwdwl/image_1cnrhc09s50p1f7311rv9k8ah51l.png" alt="image_1cnrhc09s50p1f7311rv9k8ah51l.png-59kB"></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/06/代码审计之Day1 - in_array函数缺陷/" rel="next" title="代码审计之Day1 - in_array函数缺陷">
+                <i class="fa fa-chevron-left"></i> 代码审计之Day1 - in_array函数缺陷
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" rel="prev" title="代码审计之Day2 - filter_var函数缺陷">
+                代码审计之Day2 - filter_var函数缺陷 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -276,6 +402,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -502,6 +632,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

@@ -387,6 +387,145 @@ alert(1);  执行的js代码
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计Day3 - 实例化任意对象漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/06/代码审计Day3 - 实例化任意对象漏洞/" itemprop="url">代码审计Day3 - 实例化任意对象漏洞</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T10:15:41+08:00">
+                2018-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>##<strong>Day 3 - Snow Flake</strong></p>
+<p>###题目名字:雪花<br>代码如下:<br><img src="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png" alt="image_1cnrfif3p1clakuvd7p1s0g1muv9.png-213.8kB"></p>
+<p>###<strong>漏洞产生</strong>:这里的代码存在两个问题<br>1.文件包含漏洞 <code>class_exists($controllerName)</code>当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含</p>
+<p>我们看下class_exists()函数</p>
+<blockquote>
+<p><strong>class_exists()</strong>  (PHP 4, PHP 5, PHP 7)<br>定义:class_exists — 检查指定的类是否已定义。<br>参数:bool class_exists ( string \$class_name [, bool \$autoload = true ] )</p>
+</blockquote>
+<p>class_exists() 默认将会尝试调用 <strong>autoload，如果不想让 class_exists() 调用 </strong>autoload，可以将 autoload 参数设为 FALSE。</p>
+<p>2.在代码中的第九行 由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类SimpleXMLElement来执行xxe攻击读取任意文件</p>
+<p>测试代码:</p>
+<pre><code> &lt;?php
+
+$xml = &apos;&lt;?xml version=&quot;1.0&quot;?&gt;&lt;!DOCTYPE foo [&lt;!ELEMENT methodName ANY &gt;&lt;!ENTITY xxe SYSTEM &quot;file:///C:/sec/1.txt&quot;&gt;]&gt;&lt;methodCall&gt; &lt;methodName&gt;&amp;xxe;&lt;/methodName&gt;&lt;/methodCall&gt;&apos;;
+
+$xml_class = new SimpleXMLElement($xml,LIBXML_NOENT);
+var_dump($xml_class);
+
+?&gt;
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/gl70z7his5l5e30ssvenwdwl/image_1cnrhc09s50p1f7311rv9k8ah51l.png" alt="image_1cnrhc09s50p1f7311rv9k8ah51l.png-59kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -719,7 +858,7 @@ alert(1);  执行的js代码
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
