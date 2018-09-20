@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入   1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\In">
+<meta name="description" content="1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\Index.php &amp;lt;?php namespace ap">
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入">
 <meta property="og:url" content="http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入   1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\In">
+<meta property="og:description" content="1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\Index.php &amp;lt;?php namespace ap">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/0zcysigiatdabqegxix5iwhj/image_1cnoariv0mgh17d11mfk1k52t0036.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/u6zwd3bbanwd7vefq952id1a/image_1cno7um1g11q71p2213001b9psbf1p.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/g0wkga74rhoc97bjywwbbe38/image_1cnol50m31iepu3usdb8epq99.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/0zcysigiatdabqegxix5iwhj/image_1cnoariv0mgh17d11mfk1k52t0036.png">
-<meta property="og:updated_time" content="2018-09-19T10:47:31.238Z">
+<meta property="og:updated_time" content="2018-09-19T10:48:51.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入">
-<meta name="twitter:description" content="ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入   1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\In">
+<meta name="twitter:description" content="1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\Index.php &amp;lt;?php namespace ap">
 <meta name="twitter:image" content="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png">
 
 
@@ -315,10 +315,7 @@
       
 
       
-        <blockquote>
-<p>ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</p>
-</blockquote>
-<hr>
+        <hr>
 <p><strong>1.基础知识</strong><br>A.Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png" alt="image_1cnoln6a46g715koj3o6rcpbhm.png-71.9kB"><br>更多基础知识可参考文章：<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a><br><strong>2.环境搭建</strong><br>A.</p>
 <pre><code>#application\index\controller\Index.php
 &lt;?php
@@ -591,6 +588,10 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/09/20/PDO的来龙去脉/" rel="prev" title="PHP基础 | PDO的来龙去脉">
+                PHP基础 | PDO的来龙去脉 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -657,7 +658,7 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -670,7 +671,7 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

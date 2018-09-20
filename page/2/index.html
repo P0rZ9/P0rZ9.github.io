@@ -236,6 +236,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" itemprop="url">代码审计之Day2 - filter_var函数缺陷</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T10:15:41+08:00">
+                2018-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+</blockquote>
+<hr>
+<p><strong>Day 2 - Twig</strong><br>题目名字:Twig<br><img src="http://static.zybuluo.com/chhyx/36d1fhnqk45hoxmjz55p0rya/image_1cmn8bi0j13r79fvd85to7p05p.png" alt="image_1cmn8bi0j13r79fvd85to7p05p.png-211.8kB"></p>
+<p><strong>代码大意</strong>:php脚本接收GET传输过来的\$nextSlide参数,然后经过\filter_var()函数过滤处理之后赋值给\$link,然后$link这个参数经过escape过滤器处理 最后渲染index.html</p>
+<p><strong>漏洞产生</strong>:这里考察的是xss漏洞,导致这一漏洞产生的原因是题中代码使用的escape过滤器跟filter_car()函数两个过滤方法并不安全,导致攻击者可构造js语句 造成xss(跨站脚本攻击)漏洞</p>
+<p><strong>漏洞解析</strong>: escape过滤器(本质是htmlspecialchars函数)与filter_var()过滤函数的缺陷:并不能捕捉到jacascript伪协议构造的xss语句</p>
+<p>题目中使用了<a href="https://twig.symfony.com/" target="_blank" rel="noopener">Twig</a>定义的escape过滤器跟filter_car()函数两个过滤方法，下面我们先讲一下这两种过滤的规则是怎样的</p>
+<p>1.<a href="https://twig.symfony.com/doc/2.x/filters/escape.html" target="_blank" rel="noopener"><strong>escape</strong></a><br>在默认情况下 escape使用html转义策略</p>
+<blockquote>
+<p>在内部，escape使用PHP本机htmlspecialchars函数进行HTML转义策略。</p>
+</blockquote>
+<p>我们接着看下<strong>htmlspecialchars()</strong>函数</p>
+<blockquote>
+<p><a href="http://php.net/manual/zh/function.htmlspecialchars.php" target="_blank" rel="noopener">htmlspecialchars()</a><br>(PHP 4, PHP 5, PHP 7)<br><strong>作用:</strong> 将特殊字符转换为 HTML 实体<br><strong>定义:</strong> string htmlspecialchars ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get(“default_charset”) [, bool $double_encode = TRUE ]]] )</p>
+</blockquote>
+<p>转义前后字符:<br><img src="http://static.zybuluo.com/chhyx/7gmkdgry3l238wu19n9jti2s/image_1cmndbk64bioafv1kih1lm8uhq16.png" alt="image_1cmndbk64bioafv1kih1lm8uhq16.png-8.5kB"></p>
+<p>2.<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>这里使用<strong>filter_var</strong>函数来过滤<strong>\$nextSlide</strong>变量 且用了<a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>FILTER_VALIDATE_URL</strong></a>过滤器来判断是否一个合法的url。</p>
+<blockquote>
+<p><a href="http://php.net/manual/zh/function.filter-var.php" target="_blank" rel="noopener"><strong>filter_var()</strong></a><br>(PHP 5 &gt;= 5.2.0, PHP 7)<br><strong>作用:</strong> 使用特定的过滤器过滤一个变量</p>
+<p><strong>定义:</strong> mixed filter_var ( mixed \$variable [, int \$filter = FILTER_DEFAULT [, mixed \$options ]] )</p>
+</blockquote>
+<p>针对这两处的过滤,我们可以使用javascript://伪协议来绕过:</p>
+<pre><code>javascript://P0rZ9%250aalert(1);
+</code></pre><p>我们来本地测试一下：<br><img src="http://static.zybuluo.com/chhyx/7rjo70x4enrxtfm0su3w0fbh/image_1cmnjdbvppef19no1akip5acj7m.png" alt="image_1cmnjdbvppef19no1akip5acj7m.png-27.6kB"><br><img src="http://static.zybuluo.com/chhyx/6tmfahno1m39g0k806q0wtlj/image_1cmnkgim5qjv1hh0hbqr7e1tb013.png" alt="image_1cmnkgim5qjv1hh0hbqr7e1tb013.png-63.6kB"></p>
+<p>成功执行alert(1)<br>代码实际意思:</p>
+<pre><code>//         表示单行注释 注释掉后面的P0rZ9
+%250a      %0a(换行符)经过url编码
+alert(1);  执行的js代码
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/cxbyhnaq15qc2li0wa8rl95i/image_1cmnku1271fjr1bii1jggoa2lbr4t.png" alt="image_1cmnku1271fjr1bii1jggoa2lbr4t.png-8.2kB"></p>
+<p>所以php脚本程序在接到浏览器传输过来的<strong>payload:</strong> <code>javascript://P0rZ9%250aalert(1);</code> 会先解码成 <code>javascript://P0rZ9%0aalert(1);</code> 然后赋值给\$url,我们点击a标签的链接就会触发alert()函数。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -568,7 +719,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -581,7 +732,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
