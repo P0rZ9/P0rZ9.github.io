@@ -94,7 +94,7 @@
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/a3hij28f4rsix5nv4bwd7z5d/image_1co76cjk27kqo00i3auj21f3l3c.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/b7xufwpqmq4qphlyytfivelj/image_1co76e4lql0519tvp9f10inbd648.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/ccs5d8sokh6yvo2gd578o95r/image_1co7pdni110vd2731um1p352fr9.png">
-<meta property="og:updated_time" content="2018-09-25T13:36:54.791Z">
+<meta property="og:updated_time" content="2018-09-26T02:54:30.735Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计 |  thinkphp5.0.10函数过滤不全导致一处盲注">
 <meta name="twitter:description" content="跟着P师傅后面捡洞不容易,虽然撞洞了,但是毕竟是自己审出来的,还是分析记录下为好。   ##1.基础知识:A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP ##2.环境搭建:A.index.php #application\index\controller\Index.php &amp;lt;?php nam">
@@ -439,10 +439,20 @@ return $data;
 </code></pre><p>G.这里判断了变量是否为数组 这里调用了<code>filterValue()</code>函数进行过滤 跟进函数:</p>
 <pre><code>#thinkphp\library\think\Requests.php 1054行
 private function filterValue(&amp;$value, $key, $filters)
-</code></pre><p>{<br>    …<br>    return $this-&gt;filterExp($value);<br>}<br>跟进<code>filterExp()</code>函数:</p>
+{
+...
+return $this-&gt;filterExp($value);
+}
+</code></pre><p>跟进<code>filterExp()</code>函数:</p>
 <pre><code>public function filterExp(&amp;$value)
-</code></pre><p>{<br>    // 过滤查询特殊字符<br>    if (is_string($value) &amp;&amp; preg_match(‘/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i’, $value)) {<br>        $value .= ‘ ‘;<br>    }<br>    // TODO 其他安全过滤<br>}</p>
-<p>H.这个函数的作用很简单,判断传进来的表达式是否属于敏感关键字,如果是—&gt;关键字后加空格,来进行给过滤<br>如传进来的post数据:</p>
+{
+// 过滤查询特殊字符
+if (is_string($value) &amp;&amp; preg_match(&apos;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i&apos;, $value)) {
+    $value .= &apos; &apos;;
+}
+// TODO 其他安全过滤
+}
+</code></pre><p>H.这个函数的作用很简单,判断传进来的表达式是否属于敏感关键字,如果是—&gt;关键字后加空格,来进行给过滤<br>如传进来的post数据:</p>
 <pre><code>x[0]=in&amp;x[1]=1
 </code></pre><p>服务器接收时如果没有进行过滤:</p>
 <pre><code>$date[&apos;x&apos;] = array(&apos;in&apos;=&gt;&apos;1&apos;)
@@ -537,6 +547,10 @@ get_table_name(6)//运行函数
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/09/25/利用DNSLOG快速获取数据(盲注)/" rel="prev" title="渗透技巧 |  利用DNSLOG快速获取数据(盲注)">
+                渗透技巧 |  利用DNSLOG快速获取数据(盲注) <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -603,7 +617,7 @@ get_table_name(6)//运行函数
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
