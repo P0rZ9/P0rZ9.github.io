@@ -79,24 +79,24 @@
 
 
 
-<meta name="description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建: #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use Think\Controller; class IndexControl">
+<meta name="description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建:cms:Thinkphp3.2.3下载后开启debug调试模式,方便测试。 #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use">
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
 <meta property="og:url" content="http://yoursite.com/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建: #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use Think\Controller; class IndexControl">
+<meta property="og:description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建:cms:Thinkphp3.2.3下载后开启debug调试模式,方便测试。 #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/vmaxbtyn92txy3ccoburcfmp/image_1coi3s5gvspqtpo1s1g1euq15e067.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/tdbbat7954ktp3f227xv32sr/image_1coi0lkg517g1ghqv331n9fj6o9.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/w5s7d3huryk02oimj6hn2cu6/image_1coi0q3fk1hh0jkiatc1oc515sm1m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/ekxqnkhns953gzus9dk1qsig/image_1coju9t0q1b3dmm3109puv41ds49.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png">
-<meta property="og:updated_time" content="2018-09-29T08:26:07.195Z">
+<meta property="og:updated_time" content="2018-09-30T00:35:13.300Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
-<meta name="twitter:description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建: #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use Think\Controller; class IndexControl">
+<meta name="twitter:description" content="##基础知识:更多基础知识看:https://p0rz9.github.io/2018/09/28/TP框架数据操作 ##环境搭建:cms:Thinkphp3.2.3下载后开启debug调试模式,方便测试。 #Application\Home\Controller\IndexController.class.php: &amp;lt;?php namespace Home\Controller; use">
 <meta name="twitter:image" content="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png">
 
 
@@ -318,7 +318,7 @@
       
         <hr>
 <p>##<strong>基础知识:</strong><br><img src="http://static.zybuluo.com/chhyx/lw29luk5t7su3s5qqqriv3fn/image_1coi47sfp1u5q6iruc7rtffoe6k.png" alt="image_1coi47sfp1u5q6iruc7rtffoe6k.png-74kB"><br>更多基础知识看:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
-<p>##<strong>环境搭建:</strong></p>
+<p>##<strong>环境搭建:</strong><br>cms:<a href="http://static.zybuluo.com/chhyx/ekxqnkhns953gzus9dk1qsig/image_1coju9t0q1b3dmm3109puv41ds49.png" target="_blank" rel="noopener">Thinkphp3.2.3</a><br>下载后开启debug调试模式,方便测试。</p>
 <pre><code>#Application\Home\Controller\IndexController.class.php:
 &lt;?php
 namespace Home\Controller;
@@ -373,7 +373,7 @@ $sql  =   $this-&gt;parseSql($this-&gt;selectSql,$options);
 return $sql;
 }
 </code></pre><p>跟进<code>parseSql()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/w5s7d3huryk02oimj6hn2cu6/image_1coi0q3fk1hh0jkiatc1oc515sm1m.png" alt="image_1coi0q3fk1hh0jkiatc1oc515sm1m.png-75.9kB"></p>
-<p>跟进<code>parseWhere()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png" alt="image_1coi13nn815cb1fates71u48k9u30.png-28.6kB"></p>
+<p>跟进<code>parseWhere()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/ekxqnkhns953gzus9dk1qsig/image_1coju9t0q1b3dmm3109puv41ds49.png" alt="image_1coju9t0q1b3dmm3109puv41ds49.png-19.3kB"></p>
 <p>传入的<code>$options[&#39;where&#39;]</code>的值为<code>string</code>类型时直接返回</p>
 <p>D.在<code>parseSql()</code>方法中 我们可以看到不仅仅<code>$where</code>我们可控 像其他的<code>table field order union</code>等 我们都是可以控制的:<br><img src="http://static.zybuluo.com/chhyx/px40iynyvtu30hk0kqywdv5n/image_1coi1gccr10g61jcvfk5stn6i35q.png" alt="image_1coi1gccr10g61jcvfk5stn6i35q.png-47.9kB"></p>
 <p>也就是说我们可以自己构造sql语句进行注入。</p>
@@ -429,6 +429,10 @@ public function addAll($dataList,$options=array(),$replace=false)
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/02/74CMS缓存设计缺陷导致getshell/" rel="prev" title="代码审计 | 74CMS缓存设计缺陷导致getshell">
+                代码审计 | 74CMS缓存设计缺陷导致getshell <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -496,7 +500,7 @@ public function addAll($dataList,$options=array(),$replace=false)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -509,7 +513,7 @@ public function addAll($dataList,$options=array(),$replace=false)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
