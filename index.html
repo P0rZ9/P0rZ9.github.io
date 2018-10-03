@@ -312,8 +312,7 @@
 </blockquote>
 <hr>
 <p>审计cms：<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:用了<code>Thinkphp3.2.3</code>改写的缓存函数<code>set()</code>方法,而这个方法对写入的内容只进行了<code>serialize()</code>函数过滤操作,导致可用<code>%0D%0A</code>进行换行写入<code>php</code>代码而<code>getshell</code></p>
-<p>##<strong>1.基础知识:</strong><br><code>Thinkphp</code>的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png" alt="image.png-73.6kB"></p>
-<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
+<p>##<strong>1.基础知识:</strong><br><code>Thinkphp</code>的一些基本操作可参考文章:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
 <p>##<strong>2.环境搭建:</strong><br>创建一个企业用户用于验证漏洞即可</p>
 <p>##<strong>3.漏洞利用:</strong><br>payload:</p>
 <pre><code>url:http://127.0.0.1:84/index.php?m=&amp;c=Company&amp;a=com_auth
@@ -2535,7 +2534,7 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
