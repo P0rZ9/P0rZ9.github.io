@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="代码审计," />
+  <meta name="keywords" content="PHP," />
 
 
 
@@ -79,21 +79,26 @@
 
 
 
-<meta name="description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
-<meta name="keywords" content="代码审计">
+<meta name="description" content="打算将PHP学习的基础知识码出来,持续更新。   php四种标记风格： &amp;lt;?php ?&amp;gt; //官方推荐 &amp;lt;? ?&amp;gt;    //短标记风格 需要在php.ini中设置short_open_tag = on &amp;lt;% %&amp;gt;    //ASP风格    需要在php.ini中设置asp_tags = on &amp;lt;script language=&amp;quot;php&amp;qu">
+<meta name="keywords" content="PHP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码审计之Day1 - in_array函数缺陷">
-<meta property="og:url" content="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/index.html">
+<meta property="og:title" content="PHP | PHP基础知识">
+<meta property="og:url" content="http://yoursite.com/2018/10/12/PHP基础知识/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
+<meta property="og:description" content="打算将PHP学习的基础知识码出来,持续更新。   php四种标记风格： &amp;lt;?php ?&amp;gt; //官方推荐 &amp;lt;? ?&amp;gt;    //短标记风格 需要在php.ini中设置short_open_tag = on &amp;lt;% %&amp;gt;    //ASP风格    需要在php.ini中设置asp_tags = on &amp;lt;script language=&amp;quot;php&amp;qu">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png">
-<meta property="og:updated_time" content="2018-09-07T05:31:29.287Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/nvnvjmhlnfqbjyu8l5lp9pfs/image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/q58f8ggkquq7i5xocprc2pg9/image_1cpj4nuff1uh41jrh14uc1i9711uop.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/vkgni63ayh1e2xowi3cnum1z/image_1cpj5rk701vlv1ge1d0q106m4c023.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/aourri8psost2uos8z6jqft4/image_1cpj65kpp138a1h1819jb1ufguam2g.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/1w096o9pm7ym6uqyq7qs8yim/image_1cpj76eft8dh1ac5vd5qb12mf2t.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/gn2bptw7jyzjckdyzluyycnf/image_1cpj7d42p1hji1sahkukfrrhio3q.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/26tsa0smndv6beslkafazqif/image_1cpj7fkmk5fei11gvn1flv1b399.png">
+<meta property="og:updated_time" content="2018-10-12T15:45:41.533Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码审计之Day1 - in_array函数缺陷">
-<meta name="twitter:description" content="最近看红日公众号的文章,看到 PHP-Audit-Labs 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波   Day 1 - Wish List题目名字:愿望清单代码大意:检查文件名file[‘name’]是否在白名单$whitelist里–&amp;gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIR">
-<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png">
+<meta name="twitter:title" content="PHP | PHP基础知识">
+<meta name="twitter:description" content="打算将PHP学习的基础知识码出来,持续更新。   php四种标记风格： &amp;lt;?php ?&amp;gt; //官方推荐 &amp;lt;? ?&amp;gt;    //短标记风格 需要在php.ini中设置short_open_tag = on &amp;lt;% %&amp;gt;    //ASP风格    需要在php.ini中设置asp_tags = on &amp;lt;script language=&amp;quot;php&amp;qu">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/nvnvjmhlnfqbjyu8l5lp9pfs/image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png">
 
 
 
@@ -123,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/12/PHP基础知识/"/>
 
 
 
 
 
-  <title>代码审计之Day1 - in_array函数缺陷 | P0rZ9's blog</title>
+  <title>PHP | PHP基础知识 | P0rZ9's blog</title>
   
 
 
@@ -240,7 +245,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day1 - in_array函数缺陷/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/PHP基础知识/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -257,7 +262,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">代码审计之Day1 - in_array函数缺陷</h1>
+          <h1 class="post-title" itemprop="name headline">PHP | PHP基础知识</h1>
         
 
         <div class="post-meta">
@@ -269,8 +274,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-06T08:15:41+08:00">
-                2018-09-06
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T08:15:41+08:00">
+                2018-10-12
               </time>
             
 
@@ -313,18 +318,47 @@
 
       
         <blockquote>
-<p>最近看红日公众号的文章,看到 <strong>PHP-Audit-Labs</strong> 这个项目 ,正好最近开始学PHP,所以跟着大佬脚步学习一波</p>
+<p>打算将PHP学习的基础知识码出来,持续更新。</p>
 </blockquote>
 <hr>
-<p><strong>Day 1 - Wish List</strong><br>题目名字:愿望清单<br><img src="http://static.zybuluo.com/chhyx/bgfejdnfnoma3u8eqd2z4ubm/image_1cmmmhtm01cn4nastlume1tso20.png" alt="image_1cmmmhtm01cn4nastlume1tso20.png-148.8kB"><br><strong>代码大意</strong>:检查文件名file[‘name’]是否在白名单$whitelist里–&gt;如果存在,则用move_upload_file()函数移动上传的临时文件file[‘tmp_name’]到指定目录UPLOAD_DIRECTORY</p>
-<p><strong>漏洞产生</strong>:这里考察的是任意文件上传漏洞,导致这一漏洞产生的原因是弱类型比较和in_array()的不规范使用,攻击者可通过构造的文件名(1.php)来绕过服务端的检测,造成文件上传漏洞<br><strong>漏洞解析</strong>:因为未将in_array()函数的第三个参数设置为TRUE且目标数组$whitelist的元素类型为数字类型,所以在进行in_array()判断时1.php会强制转化为1,而1在rand(1,24)数组中,最终绕过in_array()判断。</p>
-<blockquote>
-<p><strong>in_array()</strong><br>作用:检查数组中是否存在某个值<br>定义:bool in_array ( mixed \$needle , array \$haystack [, bool \$strict = FALSE ] )</p>
-</blockquote>
-<blockquote>
-<p>在\$haystack数组中搜索\$needle,如果\$strict参数的值为True,则in_array()函数会进行强检查(检查值、类型是否相同),如果没有设置,则默认为FALSE 进行弱检查(只检查值是否相同)。如果成功搜索到\$needle,则返回TRUE 否则返回FALSE。</p>
-</blockquote>
-<p><strong>本地测试:</strong><br><img src="http://static.zybuluo.com/chhyx/pquwjj86ytjbyba2dkr0ppvv/image_1cmmo17sncmevnor4a10hp1rm73d.png" alt="image_1cmmo17sncmevnor4a10hp1rm73d.png-35.3kB"></p>
+<p>php四种标记风格：</p>
+<pre><code>&lt;?php ?&gt; //官方推荐
+&lt;? ?&gt;    //短标记风格 需要在php.ini中设置short_open_tag = on
+&lt;% %&gt;    //ASP风格    需要在php.ini中设置asp_tags = on
+&lt;script language=&quot;php&quot;&gt;代码&lt;/script&gt; //JS标记风格 任意情况都可使用
+</code></pre><p>注释:</p>
+<pre><code>// #        //单行注释
+/*   */     //多行注释
+</code></pre><p>引用赋值：<br><img src="http://static.zybuluo.com/chhyx/nvnvjmhlnfqbjyu8l5lp9pfs/image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png" alt="image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png-39.8kB"><br><img src="http://static.zybuluo.com/chhyx/q58f8ggkquq7i5xocprc2pg9/image_1cpj4nuff1uh41jrh14uc1i9711uop.png" alt="image_1cpj4nuff1uh41jrh14uc1i9711uop.png-47kB"></p>
+<p>字符串:<br>单引号:变量和转义的序列都不会进行转义<br>双引号:PHP会处理双引号括起来的字符串、变量以及转义序列(\n等)</p>
+<p>标识符(定界符)：<br><img src="http://static.zybuluo.com/chhyx/vkgni63ayh1e2xowi3cnum1z/image_1cpj5rk701vlv1ge1d0q106m4c023.png" alt="image_1cpj5rk701vlv1ge1d0q106m4c023.png-37.1kB"></p>
+<p>格式化字符串:<br><img src="http://static.zybuluo.com/chhyx/aourri8psost2uos8z6jqft4/image_1cpj65kpp138a1h1819jb1ufguam2g.png" alt="image_1cpj65kpp138a1h1819jb1ufguam2g.png-32.8kB"></p>
+<p>获取字串位置:</p>
+<pre><code>&lt;?php
+
+$str = &apos;Php is the best,php is my favorite&apos;;
+</code></pre><p>echo substr_count($str,’php’);//出现次数<br>    echo strpos($str,’php’);//返回php第一次出现在$str的位置<br>    echo stripos($str,’php’);//返回php第一次出现在$str的位置 不区分大小写<br>    echo strrpos($str,’php’);//返回php最后一次出现在$str的位置<br>    echo strripos($str,’php’);//返回php最后一次出现在$str的位置 不区分大小写</p>
+<pre><code>?&gt;
+</code></pre><p>字符串替换：<br><img src="http://static.zybuluo.com/chhyx/1w096o9pm7ym6uqyq7qs8yim/image_1cpj76eft8dh1ac5vd5qb12mf2t.png" alt="image_1cpj76eft8dh1ac5vd5qb12mf2t.png-34.9kB"></p>
+<p>正则:</p>
+<pre><code>a.^PHP 匹配以PHP开头的字符串
+  [^a-z] 表示匹配所有非小写字母开头的字符串
+b.PHP$ 匹配以PHP结尾的字符串
+</code></pre><p>c.^PHP$ 精确匹配PHP字符串<br>    d.PHP 匹配所有含有PHP的字符串<br>    e.com|org|net 匹配com、org、net中的任意一个<br>    f.PHP内置通用字符集</p>
+<p><img src="http://static.zybuluo.com/chhyx/gn2bptw7jyzjckdyzluyycnf/image_1cpj7d42p1hji1sahkukfrrhio3q.png" alt="image_1cpj7d42p1hji1sahkukfrrhio3q.png-34.5kB"></p>
+<pre><code>g.使用{}确定重复出现的次数
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/26tsa0smndv6beslkafazqif/image_1cpj7fkmk5fei11gvn1flv1b399.png" alt="image_1cpj7fkmk5fei11gvn1flv1b399.png-35.5kB"></p>
+<p>文件操作:<br>a.目录部分</p>
+<pre><code>$path = &quot;c:/sec/blogs/index/&quot;;
+$file = dirname($path); //返回目录 $file:c:/sec/blogs
+</code></pre><p>b.路径关联数组:</p>
+<pre><code>$pathinfo = pathinfo(&quot;www/test/index.html&quot;);
+//得到一个数组 包含4个值
+echo $pathinfo[&apos;dirname&apos;];//路径 www/test
+echo $pathinfo[&apos;basename&apos;];//基本名 index.html
+echo $pathinfo[&apos;extension&apos;];//扩展名 html
+echo $pathinfo[&apos;filename&apos;];//文件名 index
+</code></pre><p>c.文件部分<br>file<br>open<br>copy<br>file_get_contents</p>
 
       
     </div>
@@ -342,7 +376,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
           
         </div>
       
@@ -355,8 +389,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/05/用hexo+girhub部署博客/" rel="next" title="用hexo+github部署博客">
-                <i class="fa fa-chevron-left"></i> 用hexo+github部署博客
+              <a href="/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/" rel="next" title="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
+                <i class="fa fa-chevron-left"></i> 代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置
               </a>
             
           </div>
@@ -365,8 +399,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/09/06/代码审计之Day2 - filter_var函数缺陷/" rel="prev" title="代码审计之Day2 - filter_var函数缺陷">
-                代码审计之Day2 - filter_var函数缺陷 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/10/12/mysql基础命令/" rel="prev" title="mysql基础命令">
+                mysql基础命令 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
