@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="这里笔者是从测试的角度来练习的,通过fuzz猜测闭合符号—&amp;gt;猜测sql语句—&amp;gt;注入利用  less-7:访问第7关地址:按照笔者的理解,sql注入的第一步是去想办法闭合语句,我们在平常挖洞的时候测试sql注入时,碰到http://127.0.0.1:86/less-7/index.php?id=1我们往往会加’测试,但是并不是所有的代码都会用单引号去包裹,我们需要更全面的去fuzz">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.44.57-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.17.28.55-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.25.31-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.09.07-image.png">
@@ -103,11 +103,11 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.53.31-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.58.38-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.22.02.01-image.png">
-<meta property="og:updated_time" content="2018-10-28T14:19:36.183Z">
+<meta property="og:updated_time" content="2018-10-29T04:11:14.409Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Sqli-labs Less7-16">
 <meta name="twitter:description" content="这里笔者是从测试的角度来练习的,通过fuzz猜测闭合符号—&amp;gt;猜测sql语句—&amp;gt;注入利用  less-7:访问第7关地址:按照笔者的理解,sql注入的第一步是去想办法闭合语句,我们在平常挖洞的时候测试sql注入时,碰到http://127.0.0.1:86/less-7/index.php?id=1我们往往会加’测试,但是并不是所有的代码都会用单引号去包裹,我们需要更全面的去fuzz">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.44.57-image.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png">
 
 
 
@@ -394,7 +394,7 @@ http://127.0.0.1:86/less-7/index.php?id=1%23 正确
 <blockquote>
 <p>如果未加<code>%23(#)</code>显示错误而加上<code>%23(#)</code>显示正确即为闭合符号</p>
 </blockquote>
-<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.44.57-image.png" alt="2018-10-28.20.44.57-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
+<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png" alt="2018-10-29.12.10.46-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
 <p>判断字段个数</p>
 <pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 3%23
 http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 4%23
@@ -516,6 +516,10 @@ $passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;;
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/10/29/Sqli-labs Less17-22/" rel="prev" title="Sqli-labs Less17-22">
+                Sqli-labs Less17-22 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -591,7 +595,7 @@ $passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;;
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

