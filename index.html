@@ -236,6 +236,249 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/01/Sqli-labs Less29-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/01/Sqli-labs Less29-37/" itemprop="url">Sqli-labs less29-37</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-01T08:15:41+08:00">
+                2018-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="less-29"><a href="#less-29" class="headerlink" title="less-29"></a>less-29</h3><p>刚开始做这关,直接在<code>index.php</code>注的,无任何防护,直接联合注入即可,但是返回去看网上的教程发现题目应该是要求在<code>login.php</code>页面进行注入</p>
+<p>index.php直接联合注入即可:    </p>
+<pre><code>http://127.0.0.1:86/less-29/index.php?id=-1&apos; union select 1,database(),3%23
+</code></pre><p>login.php的注入:</p>
+<p><code>login.php</code>关键过滤代码:</p>
+<pre><code>function whitelist($input)
+{
+    $match = preg_match(&quot;/^\d+$/&quot;, $input);
+    if($match)
+    {
+        //echo &quot;you are good&quot;;
+        //return $match;
+    }
+    else
+    {    
+        header(&apos;Location: hacked.php&apos;);
+        //echo &quot;you are bad&quot;;
+    }
+}
+function java_implimentation($query_string)
+{
+    $q_s = $query_string;
+    $qs_array= explode(&quot;&amp;&quot;,$q_s);
+
+
+    foreach($qs_array as $key =&gt; $value)
+    {
+        $val=substr($value,0,2);
+        if($val==&quot;id&quot;)
+        {
+            $id_value=substr($value,3,30); 
+            return $id_value;
+            echo &quot;&lt;br&gt;&quot;;
+            break;
+        }
+
+    }
+
+}
+</code></pre><p>代码逻辑:<br>1.首先用<code>$_SERVER[&#39;QUERY_STRING&#39;];</code>获取?之后的查询字符串,然后去<code>java_implimentation()</code>函数过滤,返回id参数的值。<br>2.将返回的id参数的值给了函数<code>whitelist</code>,如果是数字则查询,否则跳转到<code>hacked.php</code></p>
+<p>重点:<br>此处服务器配置情况:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.12.41.56-image.png" alt="2018-10-31.12.41.56-image.png"><br>然后假设我们发送一个请求:<br><code>http://127.0.0.1:86/less-29/login.php?id=1&amp;id=2</code><br>对于这个请求,<code>apache(php)</code>解析最后一个参数,即显示id=2的内容，<code>Tomcat(jsp)</code>解析第一个参数,即显示id=1的内容</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.09.43.42-image.png" alt="2018-10-31.09.43.42-image.png"></p>
+<p>那这一关,根据该处的服务器配置情况,客户端的请求首先经过<code>tomcat</code>服务器,<code>tomcat</code>会解析第一个参数,接下来<code>tomcat</code>去请求<code>apache(php)</code>服务器,而<code>apache</code>会解析最后一个参数,那么最终返回的肯定是<code>apache</code>处理的数据。因为在实际情况中,如果配置两层服务器的情况,往往我们会在第一台服务器做数据处理和过滤,其功能类似于一个waf。而正是因为前后两层服务器对参数解析的不同,我们就可使用<code>HPP</code>(参数污染)攻击,该攻击会对服务器和客户端造成威胁。</p>
+<p>这里我们用参数污染的方式进行绕过:</p>
+<pre><code>login.php?id=1&amp;id=1&apos; and 1=1%23
+</code></pre><p>进入<code>java_implimentation()</code>函数的是?后面的整个字符串,返回的是第一个字段内容1,为数字成功绕过第一步的<code>tomcat</code>服务器的检测,到达<code>apache</code>服务器,执行第二个参数的语句。<br>然后后面的话,改变第二个参数的值即可。</p>
+<h3 id="less-30"><a href="#less-30" class="headerlink" title="less-30"></a>less-30</h3><p>将less-29的闭合符<code>&#39;</code>变为<code>&quot;</code>即可。</p>
+<h3 id="less-31"><a href="#less-31" class="headerlink" title="less-31"></a>less-31</h3><p>将less-29的闭合符<code>&#39;</code>变为<code>&quot;)</code>即可。</p>
+<hr>
+<p>HPP:<br>HPP不是一种漏洞,但是在网站存在waf的情况下可以帮助攻击者绕过waf。HPP参数污染,简单的讲就是给相同名称参数赋上两个或两个以上的值,导致应用程序以意外方式解释值而出现漏洞。</p>
+<p>我们把搜索的参数赋2个值看下<br>baidu:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.16.22.19-image.png" alt="2018-10-31.16.22.19-image.png"></p>
+<p>bing:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.16.23.49-image.png" alt="2018-10-31.16.23.49-image.png"></p>
+<p>百度取第一个而bing搜索取第二个参数,这是因为不同的网站(服务器)对相同参数的处理方式不同。</p>
+<p>我们less-29就是<code>waf(tomcat)</code>检验的是第一个参数值而<code>apache</code>服务器执行的却是第二个参数值导致绕过了waf。</p>
+<hr>
+<p>下面的几关都是涉及宽字节注入的,我们介绍一下宽字节注入的原理及用法:<br>原理:mysql在使用GBK编码时,会认为2个字符为1个汉字,例如<code>%df%5c</code>就是一个汉字,程序在过滤’时,一般会选择将’转化为\’,对于攻击者来说,绕过这种过滤,一般有两种思路:</p>
+<p>1.将\吃掉  具体原因:<code>urldecode(\&#39;)=%5c%27</code> 我们在前面添加%df使其变成<code>%df%5c%27</code> 而根据上面提到的,mysql在GBK编码时会将2个字节当作一个汉字,此时<code>%df%5c</code>就是一个汉字,%27被当作单独的符号在外面,就达到了使单引号逃逸的目的。    </p>
+<p>2.将\过滤,例如构造<code>%5c%5c%27</code>,第一个\转义第二个\,也可以使得单引号’逃逸,不过这种情况只适用于\没有被过滤得情况</p>
+<h3 id="less-32"><a href="#less-32" class="headerlink" title="less-32"></a>less-32</h3><p>我们尝试payload:</p>
+<pre><code>http://127.0.0.1:86/less-32/index.php?id=-1%df%27 union select 1,user(),3%23
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-11-01.09.32.32-image.png" alt="2018-11-01.09.32.32-image.png"></p>
+<p>可以看到<code>&#39;</code>成功逃逸,造成注入。</p>
+<p><code>less-32</code>代码:</p>
+<pre><code>function check_addslashes($string)
+{ //preg_quote：保持字符串,使其不适用正则表达式的特殊语义
+    $string = preg_replace(&apos;/&apos;. preg_quote(&apos;\\&apos;) .&apos;/&apos;, &quot;\\\\\\&quot;, $string);          //escape any backslash
+    $string = preg_replace(&apos;/\&apos;/i&apos;, &apos;\\\&apos;&apos;, $string);                               //escape single quote with a backslash
+    $string = preg_replace(&apos;/\&quot;/&apos;, &quot;\\\&quot;&quot;, $string);                                //escape double quote with a backslash
+
+
+    return $string;
+}
+</code></pre><p>上述函数为过滤<code>&#39;</code>的函数,将’转为<code>\&#39;</code>,将<code>&quot;</code>转化为<code>\&quot;</code>,将<code>\</code>转化为<code>\\</code>,所以我们只能使用第一种方法,将<code>%5c</code>吃掉,使<code>&#39;</code>逃逸,造成注入。</p>
+<p>若我们改变一下源代码,将过滤<code>\</code>的代码:<code>$string = preg_replace(&#39;/&#39;. preg_quote(&#39;\\&#39;) .&#39;/&#39;, &quot;\\\\\\&quot;, $string);</code>注释掉,用第二种方法过滤掉\,使’逃逸:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-11-01.09.48.05-image.png" alt="2018-11-01.09.48.05-image.png"></p>
+<p>如图可看到,<code>&#39;</code>成功逃逸。</p>
+<h3 id="less-33"><a href="#less-33" class="headerlink" title="less-33"></a>less-33</h3><p>less-33的过滤代码:</p>
+<pre><code>function check_addslashes($string)
+{
+    $string= addslashes($string);    
+    return $string;
+}
+</code></pre><p>由代码可知,这里是用<code>addslashes()</code>函数来进行过滤的。<br><code>addslashes()</code> 返回预定字符之前添加\的字符串<br>预定义字符: <code>&#39;</code>,<code>&quot;</code>,<code>\</code>,处理方式与less-32一样,所以依旧用<code>%df</code>即可绕过。<br>注意:使用<code>addslashes()</code>函数,我们将<code>mysql_query()</code>设置<code>set character_set_client=binary</code>来设定客户端的字符集是二进制,就可防御此漏洞。</p>
+<pre><code>#设置客户端的字符集为二进制,Mysql就以二进制来执行sql语句
+Mysql_query(“SET character_set_connection=gbk,character_set_result=gbk,character_set_client=binary”,$conn);
+</code></pre><h3 id="less-34"><a href="#less-34" class="headerlink" title="less-34"></a>less-34</h3><p>这一关是post型的注入漏洞,同样是将传输过来的<code>&#39;</code>进行了<code>\&#39;</code>处理,同样可用<code>%df</code>吃掉\,造成’逃逸<br>但是前几关都是基于get形式的注入,数据是以url形式提交的,因此数据会经过URLencode,那我们将<code>%df</code>先经过URLencode得到<code>�</code>,或者在burp/hackbar里用<code>%df</code>也是可以的。</p>
+<p>首先在浏览器里尝试:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-11-01.11.02.48-image.png" alt="2018-11-01.11.02.48-image.png"></p>
+<p>burp：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.07.48-image.png" alt="2018-11-01.11.07.48-image.png"></p>
+<p>hackbar也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.06.05-image.png" alt="2018-11-01.11.06.05-image.png"></p>
+<p>浏览器直接提交只能使用源字符,hackbar与burp里使用源字符与url编码过的字符都可以。</p>
+<p>这里也说下万能密码:<br>提交:<code>�&#39; or 1=1#</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.14.50-image.png" alt="2018-11-01.11.14.50-image.png"></p>
+<p>成功以Dumb的用户登陆。<br>我们看下源代码:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
+</code></pre><p>我们提交<code>�&#39; or 1=1#</code>,执行的sql语句为:<code>SELECT username, password FROM users WHERE username=&#39;�&#39; or 1=1#&#39; and password=&#39;$passwd&#39; LIMIT 0,1</code><br>实际执行的语句为<code>SELECT username, password FROM users WHERE username=&#39;�&#39; or 1=1</code>,无论数据库中有无username等于�的用户,在与1=1进行了or操作后,返回值都为1,<br>所以执行这条语句返回的结果是全部<code>username</code>与<code>password,mysql_fetch_array()</code>函数每次从结果集中取得一行作为关联数组,只去了一次,所以返回id为0的账户密码:<code>Dumb 0</code>。</p>
+<h3 id="less-35"><a href="#less-35" class="headerlink" title="less-35"></a>less-35</h3><p>添加单引<code>&#39;</code>测试:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.37.30-image.png" alt="2018-11-01.11.37.30-image.png"></p>
+<p>报错信息:<code>&#39;\&#39; LIMIT 0,1&#39;</code>,说明这里并不需要闭合符,直接联合注入即可</p>
+<p><code>id=-1 union select 1,2,database()%23</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.38.45-image.png" alt="2018-11-01.11.38.45-image.png"></p>
+<h3 id="less-36"><a href="#less-36" class="headerlink" title="less-36"></a>less-36</h3><p>利用方式与<code>less-33</code>无异。</p>
+<p>查看源代码:</p>
+<pre><code>function check_quotes($string)
+{
+    $string= mysql_real_escape_string($string);    
+    return $string;
+}
+</code></pre><p>查看代码得知是用<code>mysql_real_escape_string()</code>进行过滤的</p>
+<p><code>mysql_real_escape_string()</code>函数转义 SQL 语句中使用的字符串中的特殊字符<br>下列字符受影响：</p>
+<pre><code>\x00
+\n
+\r
+\
+&apos;
+&quot;
+\x1a
+</code></pre><p>如果成功，则该函数返回被转义的字符串。如果失败,则返回false。<br>注意:在使用<code>mysql_real_escape_string()</code>时,需要将<code>mysql</code>设置为<code>gbk</code>:<code>Mysql_set_charset(&#39;gbk&#39;,&#39;$conn&#39;)</code></p>
+<h3 id="less-37"><a href="#less-37" class="headerlink" title="less-37"></a>less-37</h3><p>利用方式与less-34无异<br>代码与less-34的区别是post内容用的是<code>mysql_real_escape_string()</code>函数进行处理的,而不是<code>addslashes()</code>函数,但是原理是一样的.利用方式也相同。</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>宽字节注入发生的位置就是PHP发送请求到MYSQL时字符集使用<code>character_set_client</code>设置值进行了一次编码。</p>
+<h4 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法:"></a>修复方法:</h4><blockquote>
+<p><strong>A</strong>.在执行查询前先执行set names ‘gbk’,character_set_client=binary设置character_set_client为binary<br>    <strong>B</strong>.使用mysql_set_charset(‘gbk’)设置编码,然后使用mysql_real_escape_string()函数把参数过滤.<br>    <strong>C</strong>.使用PDO模式,在PHP5.3.6及以下版本,需要设置serAttribute(PDO::ATTR_EMULATE_PREPARES,false);来禁用prepare statements的仿真效果(本地模拟预处理),这个在之前复现TP框架的洞时有涉及:<br>    <a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">ThinkPHP5.x设计缺陷泄露账户密码+鸡肋sql注入</a>            </p>
+</blockquote>
+<h4 id="CMS挖掘"><a href="#CMS挖掘" class="headerlink" title="CMS挖掘:"></a>CMS挖掘:</h4><p>挖掘宽字节注入的方法也比较简单,只要搜索如下几个关键字即可:</p>
+<pre><code>set names
+character_set_client=gbk
+mysql_set_charset(&apos;gbk&apos;)
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/30/Sqli-labs Less23-28/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2324,206 +2567,6 @@ POST:content=1&amp;mobile=1&amp;contacts[acode`,`mobile`,`content`,`user_ip`,`us
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/15/SQL注入基础/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/15/SQL注入基础/" itemprop="url">基础知识 | SQL注入基础</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T20:15:41+08:00">
-                2018-10-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>##<strong>1.mysql中常见函数:</strong><br>在进行sql注入过程中,会使用到mysql的内置函数。在内置函数中又分为获取信息的<code>函数</code>和<code>功能函数</code></p>
-<p><strong>信息函数:</strong>用来获取mysql中的数据库的信息<br>常见信息函数:</p>
-<pre><code>user() ：当前使用者的用户名
-database()：当前数据库名
-version()：数据库版本
-datadir：读取数据库的绝对路径
-@@vasedir：mysql安装路径
-@@version_compile_os：操作系统
-concat()：连接一个或者多个字符串
-group_concat()：连接一个组的所有字符串，并以逗号分隔每一条数据
-</code></pre><p><strong>功能函数:</strong>传统的函数用来完成某项具体操作</p>
-<p><code>load_file():</code>从计算机载入文件,读取文件中的数据</p>
-<pre><code>select load_file(&apos;C:\\web\\1.txt&apos;);
-select load_file(0x433A5C5C7765625C5C4D7953514C5C5C312E747874); //绕过单引限制,使用16进制转换C:\\web\\1.txt
-</code></pre><p><code>into_file():</code>写入文件,前提是具有写入权限</p>
-<pre><code>select &apos;&lt;?php phpinfo();?&gt;&apos; into outfile &apos;c:\\web\\MYSQL\\1.txt&apos;;              //单引号不能少
-select char(60,63,112,104,112,32,112,104,112,105,110,102,111,40,41,59,32,63,62) into outfile &apos;c:\\web\\MYSQL\\1.txt&apos;;     //&lt;?php pphinfo();?&gt;换为Ascii码值
-</code></pre><p><code>concat():</code>返回结果为连接参数产生的字符串。如果其中一个参数为null，则返回值为null<br><img src="http://static.zybuluo.com/chhyx/skhrfdjnmf9g3ya5fbbcfbi4/image_1cprho8cmm53btea97pf04ci9.png" alt="image_1cprho8cmm53btea97pf04ci9.png-10.8kB"></p>
-<p><code>concat_ws():</code>concat()的简化版 第一个参数为分隔符,后面为字段名<br><img src="http://static.zybuluo.com/chhyx/ccoxga4lfnhjn797ujzoz9ll/image_1cpri8q272mmddgd4q2qv1qqam.png" alt="image_1cpri8q272mmddgd4q2qv1qqam.png-11.3kB"></p>
-<p><code>group_concat():</code>用于合并多条查询记录的结果。</p>
-<pre><code>select group_concat(name) from user;
-//返回的是user表中所有的用户名且是作为一条记录返回
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/5m2jqjvwxa085t2dt5mj25qc/image_1cpriggt5di617sm19b2203s6913.png" alt="image_1cpriggt5di617sm19b2203s6913.png-22.4kB"></p>
-<p><code>substr() substring()</code>用于截取字符串  用法:substr(str,pos,length) 注意:pos是从1开始的</p>
-<pre><code>select substr((select database()),1,1); //t
-select substr((select database()),2,1); //tp
-select substr((select database()),1,2); //tp
-</code></pre><p><code>ascii():</code>用法返回字符对应的ascii值    </p>
-<pre><code>select ascii(&apos;a&apos;);#97
-</code></pre><p><code>length():</code>返回字符串长度<br>    select length(concat(0x7e,(select user())));//hex(~)=0x7e</p>
-<p><img src="http://static.zybuluo.com/chhyx/hchzczk6pqldgppm98mmurcs/image_1cprk9o9venb1ecm1kl81rdcoes1g.png" alt="image_1cprk9o9venb1ecm1kl81rdcoes1g.png-12.9kB"></p>
-<p><code>if(exp1,exp2,exp2):</code>如果exp1的表达式是True,则返回exp2;否则返回exp3</p>
-<p><img src="http://static.zybuluo.com/chhyx/50pwp3z3gx2kpqdrxc63fshv/image_1cprkigne3m885dn371ppv1c3s1t.png" alt="image_1cprkigne3m885dn371ppv1c3s1t.png-16.8kB"></p>
-<p><code>hex():</code>返回字符串的16进制   <code>unhex():</code>反向的hex()的16进制<br><img src="http://static.zybuluo.com/chhyx/dwzzjdc8ecle6wy8xtuxftd9/image_1cprkmp0cqjtgkj1qjl584o1p19.png" alt="image_1cprkmp0cqjtgkj1qjl584o1p19.png-18.1kB"></p>
-<p><strong>2.mysql数据库元信息</strong></p>
-<blockquote>
-<p><code>information_schema</code>数据库是在MYSQL的版本5.0之后产生的，一个虚拟数据库，物理上并不存在。<code>information_schema</code>数据库类似与“数据字典”，提供了访问数据库元数据的方式，即数据的数据。比如数据库名或表名，列类型，访问权限（更加细化的访问方式）。<code>information_schema</code>是一个由数据库的元数据组成的数据库。里面存储的所有的其他数据库的信息，如数据库名，数据库的表，表的字段名称。并随时改变。用于查看信息以及系统决策时作为重要的信息提供者。</p>
-</blockquote>
-<p><code>information_schema</code>数据库下<code>schemata</code>表下<code>schema_name</code>字段 //存放数据库名<br><code>information_schema</code>数据库下<code>tables</code>表下<code>table_name</code>字段 //存放表名<br><code>information_schema</code>数据库下<code>columns</code>表下<code>column_name</code>字段 //存放字段名</p>
-<pre><code>select database(); #查选数据库
-select schema_name from information_schema.schemata;#得到databases名称
-select table_name from information_schema.tables where TABLE_SCHEMA=&apos;tp&apos;;#得到tp数据库下的table名称
-select column_name from information_schema.columns where  TABLE_NAME=&apos;user&apos; and TABLE_SCHEMA=&apos;tp&apos;;#得到user表中的字段
-</code></pre><p>##<strong>3.窃取哈希口令:</strong><br>Mysql在<code>mysql.user</code>表中存储哈希口令,提取:<br><img src="http://static.zybuluo.com/chhyx/pk2vghr0nhggi7qlmmoeu35o/image_1cprg4r9s1ca71s8gr0i1p3rco39.png" alt="image_1cprg4r9s1ca71s8gr0i1p3rco39.png-22.5kB"></p>
-<p>哈希口令是使用<code>PASSWORD()</code>函数加密的:<br><img src="http://static.zybuluo.com/chhyx/t1hyamh45szmoolqm5ioc279/image_1cprg65sgnfs1b141qai8o51aimm.png" alt="image_1cprg65sgnfs1b141qai8o51aimm.png-13.7kB"><br>关于哈希密码破解：<br><a href="https://www.cnblogs.com/ichunqiu/p/7810914.html" target="_blank" rel="noopener">https://www.cnblogs.com/ichunqiu/p/7810914.html</a></p>
-<p>##<strong>4.常见SQL注入:</strong><br>按照执行效果来分类:</p>
-<pre><code>**普通注入:**
-联合查询注入：可以使用union的情况下的注入
-基于报错注入：页面会返回错误信息,或者把注入的语句的结果直接返回页面
-
-**盲注:**
-基于布尔的盲注 即可以根据返回页面判断条件真假的注入
-基于时间的盲注 即不能根据页面返回内容判断任何信息，用条件语句查看时间延迟语句是否执行（即页面返回时间是否增加）来判断。
-
-**特殊注入:**
-二次注入  类似于存储xss 先将注入语句存入数据库 调用时触发
-宽字节注入  
-</code></pre><p><strong>A.联合查询注入</strong><br>先了解下<code>union</code>:<a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/12/mysql基础命令/</a><br><code>order by</code>用于对结果集进行排序<br>实例用的<code>sql</code>语句:</p>
-<pre><code>order by 3  #正确
-and 1=2 union select 1,version(),database() #爆版本和数据库名
-and 1=2 union select 1,2,group_concat(schema_name) from information_schema.schemata%23  #爆全部数据库名
-</code></pre><p><strong>B.报错注入</strong><br>报错注入就是通过<code>sql</code>语句的矛盾性来使数据被回显到页面上</p>
-<p><strong>C.盲注:</strong><br>基于布尔的<code>sql</code>盲注:</p>
-<pre><code>1&apos; and ascii(substr(select database(),1,1))&gt;99
-1&apos; and ascii(substr((select table_name from   information_schema.tables limit 0,1),1,1))&gt;90
-</code></pre><p>基于时间的盲注:<br><code>sleep()</code>函数—-让此语句运行特定时间</p>
-<pre><code>select * from users where id=1 and if(length(user())=14,sleep(3),1); //user()长度为14则等待3s
-select * from users where id=1 and if(mid(user(),1,1)=&apos;r&apos;,sleep(3),1);//user()第一位为r 则等待3s
-</code></pre><p><code>BENCHMARK()</code>函数—-测试某些特定操作的执行速度(不推荐使用)<br>    <img src="http://static.zybuluo.com/chhyx/vbb9oqe9cjg4leuaszajxzfj/image_1cprru9861pai13n1d1o1to1kl4m.png" alt="image_1cprru9861pai13n1d1o1to1kl4m.png-13.1kB"></p>
-<p>实战中利用语句一般长这样:</p>
-<pre><code>mysql&gt;  select sleep(find_in_set(mid(@@version, 1, 1), &apos;0,1,2,3,4,5,6,7,8,9,.&apos;));
-1 row in set (6.00 sec) //version()第一位为5
-mysql&gt;  select sleep(find_in_set(mid(@@version, 2, 1), &apos;0,1,2,3,4,5,6,7,8,9,.&apos;));
-1 row in set (11.00 sec) //version()第一位为.
-...  依次类推即可得到version()
-
-select sleep(find_in_set(mid((select name from user where id=2), 1, 1), &apos;0,1,2,3,4,5,t,7,8,9,.&apos;)); //name值的第一位为t
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/vbb9oqe9cjg4leuaszajxzfj/image_1cprru9861pai13n1d1o1to1kl4m.png" alt="image_1cprriluvei11khg1hojf3arlu9.png-30.9kB"></p>
-<p><strong>D.特殊注入:</strong><br>二次注入:<br>注入过程分为两个部分,语句插入和语句执行。类似于存储型XSS,但是执行的地方与插入的地方可能不在一个位置。</p>
-<p>宽字节注入:<br>关于宽字节注入,可以参考宽字节注入详解。宽字节输入一般是由于网页编码与数据库的编码不匹配造成的。对于宽字节注入,使用<code>%df</code>绕过</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2574,7 +2617,7 @@ select sleep(find_in_set(mid((select name from user where id=2), 1, 1), &apos;0,
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
