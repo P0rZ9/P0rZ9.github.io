@@ -423,14 +423,18 @@ Mysql_query(“SET character_set_connection=gbk,character_set_result=gbk,charact
 \x1a
 </code></pre><p>如果成功，则该函数返回被转义的字符串。如果失败,则返回false。<br>注意:在使用<code>mysql_real_escape_string()</code>时,需要将<code>mysql</code>设置为<code>gbk</code>:<code>Mysql_set_charset(&#39;gbk&#39;,&#39;$conn&#39;)</code></p>
 <h3 id="less-37"><a href="#less-37" class="headerlink" title="less-37"></a>less-37</h3><p>利用方式与less-34无异<br>代码与less-34的区别是post内容用的是<code>mysql_real_escape_string()</code>函数进行处理的,而不是<code>addslashes()</code>函数,但是原理是一样的.利用方式也相同。</p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>宽字节注入发生的位置就是PHP发送请求到MYSQL时字符集使用<code>character_set_client</code>设置值进行了一次编码。</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>出现宽字节的原因是在PHP连接mysql时执行了如下设置:</p>
+<pre><code>set character_set_client=gbk
+</code></pre><p>这句代码是告诉mysql服务器,客户端传过来的数据是gbk编码的,然后mysql服务器对查询语句进行gbk编码导致反斜杠\被<code>%df</code>吃掉,但是一般网站都不这么设置,通常的设置方法是:<code>set names &#39;gbk&#39;</code>,但是实际上这行代码不过是比<code>set character_set_client</code>多干了两件事而已,set names ‘gbk’等同于如下代码:<br><code>set character_set_connection=&#39;gbk&#39; character_set_results=&#39;gbk&#39; character_set_client=gbk</code>。<br>代码意思是:mysql服务器接收客户端数据,认为他的编码是<code>character_set_client</code>,然后将其转化为<code>character_set_connection</code>的编码,然后进入表及字段,转化为字段对应编码,执行完sql语句返回的结果转成<code>character_set_results</code>编码,返回客户端。</p>
 <h4 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法:"></a>修复方法:</h4><blockquote>
-<p><strong>A</strong>.在执行查询前先执行set names ‘gbk’,character_set_client=binary设置character_set_client为binary<br>    <strong>B</strong>.使用mysql_set_charset(‘gbk’)设置编码,然后使用mysql_real_escape_string()函数把参数过滤.<br>    <strong>C</strong>.使用PDO模式,在PHP5.3.6及以下版本,需要设置serAttribute(PDO::ATTR_EMULATE_PREPARES,false);来禁用prepare statements的仿真效果(本地模拟预处理),这个在之前复现TP框架的洞时有涉及:<br>    <a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">ThinkPHP5.x设计缺陷泄露账户密码+鸡肋sql注入</a>            </p>
+<p><strong>A</strong>.所有sql语句前指定一下连接的形式是二进制:set names ‘gbk’,character_set_client=binary或者直接(SET character_set_connection=gbk, character_set_results=gbk,character_set_client=binary)<br>    <strong>B</strong>.先调用mysql_set_charset(‘gbk’)设置连接所使用的字符集为gbk,然后使用mysql_real_escape_string()来过滤用户输入。<br>    <strong>C</strong>.使用PDO模式,在PHP5.3.6及以下版本,需要设置serAttribute(PDO::ATTR_EMULATE_PREPARES,false);来禁用prepare statements的仿真效果(本地模拟预处理),这个在之前复现TP框架的洞时有涉及:<br>    <a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">ThinkPHP5.x设计缺陷泄露账户密码+鸡肋sql注入</a>         </p>
 </blockquote>
+<p>但是还存在一种特殊情况,就是<code>iconv()</code>的错误使用导致上面的方法前功尽弃,例如：很多cms使用<code>iconv(&#39;utf-8&#39;, &#39;gbk&#39;, $_GET[&#39;word&#39;]);</code>来转换编码,目的是避免乱码。但是在utf-8转向gbk或者在gbk转向utf-8时,会多处一个%5c将转义符(反斜杠)转义,造成后面的单引号逃逸,也会造成注入。</p>
 <h4 id="CMS挖掘"><a href="#CMS挖掘" class="headerlink" title="CMS挖掘:"></a>CMS挖掘:</h4><p>挖掘宽字节注入的方法也比较简单,只要搜索如下几个关键字即可:</p>
 <pre><code>set names
 character_set_client=gbk
 mysql_set_charset(&apos;gbk&apos;)
+iconv(
 </code></pre>
           
         
