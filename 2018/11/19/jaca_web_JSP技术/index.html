@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JSP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JSP技术JSP基本语法 JSP = HTML + Java代码 + JSP标签  Java代码:Java脚本 声明 表达式  JSP标签:指令 动作 注释      JSP脚本元素脚本元素主要包含3种类型:  脚本程序:&amp;lt;% %&amp;gt;脚本程序可以包含任意量的Java语句、变量、方法或表达式(局部变量 用完即销毁 刷新)声明语句:&amp;lt;%! %&amp;gt;一个声明语句可以声明一个或多个变量、">
+<meta name="keywords" content="JSP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基础知识 | JSP基础">
+<meta property="og:url" content="http://yoursite.com/2018/11/19/jaca_web_JSP技术/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="JSP技术JSP基本语法 JSP = HTML + Java代码 + JSP标签  Java代码:Java脚本 声明 表达式  JSP标签:指令 动作 注释      JSP脚本元素脚本元素主要包含3种类型:  脚本程序:&amp;lt;% %&amp;gt;脚本程序可以包含任意量的Java语句、变量、方法或表达式(局部变量 用完即销毁 刷新)声明语句:&amp;lt;%! %&amp;gt;一个声明语句可以声明一个或多个变量、">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.44.30-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.51.50-image.png">
+<meta property="og:updated_time" content="2018-11-19T13:36:16.319Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基础知识 | JSP基础">
+<meta name="twitter:description" content="JSP技术JSP基本语法 JSP = HTML + Java代码 + JSP标签  Java代码:Java脚本 声明 表达式  JSP标签:指令 动作 注释      JSP脚本元素脚本元素主要包含3种类型:  脚本程序:&amp;lt;% %&amp;gt;脚本程序可以包含任意量的Java语句、变量、方法或表达式(局部变量 用完即销毁 刷新)声明语句:&amp;lt;%! %&amp;gt;一个声明语句可以声明一个或多个变量、">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.44.30-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/19/jaca_web_JSP技术/"/>
+
+
+
+
+
+  <title>基础知识 | JSP基础 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/jaca_web_JSP技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基础知识 | JSP基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-19T08:15:41+08:00">
+                2018-11-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="JSP技术"><a href="#JSP技术" class="headerlink" title="JSP技术"></a>JSP技术</h2><h3 id="JSP基本语法"><a href="#JSP基本语法" class="headerlink" title="JSP基本语法"></a>JSP基本语法</h3><blockquote>
+<p>JSP = HTML + Java代码 + JSP标签<br>  Java代码:Java脚本 声明 表达式<br>  JSP标签:指令 动作 注释    </p>
+</blockquote>
+<h4 id="JSP脚本元素"><a href="#JSP脚本元素" class="headerlink" title="JSP脚本元素"></a>JSP脚本元素</h4><p>脚本元素主要包含3种类型:</p>
+<blockquote>
+<p>脚本程序:&lt;% %&gt;<br>脚本程序可以包含任意量的Java语句、变量、方法或表达式(局部变量 用完即销毁 刷新)<br>声明语句:&lt;%! %&gt;<br>一个声明语句可以声明一个或多个变量、方法，供后面的Java代码使用。在JSP文件中，您必须先声明这些变量和方法然后才能使用它们(类变量 存在内存)<br>表达式:&lt;%= %&gt;<br>一个JSP表达式中包含的脚本语言表达式，先被转化成String，然后插入到表达式出现的地方。无引号</p>
+</blockquote>
+<p>例子:</p>
+<pre><code>#
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;ISO-8859-1&quot;&gt;
+&lt;title&gt;JSP title&lt;/title&gt;
+&lt;/head&gt;
+&lt;%!//声明语句 定义2个变量及一个print方法
+    int a=1,b=2;
+%&gt;
+&lt;%! public String print(){
+    String str = &quot;itcast&quot;;
+    return str;
+} %&gt;
+&lt;body&gt;
+&lt;% 
+    out.print(a + b); //JSP脚本元素 输出a+b
+%&gt;
+&lt;br /&gt;
+&lt;% 
+    out.print(print()); //运行print()函数
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>总之,<code>&lt;%! %&gt;</code>是用来定义成员变量属性及方法的,<code>&lt;% %&gt;</code>主要用来输出内容的,因此,如果涉及了成员变量的操作,就应该使用<code>&lt;%! %&gt;</code>,而如果涉及到了输出内容,就应该使用<code>&lt;% %&gt;</code></p>
+<p>JSP表达式,将刚才代码的<code>body</code>段改为如下即可:</p>
+<pre><code>&lt;body&gt;
+&lt;%= a+b %&gt;
+&lt;br /&gt;
+&lt;%= print() %&gt;
+&lt;/body&gt;
+</code></pre><p><code>&lt;%= %&gt;</code>之间只能插入表达式,不能插入语句。且最后无分号(<code>;</code>)</p>
+<p>JSP注释(JSP的注释不会发送到前端)</p>
+<pre><code>&lt;%--this is notes--%&gt;
+</code></pre><h4 id="JSP指令"><a href="#JSP指令" class="headerlink" title="JSP指令"></a>JSP指令</h4><p>page指令:</p>
+<pre><code>&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot;%&gt;
+//contentType是给浏览器看的,使其按照text/html进行解释  pageEncoding是给servlet看的
+还有属性import=&quot;&quot; session=&quot;true&quot; errorPage=&quot;&quot;(错误页面) iserrorpage=&quot;true&quot;(本页面就是错误页面),只有import可以出现多次 其他都只能出现一次
+</code></pre><p>include指令:</p>
+<pre><code>&lt;%@ include file=&quot;date.jsp&quot;  %&gt; //引入date.jsp 将其代码合并到demo.jsp中
+
+#date.jsp
+&lt;% out.println(new java.util.Date().toLocaleString()); %&gt;
+
+//文件路径一般用相对路径,开发后期移动方便   绝对路径:/开头
+</code></pre><p>taglib指令：引入标签库的定义,可以是自定义标签</p>
+<h4 id="JSP隐式对象"><a href="#JSP隐式对象" class="headerlink" title="JSP隐式对象"></a>JSP隐式对象</h4><p>1.out对象    </p>
+<pre><code>&lt;%
+    out.println(&quot;first line&lt;br /&gt;&quot;);  //out.print(&quot;first line&lt;br /&gt;&quot;);也可以
+    out.println(out.getBufferSize()); //输出缓冲区大小
+    response.getWriter().println(&quot;second line&lt;br /&gt;&quot;);
+
+%&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.44.30-image.png" alt="2018-11-08.21.44.30-image.png"></p>
+<p>我们可发现<code>out.println()</code>在前面,但它的输出内容却在后面。因为out对象通过print语句写入数据后,直到整个JSP页面结束,才会写入缓冲区输出,而<code>response.getWrite.println()</code>则是直接把内容写入<code>Servlet</code>引擎提供的缓冲区中。<code>Servlet</code>引擎按照缓冲区的数据存放顺序输出内容。<br>有时候我们希望<code>out</code>对象可以直接将数据写入缓冲区进行输出,我们可通过<code>page</code>的<code>buffer</code>属性来实现</p>
+<pre><code>&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot; buffer=&quot;0kb&quot;%&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.51.50-image.png" alt="2018-11-08.21.51.50-image.png"></p>
+<p>这样就直接写入了。</p>
+<p>2.pageContext</p>
+<p>下面的几种是隐式对象,同时也是页面间数据共享范围<br>            范围                         有效期<br>    3.page: 当前页面                    当前页面<br>    4.request: 两两页面之间              当前请求站点<br>    5.session: 所有页面都共享 单用户      浏览器启动-浏览器关闭<br>    6.application: 所有页面,所有用户     服务器不关闭</p>
+<pre><code>&lt;% session.setAttribute(&quot;str&quot;, &quot;hello&quot;); %&gt;
+&lt;% out.println(session.getAttribute(&quot;str&quot;)); %&gt;   
+先访问set的文件,然后str存入session中,再访问get的页面,取出str值。
+</code></pre><p>7.exception对象</p>
+<pre><code>#exception.jsp
+&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot; errorPage=&quot;error.jsp&quot;%&gt;
+//errorPage表明错误文件
+...
+&lt;body&gt;
+&lt;% int a=3;
+   int b=0; 
+%&gt;
+&lt;%= (a/b) %&gt;
+&lt;/body&gt;
+
+#error.jsp
+&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot; isErrorPage=&quot;true&quot;%&gt;
+//isErrorPage表明当前页面为错误跳转页面
+&lt;body&gt;
+this is error;
+&lt;%= exception.getMessage() %&gt;&lt;br /&gt;
+&lt;/body&gt;
+</code></pre><p>说明exception.jsp发生错误时,会自动调用error.jsp页面进行处理</p>
+<p>还有两种分别为config与response对象<br>其他参考<a href="http://www.runoob.com/jsp/jsp-syntax.html" target="_blank" rel="noopener">JSP隐式对象</a></p>
+<h4 id="JSP行为"><a href="#JSP行为" class="headerlink" title="JSP行为"></a>JSP行为</h4><p><strong><a href="jsp:include" target="_blank" rel="noopener">jsp:include</a></strong>:将其他资源的输出内容插入到当前页面的输出内容中。<br>元素语法:<code>&lt;jsp:include page=&quot;文件路径&quot; flush=&quot;false|true&quot;&gt;</code></p>
+<pre><code>#test_include.jsp内容:
+&lt;body&gt;
+test_include的中文
+&lt;br /&gt;
+&lt;jsp:include page=&quot;include.jsp&quot; flush=&quot;true&quot; /&gt;
+&lt;body&gt;
+
+#include.jsp内容:
+&lt;body&gt;
+    &lt;% Thread.sleep(5000); %&gt;
+    include文件的中文
+&lt;/body&gt;
+</code></pre><p>访问<code>127.0.0.1:8080/test_dynamic/test_include.jsp</code>,页面会先显示<code>test_include的中文</code>,然后等待5s显示<code>include文件的中文</code>。<br>若flush的属性值为false(默认),再次访问,则会等待5s后,2行内容一起显示出来。<br>与include的区别:</p>
+<pre><code>a.&lt;jsp:include&gt;的文件与被包含文件是2个独立的文件,被包含文件的内容必须能被WEB容器独立执行。而include的内容只需要遵循JSP文件格式,包含与被包含文件是一个整体,需要合并才能翻译成一个Servlrt文件
+b.&lt;jsp:include&gt;标签引入的资源是在运行时才包含的,而且只包含运行结果,而include引入的资源是在编译时包含的,包含的是源代码
+c.&lt;jsp:include&gt;标签运行原理与RequestDispatcher.include()方法类似,即被包含的页面不能改变响应状态码及设置响应头,而include
+指令没有这方面的限制。
+</code></pre><p><strong><a href="jsp:forward" target="_blank" rel="noopener">jsp:forward</a></strong>:当前请求转发到其他WEB资源,在执行请求转发后的当前页面将不再执行<br>元素语法:<code>&lt;jsp:forward page=&quot;文件路径&quot; /&gt;</code>        </p>
+<pre><code>#jspforward.jsp
+&lt;jsp:forward page=&quot;date.jsp&quot;&gt;&lt;/jsp:forward&gt;
+&lt;% out.println(1); %&gt; //不执行了
+
+#date.jsp
+&lt;% out.println(new java.util.Date().toLocaleString()); %&gt; //输出当前时间
+</code></pre><p>由于请求转发是服务端的操作,浏览器并不知道请求页面,所以浏览器的地址栏不会变化(jspforward.jsp)    </p>
+<p>其他JSP行为请参考:<a href="http://www.runoob.com/jsp/jsp-syntax.html" target="_blank" rel="noopener">JSP行为</a></p>
+<p>判断语句:</p>
+<pre><code>&lt;h3&gt;if....else例子&lt;/h3&gt;
+&lt;% if (day == 1 | day == 7) { %&gt;
+      &lt;p&gt;今天是周末&lt;/p&gt;
+&lt;% } else { %&gt;
+      &lt;p&gt;今天不是周末&lt;/p&gt;
+&lt;% } %&gt;
+&lt;/body&gt;
+</code></pre><p><a href="http://www.runoob.com/jsp/jsp-syntax.html" target="_blank" rel="noopener">http://www.runoob.com/jsp/jsp-syntax.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JSP/" rel="tag"># JSP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/12/Weblogic 漏洞复现/" rel="next" title="Weblogic 漏洞复现">
+                <i class="fa fa-chevron-left"></i> Weblogic 漏洞复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JSP技术"><span class="nav-number">1.</span> <span class="nav-text">JSP技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP基本语法"><span class="nav-number">1.1.</span> <span class="nav-text">JSP基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JSP脚本元素"><span class="nav-number">1.1.1.</span> <span class="nav-text">JSP脚本元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSP指令"><span class="nav-number">1.1.2.</span> <span class="nav-text">JSP指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSP隐式对象"><span class="nav-number">1.1.3.</span> <span class="nav-text">JSP隐式对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSP行为"><span class="nav-number">1.1.4.</span> <span class="nav-text">JSP行为</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

