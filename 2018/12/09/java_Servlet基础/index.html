@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近在学习Java,完成学校给布置的Java_web实验,写一个简单论坛,实验内容还需要完善,简单记录下所学内容。  Servlet Java Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。使用 Servlet,可以收集来自网页表单的用户输入，呈现来自数据库或者其他源的">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基础知识 | Java_Servlet 基础">
+<meta property="og:url" content="http://yoursite.com/2018/12/09/java_Servlet基础/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="最近在学习Java,完成学校给布置的Java_web实验,写一个简单论坛,实验内容还需要完善,简单记录下所学内容。  Servlet Java Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。使用 Servlet,可以收集来自网页表单的用户输入，呈现来自数据库或者其他源的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.54.18-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.31.50-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.31.05-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.08.58.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.09.15.29-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.10.21.31-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-09.17.08.14-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-09.16.50.22-image.png">
+<meta property="og:updated_time" content="2018-12-09T13:15:33.399Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基础知识 | Java_Servlet 基础">
+<meta name="twitter:description" content="最近在学习Java,完成学校给布置的Java_web实验,写一个简单论坛,实验内容还需要完善,简单记录下所学内容。  Servlet Java Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。使用 Servlet,可以收集来自网页表单的用户输入，呈现来自数据库或者其他源的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.54.18-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/09/java_Servlet基础/"/>
+
+
+
+
+
+  <title>基础知识 | Java_Servlet 基础 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/java_Servlet基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基础知识 | Java_Servlet 基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-09T08:15:41+08:00">
+                2018-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>最近在学习Java,完成学校给布置的Java_web实验,写一个简单论坛,实验内容还需要完善,简单记录下所学内容。</p>
+</blockquote>
+<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><blockquote>
+<p>Java Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。使用 Servlet,可以收集来自网页表单的用户输入，呈现来自数据库或者其他源的记录，还可以动态创建网页。</p>
+</blockquote>
+<h3 id="Servlet的生命周期"><a href="#Servlet的生命周期" class="headerlink" title="Servlet的生命周期"></a>Servlet的生命周期</h3><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.54.18-image.png" alt="2018-12-03.17.54.18-image.png"></p>
+<p>1.初始化阶段            </p>
+<blockquote>
+<p>当客户端向Servlet容器发出请求要求访问Servlet时,Servlet容器首先会解析请求,检查内存是否已经存在该Servlet对象,如果有则直接使用该Servlet对象,如果没有就创建Servlet对象,然后通过调用init()方法实现Servlet的初始化工作,需要注意的是,在Servlet的整个生命周期内,它的init()方法只被调用一次。</p>
+</blockquote>
+<p>2.运行阶段</p>
+<blockquote>
+<p>这是生命周期最核心的阶段,Servlet容器为这个请求创建代表Http请求的ServletRequest对象和代表Http响应的ServletResponse对象,然后将他们作为参数传递给Servlet的service()方法。service()方法从ServletRequest对象中获取客户端传输过来的信息并处理该请求,通过ServletResponse对象生成响应结果。在Servlet的生命周期内,每收到一次访问请求,Servlet容器都会调用一次Servlet的service()方法,并且创建新的ServletRequest和ServletResponse对象,service()方法在Servlet的生命周期内会被调用多次。</p>
+</blockquote>
+<p>3.销毁阶段:</p>
+<blockquote>
+<p>当服务器关闭或Web应用被移除容器后,Servlet会随着Web应用的销毁而销毁,在销毁Servlet之前,Servlet容器会调用Servlet的destroy()方法,以便让Servlet对象释放他所占用的资源。在Servlet的整个生命周期中,destory()方法也只被调用一次。需要注意的是,Servlet对象一旦创建就会驻留在内存中等待客户端的访问,直到服务器关闭,或Web应用被移除容器时,Servlet对象才会销毁。</p>
+</blockquote>
+<hr>
+<p>配置Servlet:</p>
+<pre><code>1.注解配置:@WebServlet(&quot;/RequestMethodServlet&quot;)  //自动创建注解,不用手动配置  现在的主流      
+2.web.xml 配置
+</code></pre><h3 id="运行Servlet"><a href="#运行Servlet" class="headerlink" title="运行Servlet:"></a>运行Servlet:</h3><p>由于<code>HttpServlet</code>类在重写的<code>service()</code>方法中,为每一种HTTP请求方式都定义了<code>doXXX()</code>方法,因此,当定义的类继承<code>HttpServlet</code>时,只需要根据请求方式,重写对应的<code>doxxx()</code>方法即可,而不需要重写<code>service()</code>方法:<br>重写doget与dopost方法:</p>
+<pre><code>protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+    PrintWriter out = response.getWriter();
+    out.write(&quot;this is get method&quot;);
+
+}
+
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+    PrintWriter out = response.getWriter();
+    out.write(&quot;this is post method&quot;);
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.31.50-image.png" alt="2018-12-03.17.31.50-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.31.05-image.png" alt="2018-12-03.17.31.05-image.png"></p>
+<p>如果GET与POST请求的处理方式一致,则可以在<code>doPost()</code>方法中直接调用<code>doGet()</code>方法：<code>this.doGet(request, response);</code>即可。    </p>
+<h3 id="ServletContext与ServletConfig接口"><a href="#ServletContext与ServletConfig接口" class="headerlink" title="ServletContext与ServletConfig接口"></a>ServletContext与ServletConfig接口</h3><h4 id="ServletContext"><a href="#ServletContext" class="headerlink" title="ServletContext"></a>ServletContext</h4><h5 id="1-获取WEB应用程序的初始化参数"><a href="#1-获取WEB应用程序的初始化参数" class="headerlink" title="1.获取WEB应用程序的初始化参数"></a>1.获取WEB应用程序的初始化参数</h5><p>在web.xml文件中,不仅可以配置Servlet的初始化信息,还可以配置WEB应用程序的初始化参数,web应用程序的初始化参数:</p>
+<pre><code>#web.xml
+&lt;context-param&gt;
+      &lt;param-name&gt;companyname&lt;/param-name&gt;
+      &lt;param-value&gt;itcast&lt;/param-value&gt;    
+  &lt;/context-param&gt;
+  &lt;context-param&gt;
+      &lt;param-name&gt;address&lt;/param-name&gt;
+      &lt;param-value&gt;beijing&lt;/param-value&gt;
+  &lt;/context-param&gt;
+</code></pre><p>Servlet中读取该配置信息:</p>
+<pre><code>PrintWriter out = response.getWriter();
+ServletContext context = (ServletContext) this.getServletContext();  //得到ServletContext对象
+Enumeration&lt;String&gt; paramNames = context.getInitParameterNames();     //得到可遍历的数组集合Enumeration对象
+out.println(&quot;there are param-name and param-value:&quot;);
+while(paramNames.hasMoreElements()) {                      //hasMoreElement方法,是否包含元素,有返回true
+    String name = paramNames.nextElement();
+    String value = context.getInitParameter(name);
+    out.println(name+&quot;:&quot;+value);
+
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.08.58.33-image.png" alt="2018-12-07.08.58.33-image.png"></p>
+<h6 id="2-实现多个Servlet的对象共享数据"><a href="#2-实现多个Servlet的对象共享数据" class="headerlink" title="2.实现多个Servlet的对象共享数据"></a>2.实现多个Servlet的对象共享数据</h6><p>由于一个WEB应用中的所有Servlet共享同一个ServletContext对象,因此,ServletContext对象的域属性可以被该WEB应用中的所有Servlet访问</p>
+<pre><code>#TestServlet04
+javax.servlet.ServletContext context = this.getServletContext();
+context.setAttribute(&quot;data&quot;, &quot;this servlet save data&quot;);
+
+
+#TestServlet05
+PrintWriter out = response.getWriter();
+javax.servlet.ServletContext context = this.getServletContext();
+String data = (String) context.getAttribute(&quot;data&quot;);
+out.println(data);
+</code></pre><p>然后启动服务器,先访问TestServlet04将数据存入ServletContext对象,然后访问TestServlet05,即可得到ServletContext对象的data属性值<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.09.15.29-image.png" alt="2018-12-07.09.15.29-image.png"><br>说明ServletContext对象中的数据可以被多个Servlet访问。</p>
+<h5 id="3-读取WEB应用下的资源文件"><a href="#3-读取WEB应用下的资源文件" class="headerlink" title="3.读取WEB应用下的资源文件"></a>3.读取WEB应用下的资源文件</h5><p>在WebContent下面新建itcast.properties文件,写入:</p>
+<pre><code>Company = itcast
+Address = Beijing
+</code></pre><p>我们在Servlet中读取(相对路径):</p>
+<pre><code>#TestServlet06:
+ServletContext context = this.getServletContext();
+PrintWriter out = response.getWriter();
+
+//获取相对路径中的输入流对象
+InputStream in = context.getResourceAsStream(&quot;/itcast.properties&quot;);
+Properties pros = new Properties();
+pros.load(in);
+out.println(&quot;Company:&quot;+pros.getProperty(&quot;Company&quot;));
+out.println(&quot;address:&quot;+pros.getProperty(&quot;Address&quot;));
+</code></pre><p>根据绝对路径获取WEB应用的参数:</p>
+<pre><code>response.setContentType(&quot;text/html;charset=utf-8&quot;);
+ServletContext context = this.getServletContext();
+PrintWriter out = response.getWriter();
+
+String path = context.getRealPath(&quot;/itcast.properties&quot;); //得到绝对路径
+out.println(&quot;path:&quot;+path);
+FileInputStream in = new FileInputStream(path);
+
+Properties pros = new Properties();
+pros.load(in);
+out.println(&quot;Company:&quot;+pros.getProperty(&quot;Company&quot;));
+out.println(&quot;address:&quot;+pros.getProperty(&quot;Address&quot;));
+</code></pre><p>访问TestServlet06,可看到已经成功取出数据<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.10.21.31-image.png" alt="2018-12-07.10.21.31-image.png"></p>
+<p>ServletConfig   </p>
+<p>#####<br>当Tomcat初始化一个Servlet参数时,会将Servlet的配置信息封装到一个ServletConfig对象中,通过调用init(ServletConfig config)方法将ServletConfig对象传递给Servlet。    </p>
+<h3 id="HttpServletRequest与HttpServletResponse对象"><a href="#HttpServletRequest与HttpServletResponse对象" class="headerlink" title="HttpServletRequest与HttpServletResponse对象"></a>HttpServletRequest与HttpServletResponse对象</h3><blockquote>
+<p>Servlet 最主要的功能就是处理客户端请求,并向客户端做出响应。为此,针对Servlet的每次请求,Web服务器在调用service()之前,都会创建2个对象.分别是HttpServlet与HttpServletResponse。</p>
+</blockquote>
+<h4 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h4><h5 id="获取请求参数"><a href="#获取请求参数" class="headerlink" title="获取请求参数:"></a>获取请求参数:</h5><pre><code>获取前台form表单传输过来的参数信息:
+String username = request.getparameter(&quot;username&quot;);
+String pwd = request.getparameter(&quot;password&quot;);
+
+String[] hobbys = request.getparameter(&quot;hobby&quot;);
+for(int i=0;i&lt;hobbys.length();i++){
+    out.print(hobbys[i]);    
+}
+
+Enumeration names = request.getParameterNames()   //返回所有参数名    
+Map&lt;String,String[]&gt; map=request.getParameterMap();   //将请求参数与值放进一个Map对象中返回
+
+Map&lt;String,String[]&gt; map=request.getParameterMap();  
+     //遍历  
+      for(Iterator iter=map.entrySet().iterator();iter.hasNext();){  
+            Map.Entry element=(Map.Entry)iter.next();  
+            //key值  
+            Object strKey = element.getKey();  
+            //value,数组形式  
+          String[] value=(String[])element.getValue();  
+
+          out.print(strKey.toString() +&quot;=&quot;);  
+         for(int i=0;i&lt;value.length;i++){  
+             out.print(value[i]+&quot;,&quot;);  
+         }
+</code></pre><h5 id="获取请求消息头信息"><a href="#获取请求消息头信息" class="headerlink" title="获取请求消息头信息:"></a>获取请求消息头信息:</h5><pre><code>PrintWriter out = response.getWriter();
+
+Enumeration headerNames = request.getHeaderNames();         
+
+while(headerNames.hasMoreElements()) {
+    String paramName = (String)headerNames.nextElement();
+    String paramValue = request.getHeader(paramName);
+    out.print(paramName+&quot;:&quot;+paramValue);
+    out.print(&quot;&lt;br /&gt;&quot;);
+
+}
+</code></pre><p>先使用HttpServletRequest的getHeaderName()读取HTTP头信息,该方法返回一个枚举,包含与当前的HTTP请求相关的头信息,我们循环枚举,使用hasMoreElements()方法遍历即可。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-09.17.08.14-image.png" alt="2018-12-09.17.08.14-image.png"></p>
+<h5 id="通过Request对象传递数据"><a href="#通过Request对象传递数据" class="headerlink" title="通过Request对象传递数据"></a>通过Request对象传递数据</h5><blockquote>
+<p>Request对象不仅可以获取一系列数据,还可以使用属性传递数据,在ServletRequest接口中,定义了一系列操作属性的方法。</p>
+</blockquote>
+<p><code>request.setAttribute()</code>将一个对象与一个name关联存入<code>ServletRequest()</code>对象中,如果已经存在相同名字,则会删除原来的属性.如果设置对象值为<code>null</code>,则相当于<code>removeAttribute()</code></p>
+<pre><code>Servlet：
+request.setAttribute(&quot;list&quot;, list1);
+
+Jsp:
+&lt;jsp:include page=&apos;&lt;%=&quot;/ShowAllUser&quot; %&gt;&apos;&gt;&lt;/jsp:include&gt;
+${list}  即可在Jsp中接收list
+
+request.getAttribute(String name)  返回ServletRequest对象指定name的value    
+request.removeAttribute(String name)  删除ServletRequest对象指定name的value    
+request.getAttributeNames()    
+
+    request.setAttribute(&quot;name&quot;, &quot;zhangsan&quot;);
+    request.setAttribute(&quot;pwd&quot;, &quot;123&quot;);
+    Enumeration aa = request.getAttributeNames();
+
+    while(aa.hasMoreElements()) {
+        String name = (String) aa.nextElement();  //name
+        Object str = request.getAttribute(name);  //对象
+        out.print(name+&quot;:&quot;+str+&quot;&lt;br /&gt;&quot;);
+
+    }
+</code></pre><h5 id="RequestDispatcher接口"><a href="#RequestDispatcher接口" class="headerlink" title="RequestDispatcher接口"></a>RequestDispatcher接口</h5><p>当一个Web资源收到客户端的请求时,如果希望服务器通知另一个资源区处理请求,除了使用<code>response.sendRedirect()</code>,还可以使用RequestDispatcher接口实例化对象区实现。    </p>
+<h5 id="请求转发-forward"><a href="#请求转发-forward" class="headerlink" title="请求转发 forward()"></a>请求转发 forward()</h5><blockquote>
+<p>请求转发完给其他资源,其他WEB资源处理完请求后,直接将响应结果返回给客户端。(该方法需在提交给客户端之前调用,否则会出现错误)        </p>
+</blockquote>
+<pre><code>RequestDispatcher dispatcher = request.getRequestDispatcher(&quot;/TestServlet03&quot;);
+dispatcher.forward(request, response);   //返回TestServlet03的输出信息
+</code></pre><h5 id="请求包含-incule"><a href="#请求包含-incule" class="headerlink" title="请求包含 incule()"></a>请求包含 incule()</h5><blockquote>
+<p>请求包含指的是使用include()方法将Servlet请求转发到其他Web资源进行处理,与请求转发不同,Servlet与WEB资源都返回消息给客户端（关于编码,需在Servlet设置）</p>
+</blockquote>
+<pre><code>RequestDispatcher dispatcher = request.getRequestDispatcher(&quot;/TestServlet03&quot;);
+dispatcher.include(request, response);   //返回TestServlet02与TestServlet03的输出信息
+</code></pre><h4 id="HttpServletResponse对象"><a href="#HttpServletResponse对象" class="headerlink" title="HttpServletResponse对象"></a>HttpServletResponse对象</h4><p>a.setStatus(int status)方法    设置返回状态码(默认为200)<br>b.sendError(int sc)方法    用于发送表示错误信息的状态码。</p>
+<pre><code>public void sendError(int code) throws java.io.IOException  //只返回状态码
+public void sendError(int code,String message) throws java.io.IOException //返回加提示信息
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-09.16.50.22-image.png" alt="2018-12-09.16.50.22-image.png"><br>c.发送响应消息头相关的方法:</p>
+<pre><code>addHeader(String name,String value)   //增加同名响应头
+setHeader(String name,String value)   //覆盖同名响应头
+
+addIntHeader(String name,int value)   //设置valu值为int类型的参数,避免使用addHeader需要转换String的麻烦
+setIntHeader(String name,int value)    
+
+setContentLength(int len)   //设置响应消息的实体内容的大小
+setContentType(String type)  //设置Servlet输出内容的MIME类型
+
+setCharacterEncoding(String charset)   //设置输出内容使用的字符编码
+
+
+eg:response.setHeader(&quot;refresh&quot;,&quot;3;URL=http://www.baidu.com&quot;);  //定时刷新并跳转
+</code></pre><p>d.发送响应消息体相关的方法:</p>
+<pre><code>ServletOutputStream out = response.getOutputStream(); //输出字节数组中的二进制数据
+out.write(data.getBytes());               //使用当前文件的编码格式输出
+
+response.getWriter().write(data);   
+</code></pre><p>两者互相排斥,不可同时使用。(设计原因) 只能输出字节流或字符流。</p>
+<p>e.实现请求重定向:</p>
+<pre><code>response.sendRedirect(&quot;login.html&quot;);   //重定向到login.html
+</code></pre><h4 id="解决乱码问题"><a href="#解决乱码问题" class="headerlink" title="解决乱码问题"></a>解决乱码问题</h4><pre><code>request.setCharacterEncoding(&quot;UTF-8&quot;);   //使接收的参数值为utf-8格式
+response.setContentType(&quot;text/html;charset=utf-8&quot;);  //返回的信息为utf-8
+PrintWriter out = response.getWriter();   //在response.getWriter()前设置编码
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/19/java_web_JSP技术/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet"><span class="nav-number">1.</span> <span class="nav-text">Servlet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet的生命周期"><span class="nav-number">1.1.</span> <span class="nav-text">Servlet的生命周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行Servlet"><span class="nav-number">1.2.</span> <span class="nav-text">运行Servlet:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ServletContext与ServletConfig接口"><span class="nav-number">1.3.</span> <span class="nav-text">ServletContext与ServletConfig接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ServletContext"><span class="nav-number">1.3.1.</span> <span class="nav-text">ServletContext</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-获取WEB应用程序的初始化参数"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">1.获取WEB应用程序的初始化参数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#2-实现多个Servlet的对象共享数据"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">2.实现多个Servlet的对象共享数据</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-读取WEB应用下的资源文件"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">3.读取WEB应用下的资源文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HttpServletRequest与HttpServletResponse对象"><span class="nav-number">1.4.</span> <span class="nav-text">HttpServletRequest与HttpServletResponse对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HttpServletRequest对象"><span class="nav-number">1.4.1.</span> <span class="nav-text">HttpServletRequest对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#获取请求参数"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">获取请求参数:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取请求消息头信息"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">获取请求消息头信息:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过Request对象传递数据"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">通过Request对象传递数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RequestDispatcher接口"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">RequestDispatcher接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#请求转发-forward"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">请求转发 forward()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#请求包含-incule"><span class="nav-number">1.4.1.6.</span> <span class="nav-text">请求包含 incule()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HttpServletResponse对象"><span class="nav-number">1.4.2.</span> <span class="nav-text">HttpServletResponse对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决乱码问题"><span class="nav-number">1.4.3.</span> <span class="nav-text">解决乱码问题</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

