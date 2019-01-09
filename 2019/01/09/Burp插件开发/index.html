@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="安全工具," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。   关于Java基础语法移步笔者以前文章：https://p0rz9.github.io/2019/01/08/Java语法基础/ Java接口接口简介 接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类">
+<meta name="keywords" content="安全工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Burp插件开发">
+<meta property="og:url" content="http://yoursite.com/2019/01/09/Burp插件开发/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。   关于Java基础语法移步笔者以前文章：https://p0rz9.github.io/2019/01/08/Java语法基础/ Java接口接口简介 接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.28.35-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.30.37-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.40.25-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.16.22.20-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.16.23.21-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.18.01.11-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.22.21.12-image.png">
+<meta property="og:updated_time" content="2019-01-09T10:11:54.316Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Burp插件开发">
+<meta name="twitter:description" content="最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。   关于Java基础语法移步笔者以前文章：https://p0rz9.github.io/2019/01/08/Java语法基础/ Java接口接口简介 接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.28.35-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/09/Burp插件开发/"/>
+
+
+
+
+
+  <title>Burp插件开发 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/09/Burp插件开发/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Burp插件开发</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-09T08:15:41+08:00">
+                2019-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。</p>
+</blockquote>
+<hr>
+<p>关于Java基础语法移步笔者以前文章：<a href="https://p0rz9.github.io/2019/01/08/Java语法基础/" target="_blank" rel="noopener">https://p0rz9.github.io/2019/01/08/Java语法基础/</a></p>
+<h3 id="Java接口"><a href="#Java接口" class="headerlink" title="Java接口"></a>Java接口</h3><h4 id="接口简介"><a href="#接口简介" class="headerlink" title="接口简介"></a>接口简介</h4><blockquote>
+<p>接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类与接口有相似的地方同时也有很多不同的地方。</p>
+</blockquote>
+<h4 id="接口的声明"><a href="#接口的声明" class="headerlink" title="接口的声明"></a>接口的声明</h4><p>接口的声明语法格式如下：</p>
+<pre><code>[可见度] interface 接口名称 [extends 其他的类名] {
+        // 声明变量
+        // 抽象方法
+}
+</code></pre><p>Burp的接口声明</p>
+<pre><code>package burp;
+public interface IBurpExtender
+{
+    void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks);
+}
+</code></pre><h4 id="接口的实现"><a href="#接口的实现" class="headerlink" title="接口的实现"></a>接口的实现</h4><blockquote>
+<p>一个接口可以被另外一个接口继承，也可以被一个类实现。当类实现接口的时候，类要实现接口中所有的方法。否则，类必须声明为抽象的类。类使用implements关键字实现接口。</p>
+</blockquote>
+<p>实现接口的语法    </p>
+<pre><code>#!java
+... implements 接口名称[, 其他接口1, 其他接口2..., ...] ...
+</code></pre><hr>
+<h3 id="编写Burp插件"><a href="#编写Burp插件" class="headerlink" title="编写Burp插件"></a>编写Burp插件</h3><p>编写插件应该分为三步,导入Burp提供接口—&gt;编写功能代码—&gt;导入插件</p>
+<h4 id="导入Burp插件接口"><a href="#导入Burp插件接口" class="headerlink" title="导入Burp插件接口"></a>导入Burp插件接口</h4><p>1.将Burp提供的接口文件(Burp目录)导入Java项目中<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.28.35-image.png" alt="2019-01-09.16.28.35-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.30.37-image.png" alt="2019-01-09.16.30.37-image.png"></p>
+<h4 id="编写插件代码"><a href="#编写插件代码" class="headerlink" title="编写插件代码"></a>编写插件代码</h4><p>新建一个BurpExtender.java文件,这是编写插件必须要写的一个类,然后编写所要实现功能的代码</p>
+<h4 id="导出Jar文件并加载插件"><a href="#导出Jar文件并加载插件" class="headerlink" title="导出Jar文件并加载插件"></a>导出Jar文件并加载插件</h4><p>将上一步编写完成的插件,打包导入<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.40.25-image.png" alt="2019-01-09.16.40.25-image.png"></p>
+<h3 id="BurpSuite官方接口"><a href="#BurpSuite官方接口" class="headerlink" title="BurpSuite官方接口"></a>BurpSuite官方接口</h3><p>其中最重要的就是编写代码部分,首先注意:<br>编写Burp插件必须编写BurpExtender类，实现接口IBurpExtender且声明为<code>public</code><br>IBurpExtender实现接口IBurpExtender,IProxyListener的demo:    </p>
+<pre><code>package burp;
+public class BurpExtender implements IBurpExtender{
+
+  // 实现 IBurpExtender 接口的 registerExtenderCallbacks 方法
+  @Override
+  public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
+      // TODO here
+  }
+}
+</code></pre><p>Burp提供的接口类说明文档:<a href="https://portswigger.net/burp/extender/api/index.html" target="_blank" rel="noopener">https://portswigger.net/burp/extender/api/index.html</a><br>下面根据接口功能的不同对接口进行分类：</p>
+<p>1.插件入口和帮助接口类:<code>IBurpExtender、IBurpExtenderCallbacks、 IExtensionHelpers、IExtensionStateListener</code></p>
+<pre><code>IBurpExtender接口类是Burp插件的入口，所有Burp的插件均需要实现此接口，并且 类命名为BurpExtender。IBurpExtenderCallbacks接口类是IBurpExtender接口的实现类与Burp其他各个组件（Scanner、Intruder、Spider……）、各个通信对象 （HttpRequestResponse、HttpService、SessionHandlingAction）之间的连接。 IExtensionHelpers、IExtensionStateListener这两个接口类是插件的帮助和管理操作的接口定义。IBurpExtender、IBurpExtenderCallbacks、 IExtensionHelpers、IExtensionStateListener
+</code></pre><p>2.UI相关接口类:<code>IContextMenuFactory、IContextMenuInvocation、ITab、ITextEditor、 IMessageEditor、IMenuItemHandler</code></p>
+<pre><code>这类接口类主要是定义Burp插件的UI显示和动作的处理事件，主要是软件交互中使用。
+</code></pre><p>3.Burp工具组件接口类:<code>IInterceptedProxyMessage、IIntruderAttack、 IIntruderPayloadGenerator、IIntruderPayloadGeneratorFactory、 IIntruderPayloadProcessor、IProxyListener、IScanIssue、IScannerCheck、 IScannerInsertionPoint、IScannerInsertionPointProvider、IScannerListener、IScanQueueItem、IScopeChangeListener</code></p>
+<pre><code>这些接口类的功能非常好理解，Burp在接口定义的命名中使用了的见名知意的规范，看到接口类的名称，基本就能猜测出来这个接口是适用于哪个工具组件。
+</code></pre><p>4.HTTP消息处理接口类：<code>ICookie、IHttpRequestResponsePersisted、IHttpRequestResponseWithMarkers、IHttpService、 IRequestInfo、IParameter、IResponseInfo</code></p>
+<pre><code>这些接口的定义主要是围绕HTTP消息通信过程中涉及的Cookie、Request、 Response、Parameter几大消息对象，通过对通信消息头、消息体的数据处理，来达到控制HTTP消息传递的目的。
+</code></pre><h4 id="几个写插件常用的接口"><a href="#几个写插件常用的接口" class="headerlink" title="几个写插件常用的接口:"></a>几个写插件常用的接口:</h4><p>1.<code>registerExtenderCallbacks</code>是IBurpExtender接口的实现类,与Burp的其他组件(Scanner Intruder Spider)及通信对象连接(HttpRequestResponse HttpService SessionHandlingAction)之间的连接。</p>
+<p>2.HTTP消息处理接口类:IHttpListener(注册Http监听器)  </p>
+<pre><code>//注册Http监听器
+public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo)
+{    
+//toolFlag:指示了发起请求或收到响应的 Burp 工具的 ID，所有的 toolFlag 定义在 IBurpExtenderCallbacks 接口中。
+//messageIsRequest:指示该消息是请求消息（值为True）还是响应消息（值为False）
+//messageInfo:被处理的消息的详细信息，是一个 IHttpRequestResponse 对象
+}
+</code></pre><p>3.<code>IHttpRequestResponse</code>类</p>
+<pre><code>byte[] request_by = messageInfo.getRequest();
+byte[] response = messageInfo.getResponse();
+IHttpService httpService = messageInfo.getHttpService();
+String Highlight = messageInfo.getHighlight();
+String Comment = messageInfo.getComment();
+</code></pre><p>4.<code>IHttpListener</code>接口<br>可通过调用IBurpExtenderCallbacks.registerHttpListener()注册一个HTTP监听器,Burp的任何一个接口发起HTTP请求或者收到HTTP响应都会通知此监听器。该接口可得到这些交互数据,进行分析和修改。<br>方法:        </p>
+<pre><code>void processHttpMessage(int toolFlag,boolean messageIsRequest,IHttpRequestResponse messageInfo);
+参数:toolFlag  发起或收到请求的插件ID,所有的ID已经在IBurpExtenderCallbacks定义好了。
+    boolean messageISRequest 提示该消息是请求消息(True)还是响应消息（False）
+    IHttpRequestResponse messageInfo 被处理的消息的详细消息,是一个IHttpRequestResponse对象
+</code></pre><p>5.<code>IContextMenuFactory</code>类实现菜单效果</p>
+<pre><code>package burp;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+public class BurpExtender implements IBurpExtender, IContextMenuFactory{
+
+@Override
+public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks){
+
+    //插件名称
+    callbacks.setExtensionName(&quot;Her0in&quot;);
+
+    //注册菜单
+    callbacks.registerContextMenuFactory(this);
+}
+
+
+@Override
+public List&lt;JMenuItem&gt; createMenuItems(final IContextMenuInvocation invocation) {
+
+    List&lt;JMenuItem&gt; listMenuItems = new ArrayList&lt;JMenuItem&gt;();
+
+    //子菜单
+    JMenuItem menuItem;
+    menuItem = new JMenuItem(&quot;子菜单&quot;);  
+
+    //父级菜单
+    JMenu jMenu = new JMenu(&quot;父菜单&quot;);
+
+    //菜单操作
+    jMenu.add(menuItem);        
+    listMenuItems.add(jMenu);
+
+
+    return listMenuItems;
+}
+
+
+@Override
+public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo,
+        BurpExtender helpers) {
+    // TODO Auto-generated method stub
+
+}
+</code></pre><p>}</p>
+<p>加载插件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.16.22.20-image.png" alt="2018-12-11.16.22.20-image.png"></p>
+<p>查看效果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.16.23.21-image.png" alt="2018-12-11.16.23.21-image.png"></p>
+<p>6.<code>ICookie</code>接口    </p>
+<pre><code>// 此方法用于获取 Cookie 的域
+java.lang.String    getDomain()
+
+// 此方法用于获取 Cookie 的过期时间
+java.util.Date  getExpiration()
+
+// 此方法用于获取 Cookie 的名称
+java.lang.String    getName()
+
+// 此方法用于获取 Cookie 的路径
+java.lang.String    getPath()
+
+// 此方法用于获取 Cookie 的值
+java.lang.String    getValue()
+</code></pre><p>7.<code>IExtensionHelpers</code>接口:<br>此接口提供很多常用的辅助方法,可通过调用<code>IBurpExtenderCallbacks.getHelpers</code>获得此接口的实例。    </p>
+<pre><code>byte[]  addParameter(byte[] request, IParameter parameter) //添加参数到指定的请求中,并更新Content-Length
+
+IRequestInfo analyzeRequest(byte[] request)  //分析request的请求信息
+IResponseInfo analyzeResponse(byte[] response)  //分析response的响应消息
+
+byte[]  buildHttpMessage(java.util.List&lt;java.lang.String&gt; headers, byte[] body)  //构建请求包,返回响应报
+
+
+byte[]  buildHttpRequest(java.net.URL url) //向指定的url发起get请求
+java.lang.String    bytesToString(byte[] data)   //bytes到String的转换
+java.lang.String    bytesToString(byte[] data)   //String到bytes的转换
+
+
+实例：
+private IExtensionHelpers helpers;
+
+this.helpers = callbacks.getHelpers();
+
+byte[] request = messageInfo.getRequest();
+IRequestInfo a = helpers.analyzeRequest(request);
+</code></pre><p>8.<code>IHttpRequestResponse</code>接口<br>该接口用于检索与更新有关HTTP消息的详细信息    </p>
+<pre><code>java.lang.String getComment()          //获取用户的标注信息
+java.lang.String getHighlight()       /获取用户标注的高亮信息
+IHttpService getHttpService()   //获取请求响应的http服务信息    
+
+byte[]  getRequest()  // 获取 HTTP 请求信息
+byte[]  getResponse()  // 获取 HTTP 响应信息
+
+void    setHttpService(IHttpService httpService)  //更新请求/响应HTTP服务信息
+void    setRequest(byte[] message)    // 更新 HTTP 请求信息
+void    setResponse(byte[] message)  // 更新 HTTP 响应信息
+</code></pre><p>9.<code>IHttpService</code>接口<br>此接口用于提供关于 HTTP 服务信息的细节    </p>
+<pre><code>java.lang.String getHost()    
+int getPort()    
+java.lang.String getProtocol()    
+
+
+例子:
+public void processHttpMessage(int toolFlag, boolean messageIsRequest,
+        IHttpRequestResponse messageInfo) {
+
+    IHttpService iHttpService = messageInfo.getHttpService();
+
+    this.stdout.println(&quot;Host:&quot;+iHttpService.getHost());
+    this.stdout.println(&quot;Port:&quot;+iHttpService.getPort());
+    this.stdout.println(&quot;Protocol:&quot;+iHttpService.getProtocol());
+}
+</code></pre><p>在放掉拦截的数据包后,效果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.18.01.11-image.png" alt="2018-12-11.18.01.11-image.png"></p>
+<p>10.<code>IInterceptedProxyMessage</code>接口<br>该接口不能被扩展实现,它表示已被Burp代理拦截的HTTP消息。我们可以利用接口注册一个IProxyListener以得到代理消息的细节。    </p>
+<pre><code>callbacks.registerProxyListener(this);  //注册代理监听器
+
+IHttpRequestResponse message1 = message.getMessageInfo();  //请求的详细信息
+int action = message.getInterceptAction();      //当前的拦截操作类型    
+
+//获取客户端的Ip,即代理Ip
+stdout.println(message.getClientIpAddress());
+
+//获取当前的拦截操作类型  
+stdout.println(action);
+
+//获取请求的详细信息
+stdout.println(message1);
+
+// Drop 掉所有请求
+//message.setInterceptAction(IInterceptedProxyMessage.ACTION_DROP);
+</code></pre><p>11.<code>Itab</code>接口:</p>
+<pre><code>package burp;
+import java.awt.Component;
+import java.io.PrintWriter;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+public class BurpExtender implements IBurpExtender, ITab {
+      public PrintWriter stdout;
+      public IExtensionHelpers helpers;
+      private JPanel jPanel1;
+      private JButton jButton1;
+
+  @Override
+  public void registerExtenderCallbacks( final IBurpExtenderCallbacks callbacks) {
+
+      this.stdout = new PrintWriter(callbacks.getStdout(), true);
+      this.helpers = callbacks.getHelpers();
+
+      //设置扩展名
+      callbacks.setExtensionName(&quot;JSON劫持检测&quot;);
+
+       //创建我们的窗体
+       SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                 //我们的主窗体
+                 jPanel1 = new JPanel();
+                 jButton1 = new JButton(&quot;测试按钮&quot;);
+
+                 //将按钮添加到面板中
+                 jPanel1.add(jButton1);
+
+                 //自定义我们的组件
+                 callbacks.customizeUiComponent(jPanel1);
+                 //添加标签到Burp主窗体
+                 callbacks.addSuiteTab(BurpExtender.this);
+            }
+       });
+  }
+  @Override
+  public String getTabCaption() {
+       return &quot;JSON劫持检测&quot; ;
+  }
+
+  @Override
+  public Component getUiComponent() {
+       return jPanel1;
+  }
+
+@Override
+public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo,
+        BurpExtender helpers) {
+    // TODO Auto-generated method stub        
+}
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.22.21.12-image.png" alt="2018-12-11.22.21.12-image.png"></p>
+<p>我们也可以学习官方插件代码,下载JD-GUI工具:<br><a href="https://www.softpedia.com/get/Programming/Debuggers-Decompilers-Dissasemblers/JD-GUI.shtml" target="_blank" rel="noopener">https://www.softpedia.com/get/Programming/Debuggers-Decompilers-Dissasemblers/JD-GUI.shtml</a><br>在burpsuite安装目录下的bapps目录下存放已经安装的插件源代码,用下载的JD-GUI直接打开即可看到源码。</p>
+<h3 id="实战编写"><a href="#实战编写" class="headerlink" title="实战编写"></a>实战编写</h3><p>Jsonp劫持插件:<br><a href="https://github.com/P0rZ9/Burp_Extender/tree/master/Json_Hijacking" target="_blank" rel="noopener">插件源码</a></p>
+<p><a href="https://github.com/P0rZ9/Burp_Extender/raw/master/Json_Hijacking/Burp/Json_Hijacking.jar" target="_blank" rel="noopener">插件成品</a></p>
+<p>Http请求入库插件:<br><a href="https://github.com/P0rZ9/Burp_Extender/tree/master/Http_to_Mysql/Http_to_Mysql" target="_blank" rel="noopener">插件源码</a></p>
+<p><a href="https://github.com/P0rZ9/Burp_Extender/raw/master/Http_to_Mysql/Http_to_Mysql/http-to-mysql.jar" target="_blank" rel="noopener">插件成品</a></p>
+<p><strong>注:如插件要导入其他扩展包,如需要使用数据库操作(需导入mysql-connector-java-bin.jar),在加载到Burp时应将几个Jar打包为一个文件:</strong></p>
+<pre><code>1.将项目引入的jar包跟项目导出的包放入当前目录下
+2..将包分别解压
+  jar -xvf 1.jar
+  jar -xvf 2.jar
+  jar -xvf 引入的jar包
+3.将所有jar包移出当前目录
+4.将当前目录文件打包为一个jar文件
+  jar -cvfM result.jar .   (别忘了.)
+5.导入BurpSuite即可  
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/安全工具/" rel="tag"># 安全工具</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/08/Java语法基础/" rel="next" title="基础知识 | JAVA语法基础<一>">
+                <i class="fa fa-chevron-left"></i> 基础知识 | JAVA语法基础<一>
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java接口"><span class="nav-number">1.</span> <span class="nav-text">Java接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#接口简介"><span class="nav-number">1.1.</span> <span class="nav-text">接口简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#接口的声明"><span class="nav-number">1.2.</span> <span class="nav-text">接口的声明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#接口的实现"><span class="nav-number">1.3.</span> <span class="nav-text">接口的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写Burp插件"><span class="nav-number">2.</span> <span class="nav-text">编写Burp插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#导入Burp插件接口"><span class="nav-number">2.1.</span> <span class="nav-text">导入Burp插件接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编写插件代码"><span class="nav-number">2.2.</span> <span class="nav-text">编写插件代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#导出Jar文件并加载插件"><span class="nav-number">2.3.</span> <span class="nav-text">导出Jar文件并加载插件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BurpSuite官方接口"><span class="nav-number">3.</span> <span class="nav-text">BurpSuite官方接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#几个写插件常用的接口"><span class="nav-number">3.1.</span> <span class="nav-text">几个写插件常用的接口:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实战编写"><span class="nav-number">4.</span> <span class="nav-text">实战编写</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
