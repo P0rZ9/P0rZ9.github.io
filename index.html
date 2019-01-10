@@ -630,6 +630,514 @@ public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequ
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/08/ssm基础之Spring/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/08/ssm基础之Spring/" itemprop="url">ssm基础之Spring</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-08T08:15:41+08:00">
+                2019-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>早几天就将Java Web的实验收尾了,项目代码(简易论坛)已经上传到Github了,没事儿看看ssm框架,争取早日撸个商城出来。</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/P0rZ9/Java_Web/tree/master/Java_Web_BBS" target="_blank" rel="noopener">Java_Web_Bbs项目地址</a></p>
+<p>SSM <strong>(Spring+SpringMVC+MyBatis)</strong> 框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。先了解一波Spring。</p>
+<blockquote>
+<p>Spring是一个开源框架，主要是为了解决项目开发中的紧耦合的问题，采用了控制反转和AOP技术简化了企业级应用的开发，让开发者能够更专注于业务的开发，减少了流程式的代码，简化了开发过程，所以受到开发人员的欢迎。</p>
+</blockquote>
+<h2 id="IOC-DI-控制反转-依赖注入"><a href="#IOC-DI-控制反转-依赖注入" class="headerlink" title="IOC/DI 控制反转/依赖注入"></a>IOC/DI 控制反转/依赖注入</h2><blockquote>
+<p>在java开发中，如果要使用另外一个类的定义的功能，譬如在A类中需要调用B类的方法，那么一般的做法就是在A类中实例化一个B的对象,通过A.b.method()这样的方式来调用，那么这样造成了什么后果呢？那就是A强烈的依赖于B，这个时候就要求B中方法保持稳定，不能随意变动。这个时候B中的代码就被A给“限制”了，如果这个时候你要修改B中的方法，譬如将method()改为methodA()，那么同时也就要修改A中的代码以适应这个改变，这样的程序改动起来很大，也就是说扩展性很低。<br>控制反转就是为了解决这类问题所提出来的一种概念，主要就是通过一个容器来管理对象之间的依赖关系，Spring就提供了这样的一个容器来管理对象之间的依赖。就以上面的场景来说，A需要用到B中的功能，A只需要向容器提出我需要包含xx功能的对象，容器就能给你一个这样的对象，至于这个对象到底是不是B？你管那么多呢？只要能用就行对吧。<br>Spring中提供的这样的容器就是我们经常提到的ApplicationContext。</p>
+</blockquote>
+<h2 id="AOP-Aspect-Oriented-Program-面向切面编程"><a href="#AOP-Aspect-Oriented-Program-面向切面编程" class="headerlink" title="AOP(Aspect Oriented Program)面向切面编程"></a>AOP(Aspect Oriented Program)面向切面编程</h2><blockquote>
+<p>在开发中，经常会遇到相同的模块，例如打印日志，安全管理这样的功能，可能每一个类都会有这样的需要。譬如我要记录每一个类的调用记录，使用参数等信息，这种功能k可以在每个类中加入相似的代码，直接打印出来就好。但是这种方法将辅助性的功能放到实际业务里去实现了，使每个方法承担的使命太多，如果能狗自动打印日志，不是更好吗？而这种通用的功能就称之为一个切面，面向切面的编程能够简化开发的实际代码，更好的关注于业务本身。</p>
+</blockquote>
+<h3 id="演示IOC-反转控制-和DI-依赖注入"><a href="#演示IOC-反转控制-和DI-依赖注入" class="headerlink" title="演示IOC(反转控制)和DI(依赖注入)"></a>演示IOC(反转控制)和DI(依赖注入)</h3><h4 id="运行TestSpring演示用Spring获取一个对象-并打印name"><a href="#运行TestSpring演示用Spring获取一个对象-并打印name" class="headerlink" title="运行TestSpring演示用Spring获取一个对象,并打印name"></a>运行TestSpring演示用Spring获取一个对象,并打印name</h4><p>1.<strong>Eclipse新建项目(Java Project),项目名字spring</strong><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.02.18-image.png" alt="2019-01-10.11.02.18-image.png"></p>
+<p>2.<strong>下载项目所需的jar包,并导入项目中(Build Path—&gt;Add Externam JARs)</strong><br><a href="http://how2j.cn/frontdownload?bean.id=1484" target="_blank" rel="noopener">Jar包下载</a>,导入后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.03.44-image.png" alt="2019-01-10.11.03.44-image.png"></p>
+<p>3.<strong>pojo</strong><br>准备pojo Source类    </p>
+<pre><code>package pojo;
+
+public class Source {
+     private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }  
+}
+</code></pre><p><strong>4.applicationContext.xml</strong><br>在src目录下新建applicationContext.xml,这是Spring的核心配置文件,通过关键字s获取Source对象,该对象获取的时候,即被注入了字符串”test1”到name属性,数值1到id属性中。    </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans         
+xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;
+        xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+xsi:schemaLocation=&quot;
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+ http://www.springframework.org/schema/aop
+ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+ http://www.springframework.org/schema/context     
+ http://www.springframework.org/schema/context/spring-context-3.0.xsd&quot;&gt;
+
+&lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+    &lt;property name=&quot;id&quot; value=&quot;1&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p></p>
+<p><strong>5.TestSpring</strong><br>测试代码,演示通过spring获取Source对象,以及该对象被注入的name属性。如图所示,打印通过Spring拿到的Source对象的name与id属性。    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pojo.Source;
+
+public class TestSpring {
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] { &quot;applicationContext.xml&quot; });
+
+    Source s = (Source) context.getBean(&quot;s&quot;);
+
+    System.out.println(s.getName());
+    System.out.println(s.getId());
+    }
+}
+</code></pre><p>运行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.18.44-image.png" alt="2019-01-10.11.18.44-image.png">    </p>
+<p><strong>6.原理图</strong><br>获取对象的方式比较:<br>传统:<code>Source s = new Source();</code><br>IOC:<code>Source s = (Source) context.getBean(&quot;s&quot;);</code><br>对象的声明周期由Spring来管理,直接从Spring那里去获取一个对象,IOC是控制反转(Inversion Of Control)的缩写,控制权交给了Spring。    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.22.29-image.png" alt="2019-01-10.11.22.29-image.png"></p>
+<hr>
+<p>上面第一个例子演示了注入对象的属性,下面演示注入Source对象</p>
+<h4 id="向Product注入Source对象"><a href="#向Product注入Source对象" class="headerlink" title="向Product注入Source对象"></a>向Product注入Source对象</h4><p>1.Product.java    </p>
+<pre><code>package pojo;
+
+public class Product {
+    private int id;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Source getSource() {
+        return source;
+    }
+    public void setSource(Source source) {
+        this.source = source;
+    }
+    private String name;
+    private Source source;
+}
+</code></pre><p>2.applicationContext.xml(关键) 在创建Product的时候注入一个Source对象(使用ref来注入另一个对象)        </p>
+<pre><code>&lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+    &lt;property name=&quot;id&quot; value=&quot;1&quot; /&gt;
+&lt;/bean&gt;
+
+&lt;bean name=&quot;p&quot; class=&quot;pojo.Product&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;product1&quot; /&gt;
+    &lt;property name=&quot;source&quot; ref=&quot;s&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p>3.TestSpring.java    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import pojo.Source;
+import pojo.Product;
+
+public class TestSpring {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                new String[] { &quot;applicationContext.xml&quot; });
+
+        //Source s = (Source) context.getBean(&quot;s&quot;);
+        Product p = (Product) context.getBean(&quot;p&quot;); 
+
+        System.out.println(p.getName());
+        System.out.println(p.getSource().getName());
+
+    }
+}
+</code></pre><p>通过Spring拿到的Product对象已经被注入了Source对象<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.41.51-image.png" alt="2019-01-10.11.41.51-image.png"></p>
+<h4 id="注解方式演示IOC-DI-对注入对象的注解"><a href="#注解方式演示IOC-DI-对注入对象的注解" class="headerlink" title="注解方式演示IOC/DI(对注入对象的注解)"></a>注解方式演示IOC/DI(对注入对象的注解)</h4><p>1.修改applicationContext.xml    </p>
+<pre><code>&lt;context:annotation-config/&gt;  
+ &lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+     &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+ &lt;/bean&gt;
+ &lt;bean name=&quot;p&quot; class=&quot;pojo.Product&quot;&gt;
+     &lt;property name=&quot;name&quot; value=&quot;product1&quot; /&gt;
+ &lt;/bean&gt;
+</code></pre><p>2.在Product.java中,在定义对象前加<code>@Autowired</code></p>
+<pre><code>@Autowired
+private Source source;
+</code></pre><p>也可以在setSource(Source source)前面添加    </p>
+<pre><code>@Autowired
+public void setSource(Source source) {
+    this.source = source;
+}
+</code></pre><p>也可以在</p>
+<pre><code>@Resource(name=&quot;s&quot;)
+private Source source;
+</code></pre><h4 id="对Bean本身的注解"><a href="#对Bean本身的注解" class="headerlink" title="对Bean本身的注解"></a>对Bean本身的注解</h4><p>1.修改applicationContext.xml,只新增:</p>
+<pre><code>&lt;context:component-scan base-package=&quot;pojo&quot;/&gt;
+</code></pre><p>作用是告诉Spring,bean都放在pojo这个包下。</p>
+<p>2.注解@Component,表示该类为bean    </p>
+<pre><code>@Component(&quot;p&quot;)
+public class Product {
+
+@Component(&quot;s&quot;)
+public class Source {
+</code></pre><p>3.因为配置在applicationContext.xml中已经删除,所以属性的初始化要在属性的声明时进行。            </p>
+<pre><code>private String name=&quot;product 1&quot;;
+private String name=&quot;test1&quot;;
+</code></pre><p>Product.java    </p>
+<pre><code>package pojo;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component(&quot;p&quot;)
+public class Product {
+private int id;
+private String name = &quot;product 2&quot;;
+
+@Autowired
+private Source source;
+
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+public String getName() {
+    return name;
+}
+public void setName(String name) {
+    this.name = name;
+}
+public Source getSource() {
+    return source;
+}
+
+public void setSource(Source source) {
+    this.source = source;
+ }
+
+}
+</code></pre><h2 id="AOP-Aspect-Oriented-Program-面向切面编程-1"><a href="#AOP-Aspect-Oriented-Program-面向切面编程-1" class="headerlink" title="AOP(Aspect Oriented Program)面向切面编程"></a>AOP(Aspect Oriented Program)面向切面编程</h2><p>1.jar包:<a href="http://how2j.cn/frontdownload?bean.id=1810" target="_blank" rel="noopener">http://how2j.cn/frontdownload?bean.id=1810</a></p>
+<p>2.业务类:ProductService.java    </p>
+<pre><code>package service
+public class ProductService {
+
+public void doSomeService(){
+
+    System.out.println(&quot;doSomeService&quot;);
+
+}
+</code></pre><p>}</p>
+<p>3.准备日志切面LoggerAspect.java<br>功能:在调用核心功能之前和之后分别打印日志,切面就是原理图中讲的那些辅助功能.将来与某个核心功能编制后,用于实现核心功能的代码:<code>Object object = joinPoint.proceed();</code></p>
+<pre><code>package aspect;
+import org.aspectj.lang.ProceedingJoinPoint;
+
+public class LoggerAspect {
+
+    public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(&quot;start log:&quot; + joinPoint.getSignature().getName());
+        Object object = joinPoint.proceed();
+        System.out.println(&quot;end log:&quot; + joinPoint.getSignature().getName());
+        return object;
+    }
+}
+</code></pre><p>4.applicationContext.xml</p>
+<pre><code>&lt;bean name=&quot;se&quot; class=&quot;service.ProductService&quot;&gt;
+&lt;/bean&gt;   
+&lt;bean id=&quot;loggerAspect&quot; class=&quot;aspect.LoggerAspect&quot;/&gt;
+
+&lt;aop:config&gt;
+    &lt;aop:pointcut id=&quot;loggerCutpoint&quot; expression=&quot;execution(* service.ProductService.*(..)) &quot;/&gt;        
+    &lt;aop:aspect id=&quot;logAspect&quot; ref=&quot;loggerAspect&quot;&gt;
+    &lt;aop:around pointcut-ref=&quot;loggerCutpoint&quot; method=&quot;log&quot;/&gt;
+    &lt;/aop:aspect&gt;
+&lt;/aop:config&gt;    
+</code></pre><p>大概讲以下这个xml的含义:<br>第一行:<code>&lt;bean name=&quot;se&quot; class=&quot;service.ProductService&quot;&gt;
+    &lt;/bean&gt;</code> 是声明业务对象的<br>第二行:<code>&lt;bean id=&quot;loggerAspect&quot; class=&quot;aspect.LoggerAspect&quot;/&gt;</code>是声明日志切面的<br>第三行:<code>&lt;aop:pointcut id=&quot;loggerCutpoint&quot; expression=&quot;execution(* service.ProductService.*(..)) &quot;/&gt;</code><br>表示id为该切入点的标识符,expression表示满足该正则的方法调用后,就会进行切面操作,类似于触发了切面。<br><code>expression</code>:第一个<em>表示返回任意类型,包名为<code>service.ProductService</code>开头的类的任意方法(第二个</em>表示任意方法)(..)表示参数的任意类型和个数。<br>简单来说,第三行代码意思就是service包中的ProductService类的任意一个函数被调用,不管返回值为什么,都会触发开关,去执行切面(相当于将业务对象于辅助功能编织在一起),也就是辅助功能:<br><code>&lt;aop:aspect id=&quot;logAspect&quot; ref=&quot;loggerAspect&quot;&gt;
+        &lt;aop:around pointcut-ref=&quot;loggerCutpoint&quot; method=&quot;log&quot;/&gt;</code><br>上面说的只要触发开关,就回去执行切面,这里所谓的切面其实就是一个类的方法而已。<br>id代表这个切面的名字,ref表明方法所在类,method代表方法的名字,<code>pointcut-ref=&quot;loggerCutpoint&quot;</code>表示这个切面与上面的切点关联起来的,只要上面的切点被触发,我就会在这里执行一些辅助功能。    <code>&lt;aop:around</code>表示执行的顺序。具体看AOP的基本概念。</p>
+<p>5.TestSpring.java    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import service.ProductService;
+
+public class TestSpring {
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] { &quot;applicationContext.xml&quot; });
+    ProductService s = (ProductService) context.getBean(&quot;se&quot;);
+    s.doSomeService();
+}
+</code></pre><p>}</p>
+<p>执行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.24.40-image.png" alt="2019-01-10.17.24.40-image.png"></p>
+<h3 id="AOP的几个重要概念"><a href="#AOP的几个重要概念" class="headerlink" title="AOP的几个重要概念"></a>AOP的几个重要概念</h3><p>1.通知<br>定义了切面何时工作及工作内容,即什么时候去执行切面程序与功能具体的代码。这里一共有5种类型,分别为</p>
+<pre><code>a.Before 在方法之前调用通知
+b.After 在方法之后调用通知,无论是否执行成功
+c.around 在方法之前与之后都调用
+d.After-Return    方法执行成功后调用
+e.After-throwing    方法抛出异常后调用
+</code></pre><p>执行顺序:            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.05.53-image.png" alt="2019-01-10.17.05.53-image.png">            </p>
+<p>&lt;aop:aspect id=”logAspect” ref=”loggerAspect”&gt;<br>            &lt;aop:around pointcut-ref=”loggerCutpoint” method=”log”/&gt;<br>        &lt;/aop:aspect&gt;</p>
+<p>2.连接点<br>在执行正常功能时,能够插入切面的点,连接点可以是调用方法时、抛出异常时、甚至修改字段时,在这些点,就可以去执行切面            </p>
+<p>3.切面<br>定义:切面是切点与通知的集合,通知和切点定义了切面的全部功能—(它是什么,在何时何处完成其功能)<br>声明切面:<code>&lt;aop:aspect&gt;</code>完成的,ref指定类,pointcut-ref,pointcut-ref表明与哪个切点联系,method指定要执行的方法。    </p>
+<p>4.切点<br>通知定义了”何时”与”什么”,而切点定义了”何处”<br>作用:定义通知被调用的位置(在哪些连接点)<br>声明切点：<br><strong>a.在\&lt;<a href="aop:config\" target="_blank" rel="noopener">aop:config\</a>&gt;标签下使用\&lt;<a href="aop:pointcut\" target="_blank" rel="noopener">aop:pointcut\</a>&gt;声明一个切入点Bean</strong>该切入点可被多个切面使用,对于需要共享的切入点最好使用该方式。</p>
+<pre><code>&lt;aop:config&gt;  
+   &lt;aop:pointcut id=&quot;pointcut&quot; expression=&quot;execution(* cn.javass..*.*(..))&quot;/&gt;  
+   &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+      &lt;aop:before pointcut-ref=&quot;pointcut&quot; method=&quot;before&quot;/&gt;  
+   &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;
+</code></pre><p>&lt;aop:pointcut id=”loggerCutpoint” expression=”execution(<em> service.ProductService.</em>(..)) “/&gt;        </p>
+<p><strong>b.在<a href="aop:aspect" target="_blank" rel="noopener">aop:aspect</a>标签下使用<a href="aop:pointcut" target="_blank" rel="noopener">aop:pointcut</a>声明一个切入点Bean</strong>该切入点一般只用于该切面。</p>
+<pre><code>&lt;aop:config&gt;  
+ &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+    &lt;aop:pointcut id=&quot; pointcut&quot; expression=&quot;execution(* cn.javass..*.*(..))&quot;/&gt;  
+    &lt;aop:before pointcut-ref=&quot;pointcut&quot; method=&quot;before&quot;/&gt;  
+ &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;  
+</code></pre><p><strong>c.匿名切入点Bean，可以在声明通知时通过pointcut属性指定切入点表达式，该切入点是匿名切入点，只被该通知使用</strong></p>
+<pre><code>&lt;aop:config&gt;  
+ &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+     &lt;aop:after pointcut=&quot;execution(* cn.javass..*.*(..))&quot; method=&quot;afterFinallyAdvice&quot;/&gt;  
+ &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;  
+</code></pre><p>5.引入<br>允许我们向现有的类中添加方法或属性。        </p>
+<p>6.织入(未理解,先占坑,有时间回来描述)        </p>
+<h3 id="注解方式AOP"><a href="#注解方式AOP" class="headerlink" title="注解方式AOP"></a>注解方式AOP</h3><p>1.配置业务类    </p>
+<pre><code>@Component(&quot;se&quot;)
+public class ProductService {
+</code></pre><p>2.注解配置切面</p>
+<pre><code>@Aspect 注解表示这是一个切面
+@Component 表示这是一个bean,由Spring进行管理
+@Around(value = &quot;execution(* com.how2java.service.ProductService.*(..))&quot;) 表示对com.how2java.service.ProductService 这个类中的所有方法进行切面操作
+</code></pre><p>LoggerAspect.java</p>
+<pre><code>package aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+
+@Aspect
+@Component
+public class LoggerAspect {
+
+    @Around(value = &quot;execution(* service.ProductService.*(..))&quot;)
+    public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(&quot;start log:&quot; + joinPoint.getSignature().getName());
+        Object object = joinPoint.proceed();
+        System.out.println(&quot;end log:&quot; + joinPoint.getSignature().getName());
+        return object;
+    }
+}
+</code></pre><p>3.applicationContext.xml(关键)            </p>
+<pre><code>//扫描aspect与service包,定位业务类与切面类
+&lt;context:component-scan base-package=&quot;aspect&quot;/&gt;
+&lt;context:component-scan base-package=&quot;service&quot;/&gt; 
+
+//找到被注解了的切面类,进行切面设置
+&lt;aop:aspectj-autoproxy/&gt; 
+</code></pre><p>4.TestSpring.java与上一个xml设置的代码相同。<br>运行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.19.56.37-image.png" alt="2019-01-10.19.56.37-image.png">        </p>
+<h3 id="AOP注解方式测试"><a href="#AOP注解方式测试" class="headerlink" title="AOP注解方式测试"></a>AOP注解方式测试</h3><p>1.jar包下载:<br><a href="http://how2j.cn/frontdownload?bean.id=1189" target="_blank" rel="noopener">jubit.jar</a><br><a href="http://how2j.cn/frontdownload?bean.id=1190" target="_blank" rel="noopener">hamcrest.jar</a></p>
+<p>2.applicationContext.xml</p>
+<pre><code>&lt;context:component-scan base-package=&quot;pojo&quot;/&gt;
+</code></pre><p>3.Source.java</p>
+<pre><code>package pojo;
+
+import org.springframework.stereotype.Component;
+
+@Component(&quot;s&quot;)
+public class Source {
+    private int id;
+    private String name = &quot;test2&quot;;
+
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+public String getName() {
+    return name;
+}
+public void setName(String name) {
+    this.name = name;
+}
+</code></pre><p>}</p>
+<p>3.TestSpring.java</p>
+<pre><code>package test;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import pojo.Source;
+import service.ProductService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+public class TestSpring {
+
+@Autowired
+Source s;
+
+@Test
+public void test() {
+    System.out.println(s.getName());
+    }
+}
+</code></pre><p>运行结果：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.20.37.25-image.png" alt="2019-01-10.20.37.25-image.png">        </p>
+<p>参考:<br><a href="https://www.imooc.com/learn/196" target="_blank" rel="noopener">https://www.imooc.com/learn/196</a><br><a href="http://how2j.cn/k/spring/spring-ioc-di/87.html" target="_blank" rel="noopener">http://how2j.cn/k/spring/spring-ioc-di/87.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/08/Java语法基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3003,246 +3511,6 @@ return $id;
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/29/Sqli-labs Less17-22/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/29/Sqli-labs Less17-22/" itemprop="url">Sqli-labs Less17-22</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T08:15:41+08:00">
-                2018-10-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在做<code>less-17</code>之前,需要先了解一些MYSQL基础增删改查的命令:<a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">基础知识 | MYSQL基础命令</a></p>
-<h2 id="less-17-update注入"><a href="#less-17-update注入" class="headerlink" title="less-17 update注入"></a>less-17 update注入</h2><p>经测试在 admin字段中无报错信息<br>我们测试password字段:<br>uname=admin&amp;passwd=admin’&amp;submit=Submit<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.11.59.10-image.png" alt="2018-10-29.11.59.10-image.png"></p>
-<p>查看报错即可知道这里用<code>&#39;</code>闭合即可,且这里显示出sql错误,所以可用报错注入或延时注入,下面介绍下报错注入:</p>
-<pre><code>uname=admin&amp;passwd=admin&apos; and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;submit=Submit  #得到数据库名
-</code></pre><p>然后将select database()换为其他查询语句即可(可参考less-5的查询语句)：<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6/</a></p>
-<p>less-17的sql语句为:</p>
-<pre><code>function check_input($value)
-{
-if(!empty($value))
-    {
-    // truncation (see comments)
-    $value = substr($value,0,15);
-    }
-
-    // Stripslashes if magic quotes enabled
-    if (get_magic_quotes_gpc())
-        {
-        $value = stripslashes($value);
-        }
-
-    // Quote if not a number
-    if (!ctype_digit($value))
-        {
-        $value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;
-        }
-
-else
-    {
-    $value = intval($value);
-    }
-return $value;
-}
-......
-$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;
-</code></pre><p>查看源代码就可理解这里的<code>uname</code>字段为什么不能注入了,因为经过check_input安全函数过滤：</p>
-<pre><code>★addslashes() #预定字符之前添加反斜杠并返回
-注:PHP会默认(gpc为on状态)对所有的GET POST COOKIE数据自动运行addslashes,所以不应该对已转义过的字符使用addslashes()操作,会造成双层转义。
-遇到这种情况,一般使用get_magic_quotes_gpc()进行检测。
-
-★stripslashes() #删除由addslashes()添加的反斜杠
-
-★mysql_real_escape_string() #转义sql语句中使用的特殊字符`
-</code></pre><p>经过这几个函数处理,所以<code>uname</code>这个字段不能注入了。<br>那这里注入的语句使用的是update操作  我们在挖掘CMS的漏洞时,也可以将查询语句拼接到后面,然后再找一处查询该数据表内容的地方形成注入(update insert注入)</p>
-<hr>
-<p>在接下来的几关都属于HTTP头注入,我们需要先了解一下一些http基础:</p>
-<pre><code>Accept： 浏览器能够处理的内容类型
-Accept-Charset： 浏览器能够显示的字符集
-Accept-Encoding：浏览器能够处理的压缩编码。
-Accept-Language： 浏览器当前设置的语言。
-Connection：浏览器与服务器之间连接的类型
-Cookie：当前页面设置的任何Cookie
-Host：发出请求的页面所在的域。
-Referer：发出请求的页面的URI。
-User-Agent：浏览器的用户代理字符串
-Server: WEB 服务器表明自己是什么软件及版本等信息。例如：Server：Apache/2.0.61 (Unix)
-</code></pre><h2 id="less-18-UA头注入"><a href="#less-18-UA头注入" class="headerlink" title="less-18 UA头注入"></a>less-18 UA头注入</h2><p>输入正确的账号密码:admin 0<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.31.25-image.png" alt="2018-10-29.15.31.25-image.png"></p>
-<p>看见这里会显示ip与UA头,我们尝试注入:</p>
-<pre><code>User-Agent: aaaaa&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.22.23-image.png" alt="2018-10-29.15.22.23-image.png"></p>
-<p>ip伪造主要有几个参数:<br><code>X-FORWARDED-FOR</code> 是代理服务器通过<code>HTTP Headers</code>提供的客户端IP.代理服务器可以伪造任何IP.<br><code>$_SERVER[&#39;REMOTE_ADDR&#39;]</code> 就是跟你服务器直接连接的IP. 不可伪造<br><code>CLIENT_IP</code> 可伪造</p>
-<p>这里尝试了几个,ip不可伪造注入</p>
-<p>less-18的sql语句为:</p>
-<pre><code>$insert=&quot;INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;, $uname)&quot;;
-</code></pre><h2 id="less-19-REFERER注入"><a href="#less-19-REFERER注入" class="headerlink" title="less-19 REFERER注入"></a>less-19 REFERER注入</h2><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.46.12-image.png" alt="2018-10-29.15.46.12-image.png"><br>放入burp的reperter模块测试:<br>与less-18的payload一样,只不过是从UA头换到了referer处：</p>
-<pre><code>Referer: &apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.16.32.48-image.png" alt="2018-10-29.16.32.48-image.png"></p>
-<p>然后将<code>select user()</code>处更换为其他查询语句就ok了</p>
-<p>less-19的sql语句为:</p>
-<pre><code>$uname = check_input($_POST[&apos;uname&apos;]);
-$passwd = check_input($_POST[&apos;passwd&apos;]);
-......
-$insert=&quot;INSERT INTO `security`.`referers` (`referer`, `ip_address`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;)&quot;;
-</code></pre><h2 id="less-20-Cookie注入"><a href="#less-20-Cookie注入" class="headerlink" title="less-20 Cookie注入"></a>less-20 Cookie注入</h2><p>我们查看代码:</p>
-<pre><code>&lt;?php
-if(!isset($_COOKIE[&apos;uname&apos;]))
-    {
-    ...
-        $sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
-        $result1 = mysql_query($sql);
-        $row1 = mysql_fetch_array($result1);
-        $cookee = $row1[&apos;username&apos;];
-            if($row1)
-                {
-                echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;
-                setcookie(&apos;uname&apos;, $cookee, time()+3600);    
-                ...
-}
-else
-{
-    if(!isset($_POST[&apos;submit&apos;]))
-        {
-            $cookee = $_COOKIE[&apos;uname&apos;];
-            ...
-            $sql=&quot;SELECT * FROM users WHERE username=&apos;$cookee&apos; LIMIT 0,1&quot;;
-            ...
-        }    
-    else
-        ...
-}
-?&gt;
-</code></pre><p>从源代码可看出,我在第一次登陆时,我们的cookie从username取值,当再次刷新后,会从cookie字段中读取username的值然后进行查询.</p>
-<p>首先填写正确账号密码:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.27-image.png" alt="2018-10-29.17.36.27-image.png"><br>提交之后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.55-image.png" alt="2018-10-29.17.36.55-image.png"></p>
-<p>然后我们刷新时抓包:</p>
-<pre><code>GET /less-20/index.php HTTP/1.1
-Host: 127.0.0.1:86
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate
-DNT: 1
-Referer: http://127.0.0.1:86/less-20/index.php
-Cookie: uname=admin
-Connection: close
-Cache-Control: max-age=0
-</code></pre><p>修改cookie为：</p>
-<pre><code>Cookie: uname=admin&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1)%23
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.40.44-image.png" alt="2018-10-29.17.40.44-image.png"></p>
-<p>之后将<code>select user()</code>改为其他查询语句即可。</p>
-<h2 id="less-21-cookie-base64-注入"><a href="#less-21-cookie-base64-注入" class="headerlink" title="less-21 cookie_base64 注入"></a>less-21 cookie_base64 注入</h2><p>与less-20同理,只是将payload的闭合符号<code>&#39;</code>换为<code>&#39;)</code>,再用base64加密一下即可:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.50.13-image.png" alt="2018-10-29.17.50.13-image.png"></p>
-<h2 id="less-22"><a href="#less-22" class="headerlink" title="less-22"></a>less-22</h2><p>将less-21的payload的闭合符号<code>&#39;)</code>换为<code>&quot;</code>,再用base64加密一下即可:</p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.18.01.40-image.png" alt="2018-10-29.18.01.40-image.png"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3293,7 +3561,7 @@ Cache-Control: max-age=0
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

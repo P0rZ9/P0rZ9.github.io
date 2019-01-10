@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="早几天就将Java Web的实验收尾了,项目代码(简易论坛)已经上传到Github了,没事儿看看ssm框架,争取早日撸个商城出来。   Java_Web_Bbs项目地址 SSM (Spring+SpringMVC+MyBatis) 框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。先了解一波Spring">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssm基础之Spring">
+<meta property="og:url" content="http://yoursite.com/2019/01/08/ssm基础之Spring/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="早几天就将Java Web的实验收尾了,项目代码(简易论坛)已经上传到Github了,没事儿看看ssm框架,争取早日撸个商城出来。   Java_Web_Bbs项目地址 SSM (Spring+SpringMVC+MyBatis) 框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。先了解一波Spring">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.02.18-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.03.44-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.18.44-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.22.29-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.41.51-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.24.40-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.05.53-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.19.56.37-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.20.37.25-image.png">
+<meta property="og:updated_time" content="2019-01-10T15:36:04.812Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ssm基础之Spring">
+<meta name="twitter:description" content="早几天就将Java Web的实验收尾了,项目代码(简易论坛)已经上传到Github了,没事儿看看ssm框架,争取早日撸个商城出来。   Java_Web_Bbs项目地址 SSM (Spring+SpringMVC+MyBatis) 框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。先了解一波Spring">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.02.18-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/08/ssm基础之Spring/"/>
+
+
+
+
+
+  <title>ssm基础之Spring | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/08/ssm基础之Spring/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ssm基础之Spring</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-08T08:15:41+08:00">
+                2019-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>早几天就将Java Web的实验收尾了,项目代码(简易论坛)已经上传到Github了,没事儿看看ssm框架,争取早日撸个商城出来。</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/P0rZ9/Java_Web/tree/master/Java_Web_BBS" target="_blank" rel="noopener">Java_Web_Bbs项目地址</a></p>
+<p>SSM <strong>(Spring+SpringMVC+MyBatis)</strong> 框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。先了解一波Spring。</p>
+<blockquote>
+<p>Spring是一个开源框架，主要是为了解决项目开发中的紧耦合的问题，采用了控制反转和AOP技术简化了企业级应用的开发，让开发者能够更专注于业务的开发，减少了流程式的代码，简化了开发过程，所以受到开发人员的欢迎。</p>
+</blockquote>
+<h2 id="IOC-DI-控制反转-依赖注入"><a href="#IOC-DI-控制反转-依赖注入" class="headerlink" title="IOC/DI 控制反转/依赖注入"></a>IOC/DI 控制反转/依赖注入</h2><blockquote>
+<p>在java开发中，如果要使用另外一个类的定义的功能，譬如在A类中需要调用B类的方法，那么一般的做法就是在A类中实例化一个B的对象,通过A.b.method()这样的方式来调用，那么这样造成了什么后果呢？那就是A强烈的依赖于B，这个时候就要求B中方法保持稳定，不能随意变动。这个时候B中的代码就被A给“限制”了，如果这个时候你要修改B中的方法，譬如将method()改为methodA()，那么同时也就要修改A中的代码以适应这个改变，这样的程序改动起来很大，也就是说扩展性很低。<br>控制反转就是为了解决这类问题所提出来的一种概念，主要就是通过一个容器来管理对象之间的依赖关系，Spring就提供了这样的一个容器来管理对象之间的依赖。就以上面的场景来说，A需要用到B中的功能，A只需要向容器提出我需要包含xx功能的对象，容器就能给你一个这样的对象，至于这个对象到底是不是B？你管那么多呢？只要能用就行对吧。<br>Spring中提供的这样的容器就是我们经常提到的ApplicationContext。</p>
+</blockquote>
+<h2 id="AOP-Aspect-Oriented-Program-面向切面编程"><a href="#AOP-Aspect-Oriented-Program-面向切面编程" class="headerlink" title="AOP(Aspect Oriented Program)面向切面编程"></a>AOP(Aspect Oriented Program)面向切面编程</h2><blockquote>
+<p>在开发中，经常会遇到相同的模块，例如打印日志，安全管理这样的功能，可能每一个类都会有这样的需要。譬如我要记录每一个类的调用记录，使用参数等信息，这种功能k可以在每个类中加入相似的代码，直接打印出来就好。但是这种方法将辅助性的功能放到实际业务里去实现了，使每个方法承担的使命太多，如果能狗自动打印日志，不是更好吗？而这种通用的功能就称之为一个切面，面向切面的编程能够简化开发的实际代码，更好的关注于业务本身。</p>
+</blockquote>
+<h3 id="演示IOC-反转控制-和DI-依赖注入"><a href="#演示IOC-反转控制-和DI-依赖注入" class="headerlink" title="演示IOC(反转控制)和DI(依赖注入)"></a>演示IOC(反转控制)和DI(依赖注入)</h3><h4 id="运行TestSpring演示用Spring获取一个对象-并打印name"><a href="#运行TestSpring演示用Spring获取一个对象-并打印name" class="headerlink" title="运行TestSpring演示用Spring获取一个对象,并打印name"></a>运行TestSpring演示用Spring获取一个对象,并打印name</h4><p>1.<strong>Eclipse新建项目(Java Project),项目名字spring</strong><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.02.18-image.png" alt="2019-01-10.11.02.18-image.png"></p>
+<p>2.<strong>下载项目所需的jar包,并导入项目中(Build Path—&gt;Add Externam JARs)</strong><br><a href="http://how2j.cn/frontdownload?bean.id=1484" target="_blank" rel="noopener">Jar包下载</a>,导入后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.03.44-image.png" alt="2019-01-10.11.03.44-image.png"></p>
+<p>3.<strong>pojo</strong><br>准备pojo Source类    </p>
+<pre><code>package pojo;
+
+public class Source {
+     private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }  
+}
+</code></pre><p><strong>4.applicationContext.xml</strong><br>在src目录下新建applicationContext.xml,这是Spring的核心配置文件,通过关键字s获取Source对象,该对象获取的时候,即被注入了字符串”test1”到name属性,数值1到id属性中。    </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans         
+xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;
+        xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+xsi:schemaLocation=&quot;
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+ http://www.springframework.org/schema/aop
+ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+ http://www.springframework.org/schema/context     
+ http://www.springframework.org/schema/context/spring-context-3.0.xsd&quot;&gt;
+
+&lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+    &lt;property name=&quot;id&quot; value=&quot;1&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p></p>
+<p><strong>5.TestSpring</strong><br>测试代码,演示通过spring获取Source对象,以及该对象被注入的name属性。如图所示,打印通过Spring拿到的Source对象的name与id属性。    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pojo.Source;
+
+public class TestSpring {
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] { &quot;applicationContext.xml&quot; });
+
+    Source s = (Source) context.getBean(&quot;s&quot;);
+
+    System.out.println(s.getName());
+    System.out.println(s.getId());
+    }
+}
+</code></pre><p>运行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.18.44-image.png" alt="2019-01-10.11.18.44-image.png">    </p>
+<p><strong>6.原理图</strong><br>获取对象的方式比较:<br>传统:<code>Source s = new Source();</code><br>IOC:<code>Source s = (Source) context.getBean(&quot;s&quot;);</code><br>对象的声明周期由Spring来管理,直接从Spring那里去获取一个对象,IOC是控制反转(Inversion Of Control)的缩写,控制权交给了Spring。    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.22.29-image.png" alt="2019-01-10.11.22.29-image.png"></p>
+<hr>
+<p>上面第一个例子演示了注入对象的属性,下面演示注入Source对象</p>
+<h4 id="向Product注入Source对象"><a href="#向Product注入Source对象" class="headerlink" title="向Product注入Source对象"></a>向Product注入Source对象</h4><p>1.Product.java    </p>
+<pre><code>package pojo;
+
+public class Product {
+    private int id;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Source getSource() {
+        return source;
+    }
+    public void setSource(Source source) {
+        this.source = source;
+    }
+    private String name;
+    private Source source;
+}
+</code></pre><p>2.applicationContext.xml(关键) 在创建Product的时候注入一个Source对象(使用ref来注入另一个对象)        </p>
+<pre><code>&lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+    &lt;property name=&quot;id&quot; value=&quot;1&quot; /&gt;
+&lt;/bean&gt;
+
+&lt;bean name=&quot;p&quot; class=&quot;pojo.Product&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;product1&quot; /&gt;
+    &lt;property name=&quot;source&quot; ref=&quot;s&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p>3.TestSpring.java    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import pojo.Source;
+import pojo.Product;
+
+public class TestSpring {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                new String[] { &quot;applicationContext.xml&quot; });
+
+        //Source s = (Source) context.getBean(&quot;s&quot;);
+        Product p = (Product) context.getBean(&quot;p&quot;); 
+
+        System.out.println(p.getName());
+        System.out.println(p.getSource().getName());
+
+    }
+}
+</code></pre><p>通过Spring拿到的Product对象已经被注入了Source对象<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.41.51-image.png" alt="2019-01-10.11.41.51-image.png"></p>
+<h4 id="注解方式演示IOC-DI-对注入对象的注解"><a href="#注解方式演示IOC-DI-对注入对象的注解" class="headerlink" title="注解方式演示IOC/DI(对注入对象的注解)"></a>注解方式演示IOC/DI(对注入对象的注解)</h4><p>1.修改applicationContext.xml    </p>
+<pre><code>&lt;context:annotation-config/&gt;  
+ &lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+     &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+ &lt;/bean&gt;
+ &lt;bean name=&quot;p&quot; class=&quot;pojo.Product&quot;&gt;
+     &lt;property name=&quot;name&quot; value=&quot;product1&quot; /&gt;
+ &lt;/bean&gt;
+</code></pre><p>2.在Product.java中,在定义对象前加<code>@Autowired</code></p>
+<pre><code>@Autowired
+private Source source;
+</code></pre><p>也可以在setSource(Source source)前面添加    </p>
+<pre><code>@Autowired
+public void setSource(Source source) {
+    this.source = source;
+}
+</code></pre><p>也可以在</p>
+<pre><code>@Resource(name=&quot;s&quot;)
+private Source source;
+</code></pre><h4 id="对Bean本身的注解"><a href="#对Bean本身的注解" class="headerlink" title="对Bean本身的注解"></a>对Bean本身的注解</h4><p>1.修改applicationContext.xml,只新增:</p>
+<pre><code>&lt;context:component-scan base-package=&quot;pojo&quot;/&gt;
+</code></pre><p>作用是告诉Spring,bean都放在pojo这个包下。</p>
+<p>2.注解@Component,表示该类为bean    </p>
+<pre><code>@Component(&quot;p&quot;)
+public class Product {
+
+@Component(&quot;s&quot;)
+public class Source {
+</code></pre><p>3.因为配置在applicationContext.xml中已经删除,所以属性的初始化要在属性的声明时进行。            </p>
+<pre><code>private String name=&quot;product 1&quot;;
+private String name=&quot;test1&quot;;
+</code></pre><p>Product.java    </p>
+<pre><code>package pojo;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component(&quot;p&quot;)
+public class Product {
+private int id;
+private String name = &quot;product 2&quot;;
+
+@Autowired
+private Source source;
+
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+public String getName() {
+    return name;
+}
+public void setName(String name) {
+    this.name = name;
+}
+public Source getSource() {
+    return source;
+}
+
+public void setSource(Source source) {
+    this.source = source;
+ }
+
+}
+</code></pre><h2 id="AOP-Aspect-Oriented-Program-面向切面编程-1"><a href="#AOP-Aspect-Oriented-Program-面向切面编程-1" class="headerlink" title="AOP(Aspect Oriented Program)面向切面编程"></a>AOP(Aspect Oriented Program)面向切面编程</h2><p>1.jar包:<a href="http://how2j.cn/frontdownload?bean.id=1810" target="_blank" rel="noopener">http://how2j.cn/frontdownload?bean.id=1810</a></p>
+<p>2.业务类:ProductService.java    </p>
+<pre><code>package service
+public class ProductService {
+
+public void doSomeService(){
+
+    System.out.println(&quot;doSomeService&quot;);
+
+}
+</code></pre><p>}</p>
+<p>3.准备日志切面LoggerAspect.java<br>功能:在调用核心功能之前和之后分别打印日志,切面就是原理图中讲的那些辅助功能.将来与某个核心功能编制后,用于实现核心功能的代码:<code>Object object = joinPoint.proceed();</code></p>
+<pre><code>package aspect;
+import org.aspectj.lang.ProceedingJoinPoint;
+
+public class LoggerAspect {
+
+    public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(&quot;start log:&quot; + joinPoint.getSignature().getName());
+        Object object = joinPoint.proceed();
+        System.out.println(&quot;end log:&quot; + joinPoint.getSignature().getName());
+        return object;
+    }
+}
+</code></pre><p>4.applicationContext.xml</p>
+<pre><code>&lt;bean name=&quot;se&quot; class=&quot;service.ProductService&quot;&gt;
+&lt;/bean&gt;   
+&lt;bean id=&quot;loggerAspect&quot; class=&quot;aspect.LoggerAspect&quot;/&gt;
+
+&lt;aop:config&gt;
+    &lt;aop:pointcut id=&quot;loggerCutpoint&quot; expression=&quot;execution(* service.ProductService.*(..)) &quot;/&gt;        
+    &lt;aop:aspect id=&quot;logAspect&quot; ref=&quot;loggerAspect&quot;&gt;
+    &lt;aop:around pointcut-ref=&quot;loggerCutpoint&quot; method=&quot;log&quot;/&gt;
+    &lt;/aop:aspect&gt;
+&lt;/aop:config&gt;    
+</code></pre><p>大概讲以下这个xml的含义:<br>第一行:<code>&lt;bean name=&quot;se&quot; class=&quot;service.ProductService&quot;&gt;
+    &lt;/bean&gt;</code> 是声明业务对象的<br>第二行:<code>&lt;bean id=&quot;loggerAspect&quot; class=&quot;aspect.LoggerAspect&quot;/&gt;</code>是声明日志切面的<br>第三行:<code>&lt;aop:pointcut id=&quot;loggerCutpoint&quot; expression=&quot;execution(* service.ProductService.*(..)) &quot;/&gt;</code><br>表示id为该切入点的标识符,expression表示满足该正则的方法调用后,就会进行切面操作,类似于触发了切面。<br><code>expression</code>:第一个<em>表示返回任意类型,包名为<code>service.ProductService</code>开头的类的任意方法(第二个</em>表示任意方法)(..)表示参数的任意类型和个数。<br>简单来说,第三行代码意思就是service包中的ProductService类的任意一个函数被调用,不管返回值为什么,都会触发开关,去执行切面(相当于将业务对象于辅助功能编织在一起),也就是辅助功能:<br><code>&lt;aop:aspect id=&quot;logAspect&quot; ref=&quot;loggerAspect&quot;&gt;
+        &lt;aop:around pointcut-ref=&quot;loggerCutpoint&quot; method=&quot;log&quot;/&gt;</code><br>上面说的只要触发开关,就回去执行切面,这里所谓的切面其实就是一个类的方法而已。<br>id代表这个切面的名字,ref表明方法所在类,method代表方法的名字,<code>pointcut-ref=&quot;loggerCutpoint&quot;</code>表示这个切面与上面的切点关联起来的,只要上面的切点被触发,我就会在这里执行一些辅助功能。    <code>&lt;aop:around</code>表示执行的顺序。具体看AOP的基本概念。</p>
+<p>5.TestSpring.java    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import service.ProductService;
+
+public class TestSpring {
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] { &quot;applicationContext.xml&quot; });
+    ProductService s = (ProductService) context.getBean(&quot;se&quot;);
+    s.doSomeService();
+}
+</code></pre><p>}</p>
+<p>执行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.24.40-image.png" alt="2019-01-10.17.24.40-image.png"></p>
+<h3 id="AOP的几个重要概念"><a href="#AOP的几个重要概念" class="headerlink" title="AOP的几个重要概念"></a>AOP的几个重要概念</h3><p>1.通知<br>定义了切面何时工作及工作内容,即什么时候去执行切面程序与功能具体的代码。这里一共有5种类型,分别为</p>
+<pre><code>a.Before 在方法之前调用通知
+b.After 在方法之后调用通知,无论是否执行成功
+c.around 在方法之前与之后都调用
+d.After-Return    方法执行成功后调用
+e.After-throwing    方法抛出异常后调用
+</code></pre><p>执行顺序:            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.05.53-image.png" alt="2019-01-10.17.05.53-image.png">            </p>
+<p>&lt;aop:aspect id=”logAspect” ref=”loggerAspect”&gt;<br>            &lt;aop:around pointcut-ref=”loggerCutpoint” method=”log”/&gt;<br>        &lt;/aop:aspect&gt;</p>
+<p>2.连接点<br>在执行正常功能时,能够插入切面的点,连接点可以是调用方法时、抛出异常时、甚至修改字段时,在这些点,就可以去执行切面            </p>
+<p>3.切面<br>定义:切面是切点与通知的集合,通知和切点定义了切面的全部功能—(它是什么,在何时何处完成其功能)<br>声明切面:<code>&lt;aop:aspect&gt;</code>完成的,ref指定类,pointcut-ref,pointcut-ref表明与哪个切点联系,method指定要执行的方法。    </p>
+<p>4.切点<br>通知定义了”何时”与”什么”,而切点定义了”何处”<br>作用:定义通知被调用的位置(在哪些连接点)<br>声明切点：<br><strong>a.在\&lt;<a href="aop:config\" target="_blank" rel="noopener">aop:config\</a>&gt;标签下使用\&lt;<a href="aop:pointcut\" target="_blank" rel="noopener">aop:pointcut\</a>&gt;声明一个切入点Bean</strong>该切入点可被多个切面使用,对于需要共享的切入点最好使用该方式。</p>
+<pre><code>&lt;aop:config&gt;  
+   &lt;aop:pointcut id=&quot;pointcut&quot; expression=&quot;execution(* cn.javass..*.*(..))&quot;/&gt;  
+   &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+      &lt;aop:before pointcut-ref=&quot;pointcut&quot; method=&quot;before&quot;/&gt;  
+   &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;
+</code></pre><p>&lt;aop:pointcut id=”loggerCutpoint” expression=”execution(<em> service.ProductService.</em>(..)) “/&gt;        </p>
+<p><strong>b.在<a href="aop:aspect" target="_blank" rel="noopener">aop:aspect</a>标签下使用<a href="aop:pointcut" target="_blank" rel="noopener">aop:pointcut</a>声明一个切入点Bean</strong>该切入点一般只用于该切面。</p>
+<pre><code>&lt;aop:config&gt;  
+ &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+    &lt;aop:pointcut id=&quot; pointcut&quot; expression=&quot;execution(* cn.javass..*.*(..))&quot;/&gt;  
+    &lt;aop:before pointcut-ref=&quot;pointcut&quot; method=&quot;before&quot;/&gt;  
+ &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;  
+</code></pre><p><strong>c.匿名切入点Bean，可以在声明通知时通过pointcut属性指定切入点表达式，该切入点是匿名切入点，只被该通知使用</strong></p>
+<pre><code>&lt;aop:config&gt;  
+ &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+     &lt;aop:after pointcut=&quot;execution(* cn.javass..*.*(..))&quot; method=&quot;afterFinallyAdvice&quot;/&gt;  
+ &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;  
+</code></pre><p>5.引入<br>允许我们向现有的类中添加方法或属性。        </p>
+<p>6.织入(未理解,先占坑,有时间回来描述)        </p>
+<h3 id="注解方式AOP"><a href="#注解方式AOP" class="headerlink" title="注解方式AOP"></a>注解方式AOP</h3><p>1.配置业务类    </p>
+<pre><code>@Component(&quot;se&quot;)
+public class ProductService {
+</code></pre><p>2.注解配置切面</p>
+<pre><code>@Aspect 注解表示这是一个切面
+@Component 表示这是一个bean,由Spring进行管理
+@Around(value = &quot;execution(* com.how2java.service.ProductService.*(..))&quot;) 表示对com.how2java.service.ProductService 这个类中的所有方法进行切面操作
+</code></pre><p>LoggerAspect.java</p>
+<pre><code>package aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+
+@Aspect
+@Component
+public class LoggerAspect {
+
+    @Around(value = &quot;execution(* service.ProductService.*(..))&quot;)
+    public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(&quot;start log:&quot; + joinPoint.getSignature().getName());
+        Object object = joinPoint.proceed();
+        System.out.println(&quot;end log:&quot; + joinPoint.getSignature().getName());
+        return object;
+    }
+}
+</code></pre><p>3.applicationContext.xml(关键)            </p>
+<pre><code>//扫描aspect与service包,定位业务类与切面类
+&lt;context:component-scan base-package=&quot;aspect&quot;/&gt;
+&lt;context:component-scan base-package=&quot;service&quot;/&gt; 
+
+//找到被注解了的切面类,进行切面设置
+&lt;aop:aspectj-autoproxy/&gt; 
+</code></pre><p>4.TestSpring.java与上一个xml设置的代码相同。<br>运行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.19.56.37-image.png" alt="2019-01-10.19.56.37-image.png">        </p>
+<h3 id="AOP注解方式测试"><a href="#AOP注解方式测试" class="headerlink" title="AOP注解方式测试"></a>AOP注解方式测试</h3><p>1.jar包下载:<br><a href="http://how2j.cn/frontdownload?bean.id=1189" target="_blank" rel="noopener">jubit.jar</a><br><a href="http://how2j.cn/frontdownload?bean.id=1190" target="_blank" rel="noopener">hamcrest.jar</a></p>
+<p>2.applicationContext.xml</p>
+<pre><code>&lt;context:component-scan base-package=&quot;pojo&quot;/&gt;
+</code></pre><p>3.Source.java</p>
+<pre><code>package pojo;
+
+import org.springframework.stereotype.Component;
+
+@Component(&quot;s&quot;)
+public class Source {
+    private int id;
+    private String name = &quot;test2&quot;;
+
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+public String getName() {
+    return name;
+}
+public void setName(String name) {
+    this.name = name;
+}
+</code></pre><p>}</p>
+<p>3.TestSpring.java</p>
+<pre><code>package test;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import pojo.Source;
+import service.ProductService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+public class TestSpring {
+
+@Autowired
+Source s;
+
+@Test
+public void test() {
+    System.out.println(s.getName());
+    }
+}
+</code></pre><p>运行结果：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.20.37.25-image.png" alt="2019-01-10.20.37.25-image.png">        </p>
+<p>参考:<br><a href="https://www.imooc.com/learn/196" target="_blank" rel="noopener">https://www.imooc.com/learn/196</a><br><a href="http://how2j.cn/k/spring/spring-ioc-di/87.html" target="_blank" rel="noopener">http://how2j.cn/k/spring/spring-ioc-di/87.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/08/Java语法基础/" rel="next" title="基础知识 | JAVA语法基础<一>">
+                <i class="fa fa-chevron-left"></i> 基础知识 | JAVA语法基础<一>
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/09/Burp插件开发/" rel="prev" title="Burp插件开发">
+                Burp插件开发 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IOC-DI-控制反转-依赖注入"><span class="nav-number">1.</span> <span class="nav-text">IOC/DI 控制反转/依赖注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOP-Aspect-Oriented-Program-面向切面编程"><span class="nav-number">2.</span> <span class="nav-text">AOP(Aspect Oriented Program)面向切面编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#演示IOC-反转控制-和DI-依赖注入"><span class="nav-number">2.1.</span> <span class="nav-text">演示IOC(反转控制)和DI(依赖注入)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运行TestSpring演示用Spring获取一个对象-并打印name"><span class="nav-number">2.1.1.</span> <span class="nav-text">运行TestSpring演示用Spring获取一个对象,并打印name</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向Product注入Source对象"><span class="nav-number">2.1.2.</span> <span class="nav-text">向Product注入Source对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注解方式演示IOC-DI-对注入对象的注解"><span class="nav-number">2.1.3.</span> <span class="nav-text">注解方式演示IOC/DI(对注入对象的注解)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对Bean本身的注解"><span class="nav-number">2.1.4.</span> <span class="nav-text">对Bean本身的注解</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOP-Aspect-Oriented-Program-面向切面编程-1"><span class="nav-number">3.</span> <span class="nav-text">AOP(Aspect Oriented Program)面向切面编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP的几个重要概念"><span class="nav-number">3.1.</span> <span class="nav-text">AOP的几个重要概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解方式AOP"><span class="nav-number">3.2.</span> <span class="nav-text">注解方式AOP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP注解方式测试"><span class="nav-number">3.3.</span> <span class="nav-text">AOP注解方式测试</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
