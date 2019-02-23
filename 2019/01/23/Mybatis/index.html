@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="学习了MYBATIS,记录一波      Mybatis简介 MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis，是一个基于Java的持久层框架。  持久层： 可以将业务数据存储到磁盘，具备长期存储能力，只要磁盘不损坏，在断电或者其他情况下，重新开启系统仍">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssm基础之MyBatis">
+<meta property="og:url" content="http://yoursite.com/2019/01/23/Mybatis/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="学习了MYBATIS,记录一波      Mybatis简介 MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis，是一个基于Java的持久层框架。  持久层： 可以将业务数据存储到磁盘，具备长期存储能力，只要磁盘不损坏，在断电或者其他情况下，重新开启系统仍">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.20.51.18-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.23.40.15-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.11.35.57-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.11.42.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.12.28.48-image.png">
+<meta property="og:updated_time" content="2019-01-23T09:04:17.219Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ssm基础之MyBatis">
+<meta name="twitter:description" content="学习了MYBATIS,记录一波      Mybatis简介 MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis，是一个基于Java的持久层框架。  持久层： 可以将业务数据存储到磁盘，具备长期存储能力，只要磁盘不损坏，在断电或者其他情况下，重新开启系统仍">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.20.51.18-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/23/Mybatis/"/>
+
+
+
+
+
+  <title>ssm基础之MyBatis | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/23/Mybatis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ssm基础之MyBatis</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-23T09:15:41+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>学习了MYBATIS,记录一波    </p>
+</blockquote>
+<h3 id="Mybatis简介"><a href="#Mybatis简介" class="headerlink" title="Mybatis简介"></a>Mybatis简介</h3><blockquote>
+<p>MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis，是一个基于Java的持久层框架。</p>
+</blockquote>
+<p><strong>持久层</strong>： 可以将业务数据存储到磁盘，具备长期存储能力，只要磁盘不损坏，在断电或者其他情况下，重新开启系统仍然可以读取到这些数据。<br><strong>优点</strong>： 可以使用巨大的磁盘空间存储相当量的数据，并且很廉价<br><strong>缺点</strong>：慢（相对于内存而言）</p>
+<p><strong>为什么使用Mybatis</strong>        </p>
+<blockquote>
+<p>传统JDBC中,除了自己提供sql语句外,还必须操作Connection,Statement,ResultSet,非常繁琐。使用Mybatis后,只需要提供sql语句即可,我们只需要重点关注增删改查这些操作层面上。并且Mybatis支持使用简单的XML或注解来配置和映射原生信息,将接口和Java对象映射为数据库中的记录。            </p>
+</blockquote>
+<p>Mybatis运行程序原理图:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.20.51.18-image.png" alt="2019-01-22.20.51.18-image.png"></p>
+<pre><code>程序执行顺序:
+1.应用程序找Mybatis要数据            
+2.Mybatis从数据库找来数据        
+    2.1 通过mybatis-config.xml定位数据库        
+    2.2 通过User.xml执行对应的select语句        
+    2.3 基于User.xml把返回的数据库记录封装在User对象中
+    2.4 将多个User对象封装在一个User集合中        
+3.返回一个User集合
+</code></pre><h3 id="第一个Mybatis程序"><a href="#第一个Mybatis程序" class="headerlink" title="第一个Mybatis程序"></a>第一个Mybatis程序</h3><p>1.Maven pom.xml    </p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;5.1.43&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- Mybatis依赖 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+    &lt;version&gt;3.4.4&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>2.Mybatis 配置文件 mybatis-config.xml<br>作用主要就是提供连接数据库用的驱动,数据名称,编码方式,账号密码等</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+
+&lt;configuration&gt;
+
+
+    &lt;typeAliases&gt;
+        &lt;package name=&quot;com.test.pojo&quot;/&gt;
+    &lt;/typeAliases&gt;
+
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis?characterEncoding=UTF-8&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+    &lt;mappers&gt;
+        &lt;mapper resource=&quot;com/test/pojo/User.xml&quot;/&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre><p>3.配置文件User.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.test.pojo&quot;&gt;
+    &lt;select id=&quot;listUser&quot; resultType=&quot;User&quot;&gt;
+            select * from user
+    &lt;/select&gt;
+
+    &lt;insert id=&quot;addUser&quot; parameterType=&quot;User&quot;&gt;
+        insert into user ( name ) values (#{name})
+    &lt;/insert&gt;
+
+    &lt;delete id=&quot;delUser&quot; parameterType=&quot;User&quot;&gt;
+        delete from user where id = #{id}
+    &lt;/delete&gt;
+
+    &lt;select id=&quot;getUser&quot; parameterType=&quot;_int&quot; resultType=&quot;User&quot;&gt;
+        select * from user where id=#{id}
+    &lt;/select&gt;
+
+    &lt;update id=&quot;updateUser&quot; parameterType=&quot;User&quot; &gt;
+        update user set name = #{name} where id=#{id}
+    &lt;/update&gt;
+
+    &lt;!--模糊查询--&gt;
+    &lt;select id=&quot;findUserByName&quot; parameterType=&quot;String&quot; resultType=&quot;User&quot;&gt;
+        select * from user where name like &apos;%${value}%&apos;
+    &lt;/select&gt;
+
+
+&lt;/mapper&gt;
+</code></pre><p>由于在主配置文件里配置了<code>&lt;typeAliases&gt;</code>别名,所以在这里的resultType可以直接写User,不用写全名pojo.User<br>namespace属性就是对SQL语句进行分类管理,实现不同业务的SQL隔离。            </p>
+<p>4.测试类  TestMybatis.java    </p>
+<pre><code>TestMybatis.java            
+package com.test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import com.test.pojo.User;
+
+public class TestMybatis {
+
+public static void main(String[] args) throws IOException {
+    String resource = &quot;mybatis-config.xml&quot;;
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession session=sqlSessionFactory.openSession();
+
+
+    //插入用户
+    User user1 = new User();
+    user1.setName(&quot;test1&quot;);
+    session.insert(&quot;addUser&quot;,user1);
+
+   //修改用户
+    User user2 = session.selectOne(&quot;getUser&quot;,5);
+    user2.setName(&quot;test_after&quot;);
+    session.update(&quot;updateUser&quot;,user2);
+
+    //删除用户
+    User user3 = new User();
+    user3.setId(3);
+    session.delete(&quot;delUser&quot;,user3);
+
+    //获取用户
+    User user4 = session.selectOne(&quot;getUser&quot;,5);
+    System.out.println(user4.getName());
+
+    //模糊查询
+    List&lt;User&gt; users = session.selectList(&quot;findUserByName&quot;,&quot;te&quot;);
+    for(User user : users){
+        System.out.println(user.getId()+&quot;:&quot;+user.getName());
+    }
+
+    //获取全部用户
+    listAll(session);
+    session.commit();
+    session.close();
+}
+
+private static void listAll(SqlSession session){
+
+    //列出全部用户
+    List&lt;User&gt; users=session.selectList(&quot;listUser&quot;);
+    for (User user : users) {
+        System.out.println(user.getName());
+    }
+}
+}
+</code></pre><p>xml文件几个概念:<br>parameterType：指定输入参数类型,可为基本数据类型(int float)与包装数据类型(String Interger)以及用户编写的JavaBean类<br>resultType: 指定从数据库返回的信息对应的Java数据类型。</p>
+<p>#{}： 占位符,该符号接收输入参数,花括号中编写参数名称来接收对应参数。当#{}接收简单类型时可用value或者其他名称来获取。<br>${}：表示拼接符,可在原有SQL语句上拼接新的符合SQL语法的语句。            </p>
+<p>MyBatis使用场景:通过上面的入门程序,MyBatis的特点就是以Sql语句为核心的不完全的ORM(关系型映射)框架。使用场景为:对SQL语句优化要求比较高,项目需求经常变动。            </p>
+<h3 id="MyBatis深入学习"><a href="#MyBatis深入学习" class="headerlink" title="MyBatis深入学习"></a>MyBatis深入学习</h3><h4 id="编写日志输出环境配置文件"><a href="#编写日志输出环境配置文件" class="headerlink" title="编写日志输出环境配置文件"></a>编写日志输出环境配置文件</h4><h4 id="MyBatis高级映射"><a href="#MyBatis高级映射" class="headerlink" title="MyBatis高级映射"></a>MyBatis高级映射</h4><h5 id="一对一查询"><a href="#一对一查询" class="headerlink" title="一对一查询"></a>一对一查询</h5><p>查询number对应的学生姓名。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.23.40.15-image.png" alt="2019-01-22.23.40.15-image.png"></p>
+<h6 id="使用resultType-只能映射到一个确定的Java包装类"><a href="#使用resultType-只能映射到一个确定的Java包装类" class="headerlink" title="使用resultType    (只能映射到一个确定的Java包装类)"></a>使用resultType    (只能映射到一个确定的Java包装类)</h6><p>1.首先更改主配置文件加载的<mappers>的内容:    </mappers></p>
+<pre><code>  &lt;mappers&gt;
+    &lt;mapper resource=&quot;com/test/pojo/Student.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.Student.xml            </p>
+<pre><code>&lt;select id=&quot;findStudentByCard&quot; parameterType=&quot;_int&quot; resultType=&quot;Student&quot;&gt;
+  SELECT
+    student.*,
+    card.*
+  FROM
+    student,card
+  WHERE student.card_id = card.id AND card.number = #{value}
+&lt;/select&gt;
+</code></pre><h6 id="使用-resultMap-实现"><a href="#使用-resultMap-实现" class="headerlink" title="使用 resultMap 实现"></a>使用 resultMap 实现</h6><p>使用resultMap可以将数据字段映射到名称不一样的响应实体类属性中,重要的是可映射到实体类包裹的其他实体类。<br>1.首先更改主配置文件加载的<mappers>的内容:    </mappers></p>
+<pre><code>  &lt;mappers&gt;
+    &lt;mapper resource=&quot;com/test/pojo/Student.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.创建一个新的实体类(包含Student与card)<br>StudentWithCard.java </p>
+<pre><code>package com.test.pojo;
+  public class StudentWithCard {
+    Student student;
+    int number;
+    int id;
+
+      //geter and seter
+  }
+</code></pre><p>3.Student.xml</p>
+<pre><code>&lt;mapper namespace=&quot;com.test.pojo&quot;&gt;
+&lt;select id=&quot;findStudentByCard&quot; parameterType=&quot;_int&quot; resultMap=&quot;StudentInfoMap&quot;&gt;
+  SELECT
+    student.*,
+    card.*
+  FROM
+    student,card
+  WHERE student.card_id = card.id AND card.number = #{value}
+&lt;/select&gt;
+
+&lt;resultMap id=&quot;StudentInfoMap&quot; type=&quot;StudentWithCard&quot;&gt;
+&lt;!-- id 标签表示对应的主键
+     column 对应查询结果的列值
+     property 对应封装类中的属性名称
+--&gt;
+      &lt;id column=&quot;id&quot; property=&quot;id&quot;/&gt;
+      &lt;result column=&quot;number&quot; property=&quot;number&quot;/&gt;
+      &lt;!-- association 表示关联的嵌套结果，
+           可以简单理解就是为封装类指定的标签
+           --&gt;
+      &lt;association property=&quot;student&quot; javaType=&quot;Student&quot;&gt;
+        &lt;id column=&quot;id&quot; property=&quot;id&quot;/&gt;
+        &lt;result column=&quot;name&quot; property=&quot;name&quot;/&gt;
+        &lt;result column=&quot;card_id&quot; property=&quot;card_id&quot;/&gt;
+      &lt;/association&gt;
+&lt;/resultMap&gt;
+&lt;/mapper&gt;
+</code></pre><p>4.测试类(取出number为1111的学生的信息):</p>
+<pre><code>StudentWithCard student = session.selectOne(&quot;findStudentByCard&quot;,1111);
+System.out.println(student.getStudent().getName());
+</code></pre><p>  <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.11.35.57-image.png" alt="2019-01-23.11.35.57-image.png"></p>
+<h5 id="一对多查询"><a href="#一对多查询" class="headerlink" title="一对多查询"></a>一对多查询</h5><p>查询选修了同一个班级的同学信息<br>  <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.11.42.33-image.png" alt="2019-01-23.11.42.33-image.png"><br>1.首先更改主配置文件加载的<mappers>的内容:    </mappers></p>
+<pre><code>&lt;mappers&gt;
+  &lt;mapper resource=&quot;com/test/pojo/Class.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.创建class实体类    </p>
+<pre><code>package com.test.pojo;
+import java.util.List;
+public class Class {
+    private int id;
+    private String name;
+    private List&lt;Student&gt; students;
+      //geter and seter
+  }
+</code></pre><p>3.映射文件Class.xml            </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.test.pojo&quot;&gt;
+
+    &lt;resultMap id=&quot;Students&quot; type=&quot;Student&quot;&gt;
+        &lt;id column=&quot;student_id&quot; property=&quot;student_id&quot; /&gt;
+        &lt;result column=&quot;name&quot; property=&quot;name&quot; /&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;listStudentByClassName&quot; parameterType=&quot;String&quot; resultMap=&quot;Students&quot;&gt;
+        select student.* from student, class where student.student_id = class.student_id and class.name = #{value}
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre><p>子元素说明:<br>  id: 设置主键字段与模型属性的映射关系<br>  result: 设置普通字段与模型属性的关系            </p>
+<p>配置属性:<br>  property: 映射到JavaBean的属性名称<br>  column: 数据表的列名或者标签别名<br>  javaType: 一个完整的类名,匹配的是一个JavaBean,MyBatis会自动检测</p>
+<p>4.测试类(输出课程为Java课的学生信息):</p>
+<pre><code>List&lt;Student&gt; students = session.selectList(&quot;listStudentByClassName&quot;,&quot;Java课&quot;);
+for (Student student : students){
+    System.out.println(&quot;ID:&quot;+student.getStudent_id()+&quot;,NAME:&quot;+student.getName());
+}  
+</code></pre><p>  <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.12.28.48-image.png" alt="2019-01-23.12.28.48-image.png"></p>
+<p>结合sql语句与映射文件,就可以很方便的操作数据库        </p>
+<h3 id="Mapper-代理实例编写"><a href="#Mapper-代理实例编写" class="headerlink" title="Mapper 代理实例编写"></a>Mapper 代理实例编写</h3><p>1.Mybatis-config.xml        </p>
+<pre><code>&lt;mappers&gt;
+    &lt;mapper resource=&quot;com/test/pojo/StudentMapper.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.StudentMapper.xml        </p>
+<pre><code>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.test.pojo.mapper.StudentMapper&quot;&gt;
+    &lt;!-- 查询学生 --&gt;
+    &lt;select id=&quot;findStudentById&quot; parameterType=&quot;_int&quot; resultType=&quot;com.test.pojo.Student&quot;&gt;
+        SELECT * FROM student WHERE student_id = #{id}
+    &lt;/select&gt;
+    &lt;!-- 增加用户 --&gt;
+    &lt;insert id=&quot;insertStudent&quot; parameterType=&quot;com.test.pojo.Student&quot;&gt;
+        INSERT INTO student(student_id, name) VALUES(#{id}, #{name})
+    &lt;/insert&gt;
+    &lt;!-- 删除用户 --&gt;
+    &lt;delete id=&quot;deleteStudent&quot; parameterType=&quot;_int&quot;&gt;
+        DELETE FROM student WHERE student_id = #{id}
+    &lt;/delete&gt;
+    &lt;!-- 修改用户 --&gt;
+    &lt;update id=&quot;updateStudent&quot; parameterType=&quot;com.test.pojo.Student&quot;&gt;
+        UPDATE student SET name = #{name} WHERE student_id = #{id}
+    &lt;/update&gt;
+&lt;/mapper&gt;
+</code></pre><p>如果需要使用StudentMapper.xml的Mapper代理,需要先定义一个接口,名为StudentMapper,然后新建方法定义,分别对应配置文件的增删改查配置,然后将StudentMapper中的namespace改为接口定义的地方,即可在业务类中使用Mapper代理。<br>3.StudentMapper.java接口类(pojo/mapper/StudentMapper.java)    </p>
+<pre><code>package com.test.pojo.mapper;
+import com.test.pojo.Student;
+public interface StudentMapper {
+
+    // 根据 id 查询学生信息
+    public Student findStudentById(int id) throws Exception;
+
+    // 添加学生信息
+    public void insertStudent(Student student) throws Exception;
+
+    // 删除学生信息
+    public void deleteStudent(int id) throws Exception;
+
+    // 修改学生信息
+    public void updateStudent(Student student) throws Exception;
+}
+</code></pre><p>4.测试类Test.java            </p>
+<pre><code>  package com.test;
+
+import java.io.InputStream;
+import com.test.pojo.Student;
+import com.test.pojo.mapper.StudentMapper;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+
+
+public class Test {
+
+    public static void main(String[] args) throws Exception {
+        String resource = &quot;mybatis-config.xml&quot;;
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession session=sqlSessionFactory.openSession();
+
+        // 获取Mapper代理
+        StudentMapper studentMapper = session.getMapper(StudentMapper.class);
+
+
+        //执行 Mapper 代理独享的查询方法
+        Student student = studentMapper.findStudentById(1);
+        System.out.println(student.getName());
+
+        //insertStudent
+        Student student1 = new Student();
+        student1.setName(&quot;test_1&quot;);
+        student1.setStudent_id(3);
+        studentMapper.insertStudent(student1);
+
+        //deleteStudent
+        studentMapper.deleteStudent(3);
+
+        //updateStudent
+        Student student2 = new Student();
+        student2.setStudent_id(2);
+        student2.setName(&quot;student_2&quot;);
+        studentMapper.updateStudent(student2);
+
+        session.close();
+    }}
+</code></pre><h3 id="注解开发MyBatis"><a href="#注解开发MyBatis" class="headerlink" title="注解开发MyBatis"></a>注解开发MyBatis</h3><p>依照刚才Mapper的例子:<br>1.我们将StudentMapper.xml的配置的sql语句用注释配置在StudentMapper接口中:</p>
+<pre><code>  public interface StudentMapper {
+
+    // 根据 id 查询学生信息
+    @Select(&quot;SELECT * FROM student WHERE student_id = #{id}&quot;)
+    public Student findStudentById(int id) throws Exception;
+
+    // 添加学生信息
+    @Insert(&quot;INSERT INTO student(student_id, name) VALUES(#{id}, #{name})&quot;)
+    public void insertStudent(Student student) throws Exception;
+
+    // 删除学生信息
+    @Delete(&quot;DELETE FROM student WHERE student_id = #{id}&quot;)
+    public void deleteStudent(int id) throws Exception;
+
+    // 修改学生信息
+    @Update(&quot;UPDATE student SET name = #{name} WHERE student_id = #{id}&quot;)
+    public void updateStudent(Student student) throws Exception;
+}
+</code></pre><p>2.修改mybatis-config.xml(将之前配置的映射注释掉)</p>
+<pre><code>&lt;!-- 映射文件 --&gt;
+&lt;mappers&gt;
+    &lt;!--&lt;mapper resource=&quot;com/test/pojo/StudentMapper.xml&quot;/&gt;--&gt;
+    &lt;mapper class=&quot;com.test.pojo.mapper.StudentMapper&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>3.测试类代码不变,即可运行程序            </p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.jianshu.com/p/c77e3691867d" target="_blank" rel="noopener">https://www.jianshu.com/p/c77e3691867d</a><br><a href="http://how2j.cn/k/mybatis/mybatis-tutorial/1087.html" target="_blank" rel="noopener">http://how2j.cn/k/mybatis/mybatis-tutorial/1087.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/23/Spring_mvc/" rel="next" title="ssm基础之Spring MVC">
+                <i class="fa fa-chevron-left"></i> ssm基础之Spring MVC
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/25/ssm整合/" rel="prev" title="ssm整合">
+                ssm整合 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mybatis简介"><span class="nav-number">1.</span> <span class="nav-text">Mybatis简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第一个Mybatis程序"><span class="nav-number">2.</span> <span class="nav-text">第一个Mybatis程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyBatis深入学习"><span class="nav-number">3.</span> <span class="nav-text">MyBatis深入学习</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#编写日志输出环境配置文件"><span class="nav-number">3.1.</span> <span class="nav-text">编写日志输出环境配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MyBatis高级映射"><span class="nav-number">3.2.</span> <span class="nav-text">MyBatis高级映射</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一对一查询"><span class="nav-number">3.2.1.</span> <span class="nav-text">一对一查询</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#使用resultType-只能映射到一个确定的Java包装类"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">使用resultType    (只能映射到一个确定的Java包装类)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用-resultMap-实现"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">使用 resultMap 实现</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#一对多查询"><span class="nav-number">3.2.2.</span> <span class="nav-text">一对多查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mapper-代理实例编写"><span class="nav-number">4.</span> <span class="nav-text">Mapper 代理实例编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解开发MyBatis"><span class="nav-number">5.</span> <span class="nav-text">注解开发MyBatis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">6.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

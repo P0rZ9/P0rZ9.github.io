@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="跟着大佬的几篇文章学习了SpringMVC,记录一下。  SpringMVC:springmvc是一个基于mvc的web框架。 Spring MVC基本配置1.在web.xml配置入口Servlet     &amp;lt;servlet&amp;gt;     &amp;lt;servlet-name&amp;gt;mvc-dispatcher&amp;lt;/servlet-name&amp;gt;      &amp;lt;servlet-cl">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssm基础之Spring MVC">
+<meta property="og:url" content="http://yoursite.com/2019/01/23/Spring_mvc/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="跟着大佬的几篇文章学习了SpringMVC,记录一下。  SpringMVC:springmvc是一个基于mvc的web框架。 Spring MVC基本配置1.在web.xml配置入口Servlet     &amp;lt;servlet&amp;gt;     &amp;lt;servlet-name&amp;gt;mvc-dispatcher&amp;lt;/servlet-name&amp;gt;      &amp;lt;servlet-cl">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-15.21.52.56-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-18.09.59.30-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-20.23.10.44-image.png">
+<meta property="og:updated_time" content="2019-01-23T09:03:55.576Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ssm基础之Spring MVC">
+<meta name="twitter:description" content="跟着大佬的几篇文章学习了SpringMVC,记录一下。  SpringMVC:springmvc是一个基于mvc的web框架。 Spring MVC基本配置1.在web.xml配置入口Servlet     &amp;lt;servlet&amp;gt;     &amp;lt;servlet-name&amp;gt;mvc-dispatcher&amp;lt;/servlet-name&amp;gt;      &amp;lt;servlet-cl">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-15.21.52.56-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/23/Spring_mvc/"/>
+
+
+
+
+
+  <title>ssm基础之Spring MVC | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/23/Spring_mvc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ssm基础之Spring MVC</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-23T08:15:41+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>跟着大佬的几篇文章学习了SpringMVC,记录一下。</p>
+</blockquote>
+<p>SpringMVC:<br>springmvc是一个基于mvc的web框架。</p>
+<h4 id="Spring-MVC基本配置"><a href="#Spring-MVC基本配置" class="headerlink" title="Spring MVC基本配置"></a>Spring MVC基本配置</h4><p>1.在web.xml配置入口Servlet    </p>
+<pre><code>&lt;servlet&gt;
+    &lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt; 
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;    
+</code></pre><p>Servlet名字为:mvc-dispatcher   uri-pattern为/:拦截所有请求<br>2.SpringMVC的映射配置文件<br>在<code>mvc-dispatcher-servlet.xml</code>,配置SpringMVC的一些Controller的初始化,静态文件的映射策略,视图的配置等,这里只说下视图解析器的相关配置:        </p>
+<pre><code>&lt;!--ViewResolver 视图解析器--&gt;
+&lt;!--用于支持Servlet、JSP视图解析--&gt;
+&lt;bean id=&quot;jspViewResolver&quot; class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+    &lt;property name=&quot;viewClass&quot; value=&quot;org.springframework.web.servlet.view.JstlView&quot;/&gt;
+    &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot;/&gt;
+    &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;/&gt;
+&lt;/bean&gt;
+</code></pre><p>在SpringMVC中,controller会返回一个字符串(jsp名字)。在jspViewResolver的2个属性分别为jsp文件的前缀(/WEB-INF/pages/)与后缀(.jsp),这样在controller里面,如果返回的字符串是index(<code>return &quot;index&quot;</code>),SpringMVC就会找到<code>/WEB-INF/pages/index.jsp</code>文件    </p>
+<p>3.Maven自动导入jar包<br> 既然我们做SpringMVC开发,肯定少不了相关的jar包,但是随着项目增大,原来那种下载包然后导入感觉太麻烦,现在使用Maven就变得简单了。    其实maven的工作原理简单理解就是自动将你需要的jar包下载到本地,然后关联到项目中,所有的包都存储在几个中央仓库里面,需要什么包,就取出什么包<br> pom.xml<br> 重点看<code>&lt;dependencies&gt;</code>标签，将对每个包的需求都看成一个依赖<code>&lt;depedency&gt;</code>,定义在<code>&lt;dependencies&gt;</code>中,在每个<code>&lt;dependencies&gt;</code>中,需要提供jar包的groupid,artifactId和version,我们引入一个junit包的格式:</p>
+<pre><code>  &lt;dependency&gt;
+    &lt;groupId&gt;junit&lt;/groupId&gt;
+    &lt;artifactId&gt;junit&lt;/artifactId&gt;
+    &lt;version&gt;3.8.1&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre><p>要引入其他包,查询:<a href="https://mvnrepository.com/" target="_blank" rel="noopener">https://mvnrepository.com/</a><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-15.21.52.56-image.png" alt="2019-01-15.21.52.56-image.png"><br> 在pom.xml中填写<code>&lt;dependencies&gt;</code>标签的内容即可</p>
+<p>4.数据库配置<br>SpringMVC集成Spring Data JPA（由 Hibernate JPA 提供），来进行强大的数据库访问<br>在之前接触MVC模式中,数据库的一张表往往对应着一个JavaBean,在SpringMVC中,这个JavaBean就相当于model,且Idea会自动帮我们生成这些类<br>配置数据库有2种方法,由于刚开始学习,先使用较简单的,直接在<code>mvc-dispatcher-servlet.xml</code>中配置:    </p>
+<pre><code>&lt;bean id=&quot;entityManagerFactory&quot; class=&quot;org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean&quot;&gt;
+        &lt;property name=&quot;persistenceUnitName&quot; value=&quot;defaultPersistenceUnit&quot;/&gt;
+        &lt;property name=&quot;packagesToScan&quot; value=&quot;com.gaussic.model&quot; /&gt;
+        &lt;property name=&quot;jpaVendorAdapter&quot;&gt;
+            &lt;bean class=&quot;org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter&quot;/&gt;
+        &lt;/property&gt;
+        &lt;property name=&quot;jpaProperties&quot;&gt;
+            &lt;props&gt;
+                &lt;prop key=&quot;hibernate.connection.driver_class&quot;&gt;com.mysql.jdbc.Driver&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.url&quot;&gt;jdbc:mysql://localhost:3306/springdemo?useSSL=false&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.username&quot;&gt;root&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.password&quot;&gt;111111&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.show_sql&quot;&gt;false&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.useUnicode&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.characterEncoding&quot;&gt;UTF-8&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.format_sql&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.use_sql_comments&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.hbm2ddl.auto&quot;&gt;update&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.autoReconnect&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.dialect&quot;&gt;org.hibernate.dialect.MySQL5Dialect&lt;/prop&gt;
+            &lt;prop key=&quot;connection.autoReconnectForPools&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;connection.is-connection-validation-required&quot;&gt;true&lt;/prop&gt;
+
+            &lt;prop key=&quot;hibernate.c3p0.validate&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.connection.provider_class&quot;&gt;org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.min_size&quot;&gt;5&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.max_size&quot;&gt;600&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.timeout&quot;&gt;1800&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.max_statements&quot;&gt;50&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.preferredTestQuery&quot;&gt;SELECT 1;&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.testConnectionOnCheckout&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.idle_test_period&quot;&gt;3000&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre><p>修改上面的连接信息,然后使用Persistence工具再进行配置<br>参考:<a href="https://my.oschina.net/gaussik/blog/513444" target="_blank" rel="noopener">https://my.oschina.net/gaussik/blog/513444</a></p>
+<p>5.JPA操作<br>JPA是Java Persistence API的简称,就是定义对数据库的操作。首先新建一个repository包,在repository包中的2个接口:UserRepository，BlogRepository并让其都继承JpaRepository。<br>在JpaRepository中定义了几个简化操作数据库的方法        </p>
+<pre><code>   findAll()：查找表中所有记录；
+findOne(Integer id)：按id来查找某一条记录
+findByXXX(Object xxx)：在这里XXX是一个字段名，根据该字段的值开查找所有记录；
+save()和delete()：添加一条记录以及删除一条记录
+</code></pre><p>除此之外,我们可以在该接口中定义新的方法,如项目中定义的更新用户信息的例子:</p>
+<pre><code>@Repository
+public interface UserRepository extends     JpaRepository&lt;UserEntity, Integer&gt; {
+
+@Modifying      // 说明该方法是修改操作
+@Transactional  // 说明该方法是事务性操作
+// 定义查询
+// @Param注解用于提取参数
+@Query(&quot;update UserEntity us set us.nickname=:qNickname, us.firstName=:qFirstName, us.lastName=:qLastName, us.password=:qPassword where us.id=:qId&quot;)
+public void updateUser(@Param(&quot;qNickname&quot;) String nickname, @Param(&quot;qFirstName&quot;) String firstName,
+                       @Param(&quot;qLastName&quot;) String qLastName, @Param(&quot;qPassword&quot;) String password, @Param(&quot;qId&quot;) Integer id);
+}
+</code></pre><p>然后在controller中使用以下语句更新即可</p>
+<pre><code>userRepository.updateUser(user.getNickname(), user.getFirstName(),
+                user.getLastName(), user.getPassword(), user.getId());
+userRepository.flush();   //刷新
+</code></pre><p>6.SpringMVC 拦截器<br>IndexInterceptor.java            </p>
+<pre><code>package com.interceptor;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+
+
+/*在业务处理器处理请求(controller)之前被调用
+false：从当前拦截器往回执行所有拦截器的afterCompletion()
+true:依次执行,直到preHandle都完成---&gt;controller--&gt;从最后一个往回执行postHandle()---&gt;从最后一个往回执行afterCompletion()*/
+
+
+public class IndexInterceptor extends HandlerInterceptorAdapter {
+
+public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler) throws Exception {
+
+    System.out.println(&quot;preHandle(), 在访问Controller之前被调用&quot;);
+    return true;
+
+}
+
+
+ //controller之后,view之前        
+public void postHandle(HttpServletRequest request,
+                       HttpServletResponse response, Object handler,
+                       ModelAndView modelAndView) throws Exception {
+    System.out.println(&quot;postHandle(), 在访问Controller之后，访问视图之前被调用,这里可以注入一个时间到modelAndView中，用于后续视图显示&quot;);
+    modelAndView.addObject(&quot;date&quot;,&quot;由拦截器生成的时间:&quot; + new Date());
+}
+
+ //view之后,用于清理资源    
+ public void afterCompletion(HttpServletRequest request,
+                            HttpServletResponse response, Object handler, Exception ex)
+        throws Exception {
+
+    System.out.println(&quot;afterCompletion(), 在访问视图之后被调用&quot;);
+}
+
+}
+</code></pre><p>多定义几个拦截器即可理解其执行顺序:<br>在浏览器访问localhost:8080/index时,控制台打印:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-18.09.59.30-image.png" alt="2019-01-18.09.59.30-image.png"></p>
+<h4 id="Spring-MVC请求流程"><a href="#Spring-MVC请求流程" class="headerlink" title="Spring MVC请求流程"></a>Spring MVC请求流程</h4><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-20.23.10.44-image.png" alt="2019-01-20.23.10.44-image.png"></p>
+<p>1.首先,请求离开浏览器后,第一步到达DispatcherServlet,拦截请求并发送给相应的Spring MVC控制器(DispatcherServlet的任务就是拦截请求并发给控制器)<br>2.处理器映射<br>处理器会根据请求携带的url来进行决策请求对应的控制器是哪个,我们配置控制simpleURLHandlerMapping将/hello地址交给helloController处理:</p>
+<pre><code>&lt;bean id=&quot;simpleUrlHandlerMapping&quot;
+      class=&quot;org.springframework.web.servlet.handler.SimpleUrlHandlerMapping&quot;&gt;
+    &lt;property name=&quot;mappings&quot;&gt;
+        &lt;props&gt;
+            &lt;!-- /hello 路径的请求交给 id 为 helloController 的控制器处理--&gt;
+            &lt;prop key=&quot;/hello&quot;&gt;helloController&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;helloController&quot; class=&quot;controller.HelloController&quot;&gt;&lt;/bean&gt;
+</code></pre><p>也可以用注释:</p>
+<pre><code>@Controller
+public class HelloController{
+
+@RequestMapping(value = &quot;/hello&quot;, method = RequestMethod.GET)
+public String hello{
+    //处理逻辑
+    //返回视图名
+}
+</code></pre><p>用了注释就不需要在xml文件中指定controller了,不过需要加上<code>&lt;context:component-scan base-package=&quot;com.controller&quot;/&gt;</code><br>3.控制器处理好相关业务后,将需要返回的数据(Model)和用于渲染输出的视图名(Jsp)返回给DispatcherServlet            </p>
+<pre><code>public String getUsers(ModelMap modelMap) {
+
+    //处理逻辑
+
+    //返回模型数据
+    modelMap.addAttribute(&quot;userList&quot;, userList);
+
+    //返回用于渲染输出的视图名
+    return &quot;admin/users&quot;;
+}
+</code></pre><p>4.视图解析器            </p>
+<pre><code>&lt;bean id=&quot;viewResolver&quot;
+      class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+    &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/page/&quot; /&gt;
+    &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p>这是一个Spring MVC内置的一个视图解析器,该解析器遵循:在controller中返回的视图名上添加前缀和后缀,进而确定一个web应用中视图资源的物理路径。上面的解析器说明需要返回目录webapp/WEB-INF/page/admin下的users.jsp文件                </p>
+<p>5.视图(users.jsp)<br>在视图文件中接收Controller返回的数据(Model)并用于展示    </p>
+<pre><code>&lt;c:forEach items=&quot;${userList}&quot; var=&quot;user&quot;&gt;
+    ${user.id}
+    ${user.nickname}
+    ${user.firstName} ${user.lastName}
+    ${user.password}
+&lt;/c:forEach&gt;
+</code></pre><h4 id="控制器接收请求数据"><a href="#控制器接收请求数据" class="headerlink" title="控制器接收请求数据"></a>控制器接收请求数据</h4><p>1.Servlet原生API        </p>
+<pre><code>@RequestMapping(value = &quot;/admin/login1&quot;, method = RequestMethod.POST)
+public  String loginp1(HttpServletRequest request, HttpServletResponse response){
+    String username1 = request.getParameter(&quot;username1&quot;);
+    String password1 = request.getParameter(&quot;password1&quot;);
+</code></pre><p>2.使用@RequestParam(“前台参数名”)</p>
+<pre><code>@RequestMapping(value = &quot;/admin/login3&quot;, method = RequestMethod.POST)
+public  String loginp3(@RequestParam(&quot;username&quot;) String username3, @RequestParam(&quot;password&quot;) String password3){
+
+    System.out.println(username3);
+    System.out.println(password3);
+    return null;
+}
+</code></pre><p>3.使用同名匹配规则        </p>
+<pre><code>@RequestMapping(value = &quot;/admin/login2&quot;, method = RequestMethod.POST)
+public  String loginp2(String username2,String password2){
+
+    System.out.println(username2);
+    System.out.println(password2);
+    return null;
+}
+</code></pre><p>4.使用模型(model)传参数<br>要求:前台参数名与模型字段名相同。            </p>
+<pre><code>User模型
+package pojo;
+
+public class User {
+
+    String userName;
+    String password;
+
+    /* getter and setter */
+}
+</code></pre><p>在控制器中使用:            </p>
+<pre><code>@RequestMapping(&quot;/login&quot;)
+public String get_(User user){
+    //user.getUsername();
+    //user.getPassword();
+}
+</code></pre><h4 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h4><p>同servlet一样,只对POST方法有效(因为直接处理的request)<br>通过配置SpringMVC的字符编码过滤器来完成,web.xml中添加</p>
+<pre><code>&lt;filter&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;encoding&lt;/param-name&gt;
+        &lt;!-- 设置编码格式 --&gt;
+        &lt;param-value&gt;utf-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+</code></pre><h4 id="控制器回显数据"><a href="#控制器回显数据" class="headerlink" title="控制器回显数据"></a>控制器回显数据</h4><p>1.使用 Servlet 原生 API 来实现    </p>
+<pre><code>@RequestMapping(&quot;/value&quot;)
+public ModelAndView hand(HttpServletRequest request,                              
+HttpServletResponse response) {
+    request.setAttribute(&quot;message&quot;,&quot;成功！&quot;);
+    return new ModelAndView(&quot;test1&quot;);
+}
+</code></pre><p>2.使用 Spring MVC 所提供的 ModelAndView 对象</p>
+<pre><code>@RequestMapping(value = &quot;/admin/login&quot;, method = RequestMethod.GET)
+  public ModelAndView login(HttpRequest request, HttpResponse response){
+      ModelAndView mv = new ModelAndView(&quot;admin/login&quot;);
+      mv.addObject(&quot;message&quot;,&quot;测试&quot;);
+      return mv;
+  }
+</code></pre><p>3.使用 Model 对象(常用)            </p>
+<pre><code>session.setAttribute(&quot;count&quot;,i);
+modelMap.addAttribute(&quot;count&quot;,i);
+</code></pre><p>使用@ModelAttribute注解            </p>
+<pre><code>@ModelAttribute
+public void model(Model model) {
+    model.addAttribute(&quot;message&quot;, &quot;注解成功&quot;);
+}
+
+@RequestMapping(&quot;/value&quot;)
+public String handleRequest() {
+    return &quot;test1&quot;;
+}
+</code></pre><p>这样程序就会在调用该控制器所有的方法前,调用model()方法将message添加到页面参数中去,在视图中可直接调用。</p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><p><a href="https://my.oschina.net/gaussik/blog/385697" target="_blank" rel="noopener">https://my.oschina.net/gaussik/blog/385697</a><br><a href="http://how2j.cn/k/springmvc/springmvc-springmvc/615.html" target="_blank" rel="noopener">http://how2j.cn/k/springmvc/springmvc-springmvc/615.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/10/ssm基础之Spring/" rel="next" title="ssm基础之Spring">
+                <i class="fa fa-chevron-left"></i> ssm基础之Spring
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/23/Mybatis/" rel="prev" title="ssm基础之MyBatis">
+                ssm基础之MyBatis <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-MVC基本配置"><span class="nav-number">1.</span> <span class="nav-text">Spring MVC基本配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring-MVC请求流程"><span class="nav-number">2.</span> <span class="nav-text">Spring MVC请求流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制器接收请求数据"><span class="nav-number">3.</span> <span class="nav-text">控制器接收请求数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#中文乱码问题"><span class="nav-number">4.</span> <span class="nav-text">中文乱码问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制器回显数据"><span class="nav-number">5.</span> <span class="nav-text">控制器回显数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考链接"><span class="nav-number">6.</span> <span class="nav-text">参考链接:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
