@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="断断续续写了有十来天,写这个的目的就是为了熟悉SSM这个框架,很多都参考了how2j的教程,有许多可以改进的地方,后期再维护吧！   项目大概表结构1.表    表名 中文含义 介绍     Category 分类表 存放分类信息   Property 属性表 分类的属性信息   PropertyValue 属性值表 属性值信息   Product 产品表 产品信息   ProductImage">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-02-23T06:12:21.104Z">
+<meta property="og:updated_time" content="2019-02-23T06:20:03.482Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="仿天猫(SSM版)_项目总结">
 <meta name="twitter:description" content="断断续续写了有十来天,写这个的目的就是为了熟悉SSM这个框架,很多都参考了how2j的教程,有许多可以改进的地方,后期再维护吧！   项目大概表结构1.表    表名 中文含义 介绍     Category 分类表 存放分类信息   Property 属性表 分类的属性信息   PropertyValue 属性值表 属性值信息   Product 产品表 产品信息   ProductImage">
@@ -450,10 +450,36 @@ web目录
             include    包含的Jsp文件
 
 pom.xml    Maven配置文件            
-</code></pre><h3 id="典型场景"><a href="#典型场景" class="headerlink" title="典型场景"></a>典型场景</h3><p>前台功能:<br>    用户管理<br>        会员注册<br>        会员登陆<br>        退出登陆<br>        登陆验证拦截器<br>    订单管理<br>        查看订单状态<br>        付款<br>        确认收货<br>        评价订单<br>        删除<br>    购物车<br>        查看购物车<br>        添加删除<br>        结算<br>    产品展示<br>        搜索产品<br>        产品详情<br>        展示产品</p>
-<p>后台功能:<br>    分裂,订单,用户,属性等的CURD操作</p>
-<p>其他:<br>    分页功能<br>    事务管理(创建订单时将OrderItem的oid设置为Order表的id值)<br>    产品搜索(使用比较器)                </p>
-<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><pre><code>1.MVC设计模式            
+</code></pre><h3 id="典型场景"><a href="#典型场景" class="headerlink" title="典型场景"></a>典型场景</h3><pre><code>前台功能:
+    用户管理
+        会员注册
+        会员登陆
+        退出登陆
+        登陆验证拦截器
+    订单管理
+        查看订单状态
+        付款
+        确认收货
+        评价订单
+        删除
+    购物车
+        查看购物车
+        添加删除
+        结算
+    产品展示
+        搜索产品
+        产品详情
+        展示产品
+
+后台功能:    
+    分类,订单,用户,属性等的CURD操作
+
+
+其他:
+    分页功能                
+    事务管理(创建订单时将OrderItem的oid设置为Order表的id值)    
+    产品搜索(使用比较器)                
+</code></pre><h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><pre><code>1.MVC设计模式            
 2.MYBATIS逆向工程重构            
 3.模块化的Jsp开发(将每个页面拆分成几个小的Jsp页面)    
 4.后台所有分页页面使用相同的分页机制(admin_page.jsp)            
@@ -497,6 +523,10 @@ pom.xml    Maven配置文件
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/27/xxe/" rel="prev" title="XXE漏洞总结">
+                XXE漏洞总结 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -573,7 +603,7 @@ pom.xml    Maven配置文件
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -586,7 +616,7 @@ pom.xml    Maven配置文件
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

