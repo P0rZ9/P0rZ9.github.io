@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/xzpq.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="复现序列化漏洞时涉及到了Java反射机制，特学习总结下。   反射反射简介反射（Reflection）是Java的特征之一，它允许运行中的java程序获取自身的信息，并且可以操作类或对象的内部属性。Oracle官网对其其描述：                  Reflection enables Java code to discover information about the field">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java认识 反射">
+<meta property="og:url" content="http://yoursite.com/2019/03/31/Java反射机制/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="复现序列化漏洞时涉及到了Java反射机制，特学习总结下。   反射反射简介反射（Reflection）是Java的特征之一，它允许运行中的java程序获取自身的信息，并且可以操作类或对象的内部属性。Oracle官网对其其描述：                  Reflection enables Java code to discover information about the field">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.12.22.44-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.17.09.02-image.png">
+<meta property="og:updated_time" content="2019-04-02T02:34:26.116Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java认识 反射">
+<meta name="twitter:description" content="复现序列化漏洞时涉及到了Java反射机制，特学习总结下。   反射反射简介反射（Reflection）是Java的特征之一，它允许运行中的java程序获取自身的信息，并且可以操作类或对象的内部属性。Oracle官网对其其描述：                  Reflection enables Java code to discover information about the field">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.12.22.44-image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/31/Java反射机制/"/>
+
+
+
+
+
+  <title>Java认识 反射 | P0rZ9's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">P0rZ9's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/31/Java反射机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="P0rZ9">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="P0rZ9's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java认识 反射</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-31T08:15:41+08:00">
+                2019-03-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>复现序列化漏洞时涉及到了Java反射机制，特学习总结下。</p>
+</blockquote>
+<hr>
+<h1 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h1><h2 id="反射简介"><a href="#反射简介" class="headerlink" title="反射简介"></a>反射简介</h2><p><strong>反射（Reflection）是Java的特征之一，它允许运行中的java程序获取自身的信息，并且可以操作类或对象的内部属性</strong>。<br>Oracle官网对其<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/" target="_blank" rel="noopener">其</a>描述：                </p>
+<blockquote>
+<p>Reflection enables Java code to discover information about the fields, methods and constructors of loaded classes, and to use reflected fields, methods, and constructors to operate on their underlying counterparts, within security restrictions. The API accommodates applications that need access to either the public members of a target object (based on its runtime class) or the members declared by a given class. It also allows programs to suppress default reflective access control.</p>
+</blockquote>
+<p>简单来说就是我们可以在程序运行过程中获取类成员及成员信息</p>
+<p>Java反射提供的功能:            </p>
+<blockquote>
+<p>在运行时判断任意一个对象所属的类(getClass方法)<br>在运行时可根据类名构造任意一个类的对象(Class c = Class.forName(className);)<br>在运行时可判断任意一个类所具有的成员变量及方法<br>在运行时调用任意一个对象的方法</p>
+</blockquote>
+<h3 id="类与反射"><a href="#类与反射" class="headerlink" title="类与反射"></a>类与反射</h3><blockquote>
+<p>在反射中要明白的一个概念是类与实例的关系，即Class与Instance(类是定义，实例是在内存中实际存在的对象)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt;	类的Java对象		</span><br><span class="line">Object		实例的Java对象</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>一个类可以有多个实例(new)，操作某个成员变量或者方法，从类中获得并在实例中执行。以方法为例，因为<strong>方法是在类中定义，所有实例都有这个方法，所以在执行时(invoke)要指定哪个实例执行</strong></p>
+<h3 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h3><p><strong>获取类对象</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class ReflectionMain&#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        String str = &quot;Hello world&quot;;</span><br><span class="line"></span><br><span class="line">        //获取类对象的三种方法</span><br><span class="line">        //用Class类的forName静态方法</span><br><span class="line">        Class c1 = Class.forName(&quot;java.lang.String&quot;);</span><br><span class="line"></span><br><span class="line">        //类的对象的getClass方法</span><br><span class="line">        Class c2 = str.getClass();</span><br><span class="line"></span><br><span class="line">        //通过类的class属性</span><br><span class="line">        Class c3 = String.class;</span><br><span class="line"></span><br><span class="line">        System.out.println(c1.getName()); //java.lang.String</span><br><span class="line">        System.out.println(c2.getName()); //java.lang.String</span><br><span class="line">        System.out.println(c3.getName()); //java.lang.String</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="获取类的构造器"><a href="#获取类的构造器" class="headerlink" title="获取类的构造器"></a>获取类的构造器</h3><p>有4个方法:    </p>
+<blockquote>
+<p>//根据指定参数获得public构造器<br>Constructor getConstructor(Class[] params);<br>//获得public的所有构造器<br>Constructor[] getConstructors();<br>//根据指定参数获得public和非public的构造器<br>Constructor getDeclaredConstructor(Class[] params);<br>//获取所有public和非public的构造器<br>Constructor[] getDeclaredConstructors();</p>
+</blockquote>
+<p>创建一个User类(含几个构造方法):<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class RefUser&#123;</span><br><span class="line">    private int id;</span><br><span class="line">    private String name;</span><br><span class="line">    private String pwd;</span><br><span class="line"></span><br><span class="line">    public RefUser()&#123;&#125;</span><br><span class="line">    public RefUser(int id)&#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">    &#125;</span><br><span class="line">    private RefUser(String name)&#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    public RefUser(int id,String name,String pwd)&#123;</span><br><span class="line">        super();</span><br><span class="line">        this.id = id;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.pwd = pwd;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>获取类的构造方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">class ReflectionMain&#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Class c = RefUser.class;</span><br><span class="line">        //获取public修饰的构造方法集合</span><br><span class="line">        Constructor[] constructors1 = c.getConstructors();</span><br><span class="line">        for (Constructor constructor1 : constructors1)&#123;</span><br><span class="line">            System.out.println(constructor1);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;-----------------------&quot;);</span><br><span class="line">        //获取全部构造方法集合</span><br><span class="line">        Constructor[] constructors2 = c.getDeclaredConstructors();</span><br><span class="line">        for (Constructor constructor2 : constructors2)&#123;</span><br><span class="line">            System.out.println(constructor2);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;-----------------------&quot;);</span><br><span class="line">        //根据传入的参数获取单个构造方法(public修饰)</span><br><span class="line">        Class cls1[] = new Class[] &#123; int.class &#125;;  //paramTypes</span><br><span class="line">        Constructor constructor1 = c.getConstructor(cls1);</span><br><span class="line">        System.out.println(constructor1);</span><br><span class="line">        System.out.println(&quot;-----------------------&quot;);</span><br><span class="line">        //根据传入的参数获取单个构造方法(全部)</span><br><span class="line">        Class cls2[] = new Class[] &#123; String.class &#125;;</span><br><span class="line">        Constructor constructor2 = c.getDeclaredConstructor(cls2);</span><br><span class="line">        System.out.println(constructor2);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出:</span><br><span class="line">public RefUser(int,java.lang.String,java.lang.String)</span><br><span class="line">public RefUser(int)</span><br><span class="line">public RefUser()</span><br><span class="line">-----------------------</span><br><span class="line">public RefUser(int,java.lang.String,java.lang.String)</span><br><span class="line">private RefUser(java.lang.String)</span><br><span class="line">public RefUser(int)</span><br><span class="line">public RefUser()</span><br><span class="line">-----------------------</span><br><span class="line">public RefUser(int)</span><br><span class="line">-----------------------</span><br><span class="line">private RefUser(java.lang.String)</span><br></pre></td></tr></table></figure></p>
+<p>可看到使用<code>getDeclaredConstructors</code>与<code>getDeclaredConstructor</code>可获取到包括private的构造方法。        </p>
+<h3 id="创建实例"><a href="#创建实例" class="headerlink" title="创建实例"></a>创建实例</h3><blockquote>
+<p>通过反射来创建对象一般有两种方式，一种是Class对象的newInstance来创建Class对象对应的实例；第二种是先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance来创建实例。(<strong>由类名得到类的实例</strong>)            </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.12.22.44-image.png" alt="2019-03-31.12.22.44-image.png"></p>
+<p>我们可以看到第二个方法可以用指定的构造器构造类的实例，平常用的比较多。        </p>
+<h3 id="获取类声明的方法"><a href="#获取类声明的方法" class="headerlink" title="获取类声明的方法"></a>获取类声明的方法</h3><blockquote>
+<p>Field getField(String name)   获取指定名字的公共属性<br>Field[] getFields()               获取全部公共属性<br>Field getDeclaredField(String name)  获取单个属性(可获取private修饰的属性)<br>Field[] getDeclaredFields()       获取全部属性</p>
+</blockquote>
+<p>设置几个属性值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class RefUser&#123;</span><br><span class="line">    private int id = 1;</span><br><span class="line">    public String name = &quot;P0rZ9&quot;;</span><br><span class="line">    private String sex = &quot;男&quot;;</span><br><span class="line">    String pwd = &quot;admin&quot;;</span><br></pre></td></tr></table></figure></p>
+<p>获取类声明测试:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">Class c = RefUser.class;</span><br><span class="line">        try &#123;</span><br><span class="line">            //获取单个公共属性</span><br><span class="line">            System.out.println(&quot;单个公共属性:&quot;);</span><br><span class="line">            Field f1 = c.getField(&quot;name&quot;);</span><br><span class="line">            System.out.println(f1);</span><br><span class="line"></span><br><span class="line">            //获取全部公共属性</span><br><span class="line">            Field[] fields1 = c.getFields();</span><br><span class="line">            System.out.println(&quot;全部公共属性:&quot;);</span><br><span class="line">            for (Field field : fields1)&#123;</span><br><span class="line">                System.out.println(field);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //获取单个属性(可为private)</span><br><span class="line">            System.out.println(&quot;单个属性:&quot;);</span><br><span class="line">            Field f2 = c.getDeclaredField(&quot;sex&quot;);</span><br><span class="line">            System.out.println(f2);</span><br><span class="line"></span><br><span class="line">            //获取全部属性</span><br><span class="line">            Field[] fields2 = c.getDeclaredFields();</span><br><span class="line">            System.out.println(&quot;全部属性:&quot;);</span><br><span class="line">            for (Field field : fields2)&#123;</span><br><span class="line">                System.out.println(field);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (NoSuchFieldException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">输出:			</span><br><span class="line">单个公共属性:</span><br><span class="line">public java.lang.String RefUser.name</span><br><span class="line">全部公共属性:</span><br><span class="line">public java.lang.String RefUser.name</span><br><span class="line">单个属性:</span><br><span class="line">private java.lang.String RefUser.sex</span><br><span class="line">全部属性:</span><br><span class="line">private int RefUser.id</span><br><span class="line">public java.lang.String RefUser.name</span><br><span class="line">private java.lang.String RefUser.sex</span><br><span class="line">java.lang.String RefUser.pwd</span><br></pre></td></tr></table></figure></p>
+<h3 id="获取类的方法对象"><a href="#获取类的方法对象" class="headerlink" title="获取类的方法对象"></a>获取类的方法对象</h3><blockquote>
+<p>Method getMethod(“func_name”, Class[] params) 使用特定参数类型，获得命名的公共方法<br>method[] getMethods()    获取类的所有公共方法<br>Method getDeclaredMethod(String name,Class[] params) 获得单个方法(包括private)<br>Method[] getDeclaredMethods()  获得所有方法</p>
+</blockquote>
+<h3 id="调用方法"><a href="#调用方法" class="headerlink" title="调用方法"></a>调用方法</h3><blockquote>
+<p>我们最终需要的是利用反射机制调用方法 使用invoke<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class RefUser&#123;</span><br><span class="line">	public int sub(int a,int b)&#123;</span><br><span class="line">        return a+b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class ReflectionMain&#123;</span><br><span class="line">    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</span><br><span class="line">        </span><br><span class="line">        Class c = RefUser.class;</span><br><span class="line">        //创建实例</span><br><span class="line">        RefUser test = (RefUser) c.newInstance();</span><br><span class="line">        </span><br><span class="line">        //获取add方法</span><br><span class="line">        Method m = c.getMethod(&quot;sub&quot;,new Class[]&#123;int.class,int.class&#125;);</span><br><span class="line">		</span><br><span class="line">        //调用方法  sub(1,2)</span><br><span class="line">        Object result = m.invoke(test,1,2);</span><br><span class="line">        System.out.println(result);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>重写readObject 弹个计算器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">class ReflectCalcObject implements Serializable &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        readObject();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static void readObject()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Method m = java.lang.Runtime.class.getMethod(&quot;exec&quot;, String.class);</span><br><span class="line">            m.invoke(Runtime.getRuntime(),&quot;calc&quot;);</span><br><span class="line"></span><br><span class="line">        &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过运行java.lang.Runtime的.class属性，并使用getMethod方法来获取我们要执行的命令的exec方法，最后通过invoke来注册这个方法并传入参数calc<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-03-31.17.09.02-image.png" alt="2019-03-31.17.09.02-image.png"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/03/Shiro安全框架入门/" rel="next" title="Shiro安全框架入门">
+                <i class="fa fa-chevron-left"></i> Shiro安全框架入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/04/Java_IO流/" rel="prev" title="Java认识 IO流">
+                Java认识 IO流 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">P0rZ9</p>
+              <p class="site-description motion-element" itemprop="description">找回当年那个被寄予厚望的自己</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#反射"><span class="nav-number">1.</span> <span class="nav-text">反射</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#反射简介"><span class="nav-number">1.1.</span> <span class="nav-text">反射简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类与反射"><span class="nav-number">1.1.1.</span> <span class="nav-text">类与反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取类对象"><span class="nav-number">1.1.2.</span> <span class="nav-text">获取类对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取类的构造器"><span class="nav-number">1.1.3.</span> <span class="nav-text">获取类的构造器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建实例"><span class="nav-number">1.1.4.</span> <span class="nav-text">创建实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取类声明的方法"><span class="nav-number">1.1.5.</span> <span class="nav-text">获取类声明的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取类的方法对象"><span class="nav-number">1.1.6.</span> <span class="nav-text">获取类的方法对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用方法"><span class="nav-number">1.1.7.</span> <span class="nav-text">调用方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">1.2.</span> <span class="nav-text">应用</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">P0rZ9</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
