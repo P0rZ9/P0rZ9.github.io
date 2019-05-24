@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="每次分析关于XMLDecoder的反序列化漏洞时，网上文章在分析到XMLDecoder.readObject()就认为会触发，但是之后触发的流程与原因，自己一知半解，遂网上找资料，自己分析记录一波。   基础知识 在Java中解析XML一般有两种方式，DOM和SAX，前者是一次性读取Xml内容存入内存，便于操作，后者是顺序读取内容，遇到什么标签再根据自己的定义操作去解析。XmlDecoder是基">
+<meta name="keywords" content="Java安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XMLDecoder.readObject()解析流程分析">
+<meta property="og:url" content="http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="每次分析关于XMLDecoder的反序列化漏洞时，网上文章在分析到XMLDecoder.readObject()就认为会触发，但是之后触发的流程与原因，自己一知半解，遂网上找资料，自己分析记录一波。   基础知识 在Java中解析XML一般有两种方式，DOM和SAX，前者是一次性读取Xml内容存入内存，便于操作，后者是顺序读取内容，遇到什么标签再根据自己的定义操作去解析。XmlDecoder是基">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.39.05-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.15.55.56-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-06.22.00.28-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.50.20-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.52.43-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.54.51-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.54.45-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.18.04-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.19.12-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.22.38-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.16.03-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.16.34-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.18.43-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.27.48-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.26.11-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.11.00-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.39.04-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.16.54-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.30.36-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.46.18-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.48.14-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.20.24.28-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.21.26.13-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.20.46.38-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.15.29.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.18.46.04-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.20.57.41-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.18.48.49-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.21.00.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.21.28.55-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.11.10.42-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.13.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.14.11-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.25.48-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.40.51-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.13.13.37-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.13.17.24-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.09.02.19-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.14.14.54-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.09.12.17-image.png">
+<meta property="og:updated_time" content="2019-05-23T14:14:00.720Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XMLDecoder.readObject()解析流程分析">
+<meta name="twitter:description" content="每次分析关于XMLDecoder的反序列化漏洞时，网上文章在分析到XMLDecoder.readObject()就认为会触发，但是之后触发的流程与原因，自己一知半解，遂网上找资料，自己分析记录一波。   基础知识 在Java中解析XML一般有两种方式，DOM和SAX，前者是一次性读取Xml内容存入内存，便于操作，后者是顺序读取内容，遇到什么标签再根据自己的定义操作去解析。XmlDecoder是基">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.39.05-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>XMLDecoder.readObject()解析流程分析</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="../../11/SSM框架审计思路/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="../../05/JNDI注入入门/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&text=XMLDecoder.readObject()解析流程分析"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&is_video=false&description=XMLDecoder.readObject()解析流程分析"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=XMLDecoder.readObject()解析流程分析&body=Check out this article: http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&name=XMLDecoder.readObject()解析流程分析&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基础知识"><span class="toc-number">1.</span> <span class="toc-text">基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XMLDecoder解析流程"><span class="toc-number">2.</span> <span class="toc-text">XMLDecoder解析流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#补丁绕过"><span class="toc-number">3.</span> <span class="toc-text">补丁绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2017-3506"><span class="toc-number">3.1.</span> <span class="toc-text">CVE-2017-3506</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2017-10271"><span class="toc-number">3.2.</span> <span class="toc-text">CVE-2017-10271</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-2725"><span class="toc-number">3.3.</span> <span class="toc-text">CVE-2019-2725</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考:</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        XMLDecoder.readObject()解析流程分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-05-10T00:15:41.000Z" itemprop="datePublished">2019-05-10</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/Java安全/">Java安全</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>每次分析关于XMLDecoder的反序列化漏洞时，网上文章在分析到XMLDecoder.readObject()就认为会触发，但是之后触发的流程与原因，自己一知半解，遂网上找资料，自己分析记录一波。</p>
+</blockquote>
+<hr>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><blockquote>
+<p>在Java中解析XML一般有两种方式，DOM和SAX，前者是一次性读取Xml内容存入内存，便于操作，后者是顺序读取内容，遇到什么标签再根据自己的定义操作去解析。XmlDecoder是基于Java自带SAX Xml进行解析的。</p>
+</blockquote>
+<p>Xml格式:<br><code>&lt;元素 属性=&quot;属性值&quot;&gt;文本内容&lt;/元素&gt;</code>        </p>
+<h2 id="XMLDecoder解析流程"><a href="#XMLDecoder解析流程" class="headerlink" title="XMLDecoder解析流程"></a>XMLDecoder解析流程</h2><p>我们创建测试文件，分析流程:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">XmlDecoderDemo.java</span><br><span class="line"></span><br><span class="line">public class XmlDecoderDemo &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        String fileName = &quot;C:/sec/poc.xml&quot;;</span><br><span class="line">        try&#123;</span><br><span class="line">            XmlSeriable(fileName);</span><br><span class="line">        &#125;catch (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void XmlSeriable(String fileName) throws FileNotFoundException &#123;</span><br><span class="line">        BufferedInputStream bos = new BufferedInputStream(new FileInputStream(new File(fileName)));</span><br><span class="line">        XMLDecoder xd = new XMLDecoder(bos);</span><br><span class="line">        xd.readObject();</span><br><span class="line">        xd.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">poc.xml</span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;object class=&quot;java.lang.ProcessBuilder&quot;&gt; </span><br><span class="line">  &lt;array class=&quot;java.lang.String&quot; length=&quot;3&quot;&gt; </span><br><span class="line">    &lt;void index=&quot;0&quot;&gt; </span><br><span class="line">      &lt;string&gt;cmd&lt;/string&gt; </span><br><span class="line">    &lt;/void&gt;  </span><br><span class="line">    &lt;void index=&quot;1&quot;&gt; </span><br><span class="line">      &lt;string&gt;/c&lt;/string&gt; </span><br><span class="line">    &lt;/void&gt;  </span><br><span class="line">    &lt;void index=&quot;2&quot;&gt; </span><br><span class="line">      &lt;string&gt;calc&lt;/string&gt;</span><br><span class="line">    &lt;/void&gt; </span><br><span class="line">  &lt;/array&gt;  </span><br><span class="line">  &lt;void method=&quot;start&quot;/&gt; </span><br><span class="line">&lt;/object&gt;</span><br></pre></td></tr></table></figure></p>
+<p>readObject下个断点跟进:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.39.05-image.png" alt="2019-05-08.10.39.05-image.png"></p>
+<p>中间的调用栈比较深，篇幅有限，我们直接开始关键解析部分。在<code>DocumentElementHandler</code>的<code>startElement</code>方法:        </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.15.55.56-image.png" alt="2019-05-08.15.55.56-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-06.22.00.28-image.png" alt="2019-05-06.22.00.28-image.png"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">startElement():</span><br><span class="line">解析标签,创建对应handler类实例		</span><br><span class="line">设置Owner与Parent		</span><br><span class="line">设置属性值，最后调用对应handler的startElement()</span><br></pre></td></tr></table></figure></p>
+<p>解析<code>&lt;object&gt;</code>标签，创建对应Handler类的实例，调用其<code>addAttribute()</code>方法        </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.50.20-image.png" alt="2019-05-08.10.50.20-image.png"></p>
+<p>跟进<code>addAttribute()</code>，发现无class判断条件，根据继承关系调用其父类即<code>NewElementHandler</code>的<code>addAttribute()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.52.43-image.png" alt="2019-05-08.10.52.43-image.png"></p>
+<p>设置this.type为<code>java.lang.ProcessBuilder</code>对应的class对象(下面会用到)</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.10.54.51-image.png" alt="2019-05-08.10.54.51-image.png"></p>
+<p>最后会调用<code>ObjectElementHandler</code>的<code>startElement()</code>,因为这里没设置条件中的属性，所以直接返回</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.54.45-image.png" alt="2019-05-08.16.54.45-image.png"></p>
+<p>接着解析<code>&lt;array&gt;</code>标签，创建对应handler，设置array标签的属性值    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.18.04-image.png" alt="2019-05-08.11.18.04-image.png"></p>
+<p>可看到不是length属性，则调用其父类方法设置，现在为class属性，调用父类方法</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.19.12-image.png" alt="2019-05-08.11.19.12-image.png"></p>
+<p>设置array的type值为<code>java.lang.String</code>,然后设置length，接着调用<code>ArrayElementHandler</code>的<code>startElement()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.22.38-image.png" alt="2019-05-08.11.22.38-image.png"></p>
+<p>由于继承关系，调用<code>NewElementHandler</code>的<code>getValueObject()</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.16.03-image.png" alt="2019-05-08.16.16.03-image.png"></p>
+<p>继续调用<code>ArrayElementHandler</code>的带参<code>getValueObject()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.16.34-image.png" alt="2019-05-08.16.16.34-image.png"></p>
+<p>因为length为3，所以会返回一个值为String类型，长度为3的数组    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.16.18.43-image.png" alt="2019-05-08.16.18.43-image.png"></p>
+<p>解析<code>&lt;void&gt;</code>标签，创建对应handler。因为继承关系，调用父类<code>ObjectElementHandler</code>的方法设置<code>index</code>属性</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.27.48-image.png" alt="2019-05-08.11.27.48-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.26.11-image.png" alt="2019-05-08.11.26.11-image.png"></p>
+<p>最后由于继承关系会调用<code>ObjectElementHandler</code>的<code>startElement()</code>,因为这里与上面解析<code>&lt;object&gt;</code>的情况类似，所以直接返回。</p>
+<p>继续解析<code>&lt;String&gt;</code>标签，创建对应handler。因为继承关系，会调用父类<code>ElementHandler</code>的<code>startElement()</code>，为空方法，直接返回。接着解析到<code>&lt;string&gt;</code>的闭合标签</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.11.00-image.png" alt="2019-05-08.17.11.00-image.png"></p>
+<p>因为继承关系，调用父类的<code>endElement()</code>方法:    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.11.39.04-image.png" alt="2019-05-08.11.39.04-image.png"></p>
+<p>调用本身的<code>getValueObject()</code>，设置<code>&lt;String&gt;</code>的value值为<code>ValueObject</code>对象的实例(值为cmd)            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.16.54-image.png" alt="2019-05-08.17.16.54-image.png"></p>
+<p>返回到<code>ElementHandler</code>的<code>endElement()</code>，为parent添加参数值(cmd)，最后将当前handler设置为<code>VoidElementHandler</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.30.36-image.png" alt="2019-05-08.17.30.36-image.png"></p>
+<p>继续解析到<code>&lt;/void&gt;</code>，因为继承关系会执行<code>ObjectElementHandler</code>的<code>getValueObject()</code>方法<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.46.18-image.png" alt="2019-05-08.17.46.18-image.png"></p>
+<p>通过<code>getContextBean()</code>获得父类的ContextBean，即String数组</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.17.48.14-image.png" alt="2019-05-08.17.48.14-image.png"></p>
+<p>之后将字符串<code>cmd</code>添加到String数组，创建一个表达式对象，<br>调用其getValue()，通过invoke去执行<code>StringArray.set(&quot;cmd&quot;)</code>，并将返回结果作为参数创建一个ValueObjectImpl类<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.20.24.28-image.png" alt="2019-05-08.20.24.28-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.21.26.13-image.png" alt="2019-05-08.21.26.13-image.png"></p>
+<p>后面两个<code>&lt;void&gt;</code>标签的解析的操作为:<code>StringArray.set(&quot;/c&quot;); StringArray.set(&quot;calc&quot;);</code>，之后解析到<code>&lt;/array&gt;</code>标签时，将数组StringArray添加到parent：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.20.46.38-image.png" alt="2019-05-08.20.46.38-image.png"></p>
+<p>接着解析<code>&lt;void method=&quot;start&quot;/&gt;</code>，设置this.method为start<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.15.29.47-image.png" alt="2019-05-08.15.29.47-image.png"></p>
+<p>解析到<code>&lt;/void&gt;</code>的结束符，由于继承关系，最终会调用<code>ObjectElementHandler</code>的有参<code>getValueObject()</code>方法</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.18.46.04-image.png" alt="2019-05-08.18.46.04-image.png"></p>
+<p>获取<code>ContextBean</code>得到<code>java.lang.ProcessBuilder</code>对象，创建执行表达式<code>Class.new(StringArray)</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.20.57.41-image.png" alt="2019-05-08.20.57.41-image.png"></p>
+<p>接着执行表达式<code>ProcessBuilder.start()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.18.48.49-image.png" alt="2019-05-08.18.48.49-image.png"></p>
+<p>最终使用反射机制调用了start方法<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.21.00.47-image.png" alt="2019-05-08.21.00.47-image.png"></p>
+<p>执行了<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-08.21.28.55-image.png" alt="2019-05-08.21.28.55-image.png"></p>
+<h2 id="补丁绕过"><a href="#补丁绕过" class="headerlink" title="补丁绕过"></a>补丁绕过</h2><h3 id="CVE-2017-3506"><a href="#CVE-2017-3506" class="headerlink" title="CVE-2017-3506"></a>CVE-2017-3506</h3><blockquote>
+<p>XmlDecoder反序列化    </p>
+</blockquote>
+<p>补丁:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">weblogic/wsee/workarea/WorkContextXmlInputAdapter.java:</span><br><span class="line">private void validate(InputStream is) &#123;</span><br><span class="line">      WebLogicSAXParserFactory factory = new WebLogicSAXParserFactory();</span><br><span class="line">      try &#123;</span><br><span class="line">         SAXParser parser = factory.newSAXParser();</span><br><span class="line">         parser.parse(is, new DefaultHandler() &#123;</span><br><span class="line">            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException &#123;</span><br><span class="line">               if(qName.equalsIgnoreCase(&quot;object&quot;)) &#123;</span><br><span class="line">                  throw new IllegalStateException(&quot;Invalid context type: object&quot;);</span><br><span class="line">               &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;);</span><br><span class="line">      &#125; catch (ParserConfigurationException var5) &#123;</span><br><span class="line">         throw new IllegalStateException(&quot;Parser Exception&quot;, var5);</span><br><span class="line">      &#125; catch (SAXException var6) &#123;</span><br><span class="line">         throw new IllegalStateException(&quot;Parser Exception&quot;, var6);</span><br><span class="line">      &#125; catch (IOException var7) &#123;</span><br><span class="line">         throw new IllegalStateException(&quot;Parser Exception&quot;, var7);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>简单来说就是解析到object标签就抛出异常，基于黑名单的过滤不太靠谱，所以后面又有10271出来了                        </p>
+<p>绕过:void new可以代替object标签传入类的实例</p>
+<p><strong>我们分析下void new可以替代object的原因</strong><br>走过一遍上面的解析流程，我们会发现，当<code>&lt;object&gt; &lt;void&gt; &lt;array&gt;</code>存在<code>class</code>属性时，都会去<code>NewElementHandler</code>类中设置<code>type</code>值(当然，<code>&lt;new&gt;</code>也是)，按道理来说都可以替代<code>&lt;object&gt;</code>，但是这里<code>&lt;array&gt;</code>是不可以的，因为它的<code>class</code>属性指的是数组中值的类型，我们分别用<code>&lt;new&gt; &lt;array&gt; &lt;void&gt;</code>代替<code>&lt;object&gt;</code>查看<br>在解析<code>&lt;void method=&quot;start&quot; /&gt;</code>的情况，执行到<code>getContextBean()</code>        </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.11.10.42-image.png" alt="2019-05-09.11.10.42-image.png"></p>
+<p>标签不同最终会去调用对应handler的<code>getValueObject()</code>。</p>
+<p>当使用<code>&lt;new&gt;</code>标签时：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.13.09-image.png" alt="2019-05-09.10.13.09-image.png"></p>
+<p>会返回<code>ProcessBuilder</code>对象的实例，后面用表达式直接去调用<code>start()</code>即可成功执行命令</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.14.11-image.png" alt="2019-05-09.10.14.11-image.png"></p>
+<p>在使用<code>&lt;void&gt;</code>标签时:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.25.48-image.png" alt="2019-05-09.10.25.48-image.png"></p>
+<p>由于继承关系，最终调用还是<code>ObjectElementHandler</code>的<code>getValueObject()</code>，会返回<code>ProcessBuilder</code>对象的实例        </p>
+<p>在使用<code>&lt;array&gt;</code>标签时:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.10.40.51-image.png" alt="2019-05-09.10.40.51-image.png"></p>
+<p>并不是创建我们传入类的实例，而是创建一个数组对象，其数据类型为我们传入的类，这里因为<code>&lt;array&gt;</code>的class属性为<code>java.lang.ProcessBuilder</code>,在向Array添加值时会报错，并不会进入最后的表达式执行阶段        </p>
+<h3 id="CVE-2017-10271"><a href="#CVE-2017-10271" class="headerlink" title="CVE-2017-10271"></a>CVE-2017-10271</h3><p>绕过3506补丁而产生的RCE，具体分析见：</p>
+<p>绕过:利用class标签与<code>&lt;array class=&quot;byte&quot;&gt;</code>，这里大概有3 4种绕过方式，具体分析见后面文章    </p>
+<p>先测试下class标签:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;java&gt;&lt;class&gt;&lt;string&gt;java.lang.ProcessBuilder&lt;/string&gt;&lt;void&gt;&lt;array class=&quot;java.lang.String&quot; length=&quot;3&quot;&gt;&lt;void index=&quot;0&quot;&gt;&lt;string&gt;cmd&lt;/string&gt;&lt;/void&gt;&lt;void index=&quot;1&quot;&gt;&lt;string&gt;/c&lt;/string&gt;&lt;/void&gt;&lt;void index=&quot;2&quot;&gt;&lt;string&gt;calc&lt;/string&gt;&lt;/void&gt;&lt;/array&gt;&lt;void method=&quot;start&quot;/&gt;&lt;/void&gt;&lt;/class&gt;&lt;/java&gt;</span><br></pre></td></tr></table></figure></p>
+<p>与上面相似的poc，执行到<code>getContextBean()</code>需要调用对应handler的<code>getValueObject()</code>,因为继承关系，最终会调用<code>StringElementHandler</code>的<code>getValueObject()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.13.13.37-image.png" alt="2019-05-09.13.13.37-image.png"></p>
+<p>最终返回<code>java.lang.ProcessBuilder</code>对象，然后利用表达式创建<code>ProcessBuilder</code>实例。</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.13.17.24-image.png" alt="2019-05-09.13.17.24-image.png"></p>
+<p>需要注意的是，使用<code>&lt;class&gt;</code>不要使用空格与换行(起码在<code>&lt;class&gt;</code>与<code>&lt;void&gt;</code>之间不要使用)，查看<br><a href="http://www.docjar.com/docs/api/com/sun/beans/decoder/StringElementHandler.html" target="_blank" rel="noopener">StringElementHandler</a><br>文档可发现:            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.09.02.19-image.png" alt="2019-05-10.09.02.19-image.png"></p>
+<p>而<code>ClassElementHandler</code>是<code>StringElementHandler</code>的子类，所以使用空格与换行<code>getContextBean</code>获取到的class会带上<code>\n \t或空格</code>，最终导致<code>ClassNotFoundException</code>错误</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-09.14.14.54-image.png" alt="2019-05-09.14.14.54-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-10.09.12.17-image.png" alt="2019-05-10.09.12.17-image.png"></p>
+<h3 id="CVE-2019-2725"><a href="#CVE-2019-2725" class="headerlink" title="CVE-2019-2725"></a>CVE-2019-2725</h3><p>最新的补丁禁了class标签，目前是安全了，但是基于黑名单的修复 随着业务的拓展，安全研究人员迟早会找到绕过方式，加油加油 争取早日挖到0day            </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考:"></a>参考:</h2><p><a href="https://blog.csdn.net/fnmsd/article/details/89889144" target="_blank" rel="noopener">https://blog.csdn.net/fnmsd/article/details/89889144</a><br><a href="https://paper.seebug.org/909/" target="_blank" rel="noopener">https://paper.seebug.org/909/</a><br><a href="http://xxlegend.com/2017/12/23/Weblogic%20XMLDecoder%20RCE%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">http://xxlegend.com/2017/12/23/Weblogic%20XMLDecoder%20RCE%E5%88%86%E6%9E%90/</a><br><a href="http://xxlegend.com/2019/04/30/CVE-2019-2725%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">http://xxlegend.com/2019/04/30/CVE-2019-2725%E5%88%86%E6%9E%90/</a>            </p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基础知识"><span class="toc-number">1.</span> <span class="toc-text">基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XMLDecoder解析流程"><span class="toc-number">2.</span> <span class="toc-text">XMLDecoder解析流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#补丁绕过"><span class="toc-number">3.</span> <span class="toc-text">补丁绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2017-3506"><span class="toc-number">3.1.</span> <span class="toc-text">CVE-2017-3506</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2017-10271"><span class="toc-number">3.2.</span> <span class="toc-text">CVE-2017-10271</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-2725"><span class="toc-number">3.3.</span> <span class="toc-text">CVE-2019-2725</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考:</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&text=XMLDecoder.readObject()解析流程分析"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&is_video=false&description=XMLDecoder.readObject()解析流程分析"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=XMLDecoder.readObject()解析流程分析&body=Check out this article: http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&title=XMLDecoder.readObject()解析流程分析"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/10/XMLDecoder.readObject()解析流程分析/&name=XMLDecoder.readObject()解析流程分析&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+

