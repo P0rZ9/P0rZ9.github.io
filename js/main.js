@@ -1,6 +1,13 @@
 /**
  * Sets up Justified Gallery.
  */
+ var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?af40191dc3b362fc31509a5fa5832b62";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
 if (!!$.prototype.justifiedGallery) {
   var options = {
     rowHeight: 140,
