@@ -6,23 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.jndi.rmi.object.trustURLCodebase的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最">
+    <meta name="description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.rowset.JdbcRowSetImpl的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最终任意命令执行">
 <meta name="keywords" content="Java安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fastjson反序列化之JdbcRowSetImpl利用链">
 <meta property="og:url" content="http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.jndi.rmi.object.trustURLCodebase的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最">
+<meta property="og:description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.rowset.JdbcRowSetImpl的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最终任意命令执行">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-14.11.43.20-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-14.20.47.45-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-14.11.45.26-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-14.11.47.57-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-14.21.20.28-image.png">
-<meta property="og:updated_time" content="2019-05-23T14:28:40.445Z">
+<meta property="og:updated_time" content="2019-05-31T13:30:15.939Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fastjson反序列化之JdbcRowSetImpl利用链">
-<meta name="twitter:description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.jndi.rmi.object.trustURLCodebase的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最">
+<meta name="twitter:description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.rowset.JdbcRowSetImpl的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最终任意命令执行">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-14.11.43.20-image.png">
     
     
@@ -141,7 +141,7 @@
 </blockquote>
 <hr>
 <h4 id="漏洞简介"><a href="#漏洞简介" class="headerlink" title="漏洞简介"></a>漏洞简介</h4><blockquote>
-<p>本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.jndi.rmi.object.trustURLCodebase的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最终任意命令执行                        </p>
+<p>本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.rowset.JdbcRowSetImpl的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最终任意命令执行                        </p>
 </blockquote>
 <h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>相对于上一个(<code>TemplatesImpl</code>)利用链来说几乎无限制。基于JNDI注入的反序列化，只要<br><code>Json.parse(input)</code>便会RCE</p>
 <h4 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h4><p>在整个攻击流程中，受害者服务器相当于JNDI客户端，攻击者通过搭建一个恶意的RMI服务器实施攻击。            </p>
