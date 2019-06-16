@@ -10,7 +10,7 @@
 <meta name="keywords" content="Java安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java序列化与反序列化漏洞">
-<meta property="og:url" content="http://yoursite.com/2019/02/28/Java反序列化/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2019/02/28/Java反序列化/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="基础知识 Java序列化是指把Java对象转化为字节序列的过程便于保存在内存，文件，数据库种，ObjectOutputStream类的writeObject()方法可以实现序列化Java反序列化是指把字节序列恢复为Java对象的过程，ObjectInputStream类的readObject()方法用于反序列化              实现简单的序列化与反序列化 一个简单的User类(只有实现了">
 <meta property="og:locale" content="default">
@@ -84,16 +84,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/02/28/Java反序列化/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/02/28/Java反序列化/&text=Java序列化与反序列化漏洞"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/02/28/Java反序列化/&is_video=false&description=Java序列化与反序列化漏洞"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Java序列化与反序列化漏洞&body=Check out this article: http://yoursite.com/2019/02/28/Java反序列化/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/02/28/Java反序列化/&name=Java序列化与反序列化漏洞&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/02/28/Java反序列化/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&text=Java序列化与反序列化漏洞"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&is_video=false&description=Java序列化与反序列化漏洞"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java序列化与反序列化漏洞&body=Check out this article: https://p0rz9.github.io/2019/02/28/Java反序列化/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&name=Java序列化与反序列化漏洞&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -271,16 +271,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/02/28/Java反序列化/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/02/28/Java反序列化/&text=Java序列化与反序列化漏洞"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/02/28/Java反序列化/&is_video=false&description=Java序列化与反序列化漏洞"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Java序列化与反序列化漏洞&body=Check out this article: http://yoursite.com/2019/02/28/Java反序列化/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/02/28/Java反序列化/&name=Java序列化与反序列化漏洞&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/02/28/Java反序列化/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&text=Java序列化与反序列化漏洞"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&is_video=false&description=Java序列化与反序列化漏洞"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java序列化与反序列化漏洞&body=Check out this article: https://p0rz9.github.io/2019/02/28/Java反序列化/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&title=Java序列化与反序列化漏洞"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/02/28/Java反序列化/&name=Java序列化与反序列化漏洞&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

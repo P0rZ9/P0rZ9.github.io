@@ -10,7 +10,7 @@
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计Day4 - strpos使用不当引发漏洞">
-<meta property="og:url" content="http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="##Day 4 - False Beard ###题目名字:假胡子代码如下: ##代码大意:题目定义了一个登陆类,在7-10行对传入的参数$user与$pass进行了判断,但是这里的判断是有问题的,这也是本次产生漏洞的地方,11-12行进行了格式化字符串 使用xml结构存储登陆数据,并在16行调用了登陆类进行登陆操作 ##漏洞产生A.我们先来看下strpos()函数 PHP strpos() 函">
 <meta property="og:locale" content="default">
@@ -88,16 +88,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&text=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&is_video=false&description=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计Day4 - strpos使用不当引发漏洞&body=Check out this article: http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&name=代码审计Day4 - strpos使用不当引发漏洞&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&text=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&is_video=false&description=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计Day4 - strpos使用不当引发漏洞&body=Check out this article: https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&name=代码审计Day4 - strpos使用不当引发漏洞&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -311,16 +311,16 @@ elseif($setp == 2)
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&text=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&is_video=false&description=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计Day4 - strpos使用不当引发漏洞&body=Check out this article: http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&name=代码审计Day4 - strpos使用不当引发漏洞&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&text=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&is_video=false&description=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计Day4 - strpos使用不当引发漏洞&body=Check out this article: https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&title=代码审计Day4 - strpos使用不当引发漏洞"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/27/代码审计Day4 - strpos使用不当引发漏洞/&name=代码审计Day4 - strpos使用不当引发漏洞&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

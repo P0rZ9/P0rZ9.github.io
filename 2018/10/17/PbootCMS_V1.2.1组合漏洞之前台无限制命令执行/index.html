@@ -10,7 +10,7 @@
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行">
-<meta property="og:url" content="http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell   PbootCMS分析可参考笔者以前的文章:https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/ ##1.有限制的前台代码执行: 漏洞成因: 在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码">
 <meta property="og:locale" content="default">
@@ -87,16 +87,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&text=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&is_video=false&description=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&body=Check out this article: http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&name=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&text=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&is_video=false&description=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&body=Check out this article: https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&name=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -144,7 +144,7 @@
 <p>跟大佬成功学到一招,insert注入进数据库修改留言状态+系统解析IF标签导致Getshell</p>
 </blockquote>
 <hr>
-<p>PbootCMS分析可参考笔者以前的文章:<br><a href="https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1SQL%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/</a></p>
+<p>PbootCMS分析可参考笔者以前的文章:<br><a href="https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1%E8%AF%A6%E7%BB%86%E5%AE%A1%E8%AE%A1SQL%E6%B3%A8%E5%85%A5/">https://p0rz9.github.io/2018/10/15/PbootCMS_V1.2.1详细审计SQL注入/</a></p>
 <p>##<strong>1.有限制的前台代码执行:</strong></p>
 <p>漏洞成因:</p>
 <pre><code>在前台留言处可利用IF标签插入PHP代码,后台管理员审核(限制)后,在显示到前台时造成代码执行
@@ -246,16 +246,16 @@ POST:content=1&amp;mobile=1&amp;contacts[acode`,`mobile`,`content`,`user_ip`,`us
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&text=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&is_video=false&description=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&body=Check out this article: http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&name=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&text=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&is_video=false&description=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&body=Check out this article: https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&title=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/&name=代码审计 | PbootCMS_V1.2.1组合漏洞--&gt;前台无限制命令执行&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

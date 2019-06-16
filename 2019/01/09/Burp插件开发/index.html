@@ -10,7 +10,7 @@
 <meta name="keywords" content="安全工具">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Burp插件开发">
-<meta property="og:url" content="http://yoursite.com/2019/01/09/Burp插件开发/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2019/01/09/Burp插件开发/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。   关于Java基础语法移步笔者以前文章：https://p0rz9.github.io/2019/01/08/Java语法基础/ Java接口接口简介 接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类">
 <meta property="og:locale" content="default">
@@ -85,16 +85,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/01/09/Burp插件开发/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/01/09/Burp插件开发/&text=Burp插件开发"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/01/09/Burp插件开发/&is_video=false&description=Burp插件开发"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Burp插件开发&body=Check out this article: http://yoursite.com/2019/01/09/Burp插件开发/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/01/09/Burp插件开发/&name=Burp插件开发&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/01/09/Burp插件开发/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&text=Burp插件开发"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&is_video=false&description=Burp插件开发"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Burp插件开发&body=Check out this article: https://p0rz9.github.io/2019/01/09/Burp插件开发/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&name=Burp插件开发&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -142,7 +142,7 @@
 <p>最近学习Java,想起以前大佬写的Burp插件,就照猫画虎写了几个简单的插件,简单记录下过程。</p>
 </blockquote>
 <hr>
-<p>关于Java基础语法移步笔者以前文章：<a href="https://p0rz9.github.io/2019/01/08/Java语法基础/" target="_blank" rel="noopener">https://p0rz9.github.io/2019/01/08/Java语法基础/</a></p>
+<p>关于Java基础语法移步笔者以前文章：<a href="https://p0rz9.github.io/2019/01/08/Java语法基础/">https://p0rz9.github.io/2019/01/08/Java语法基础/</a></p>
 <h3 id="Java接口"><a href="#Java接口" class="headerlink" title="Java接口"></a>Java接口</h3><h4 id="接口简介"><a href="#接口简介" class="headerlink" title="接口简介"></a>接口简介</h4><blockquote>
 <p>接口（英文：Interface）在 Java 编程语言中是一个比较抽象的东西。熟悉 OOP 的同学可以用”类”的思想来理解接口。但是，要明白的是，类与接口有相似的地方同时也有很多不同的地方。</p>
 </blockquote>
@@ -444,16 +444,16 @@ public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequ
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/01/09/Burp插件开发/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/01/09/Burp插件开发/&text=Burp插件开发"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/01/09/Burp插件开发/&is_video=false&description=Burp插件开发"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Burp插件开发&body=Check out this article: http://yoursite.com/2019/01/09/Burp插件开发/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/01/09/Burp插件开发/&name=Burp插件开发&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/01/09/Burp插件开发/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&text=Burp插件开发"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&is_video=false&description=Burp插件开发"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Burp插件开发&body=Check out this article: https://p0rz9.github.io/2019/01/09/Burp插件开发/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&title=Burp插件开发"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/01/09/Burp插件开发/&name=Burp插件开发&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

@@ -10,7 +10,7 @@
 <meta name="keywords" content="Sqli-labs">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Sqli-labs Less7-16">
-<meta property="og:url" content="http://yoursite.com/2018/10/28/Sqli-labs Less7-16/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="这里笔者是从测试的角度来练习的,通过fuzz猜测闭合符号—&amp;gt;猜测sql语句—&amp;gt;注入利用  less-7:访问第7关地址:按照笔者的理解,sql注入的第一步是去想办法闭合语句,我们在平常挖洞的时候测试sql注入时,碰到http://127.0.0.1:86/less-7/index.php?id=1我们往往会加’测试,但是并不是所有的代码都会用单引号去包裹,我们需要更全面的去fuzz">
 <meta property="og:locale" content="default">
@@ -94,16 +94,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&text=Sqli-labs Less7-16"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&is_video=false&description=Sqli-labs Less7-16"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Sqli-labs Less7-16&body=Check out this article: http://yoursite.com/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&name=Sqli-labs Less7-16&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&text=Sqli-labs Less7-16"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&is_video=false&description=Sqli-labs Less7-16"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Sqli-labs Less7-16&body=Check out this article: https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&name=Sqli-labs Less7-16&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -226,7 +226,7 @@ http://127.0.0.1:86/less-7/index.php?id=1&apos;)) order by 4%23
 <pre><code>$sql=&quot;SELECT * FROM users WHERE id=((&apos;$id&apos;)) LIMIT 0,1&quot;;
 </code></pre><h2 id="less-8"><a href="#less-8" class="headerlink" title="less-8:"></a>less-8:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.25.31-image.png" alt="2018-10-28.18.25.31-image.png"></p>
 <p>是个<code>&#39;</code>闭合无疑了</p>
-<p>因为这里正确页面包含<code>you are in</code> 错误页面无此字符串且没显示错误信息,那么这里我们只能使用盲注来获取信息,可参考笔者之前的文章:<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/" target="_blank" rel="noopener">Sqli-labs_Blind_injection_Less5-6</a> </p>
+<p>因为这里正确页面包含<code>you are in</code> 错误页面无此字符串且没显示错误信息,那么这里我们只能使用盲注来获取信息,可参考笔者之前的文章:<br><a href="https://p0rz9.github.io/2018/10/23/Sqli-labs_Blind_injection_Less5-6/">Sqli-labs_Blind_injection_Less5-6</a> </p>
 <p>less-8的sql语句为:</p>
 <pre><code>$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;
 </code></pre><h2 id="less-9"><a href="#less-9" class="headerlink" title="less-9:"></a>less-9:</h2><p>我们先利用上面的方法得到正确的闭合符号:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2018_10/2018-10-28.18.09.07-image.png" alt="2018-10-28.18.09.07-image.png"><br>同样为<code>&#39;</code><br>这里同样没有返回错误信息,再结合less-9的题目:<code>Blind-Time based</code>,我们可知道这里是要使用延时注入的,贴几条payload:</p>
@@ -328,16 +328,16 @@ $passwd=&apos;&quot;&apos;.$passwd.&apos;&quot;&apos;;
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&text=Sqli-labs Less7-16"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&is_video=false&description=Sqli-labs Less7-16"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Sqli-labs Less7-16&body=Check out this article: http://yoursite.com/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/28/Sqli-labs Less7-16/&name=Sqli-labs Less7-16&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&text=Sqli-labs Less7-16"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&is_video=false&description=Sqli-labs Less7-16"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Sqli-labs Less7-16&body=Check out this article: https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&title=Sqli-labs Less7-16"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/28/Sqli-labs Less7-16/&name=Sqli-labs Less7-16&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

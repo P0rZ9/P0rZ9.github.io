@@ -10,7 +10,7 @@
 <meta name="keywords" content="Java安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fastjson反序列化之JdbcRowSetImpl利用链">
-<meta property="og:url" content="http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="关于JNDI注入参考笔者文章JNDI注入入门               漏洞简介 本质上是Fastjson在反序列化时会调用目标类的setter方法，在Gadget com.sun.rowset.JdbcRowSetImpl的setAutoCommit()方法中调用了lookup(),且其参数(DataSourceName的setter方法设置)可控，导致JNDI注入,最终任意命令执行">
 <meta property="og:locale" content="default">
@@ -83,16 +83,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&text=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&is_video=false&description=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Fastjson反序列化之JdbcRowSetImpl利用链&body=Check out this article: http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&name=Fastjson反序列化之JdbcRowSetImpl利用链&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&text=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&is_video=false&description=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Fastjson反序列化之JdbcRowSetImpl利用链&body=Check out this article: https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&name=Fastjson反序列化之JdbcRowSetImpl利用链&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -188,16 +188,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&text=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&is_video=false&description=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Fastjson反序列化之JdbcRowSetImpl利用链&body=Check out this article: http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&name=Fastjson反序列化之JdbcRowSetImpl利用链&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&text=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&is_video=false&description=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Fastjson反序列化之JdbcRowSetImpl利用链&body=Check out this article: https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&title=Fastjson反序列化之JdbcRowSetImpl利用链"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/05/14/Fastjson反序列化之JdbcRowSetImpl/&name=Fastjson反序列化之JdbcRowSetImpl利用链&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

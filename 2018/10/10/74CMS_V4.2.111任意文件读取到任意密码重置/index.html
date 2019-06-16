@@ -10,7 +10,7 @@
 <meta name="keywords" content="CMS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置">
-<meta property="og:url" content="http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="审计cms：74cms_v4.2.111漏洞原理:任意文件读取得到关键Token来修改用户密码。任意文件读取漏洞可参考笔者之前的文章:74CMS_V4.2.111一处任意文件读取附py脚本 代码分析1.在查看Home\Controller\ApiController.class.php代码时:发现编辑会员资料时可用uid修改密码 遂拿起Burp测试一波: 发现显示Token验证失败 我们跟进验证">
 <meta property="og:locale" content="default">
@@ -86,16 +86,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&text=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&is_video=false&description=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&body=Check out this article: http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&name=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&text=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&is_video=false&description=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&body=Check out this article: https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&name=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -140,7 +140,7 @@
 
   <div class="content" itemprop="articleBody">
     <hr>
-<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/" target="_blank" rel="noopener">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
+<p>审计cms：<a href="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:任意文件读取得到关键Token来修改用户密码。<br>任意文件读取漏洞可参考笔者之前的文章:<a href="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111%E4%B8%80%E5%A4%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E9%99%84py%E8%84%9A%E6%9C%AC/">74CMS_V4.2.111一处任意文件读取附py脚本</a></p>
 <p><strong>代码分析</strong><br>1.在查看<code>Home\Controller\ApiController.class.php</code>代码时:<br>发现编辑会员资料时可用<code>uid</code>修改密码<br><img src="http://static.zybuluo.com/chhyx/jnsrp4ki483xp9oi2ryenh2z/image_1cpe26mdq14po5331v8a1gik1132d.png" alt="image_1cpe26mdq14po5331v8a1gik1132d.png-60.4kB"></p>
 <p>遂拿起Burp测试一波:<br><img src="http://static.zybuluo.com/chhyx/gdusp76823b283ot2p7my7ou/image_1cpdu0m528571igq1v16eirejpp.png" alt="image_1cpdu0m528571igq1v16eirejpp.png-84.1kB"></p>
 <p>发现显示Token验证失败 我们跟进验证token的函数<code>check_token()</code>:<br><img src="http://static.zybuluo.com/chhyx/e0p6ctn3i3xh1smil7qikr9d/image_1cpduafgk1ps31irv1c5h12g9f7716.png" alt="image_1cpduafgk1ps31irv1c5h12g9f7716.png-57.2kB"></p>
@@ -224,16 +224,16 @@ get_token($data[&apos;PWDHASH&apos;]);
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&text=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&is_video=false&description=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&body=Check out this article: http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&name=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&text=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&is_video=false&description=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&body=Check out this article: https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&title=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/10/74CMS_V4.2.111任意文件读取到任意密码重置/&name=代码审计 | 74CMS_V4.2.111任意文件读取到任意密码重置&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

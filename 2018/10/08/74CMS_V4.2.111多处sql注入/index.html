@@ -10,7 +10,7 @@
 <meta name="keywords" content="CMS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | 74CMS_V4.2.111多处SQL注入">
-<meta property="og:url" content="http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="漏洞的大致思路: 1.找到think_filter()漏掉的表达式match 2.搜索用到where的参数可控的函数  a.get post cookie header等接收的参数  b.函数直接接收的参数 如  public function($id) 3.用表达式构造sql语句  ##基础知识:总结一下在拿到一个基于TP框架开发的cms 审计流程是怎样的这里以74cm最新版本74cms_Ho">
 <meta property="og:locale" content="default">
@@ -93,16 +93,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&text=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&is_video=false&description=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111多处SQL注入&body=Check out this article: http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&name=代码审计 | 74CMS_V4.2.111多处SQL注入&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&text=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&is_video=false&description=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111多处SQL注入&body=Check out this article: https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&name=代码审计 | 74CMS_V4.2.111多处SQL注入&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -188,7 +188,7 @@ b.查看是否有不使用I函数而带入数据库的 可进行框架注入
 <p>##<strong>本地测试:</strong><br>1.开启debug+trace模式:<br>a.<code>upload\Application\Common\Conf\config.php</code>添加内容:</p>
 <pre><code>&apos;SHOW_PAGE_TRACE&apos;        =&gt;  true,
 </code></pre><p>b.在<code>upload\index.php</code>将<code>APP_DEBUG</code>设置为<code>true</code></p>
-<p>2.查看<code>I</code>函数的过滤情况:<br>这里的漏洞情况与笔者前几天分析的<a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener">thinkphp5.0.10函数过滤不全导致一处盲注</a>思路类似,都是<code>I</code>函数用的过滤函数<code>think_filter()</code>过滤不全导致注入。</p>
+<p>2.查看<code>I</code>函数的过滤情况:<br>这里的漏洞情况与笔者前几天分析的<a href="https://p0rz9.github.io/2018/09/25/thinkphp5.0.10%E5%87%BD%E6%95%B0%E8%BF%87%E6%BB%A4%E4%B8%8D%E5%85%A8%E5%AF%BC%E8%87%B4%E4%B8%80%E5%A4%84%E7%9B%B2%E6%B3%A8/">thinkphp5.0.10函数过滤不全导致一处盲注</a>思路类似,都是<code>I</code>函数用的过滤函数<code>think_filter()</code>过滤不全导致注入。</p>
 <p>think_filter():<br><img src="http://static.zybuluo.com/chhyx/kenyd6ju23x35t1zpnnkcver/image_1cp99h5raa7dr6hebthgk19388i.png" alt="image_1cp99h5raa7dr6hebthgk19388i.png-21.4kB"></p>
 <p>系统自带的表达式:<br><img src="http://static.zybuluo.com/chhyx/2rm44f6cgdjpupj9xft5k245/image_1cp99k0aj19jngo1vtt1sc51cffa2.png" alt="image_1cp99k0aj19jngo1vtt1sc51cffa2.png-17.6kB"></p>
 <p>这里漏掉了多个表达式<br>eq,is,is not,match,match_mode,match_with</p>
@@ -326,16 +326,16 @@ POST: username=test1&amp;password=test1  //注册账户 用户名:test1       �
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&text=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&is_video=false&description=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111多处SQL注入&body=Check out this article: http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/08/74CMS_V4.2.111多处sql注入/&name=代码审计 | 74CMS_V4.2.111多处SQL注入&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&text=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&is_video=false&description=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111多处SQL注入&body=Check out this article: https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&title=代码审计 | 74CMS_V4.2.111多处SQL注入"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111多处sql注入/&name=代码审计 | 74CMS_V4.2.111多处SQL注入&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

@@ -10,7 +10,7 @@
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | ThinkPHP框架 5.0.x sql注入">
-<meta property="og:url" content="http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="笔者也是第一次审计Thinkphp框架,在结合网上视频跟Thinkphp5.0手册,完成了这次sql注入漏洞的审计,学习记录一波。   ##1.thinkphp基础知识: thinkphp初始目录结构:  project  应用部署目录 ├─application           应用目录（可设置） │  ├─common             公共模块目录（可更改） │  ├─index">
 <meta property="og:locale" content="default">
@@ -85,16 +85,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&text=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&is_video=false&description=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP框架 5.0.x sql注入&body=Check out this article: http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&name=代码审计 | ThinkPHP框架 5.0.x sql注入&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&text=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&is_video=false&description=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP框架 5.0.x sql注入&body=Check out this article: https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&name=代码审计 | ThinkPHP框架 5.0.x sql注入&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -312,16 +312,16 @@ protected function parseData($data, $options)
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&text=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&is_video=false&description=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP框架 5.0.x sql注入&body=Check out this article: http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/15/ThinkPHP框架 5.0.x sql注入/&name=代码审计 | ThinkPHP框架 5.0.x sql注入&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&text=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&is_video=false&description=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP框架 5.0.x sql注入&body=Check out this article: https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&title=代码审计 | ThinkPHP框架 5.0.x sql注入"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/15/ThinkPHP框架 5.0.x sql注入/&name=代码审计 | ThinkPHP框架 5.0.x sql注入&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

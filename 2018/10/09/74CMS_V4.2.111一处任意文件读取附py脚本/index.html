@@ -10,7 +10,7 @@
 <meta name="keywords" content="CMS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本">
-<meta property="og:url" content="http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="审计cms：74cms_v4.2.111漏洞原理:copy()操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码 ##1.基础知识:74cms是基于ThinkPHP3.2.3而建Thinkphp的一些基本操作可参考笔者以前的文章:https://p0rz9.github.io/2018/09/28/TP框架数据操作/ ##2.环境搭建:骑士官网下载最新版本74cms_v">
 <meta property="og:locale" content="default">
@@ -82,16 +82,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&text=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&is_video=false&description=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&body=Check out this article: http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&name=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&text=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&is_video=false&description=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&body=Check out this article: https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&name=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -136,7 +136,7 @@
 
   <div class="content" itemprop="articleBody">
     <hr>
-<p>审计cms：<a href="https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111%E5%A4%9A%E5%A4%84sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">74cms_v4.2.111</a><br>漏洞原理:<code>copy()</code>操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码</p>
+<p>审计cms：<a href="https://p0rz9.github.io/2018/10/08/74CMS_V4.2.111%E5%A4%9A%E5%A4%84sql%E6%B3%A8%E5%85%A5/">74cms_v4.2.111</a><br>漏洞原理:<code>copy()</code>操作的两个参数可控,导致可将目标文件内容复制到图片,然后下载图片进行读取源码</p>
 <p>##<strong>1.基础知识:</strong><br>74cms是基于ThinkPHP3.2.3而建<br><code>Thinkphp</code>的一些基本操作可参考笔者以前的文章:<br><a href="http://static.zybuluo.com/chhyx/x7syyvsfcuec6nhlrsdkatbx/image_1cpc6ufrd7gugtklt11fud1lku9.png" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/28/TP框架数据操作/</a></p>
 <p>##<strong>2.环境搭建:</strong><br><a href="http://www.74cms.com/download/index.html" target="_blank" rel="noopener">骑士官网</a>下载最新版本<code>74cms_v4.2.111</code>安装到本地即可。</p>
 <p>##<strong>3.漏洞利用:</strong><br>因为笔者是本地测试的,并没有开启短信服务,所以在这里先注释掉对验证码的判断来完成漏洞利用<br><img src="http://static.zybuluo.com/chhyx/tty53uwi3zfjnmism4ic3jcm/image_1cpcbkt29r67qm81tiassp2ve25.png" alt="image_1cpcbkt29r67qm81tiassp2ve25.png-75.4kB"></p>
@@ -281,16 +281,16 @@ main()
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&text=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&is_video=false&description=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&body=Check out this article: http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&name=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&text=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&is_video=false&description=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&body=Check out this article: https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&title=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/10/09/74CMS_V4.2.111一处任意文件读取附py脚本/&name=代码审计 | 74CMS_V4.2.111一处任意文件读取附py脚本&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

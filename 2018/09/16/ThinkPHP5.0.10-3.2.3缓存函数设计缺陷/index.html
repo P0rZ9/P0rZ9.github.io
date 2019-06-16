@@ -10,7 +10,7 @@
 <meta name="keywords" content="代码审计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷">
-<meta property="og:url" content="http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/index.html">
+<meta property="og:url" content="https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
 <meta property="og:description" content="虽然漏洞利用条件苛刻,一般做开发的没人会这么部署,但是对于学习thinkphp框架审计还是有意义的,就当练手了   审计cms:Thinkphp 5.0.10漏洞利用条件: 1.缓存使用文件方式并且缓存目录暴露在web目录下面 2.攻击者要能猜到开发者使用的缓存key ##1.基础知识:助手函数cache()： 其他基础知识可参考文章:https://p0rz9.github.io/2018/0">
 <meta property="og:locale" content="default">
@@ -84,16 +84,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&text=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&is_video=false&description=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&body=Check out this article: http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&name=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&text=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&is_video=false&description=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&body=Check out this article: https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&name=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -145,7 +145,7 @@
 <pre><code>1.缓存使用文件方式并且缓存目录暴露在web目录下面
 2.攻击者要能猜到开发者使用的缓存key
 </code></pre><p>##<strong>1.基础知识:</strong><br>助手函数cache()：<br><img src="http://static.zybuluo.com/chhyx/ksell9euf1bwfuwk0qo1xrj7/image_1cng34cnd148m1g2c1lnv15n6f3813.png" alt="image_1cng34cnd148m1g2c1lnv15n6f3813.png-41kB"></p>
-<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a></p>
+<p>其他基础知识可参考文章:<br><a href="https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/">https://p0rz9.github.io/2018/09/15/ThinkPHP%E6%A1%86%E6%9E%B6%205.0.x%20sql%E6%B3%A8%E5%85%A5/</a></p>
 <p>##<strong>2.环境搭建</strong><br>根据官网下的<a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">安装包</a>安装成功后,根据官网的手册我们用助手函数cache()简单写一个缓存使用方法<br>index.php:</p>
 <pre><code>#thinkphp5_0_10\application\index\controller\Index.php
 &lt;?php
@@ -287,16 +287,16 @@ protected function getCacheKey($name, $auto = false)
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&text=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&is_video=false&description=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&body=Check out this article: http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&name=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&text=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&is_video=false&description=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&body=Check out this article: https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&title=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2018/09/16/ThinkPHP5.0.10-3.2.3缓存函数设计缺陷/&name=代码审计 | ThinkPHP5.0.10-3.2.3缓存函数设计缺陷&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
