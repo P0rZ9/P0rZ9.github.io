@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是计算机的一个应用进程与另一台主机的应用进程交换数据.运输层的两个主要协议:用户数据报协议UDP与传输控制协议TCP           端口 端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两">
+<meta name="keywords" content="回炉重造">
+<meta property="og:type" content="article">
+<meta property="og:title" content="回炉重造-网络部分(物理层)">
+<meta property="og:url" content="https://p0rz9.github.io/2019/09/23/运输层/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是计算机的一个应用进程与另一台主机的应用进程交换数据.运输层的两个主要协议:用户数据报协议UDP与传输控制协议TCP           端口 端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.21.36.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.20.38.58-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.20.39.22-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.19.08.50-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.20.23.53-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.20.24.15-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.21.10.23-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.18.55.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.18.33.05-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.18.32.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.16.51.58-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.07.36.33-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.15.04.46-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.15.28.10-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.16.24.41-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.16.43.55-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.53-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.08-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.25-image.png">
+<meta property="og:updated_time" content="2019-09-24T04:40:47.891Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="回炉重造-网络部分(物理层)">
+<meta name="twitter:description" content="运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是计算机的一个应用进程与另一台主机的应用进程交换数据.运输层的两个主要协议:用户数据报协议UDP与传输控制协议TCP           端口 端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.21.36.09-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>回炉重造-网络部分(物理层)</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="../../15/网络层/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/23/运输层/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/23/运输层/&text=回炉重造-网络部分(物理层)"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/23/运输层/&is_video=false&description=回炉重造-网络部分(物理层)"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(物理层)&body=Check out this article: https://p0rz9.github.io/2019/09/23/运输层/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/23/运输层/&name=回炉重造-网络部分(物理层)&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#运输层"><span class="toc-number">1.</span> <span class="toc-text">运输层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#端口"><span class="toc-number">1.0.1.</span> <span class="toc-text">端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UDP"><span class="toc-number">1.1.</span> <span class="toc-text">UDP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP"><span class="toc-number">1.2.</span> <span class="toc-text">TCP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可靠传输的工作原理"><span class="toc-number">1.3.</span> <span class="toc-text">可靠传输的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#停止等待协议"><span class="toc-number">1.3.1.</span> <span class="toc-text">停止等待协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP报文首部"><span class="toc-number">1.4.</span> <span class="toc-text">TCP报文首部</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最大报文长度MSS"><span class="toc-number">1.4.1.</span> <span class="toc-text">最大报文长度MSS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可靠传输的实现"><span class="toc-number">1.5.</span> <span class="toc-text">可靠传输的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#缓存与窗口的关系"><span class="toc-number">1.5.1.</span> <span class="toc-text">缓存与窗口的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字节为单位的滑动窗口"><span class="toc-number">1.5.2.</span> <span class="toc-text">字节为单位的滑动窗口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#超时重传时间的确定"><span class="toc-number">1.5.3.</span> <span class="toc-text">超时重传时间的确定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#选择确认SACK字段"><span class="toc-number">1.5.4.</span> <span class="toc-text">选择确认SACK字段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的流量控制"><span class="toc-number">1.6.</span> <span class="toc-text">TCP的流量控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP的传输效率"><span class="toc-number">1.6.1.</span> <span class="toc-text">TCP的传输效率</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的拥塞控制"><span class="toc-number">1.7.</span> <span class="toc-text">TCP的拥塞控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#慢开始与拥塞避免算法"><span class="toc-number">1.7.1.</span> <span class="toc-text">慢开始与拥塞避免算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主动队列管理AQM"><span class="toc-number">1.7.2.</span> <span class="toc-text">主动队列管理AQM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的运输连接管理"><span class="toc-number">1.8.</span> <span class="toc-text">TCP的运输连接管理</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        回炉重造-网络部分(物理层)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-09-23T00:15:41.000Z" itemprop="datePublished">2019-09-23</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/回炉重造/">回炉重造</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a>运输层</h1><blockquote>
+<p>运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是<strong>计算机的一个应用进程与另一台主机的应用进程交换数据</strong>.运输层的两个主要协议:<strong>用户数据报协议UDP与传输控制协议TCP</strong>        </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.21.36.09-image.png" alt="2019-09-19.21.36.09-image.png"></p>
+<h3 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h3><blockquote>
+<p>端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两个计算机中的进程要相互通信,需要知道对方IP(为了找到主机)与端口(为了找见主机上的进程).                </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1.服务端端口:分为两类(系统/熟知端口号与客户端端口号),前者范围0-1023后者范围1024-49151.			</span><br><span class="line">熟知端口号:</span><br><span class="line">FTP 21</span><br><span class="line">TELNET 23</span><br><span class="line">SMTP 25</span><br><span class="line">DNS 53</span><br><span class="line">TFTP 69</span><br><span class="line">HTTP 80 SNMP 161</span><br><span class="line">HTTPS 443</span><br><span class="line"></span><br><span class="line">2.客户端端口:数值为49152-65535. 由于这类端口号仅仅在客户端运行时才动态选择,因此又叫暂时端口号(平常出网用的端口号)</span><br></pre></td></tr></table></figure>
+<h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><blockquote>
+<p>用户数据报协议特点：<br>1.无连接的,发送数据之前不需要建立连接,减少了开销与时延<br>2.尽最大努力交付. 不保证可靠交付,省去了维持复杂的状态连接表<br>3.面向报文的. <strong>UDP一次交付一个完整的报文 且只负责传输</strong> UDP对于上面应用进程交下来的报文,添加上UDP首部后直接交给I网络层的IP协议(保留报文边界,意思是UDP不会对报文合并或拆分,应用层交给UDP多大报文,UDP照样发送,因此必须选择合适大小的报文,太大在网络层要分片,影响效率,太小显得相对IP首部太长,效率也低)<br>4.无拥塞控制. 说明网络拥塞,并不会使源主机的发送速率降低.这对于很多实应用是很重要的(IP电话 实时视频会议允许丢失一些数据,但是不允许又太大的时延)<br>5.UDP支持1对1 1对多 多对1 多对多等通信(TCP只支持1对1通信)<br>6.首部开销小(只有8字节   相对于TCP固定首部20字节来说)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.20.38.58-image.png" alt="2019-09-19.20.38.58-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UDP数据报由首部字段(8字节)+数据字段组成</span><br><span class="line">源端口:不需要时写全0</span><br><span class="line">目的端口:目的端口号.如果接收方发现目的端口号不对时(端口号没有对应进程),就丢弃报文,并由网际控制层报文协议ICMP发送&quot;端口不可达&quot;差错报文(**traceroute就使用的这个原理**)				</span><br><span class="line">长度:UDP用户数据报长度(最小值为8 允许仅有首部)					</span><br><span class="line">检验和:检测UDP数据报是否有差错,有就丢弃,检验方法如下.**IP数据报的检验和字段只检查首部,而UDP的检验和是把首部及数据部分一起都检验.**</span><br></pre></td></tr></table></figure>
+<p>对于检验和:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在UDP用户数据报首部添加12字节的&quot;伪首部&quot;(临时添加,不向下传不向上交,仅仅为了计算检验和),内容(源 目的IP地址 17代表UDP协议 UDP长度)	</span><br><span class="line"></span><br><span class="line">将全0放入检验和字段,将伪首部+整个数据报分成许多16位的字串,按照**二进制反码计算出16位字的和,将和的二进制反码写入检验和字段;**			</span><br><span class="line">接收方在收到后按二进制反码求出这些16字节的和,最后结果为1则表示无差错.若有则丢弃</span><br></pre></td></tr></table></figure></p>
+<p>课本题目参考:<br><a href="https://www.cnblogs.com/jcchan/p/10400504.html" target="_blank" rel="noopener">https://www.cnblogs.com/jcchan/p/10400504.html</a></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.20.39.22-image.png" alt="2019-09-19.20.39.22-image.png"></p>
+<h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><blockquote>
+<p>TCP协议特点:<br>1.面向连接:意思就是在使用TCP前必须先建立TCP连接,通信结束必须先释放连接<br>2.提供<strong>可靠交付</strong>:无差错,不丢失,不重复且按序到达<br>3.点对点通信:每条TCP连接只有两个<strong>端点(此处的端点为套接字Socket(Ip:Port))</strong><br>4.提供<strong>全双工通信</strong>:发送和接收方可同时接收与发送数据,因为TCP两端设有发送缓存与接收缓存(可临时存放数据)<br>5.面向字节流:<strong>面向字节流的含义:虽然应用程序与TCP缓存的交互是数据块,但是在TCP看来,这些只是一串无结构的字节序列,TCP并不知道它的含义,只负责传送,</strong>.所以可以说<strong>站在TCP的角度理解:发送方的应用进程将字节流写入TCP发送缓存,接收方的应用进程从接收方缓存中读取字节流(流指的是从发送方的应用进程流出和流入到接收方应用进程的字节序列)</strong> 下图可以说明这点(注意图中的连接为逻辑连接,不是真正的物理连接,还需要传到网路层,加上IP首部发到链路层,加上链路层首尾部发送到物理链路)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.19.08.50-image.png" alt="2019-09-18.19.08.50-image.png"></p>
+<blockquote>
+<p>从上图还可以看出:<strong>TCP与UDP在发送报文时所采用的方式完全不同,TCP是根据接收方发过来的窗口值和当前网络情况决定一个报文段的长度.而UDP的报文长度是应用进程给出的</strong>                            </p>
+</blockquote>
+<h2 id="可靠传输的工作原理"><a href="#可靠传输的工作原理" class="headerlink" title="可靠传输的工作原理"></a>可靠传输的工作原理</h2><p>理想的传输条件:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.传输信道不产生差错</span><br><span class="line">2.不论发送方以多快的速度发送数据,接收方总是可以来得及处理</span><br></pre></td></tr></table></figure></p>
+<p>在现实中,这种情况的网络几乎不会出现,TCP为了保证可靠传输,给出了自己的答案:<strong>重传机制</strong>及<strong>停止等待</strong>协议.                </p>
+<h3 id="停止等待协议"><a href="#停止等待协议" class="headerlink" title="停止等待协议"></a>停止等待协议</h3><blockquote>
+<p><strong>停止等待协议就是:每发送完一个分组就停止发送,等待对方确认,收到确认后再发送下一个分组</strong>                    </p>
+</blockquote>
+<p>会碰到三种情况:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.20.23.53-image.png" alt="2019-09-18.20.23.53-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.20.24.15-image.png" alt="2019-09-18.20.24.15-image.png"></p>
+<blockquote>
+</blockquote>
+<p>1.无差错情况:如图a,A发了M1就停止,等收到B对M1的确认后再发送M2.<br>2.出现差错:B收到有差错的分组(直接丢弃,不做其他)或者M1在传输过程中丢了.A只要超过时间(超时计时器)没有收到确认信息,就认为刚才分组丢失了,会重传刚才的分组直到收到确认.<br>3.确认丢失与确认迟到:如图c,d.对于前者,A在超时重传时间内并没有收到确认就重传分组,B在收到该重复的M1时会有两个动作:<strong>丢弃重复分组M1(不向上层交付);向A发送确认;</strong>.而后者情况是B对分组M1的确认迟到了,A重传了M1且收到了重复的确认,A收下后直接丢弃,B收到重复也直接丢弃且重复发送对M1的确认</p>
+<p><strong>利用上述确认与重传机制,TCP在不可靠的传输网络上实现了可靠的通信.上面的这种可靠传输协议常称为自动重传请求ARQ。</strong></p>
+<blockquote>
+<p><strong>停止等待下协议优点是简单,缺点是:信道利用率低,一次只发送一条消息.为了解决这个问题,需要采用流水线传输(每次发送多个分组,不必每次发完一个等待确认再发送),这时就需要用到连续ARQ协议与滑动窗口了</strong></p>
+</blockquote>
+<p>连续ARQ协议：发送方维持了一个发送窗口,位于窗口内的分组都可连续发送出去,不需要再等确认传过来了,大大提高了信道利用率.且采用了<strong>累计确认(不必对收到的分组逐个确认,在收到几个分组后,对按序到达的最后一个分组发送确认)</strong> 的方式.                    </p>
+<p>滑动窗口协议:之所以叫滑动窗口是因为窗口是不停向前滑动的,该协议可以加速数据传输,也起到了流量控制的作用<br>(?????????????????????)</p>
+<h2 id="TCP报文首部"><a href="#TCP报文首部" class="headerlink" title="TCP报文首部"></a>TCP报文首部</h2><p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.21.10.23-image.png" alt="2019-09-18.21.10.23-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">源端口与目的端口:各占2个字节,写入源端口与目的端口</span><br><span class="line">序号: 4字节 TCP是面向字节流的,在传输的字节流需要为每个字节按顺序设置编号.**该字段表示本报文段的第一个字节序号**		</span><br><span class="line">确认号:** 4字节 期望下一次收到的报文段的第一个字节的序号值** 确认号为N表示:(N-1)的数据已经收到,希望下一个数据报首序号为N</span><br><span class="line">		B收到了A的数据报(序列号字段值为500,长度200),于是B给发送数据报(确认号为701,表示700以前的数据收到了,期望A发的下一个数据报是以序号701开头)</span><br><span class="line">数据偏移: 4字节 表示数据部分在TCP数据报的位置,**可表示首部长度,单位是4个字节(4个二进制数表示最大值为15 即60字节 20字节的固定首部+最长40字节的选项长度)**							</span><br><span class="line">保留:占6位,保留今后使用,先置0				</span><br><span class="line">6个控制位:</span><br><span class="line">	URG: 紧急位  当URG=1,表示有紧急数据要发送,即不按原来顺序排队尽快发送.且在窗口为0时也会传送(优先级较高)(应用:平常切断程序用的Control+C就使用的这个字段)						</span><br><span class="line">    ACK: 确认位  当ACK=1时,上面说的确认位才有意义.**TCP规定:连接建立后,所有数据报都必须把ACK置为1**			 </span><br><span class="line">    PSH: 推送位  当两个进程间进行交互时,一方希望键入一个命令后立即收到响应.这种情况下将**PSH=1,立即创建报文发送出去,接受方在 收到PSH=1的数据报会尽快交给上层应用进程(不等接收缓存满了再发)**</span><br><span class="line">	RST: 复位位  当RST=1时,表明连接主机出现差错,必须释放连接然后重新连接.			</span><br><span class="line">    SYN: 同步位  连接建立时用来同步序号,当**SYN=1表示这是一个连接请求和连接接收报文(SYN=1&amp;ACK=0表明是连接请求报文,SYN=1&amp;ACK=1表示为连接接收报文)**</span><br><span class="line">    FIN: 结束位  释放连接时使用.当FIN=1,表示发送该数据报的主机已经发送完毕,请求结束连接				</span><br><span class="line">窗口: 2字节  发送者的接收窗口大小.该字段动态变化</span><br><span class="line">	  B向A发送的数据报(确认号为701,窗口字段为1000),B告诉A:从701算起,我还能接收1000个字节(即可以传送701-1700的数据).</span><br><span class="line">检验和: 2字节 检验首尾部,与UDP类似(将伪首部协议字段17--&gt;6  第5字段的UDP长度改为TCP长度)						</span><br><span class="line">紧急指针: 2字节 只有在URG=1的时候才有意义,表示紧急数据的长度</span><br><span class="line">选项: 长度可变,最大长度为40字节. 当选项字段时,首部长度为20字节		</span><br><span class="line">填充:  为了对齐4字节</span><br></pre></td></tr></table></figure>
+<h3 id="最大报文长度MSS"><a href="#最大报文长度MSS" class="headerlink" title="最大报文长度MSS"></a>最大报文长度MSS</h3><blockquote>
+<p><strong>最大报文长度MSS表示数据部分的长度,需要选择合适长度的MSS(太小–&gt;首尾部比数据部分长–&gt;利用率低  太大–&gt;需要在IP层进行分片–&gt;额外开销增大)</strong>.因此如果主机未设置MSS,默认未536,因此在互联网上的主机都可以接收的报文长度为567(536+20+20 TCP首部+IP数据报首部).                    </p>
+</blockquote>
+<p>选项字段:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">窗口扩大: TCP首部的窗口字段为16位,可表示最大为64K字节,对于现在的网络已经不够用了,**新增的窗口扩大字段占3字节,其中一个字节表示移位值S(最大表示14),增大到(2^30-1)**</span><br><span class="line">时间戳选项: 占10字节 最主要字段为时间戳值字段(4字节)和时间戳回送回答字段(4字节),时间戳选项字段功能如下：			</span><br><span class="line">			1.计算往返时间RTT</span><br><span class="line">            2.处理TCP序号超过2^32的情况(序号位只有32位,在高速网络中很可能会重复使用,为了区分两个序号相同的报文段,可以使用时间戳字段)</span><br></pre></td></tr></table></figure></p>
+<h2 id="可靠传输的实现"><a href="#可靠传输的实现" class="headerlink" title="可靠传输的实现"></a>可靠传输的实现</h2><h3 id="缓存与窗口的关系"><a href="#缓存与窗口的关系" class="headerlink" title="缓存与窗口的关系"></a>缓存与窗口的关系</h3><blockquote>
+<p>为了更深的理解TCP发送数据的过程,我们看下缓存与窗口的关系.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.18.55.47-image.png" alt="2019-09-18.18.55.47-image.png"></p>
+<blockquote>
+<p>发送缓存用来暂时存放:包括已发送但还没确认的数据和需要发送的数据.<br>接收缓存用来存放:包括按序到达但还没交付给上层的数据和未按序到达的数据.</p>
+</blockquote>
+<p>图b指出了下一个期望收到的字节号,就是接收方给发送方的回应包中的确认字段值.</p>
+<p><strong>注意: TCP要求接收方具有累计确认的功能</strong>:就是接收方在合适的时间发送确认信息,也可以在需要发送数据时把确认捎带上(<strong>TCP规定:确认推迟的时间应该小于0.5s,否则由于接收方的确认推迟导致重传,得不偿失;若收到一连串具有最大长度的报文段,则必须每隔一个报文段就发送一个确认.</strong>)</p>
+<h3 id="字节为单位的滑动窗口"><a href="#字节为单位的滑动窗口" class="headerlink" title="字节为单位的滑动窗口"></a>字节为单位的滑动窗口</h3><blockquote>
+<p>利用滑动窗口(以字节为单位)进行,在等到接收方返回确认数据报后,滑动窗口向前移动发送下一波数据,如果没收到,根据重传时间进行重传,保证了可靠传输.                </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.18.33.05-image.png" alt="2019-09-18.18.33.05-image.png"></p>
+<p>如图,这里先不考虑网络的阻塞,只根据B返回的接收窗口,构造出A自己的发送窗口.<strong>发送窗口:在没有收到B的确认时,A仍然可以将窗口中的数据发送出去,发出去的数据在未收到确认之前都需要暂时保留,以便在超时重传时使用</strong>.在发送窗口前面是收到确认的数据(不需要保留),后面是不允许发送的数据(接收方没有为其保留缓存空间)                </p>
+<p>发送窗口的移动:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">不动:			</span><br><span class="line">1.没有收到新的确认</span><br><span class="line">2.收到了确认,但是B发回来的窗口值变小,刚好抵消</span><br><span class="line"></span><br><span class="line">前移:		</span><br><span class="line">1.收到新的确认		</span><br><span class="line"></span><br><span class="line">后移:不允许,因为不能撤销已经收到的确认信息</span><br></pre></td></tr></table></figure></p>
+<p>实例讲解:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.18.32.09-image.png" alt="2019-09-18.18.32.09-image.png"></p>
+<blockquote>
+<p>B的接收窗口大小为20,前面是已发送过确认的数据且已交付给主机,因此B就不再去保留这些数据了.<br>上面31的数据没有收到,32,33的数据未按时到达B,在这种情况下,B对收到的数据进行回应(将确认号设置为31:期望下个数据报收到以31开头的数据).现在假设B收到了31-33的数据并将其交付给上面的应用层.同时窗口向前移动3个序号,向A发送确认(确认号为34,窗口值为20).按照这种方式,P2与P3重合时(发送窗口序号已用完,但还没收到确认),由于A的发送窗口为0,所以停止发送,等待B的应答报文.这时,我们考虑一种情况<strong>A已经发送完毕,B也接收完毕,并向A发送了确认,但是这个确认报文却丢失了</strong>,这时候<strong>A为了保证可靠传输,在经过一段时间(超时计时器控制,关于时间的选择见下)后重传这些数据,重新设置计时器,直到收到B的确认为止</strong></p>
+</blockquote>
+<h3 id="超时重传时间的确定"><a href="#超时重传时间的确定" class="headerlink" title="超时重传时间的确定"></a>超时重传时间的确定</h3><blockquote>
+<p>TCP采用了一种<strong>自适应算法,简单来说就是比报文段的加权平均往返时间RTTs(对RTT进行加权平均,使其更具有代表性)长点儿</strong>,计算往返时间RTT:记录发出时间及收到确认的时间即可得出,但是这里可能存在一种情况:发出一个报文段,设定的重传时间到了没有收到确认报文,于是重传数据,经过一段时间后收到了确认报文,<strong>如何确定刚收到的这个确认报文是对先发送的报文的确认还是对后来报文的确认呢?</strong>.TCP对Karn算法做了改进,最后如下:<strong>报文每重传一次,就把重传时间增大一倍(不再根据返回时间进行判断),当不再发生重传时,根据公式得到RTTs.</strong></p>
+</blockquote>
+<h3 id="选择确认SACK字段"><a href="#选择确认SACK字段" class="headerlink" title="选择确认SACK字段"></a>选择确认SACK字段</h3><blockquote>
+<p>收到的报文段无差错,但是有缺少,就需要接收方发送提示信息给发送方(使发送方只发送缺少数据)                </p>
+</blockquote>
+<p>举个例子说明:                </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-18.16.51.58-image.png" alt="2019-09-18.16.51.58-image.png"></p>
+<blockquote>
+<p><strong>将这些字节块的边界值发给发送方(放到TCP首部选项字段),使得发送方知道缺少的部分以便重传</strong><br>在建立连接时,双方约定使用选择确认(增加<strong>允许SACK选项</strong>)如图,缺少1001-1500,3001-3500及4500后面的数据,每个数据块有2个边界(每个边界值占4个字节),由于TCP首部选项字段最多可以放40个字节,因此可以最多可以表示4个字节块的边界信息(8*4+1+1  —-&gt;  8个值,每个值4个字节,指明使用<strong>允许SACK</strong>,指明选项占几个字节)                        </p>
+</blockquote>
+<h2 id="TCP的流量控制"><a href="#TCP的流量控制" class="headerlink" title="TCP的流量控制"></a>TCP的流量控制</h2><blockquote>
+<p>所谓流量控制就是:接收方告诉发送方发送速率不要太快,要让接收方来得及接收.                    </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.07.36.33-image.png" alt="2019-09-19.07.36.33-image.png"></p>
+<blockquote>
+<p>如上图,B在最开始的窗口值(rwnd)为400(字节为单位),中间对A控制了三次(需要知道只有在ACK=1时 确认值ack才是有意义的),表示发送方A的发送窗口值不能超过B的接收窗口,这样就通过控制发送方的发送窗口,起到了流量控制的作用.<strong>这时候我们考虑个问题:如果B向A发送零窗口的报文段后不久,B又有了一些存储空间,将自己的窗口值写入数据报发送给A,但是在传输过程中丢失了,那A B就一直等待对方的信息,造成死锁</strong>,为了解决这个问题,TCP规定:<strong>TCP为每个连接设置一个持续计时器,只要收到对方0窗口数据报就启动,时间过后发送一个0窗口的探测包(携带1字节的数据),若对方给出窗口值为0,则重新设置计时器继续等待</strong>                        </p>
+</blockquote>
+<h3 id="TCP的传输效率"><a href="#TCP的传输效率" class="headerlink" title="TCP的传输效率"></a>TCP的传输效率</h3><blockquote>
+<p>我们知道,应用进程先将字节流放到发送缓存,剩下的就交给TCP完成了.<br>控制机制:<br>1.TCP维持一个变量,其值等于最大报文长度MSS,只要缓存数据达到MSS就发送出去<br>2.发送方的应用进程要求发送报文段,即push操作<br>3.计时器到了,就把当前缓存中全部数据装入报文段(长度不超过MSS)发送出去</p>
+</blockquote>
+<blockquote>
+<p>为了提高传输速率,TCP实现采用了<strong>Nagle算法</strong>:<br>应用进程将要发送的数据送到TCP发送缓存,TCP把第一个字节先发出去,当收到确认后再将后面的数据封装成数据报发送出去.当发送数据达发送窗口一半大小或达到报文最大长度就立即发送出去.</p>
+</blockquote>
+<blockquote>
+<p>另外一个就是解决<strong>糊涂窗口综合征</strong>:TCP每次给对方的窗口值都为1(每次腾出1字节的空间就向对方发送,对方就会发回1字节的数据报,这样会造成网络效率低),为了解决这个问题,TCP规定:<strong>使接收方等待一段时间,当接收缓存达到最长报文段或者接收缓存一半的长度时,才通知发送方自己的窗口大小.发送方也应该把数据积累成最长报文段或达到接收方的接收缓存的一般就发送.</strong>                </p>
+</blockquote>
+<h2 id="TCP的拥塞控制"><a href="#TCP的拥塞控制" class="headerlink" title="TCP的拥塞控制"></a>TCP的拥塞控制</h2><blockquote>
+<p>拥塞控制与流量控制的区别:<br>流量控制:<strong>指端对端通信量的控制(接收端控制发送端):接收端告诉发送端需要降低发送速率,以便使得接收方来得及接收.</strong><br>拥塞控制:<strong>相对流量控制的端对端而言,拥塞控制是一个全局性的过程,设计网络内所有路由器,主机以及降低网络传输速率的所有因素.拥塞控制作用:防止过多的数据进入网络,使得网络上的路由器及链路过载</strong>                </p>
+</blockquote>
+<p>举个例子:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">流量控制:一台巨型计算机给个人机发送数据(网络带宽够用),这时不需要考虑拥塞控制,只需要使用流量控制即可.			</span><br><span class="line">拥塞控制:500台主机向网络内的另外500台传输数据(网络带宽不够用),这时候不用考虑流量控制,只需要考虑网络中的拥塞问题即可.</span><br></pre></td></tr></table></figure></p>
+<h3 id="慢开始与拥塞避免算法"><a href="#慢开始与拥塞避免算法" class="headerlink" title="慢开始与拥塞避免算法"></a>慢开始与拥塞避免算法</h3><blockquote>
+<p>该拥塞控制方法也被称为<strong>基于窗口的拥塞控制</strong>,发送方控制窗口的原则:网络没有拥塞就增大,以便发更多的数据,但只要网络出现或可能出现拥塞,就将窗口减小以缓解网络压力.<strong>判断网络拥塞的依据是是否超时</strong></p>
+</blockquote>
+<p>我们这里只考虑网络拥塞状况,发送窗口的大小由网络的拥塞程度决定发送窗口                                </p>
+<blockquote>
+<p>慢开始算法:当主机刚开始发送数据时不知道网络是否拥塞,所以刚开始把拥塞窗口cwnd指定为1-2个(探测网络情况包)最大报文段(SMSS).<strong>然后由小到大增大发送窗口</strong>,然后每收到一个确认报文段就将窗口值加1,因此使用慢开始算法后,每经过一个传输轮次,拥塞窗口cwnd就加倍(所以说”慢”并不是增长速度慢,而是说刚开始的cwnd相对较慢)            </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.15.04.46-image.png" alt="2019-09-19.15.04.46-image.png"></p>
+<blockquote>
+<p>可看到每经过1个传输轮次,拥塞窗口cwnd就加倍.我们应当知道<strong>在实际网络中,发送方只要收到一个确认报,cwnd就立即加1并发送一个新的数据报,而并不需要等待一个传输轮次所有确认都收到后再发送新的报文段</strong>                </p>
+</blockquote>
+<blockquote>
+<p>为了防止cwnd增长过大造成网络拥塞,还需要设置一个<strong>慢开始门限</strong>,用法:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cwnd&lt;ssthresh(慢开始门限):使用慢开始算法</span><br><span class="line">cwnd&gt;ssthresh(慢开始门限):停止使用慢开始算法,开始用拥塞避免算法</span><br><span class="line">cwnd=ssthresh(慢开始门限):两者都可使用</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>拥塞避免算法:思路是让cwnd缓慢增大,每经过一个传输轮次就加1(慢开始算法是每个确认都加1).因此<strong>对于一个传输轮次,拥塞避免算法的cwnd窗口值按线性规律增长.慢开始算法的cwnd窗口按指数规律增长</strong></p>
+</blockquote>
+<p>举个例子:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.15.28.10-image.png" alt="2019-09-19.15.28.10-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">当连接进行初始化时,cwnd的值设为1,门限值设置为16,随着传输轮次增长,cwnd值成倍增长,当达到门限值时,停止慢开始算法开始使用拥塞避免算法(拥塞避免并不能完全组织拥塞,只是将增长速率改为较低的线性规律,使之不容易拥塞).			</span><br><span class="line">当窗口值增长到24时,出现超时情况,发送方判断为网络拥塞.于是调整门限值为12(cwnd/2),同时设置拥塞窗口为cwnd=1,并进入慢开始阶段.之后需要注意的是点4(3-ACK),**接收方一连收到3个对同一报文段的重复确认:**</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当网络中有个别报文丢失了,但网络实际并未发生阻塞,但是发送方在规定时间并没有收到确认报文,就会误认为网络发生了拥塞,错误开启了慢开始算法,导致网络利用率变低,为了解决这个问题,我们需要使用<br><strong>快重传算法</strong>:可以让发送方尽早知道报文的丢失.该算法要求接收方立即回传确认包(即使收到了失序报文段),具体我们看个例子            </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.16.24.41-image.png" alt="2019-09-19.16.24.41-image.png"></p>
+<blockquote>
+<p>如图,接收方收到M1,M2,M4,而M3却丢失了,<strong>按照快重传算法,接收方应当立即重复发送对M2的确认,好让发送方知道M3丢失,接收方在收到M5 M6仍会重发对M2的确认,结果发送方收到了3个重复确认,就知道M3丢失了,便重传M3,这样就不会超时.即上面点4的状态(3-ACK)</strong></p>
+</blockquote>
+<blockquote>
+<p>所以接着回到5-25,发送方知道只是个别报文的丢失并不是网络阻塞,就执行<strong>快恢复算法</strong>:调整门限值为8(cwnd/2),再设置窗口值为cwnd=ssthresh=8,并开始执行拥塞避免算法.(<strong>有另外一种快恢复算法是把拥塞窗口再加大一些,这样做的理由是(发送方觉得既然收到了3个重复确认包,说明已经有3个分组成功到达了对方,网络中的分组减少了,可以再加点)</strong>)                </p>
+</blockquote>
+<p>AIMD算法:在拥塞避免阶段,拥塞窗口按照线性规律增大,称为”乘法增长”,当碰到超时或3-ACK的情况,门限值与cwnd都变为前cwnd的一半,称为”乘法减小”,这两者合起来被称为AIMD算法.</p>
+<p>总结拥塞控制过程:                </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.16.43.55-image.png" alt="2019-09-19.16.43.55-image.png"></p>
+<h3 id="主动队列管理AQM"><a href="#主动队列管理AQM" class="headerlink" title="主动队列管理AQM"></a>主动队列管理AQM</h3><blockquote>
+<p>TCP拥塞控制其实可以跟网络层的策略联系起来.路由器维护一个队列,当队列满时,后到达的分组就会被丢弃,此为<strong>尾部丢弃策略</strong>.但是这个太暴力了(没有提前预兆,可能会造成某一时间网络突然变差),所以提出了<strong>主动队列管理</strong>        </p>
+</blockquote>
+<blockquote>
+<p>所谓主动就是还没满了就开始丢,达到提醒发送者的作用,<strong>主动队列管理的实现有个著名的随机早期检测RED</strong>,RED维护两个参数:队列长度最大与最小门限,当小于最小门限就收下;大于最大门限就丢弃;介于两者之间就随机P概率丢(P不是常数,对于每一个到达的分组都应该计算P的值 具体计算方法没了解)            </p>
+</blockquote>
+<h2 id="TCP的运输连接管理"><a href="#TCP的运输连接管理" class="headerlink" title="TCP的运输连接管理"></a>TCP的运输连接管理</h2><blockquote>
+<p>运输连接的过程:建立连接.传输数据.释放连接.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.53-image.png" alt="2019-09-19.17.19.53-image.png"></p>
+<blockquote>
+<p>开始后,A,B分别创建传输控制块(TCB),B等待客户端的连接请求,处于listen状态.A向B发送请求连接数据报<br>1.A首先发送连接请求报文段(同步位SYN=1,同时选择初始序号为x),发送完毕后就进入SYN-SENT状态(SYN=1&amp;ACK=0 请求连接报  SYN=1&amp;ACK=1 请求确认报)<br>2.B在收到后同意连接,发送确认数据报(连接确认ACK=1&amp;SYN=1;确认位ack=x+1表示前面到x的数据已经收到,下一次请求x+1开始的数据;同时字节设置序号y)，发送完后,B进入SYN-RCVD(同步收到)状态.<br>3.A在收到B的确认后,也要给出自己的确认(ACK=1,对B的确认报的确认位ack=y+1,同时发出自己的序号为位x+1).这时TCP已经建立,A进入<strong>ESTABLISHED(已建立连接状态)</strong>,B收到确认后也进入<strong>ESTABLISHED(已建立连接状态)</strong></p>
+</blockquote>
+<blockquote>
+<p>连接时前两次是请求连接与请求确认(SYN=1),释放时客户端与服务端各发一次结束请求(FIN=1)                </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.08-image.png" alt="2019-09-19.17.19.08-image.png"></p>
+<blockquote>
+<p>开始AB都处于ESTABLISHED状态<br>1.A发送结束请求(结束位FIN=1,自己的序列号seq=u 前面发送数据的结尾序号+1),发完后A就进入FIN-WAIT-1(结束等待1状态),等待B的确认<br>2.B在收到后先发送A结束请求的确认(确认位ACK=1,确认号ack=u+1,同时给出自己的序列号seq=v 前面B发给A的数据的结尾序号+1),然后B就进入了CLOSE-WAIT(关闭等待状态),通知上层进程,此时TCP处于<strong>半连接状态</strong>,即A–&gt;B的断了,但是B–&gt;A的还没有断(B如果还有数据要传 A也要接收)<br>3.A收到B的确认后进入Fin-WAIT-2(结束等待2),<strong>等待B的连接释放报文段</strong><br>4.若B没有数据传输后,其应用进程就通知TCP释放连接请求.向A发送结束请求(结束位FIN=1 ACK=1 确认号ack=u+1,同时给出自己的序号w   可能在v之后又发送了一些数据),发送完毕后B就进入LAST-ACK(最后确认状态),等待A的确认<br>5.A收到数据报时需要给出确认(确认位ACK=1 序号seq=u+1,确认号ack=w+1),然后A就进入了TIME-WAIT(时间等待)状态,这时候A并不会立即关闭,需要等待<strong>时间等待计时器设置的2MSL时间(MSL被称为最长报文段寿命)</strong>,若中间没有收到信息,则关闭(CLOSE状态),而B在接收到最后一个确认报后就直接关闭(CLOSE状态).                    </p>
+</blockquote>
+<p>最后等待2MSL的原因:<br>a.若处在LAST-ACK状态的B迟迟收不到A发来的确认,就会重传自己发送的请求结束报,若A直接关闭,则B会一直处于LAST-ACK状态.若A在等待时间2MSL内收到B发来的报,则会重传确认报,<strong>避免了A发送的最后一个数据报丢失的问题</strong><br>b.<strong>防止出现已失效的连接请求报文段</strong>:A在发完最后一个数据报后再等待2MSL时间就可以使网络中的所有数据报都消失,使下一个连接的请求不会出现这种旧的数据报.    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此外,除时间等待计时器外,TCP还设置有一个保活计时器,解决的问题就是**客户与服务器建立了连接,但是客户端突然断线,没有收到请求,服务端会傻傻等下去**.服务器每收到一次客户的请求,就重新激活计时器,当2个小时还没有收到数据,就发送一个探测包,连续发10次(每隔75S发送一次) 若无响应,服务端就认为客户端出了故障,接着关闭了这个连接.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>粗实线表示客户端进程的状态变迁,粗虚线表示服务端进程的状态变迁.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.25-image.png" alt="2019-09-19.17.19.25-image.png"></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#运输层"><span class="toc-number">1.</span> <span class="toc-text">运输层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#端口"><span class="toc-number">1.0.1.</span> <span class="toc-text">端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UDP"><span class="toc-number">1.1.</span> <span class="toc-text">UDP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP"><span class="toc-number">1.2.</span> <span class="toc-text">TCP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可靠传输的工作原理"><span class="toc-number">1.3.</span> <span class="toc-text">可靠传输的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#停止等待协议"><span class="toc-number">1.3.1.</span> <span class="toc-text">停止等待协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP报文首部"><span class="toc-number">1.4.</span> <span class="toc-text">TCP报文首部</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最大报文长度MSS"><span class="toc-number">1.4.1.</span> <span class="toc-text">最大报文长度MSS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可靠传输的实现"><span class="toc-number">1.5.</span> <span class="toc-text">可靠传输的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#缓存与窗口的关系"><span class="toc-number">1.5.1.</span> <span class="toc-text">缓存与窗口的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字节为单位的滑动窗口"><span class="toc-number">1.5.2.</span> <span class="toc-text">字节为单位的滑动窗口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#超时重传时间的确定"><span class="toc-number">1.5.3.</span> <span class="toc-text">超时重传时间的确定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#选择确认SACK字段"><span class="toc-number">1.5.4.</span> <span class="toc-text">选择确认SACK字段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的流量控制"><span class="toc-number">1.6.</span> <span class="toc-text">TCP的流量控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP的传输效率"><span class="toc-number">1.6.1.</span> <span class="toc-text">TCP的传输效率</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的拥塞控制"><span class="toc-number">1.7.</span> <span class="toc-text">TCP的拥塞控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#慢开始与拥塞避免算法"><span class="toc-number">1.7.1.</span> <span class="toc-text">慢开始与拥塞避免算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主动队列管理AQM"><span class="toc-number">1.7.2.</span> <span class="toc-text">主动队列管理AQM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的运输连接管理"><span class="toc-number">1.8.</span> <span class="toc-text">TCP的运输连接管理</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/23/运输层/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/23/运输层/&text=回炉重造-网络部分(物理层)"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/23/运输层/&is_video=false&description=回炉重造-网络部分(物理层)"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(物理层)&body=Check out this article: https://p0rz9.github.io/2019/09/23/运输层/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/23/运输层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/23/运输层/&name=回炉重造-网络部分(物理层)&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+

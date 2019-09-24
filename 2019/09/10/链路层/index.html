@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="数据链路层为什么需要链路层 我们知道物理层解决了信号传输的环境问题(就是日常对话在空气中),的、但是通信双方只能收到信号,并不明白意思(一个人说汉语,另一端是非洲人),链路层就是规定一种协议(信号是谁发的,给谁的,数据部分哪里开始哪里结束的),使得通信双方能够正常交流。平常我们说话都是一句一句的，这在链路层中以帧为单位进行传送,另外在通信过程中会产生(距离远,有人干扰信号)一些问题,所以引入了透明">
+<meta name="keywords" content="回炉重造">
+<meta property="og:type" content="article">
+<meta property="og:title" content="回炉重造-网络部分(数据链路层)">
+<meta property="og:url" content="https://p0rz9.github.io/2019/09/10/链路层/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="数据链路层为什么需要链路层 我们知道物理层解决了信号传输的环境问题(就是日常对话在空气中),的、但是通信双方只能收到信号,并不明白意思(一个人说汉语,另一端是非洲人),链路层就是规定一种协议(信号是谁发的,给谁的,数据部分哪里开始哪里结束的),使得通信双方能够正常交流。平常我们说话都是一句一句的，这在链路层中以帧为单位进行传送,另外在通信过程中会产生(距离远,有人干扰信号)一些问题,所以引入了透明">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.21.09-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.54.32-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.16.27-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.22.04.23-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.10.24-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.34.41-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.20.49.34-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.36.28-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.39.41-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.45.11-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.20.00.08-image.png">
+<meta property="og:updated_time" content="2019-09-24T04:40:50.365Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="回炉重造-网络部分(数据链路层)">
+<meta name="twitter:description" content="数据链路层为什么需要链路层 我们知道物理层解决了信号传输的环境问题(就是日常对话在空气中),的、但是通信双方只能收到信号,并不明白意思(一个人说汉语,另一端是非洲人),链路层就是规定一种协议(信号是谁发的,给谁的,数据部分哪里开始哪里结束的),使得通信双方能够正常交流。平常我们说话都是一句一句的，这在链路层中以帧为单位进行传送,另外在通信过程中会产生(距离远,有人干扰信号)一些问题,所以引入了透明">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.21.09-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>回炉重造-网络部分(数据链路层)</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="../../15/网络层/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="../../05/物理层/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/10/链路层/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/10/链路层/&text=回炉重造-网络部分(数据链路层)"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/10/链路层/&is_video=false&description=回炉重造-网络部分(数据链路层)"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(数据链路层)&body=Check out this article: https://p0rz9.github.io/2019/09/10/链路层/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/10/链路层/&name=回炉重造-网络部分(数据链路层)&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数据链路层"><span class="toc-number">1.</span> <span class="toc-text">数据链路层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么需要链路层"><span class="toc-number">1.1.</span> <span class="toc-text">为什么需要链路层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.2.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#链路-数据链路"><span class="toc-number">1.2.1.</span> <span class="toc-text">链路 + 数据链路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链路层协议共同的三个问题"><span class="toc-number">1.3.</span> <span class="toc-text">链路层协议共同的三个问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#封装成帧"><span class="toc-number">1.3.1.</span> <span class="toc-text">封装成帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#透明传输"><span class="toc-number">1.3.2.</span> <span class="toc-text">透明传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#差错检测"><span class="toc-number">1.3.3.</span> <span class="toc-text">差错检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#广播风暴"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">广播风暴</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#高速以太网"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">高速以太网</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        回炉重造-网络部分(数据链路层)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-09-10T00:15:41.000Z" itemprop="datePublished">2019-09-10</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/回炉重造/">回炉重造</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h1><h2 id="为什么需要链路层"><a href="#为什么需要链路层" class="headerlink" title="为什么需要链路层"></a>为什么需要链路层</h2><blockquote>
+<p>我们知道物理层解决了信号传输的环境问题(就是日常对话在空气中),的、但是通信双方只能收到信号,并不明白意思(一个人说汉语,另一端是非洲人),链路层就是规定一种协议(信号是谁发的,给谁的,数据部分哪里开始哪里结束的),使得通信双方能够正常交流。平常我们说话都是一句一句的，这在链路层中以<strong>帧</strong>为单位进行传送,另外在通信过程中会产生(距离远,有人干扰信号)一些问题,所以引入了<strong>透明传输</strong>与<strong>差错检测</strong>两种机制。                    </p>
+</blockquote>
+<p>复杂功能都设在TCP上，IP层稍简单（提供不可靠传输），所以链路层也就不需要可靠传输了</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="链路-数据链路"><a href="#链路-数据链路" class="headerlink" title="链路 + 数据链路"></a>链路 + 数据链路</h3><blockquote>
+<p>链路:从一个节点到另一个节点的物理线路,而中间没有其他任何的节点。两台主机交互数据要经过很多条这样的链路,可见链路只是一条路径的一部分。简单来说:<strong>链路 = 节点到节点的物理线路</strong>            </p>
+</blockquote>
+<blockquote>
+<p>数据链路:当需要在链路上传送数据时,除了必要的物理链路外,还需要通信协议去控制数据的传输,如果将实现这些协议的软硬件加到物理链路上就构成了数据链路。简单来说:<strong>数据链路 = 物理链路 + 通信协议</strong>                    </p>
+</blockquote>
+<blockquote>
+<p>链路其实是物理层信息传输的设备,<strong>链路层并没有物理链路</strong>,所谓链路层只是<strong>在物理线路的两端有控制协议,可以解读接受的数据然后传送到下一条链路中</strong>。我们知道网络都是拓扑结构,通向目的的路径有很多条,而链路层有对应的协议去决定数据在网络中走哪条路。</p>
+</blockquote>
+<h2 id="链路层协议共同的三个问题"><a href="#链路层协议共同的三个问题" class="headerlink" title="链路层协议共同的三个问题"></a>链路层协议共同的三个问题</h2><h3 id="封装成帧"><a href="#封装成帧" class="headerlink" title="封装成帧"></a>封装成帧</h3><blockquote>
+<p>我们首先来解释下为什么要封装成帧:经过上节物理层的学习,我们知道数据传输时不可靠的,如果我们不以帧为单位来传的话,只能整个文件去传输,在传输过程中出了问题需要重传整个文件/要定位问题点就需要耗费不少资源去计算,所以我们需要用一个较小的传输单位来包装发送数据,如果出现了问题,我们可以丢弃它,让客户端重传或不传(对包的完整性要求较低的业务),这就是为什么要封装成帧的原因</p>
+</blockquote>
+<p>帧的构成:            </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.21.09-image.png" alt="2019-09-07.20.21.09-image.png"></p>
+<blockquote>
+<p><strong>封装成帧</strong>就是在一段数据前后添加首尾部,这样就构成了一个帧.分组交换的一个重要概念:<strong>所有在互联网上传送的数据都是以分组(IP数据报)</strong> 为传送单位的,网络层IP数据报传到链路层就成为帧的数据部分,在其前后添加首尾部(首尾部作用除了<strong>包含控制信息</strong>外就是<strong>帧定界</strong>),就构成了一个完整的帧。中间的数据部分的最大长度为MTU(最大传送单元)                    </p>
+</blockquote>
+<p>帧定界符:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.54.32-image.png" alt="2019-09-07.20.54.32-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOH,EOT(控制字符的名称 16进制编码分别为01 04),当传输的数据中含帧定界符时,会出现错误,就是下面需要解决的透明传输问题</span><br></pre></td></tr></table></figure>
+<h3 id="透明传输"><a href="#透明传输" class="headerlink" title="透明传输"></a>透明传输</h3><blockquote>
+<p><strong>透明传输</strong>就是在链路中可以传送任意组合的比特流,而不会引起对帧边界的错误判断.当链路中的数据比特恰好与某些控制信息(这里指界定符)一样时,就必须采取措施使得接收方不会认为这是一个界定符,这样才能保证一个数据链路层的传输是透明的。                </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里的解决办法:如果在发送端链路层的数据中出现了控制字符(转义字符本身前面也需要加),就在前面加上转义字符(ESC 十六进制编码为1B)。在接收端的链路层将数据发往上面的网路层时删除转义字符.这种方式被称为**字节填充/字符填充**</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.20.16.27-image.png" alt="2019-09-07.20.16.27-image.png"></p>
+<h3 id="差错检测"><a href="#差错检测" class="headerlink" title="差错检测"></a>差错检测</h3><blockquote>
+<p>在现实中,通信链路不会是理想的,比特在传输过程中会产生差错(0-&gt;1,1-&gt;0),这种差错被称为<strong>比特差错</strong>,在一段时间内,传输错误的比特占总比特的比率叫做<strong>误码率</strong>,所以在计算机网络传输数据时,必须采用一些差错检测方法,目前在链路层使用最多的是<strong>循环冗余检验CRC</strong>,下面说下计算过程:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">已知:待发送的数据M=101001(k=6),CRC运算在M后面添加供差错检测使用的冗余码(位数n=3), 通信双方都知道的除数P=1101(位数=n+1)，需要进行二进制的模2运算(加减法不进位,1111+1010=0101)</span><br></pre></td></tr></table></figure>
+<p>下面为计算过程:</p>
+<blockquote>
+<p>将M与$$2^n$$进行模2运算(即在M的后面加n个0),将得到的(k+n)位的数除以p,得到商Q和余数P</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.22.04.23-image.png" alt="2019-09-07.22.04.23-image.png"></p>
+<p>得到的商为110101(Q),余数为001(余数),这个余数R就是我们要的<strong>冗余码</strong>,也叫<strong>帧检验序列(FCS)</strong> 所以加上冗余码发送的帧是101001001。<br>在接收端以帧为单位进行<strong>CRC检验</strong>:把收到的每个帧都除以同样的除数P(模2运算),结果有2种情况:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.算出余数R等于0,则判定这个帧无差错,接收			</span><br><span class="line">2.算出余数R不等于0,则判定该帧有差错(不确定哪一位出错),就丢弃			</span><br><span class="line">```		</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">--------------</span><br><span class="line"></span><br><span class="line">&gt;最后我们要清楚的是,经过**差错检测**的帧仅仅只能做到**无比特差错**,做不到**可靠传输(发什么,接什么)**。因为只能保证每个帧无差错,但是帧的顺序,帧的数量则是无法保证的.就可能出现**帧丢失,帧重复,帧失序(顺序错误)**的情况.				</span><br><span class="line">原来OSI提出必须让链路层向上提供可靠传输,针对这种情况,在差错检测的基础上增加了**帧编号,确认,重传机制**,收到正确的帧要向发送端发送确认.发送端在一定时间没有收到就会重新发送,直到对方返回确认.**这种机制在以前通信电路质量不是很好的时候起了大作用,但是随着通信质量的大大提高,由于通信质量导致的差错出现的概率已经很小了**,所以现在的互联网采取了区别对待的方法:</span><br></pre></td></tr></table></figure></p>
+<p>1.对于通信质量良好的传输链路来说,协议不再使用确认与重传机制,即不要求链路层向上提供可靠传输服务。若链路层的数据出现差错需要改正,则由上层的运输层(如TCP)去改正<br>2.对于通信质量不好的传输链路来说,数据链路层协议使用确认和重传机制,链路层向上提供可靠传输服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">经实践检验,区别对待的方式可提高通信效率</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 链路层使用的两种信道				</span><br><span class="line">&gt;链路层使用的信道主要为**点对点信道**和**广播信道**,而他们对应的协议是**PPP与CSMA/CD**协议.</span><br></pre></td></tr></table></figure></p>
+<p>局域网覆盖链路+物理层，总线型 广播信道    数据传输  CSMA/CD<br>广域网覆盖物理+链路+网路层，点对点通信     资源共享  PPP协议<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## PPP协议</span><br><span class="line">### 协议特点</span><br></pre></td></tr></table></figure></p>
+<p>PPP协议中有两种线路<br>同步： 逐个比特发送<br>异步：逐个字节/字符发送<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">![2019-09-09.18.38.11-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.18.38.11-image.png)</span><br><span class="line"></span><br><span class="line">![2019-09-09.18.39.14-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.18.39.14-image.png)		</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">![2019-09-09.18.41.00-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.18.41.00-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">![2019-09-09.18.48.39-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.18.48.39-image.png)</span><br></pre></td></tr></table></figure></p>
+<p>链路层与网络层都没有实现可靠传输，因为在传输层TCP部分已经实现了,而可靠传输因为有一系列差错纠错返回重传等机制,会降低网络速率,所以现在不会在链路及网络层再去实现可靠传输<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 协议格式</span><br><span class="line">![2019-09-08.14.28.38-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.14.28.38-image.png)</span><br></pre></td></tr></table></figure></p>
+<p>开始结束标志:各占1字节  0x7e(01111110) 即帧的定界符<br>地址字段A:1字节 内容为广播地址0xFF(11111111)        当对等层进行通信时,需要知道对方的地址(链路层需要知道对方的MAC地址.. 网路层需要知道对方的IP地址,传输层需要知道对方的端口地址).例如以太网上的两台主机通信时,需要知道对方的MAC地址,但是由于<strong>PPP协议是运用在点对点链路的设备上的,点对点的链路可以唯一标识对方,所以不需要知道对方的链路层地址,所以这个字段就是无意义的,按照协议规定,填充为全是1的广播地址即可</strong></p>
+<p>控制字段C:1字节 内容无实际意义 0x03(00000011)<br>协议:2字节  0x0021(对应信息字段为IP数据报)  0xC021(对应信息字段为<strong>PPP链路控制协议LCP的数据</strong>)  0x8021(表示是网络层协议(NCP)数据内容)<br>数据:IP数据报(长度不超过MTU–1500字节)<br>FCS:2字节用于差错检测的冗余位<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">#### 透明传输技术</span><br><span class="line"></span><br><span class="line">&gt;与上面一样,当传送的数据存在和标志字段(0x7E)一样的比特组合时,需要采取一些措施去解决透明传输PPP协议透明传输的问题</span><br><span class="line">常用的方法是**字节填充(用在异步传输中)**和**零比特填充法(用于同步传输中)**				</span><br><span class="line"></span><br><span class="line">字节填充(转义符定义为0x7D(01111101)):</span><br></pre></td></tr></table></figure></p>
+<p>1.若信息中出现0x7E字节就转化为2字节序列(0x7D,0x5E)<br>2.若信息字段出现一个0x7D(转义字符本身),则将其转变为(0x7D,0x5D)<br>3.若信息字段出现ASCII码的控制字符(小于0x20的字符),则在该字符前加入一个0x7D,并将编码改变(0x03–&gt;(0x7D,0x23))                                            </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">零比特填充法:</span><br></pre></td></tr></table></figure>
+<p>在发送端只要有5个连续的1,就加一个0后再发送(这样就不会出现连续6个1的情况).在接收端发现连续的5个1后,就将后面的0删除<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">![2019-09-08.17.10.53-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.17.10.53-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 工作状态</span><br><span class="line">从设备无链路开始,首先建立物理链路,然后发送LCP配置协议建立LCP链路,经过口令鉴别后建立NCP链路,然后就可以发送数据了,在数据发送完后,终止请求,进入链路终止状态				</span><br><span class="line"></span><br><span class="line">完整的会话过程:</span><br></pre></td></tr></table></figure></p>
+<p>1.建立物理链路:建立成功就进入”链路建立”状态<br>2.建立LCP链路:发送LCP的配置请求帧(配置请求帧包括:链路最大帧长,使用的<strong>鉴别协议</strong>)进行协商,协商结束后就建立了LCP链路,接着进入”鉴别”状态<br>3.鉴别：在这个阶段,只允许使用鉴别协议分组,检测链路质量的分组和LCP协议的分组。鉴别协议分为<strong>口令鉴别协议(PAP)</strong> 和 <strong>口令握手鉴别协议(CHAP)</strong> 。若鉴别成功，就进入”网络层协议”状态<br>4.网络层协议(建立NCP链路):使用控制协议配置协议（———————————）<br>5.链路打开(交换数据):链路的两个PPP端点可以向彼此发送分组<br>6.链路终止:在数据传输结束后可以由链路的一端发出<strong>终止请求LCP分组</strong>,在收到对方发来的终止确认请求LCP分组后,转到链路终止状态.如果链路出现故障后,也会转到链路终止状态.                        </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### LCP链路细节</span><br><span class="line"></span><br><span class="line">![2019-09-08.14.06.38-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.14.06.38-image.png)</span><br></pre></td></tr></table></figure>
+<p>1.A进入Link Establish(链路建立)状态,物理层会向链路层发送up事件<br>2.A首先进入LCP的第一个状态(Request-sent),并向B发送config-request请求报文(其中含有自己期望的配置信息)<br>3.B收到A的请求,会有三种反应:<br>配置确认(Configure-Ack):所有选项都接收<br>配置否认(Configure-Nak):所有选项都理解但不能接收<br>配置拒绝(Configure-Reject):有些选项无法理解或不能接收,需要协商<br>后两种表示B不认同A的期望配置,意味着A必须修改后重新发送直到收到Ack确定报<br>4.如果双方最后都收到对方的config-Ack报,就可以向下一个阶段跃迁                    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 网络层协议(NCP)细节</span><br><span class="line">&gt;在完成口令认证后,PPP还支持上层网络层参数的协商。因为现在路由器能够支持多种网络层协议,而NCP可以根据上层不同的网络协议去协商网络协议对应的内容,NCP主要包括:IPCP,IPXCP等</span><br><span class="line"></span><br><span class="line">IPCP控制协议</span><br></pre></td></tr></table></figure>
+<p>主要功能:完成链路设备两端的协商IP地址<br>协商的参数：报文压缩方式；对方的IP地址<br>    压缩方式：协商对方在传输时是使用压缩方式的IP数据报文，还是标准方式(非压缩)<br>    对方IP地址：因为PPP没有ARP协议,无法判断对方的IP是否合法,所以需要协商下<br>协商的方式：静态；动态<br>    静态:也叫不协商方法,在协商之前,各自就配好了IP地址,只需要告诉对方自己的IP地址及对方是否承认自己的IP地址即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">   </span><br><span class="line">![2019-09-08.13.31.07-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.13.31.07-image.png)</span><br><span class="line"></span><br><span class="line">&gt;静态协商时,双方都会发送一个Config-request请求报文(并带上自己的IP),对方在收到报文后,会发送一个Config-Ack确认报文(带上对方发来的IP),意在告诉：这个Ip地址跟我不冲突,可以用。在刚进入网络层协议阶段后,设备机的状态是initial的,但当完成了上述整个过程后,状态会转为opened,接着双方就可以开始网络层的数据传输了.				</span><br><span class="line"></span><br><span class="line">    动态:</span><br><span class="line"></span><br><span class="line">![2019-09-08.13.43.04-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.13.43.04-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&gt;A发送一条config-request报文,里面含0.0.0.0地址;</span><br><span class="line">B在收到这个数据包,看到0.0.0.0就知道A没有ip,正在等着我分配,于是回传一个config-nak报文(含12.1.1.100这个ip地址);</span><br><span class="line">A收到后,再发送B一个config-request报文,里面含12.1.1.100地址;			</span><br><span class="line">最后B收到后,只需要发送一个config-Ack报文,告诉A,表示A的IP</span><br><span class="line">地址已经配置完成</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&gt;PPP协议的两端的网络层可以运行不同的网络协议,但还是可以通过一条PPP链路进行传输通信				</span><br><span class="line"></span><br><span class="line">--------------------------------------------------</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">#### MAC层与LLC层</span><br><span class="line"></span><br><span class="line">![2019-09-08.19.10.38-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.19.10.38-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">### 局域网</span><br><span class="line">&gt;跨越数据链路层与物理层</span><br><span class="line">![2019-09-08.18.55.24-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.18.55.24-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">![2019-09-08.18.59.17-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.18.59.17-image.png)</span><br></pre></td></tr></table></figure></p>
+<p>并行：传输8位数据（一字节），一次送出<br>串行：数据排成一行，一位一位地送出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 适配器与MAC地址</span><br><span class="line">&gt;适配器就是我们俗称的“网卡”,现在已经嵌入计算机的主板中	</span><br><span class="line">**要点：**					</span><br><span class="line">1.进行并行与串行的转换:计算机与适配器之间的通信是通过主板上的I/O总线以并行方式交互的,而适配器与局域网之间是通过电缆或双绞线以串行方式进行的,所以适配器需要进行并行与串行的转换				</span><br><span class="line">2.装有对数据缓存的存储芯片：网络中的传输速率与计算机的传输速率不相同,需要适配器进行缓存			</span><br><span class="line">3.在主板插入适配器,需要驱动程序:这个驱动程序会告诉适配器，应该从存储器的什么位置将多长的数据发送到局域网中，或者将局域网中的数据存储下来		</span><br><span class="line">4.适配器在收发各种帧时,不适用主机的CPU,收到错的帧直接丢弃,对的再通过中断通知主机,并交给上边的网路层。**另外计算机的硬件地址(MAC地址)存储在适配器的ROM中,计算机的软件地址(IP地址)存储在存储器中**</span><br><span class="line"></span><br><span class="line">![2019-09-08.19.34.45-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.19.34.45-image.png)</span><br><span class="line"></span><br><span class="line">![2019-09-09.12.52.20-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.12.52.20-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MAC地址			</span><br><span class="line">&gt;每个适配器在出厂时都会设置一个全球唯一的48位二进制地址(前24位代表厂家,有IEEE指定,后24位由厂家自己指定),常用6个16进制数表示。已经固化在适配器的ROM中,可见**MAC地址实际上是适配器地址/适配器标识符**,当适配器嵌入主机中,就本地当作计算机的MAC地址了</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">可以利用mac地址查看买到的鼠标是否正品(将鼠标的前24位在网站查下是否对应https://regauth.standards.ieee.org公司)</span><br><span class="line"></span><br><span class="line">B0-52-16-07-2C-ED</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 载波监听多点接入/碰撞检测(CSMA/CD)					</span><br><span class="line"></span><br><span class="line">要点:</span><br></pre></td></tr></table></figure></p>
+<p>1.准备发送：将网路层交下来的IP数据报加上首尾部组成以太网帧(格式见后面),放入缓存等待发送,在发送之前,必须检测信道<br>2.检测信道：若检测到信道忙,则应该不停的检测,直到信道转为空闲(空闲应该保证96比特时间内一直空闲–有帧发送的最小间隔时间)，再开始发送帧<br>3.碰撞检测:即边发送边检测，适配器边发送数据边检测信道上的电压情况(编码所用为曼彻斯特编码,从电压变化情况可判断出是否有其它主机在传送数据)。这里有两种情况：<br>发送成功：在争用期(512bit时间)内没有检测到碰撞，则一定可以发送成功<br>发送失败：在争用期内检测到了碰撞，停止发送数据。适配器执行<strong>指数退避算法</strong>等待r倍的512bit时间再次回到步骤(2),继续检测信道。若重传次数达到16次仍然不能传输成功，则会停止传输并向上报错。                </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt;此外，以太网在每发送完一帧后会将其暂时保留下，在争用期检测到碰撞时，会推迟一段时间后将保留的帧再重传一一次					</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 为什么以太网数据帧的最小长度为64位</span><br><span class="line">&gt;以太网采用无连接的工作方式,在多台主机同时传送资源,同时占用总线会产生冲突,采用解决冲突的方式是CSMA/CD,当检测到冲突时,适配器会立即停止发送数据,然后等待一段随机时间再次发送。但是当主机接收碰撞信号时,数据已经发送完毕,就不会再进行重传:					</span><br><span class="line">假设一种情况,A，B都检测到信道空闲,然后同时发送,这时在信道中就会发生碰撞,B先检测到碰撞,于是停止正在发送的数据报,而已经发出的数据包会继续传送,当到达A时,如果A的数据报还没传完,A就会停止发送数据并等待一段时间重传。**若A的数据已经发送完毕,则不会重传这个数据包**。为了保证A会重传(即B的数据到达A时,A还未发送完毕),IEEE定义了在一个碰撞域内,最远两台机器的往返时间为512bit time(即传输512bit所用的时间),所以说当传输的数据帧的长度大于64字节(512bit)时,就可以保证被截断的数据到达A时,A的数据还没传完。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 使用集线器的星形拓扑</span><br><span class="line">![2019-09-08.19.25.08-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.19.25.08-image.png)</span><br><span class="line"></span><br><span class="line">![2019-09-08.19.28.53-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.19.28.53-image.png)</span><br></pre></td></tr></table></figure>
+<p>1.使用集线器的看起来是星型网,但是由于集线器是模拟的实际电缆的工作,所以从逻辑上来说用的还是原来总线型结构。连在集线器的各个主机共享逻辑上的总线，主机中的适配器使用的还是CSMA/CD协议<br>2.一个集线器相当于一个多接口的转发器<br>3.集线器工作在物理层，且是一个傻瓜式的设备：收到1就转发1，不进行碰撞检测<br>4.集线器采用了专门的芯片,进行自适应串音回波抵消(接口发出的强信号会对收到的弱信号进行干扰–串音)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## 以太网概述:</span><br><span class="line">&gt;以太网是基带总线局域网规范,是现有局域网最通用的通信协议标准.它的两个标准:DiX2与IEEE 802.3</span><br><span class="line"></span><br><span class="line">![2019-09-08.20.04.07-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.20.04.07-image.png)</span><br><span class="line"></span><br><span class="line">&gt;1.采用了较为灵活的**无连接**的工作方式,即不必连接就可以直接发送数据				</span><br><span class="line">2.适配器对发送的数据**不进行编号**,**不要求对方发回确认**,**接收方收到出错帧直接丢弃,是否重传由高层(传输层的TCP)来决定**.即TCP发现传的数据错了,会把这些数据发给以太网进行重传,但是以太网并不清楚这些,只会当作行的数据帧来发送					</span><br><span class="line"></span><br><span class="line">![2019-09-08.20.06.30-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.20.06.30-image.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 以太网MAC帧</span><br><span class="line">&gt;常用的以太网MAC帧有两种标准(V2与802.3标准),这里介绍最常用的V2标准帧格式:</span><br><span class="line"></span><br><span class="line">![2019-09-08.19.47.33-image.png](https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.19.47.33-image.png)</span><br></pre></td></tr></table></figure></p>
+<p>目的地址:<br>    单播:一对一,收到帧的MAC地址与硬件地址相同<br>    广播:一对全体,发送给本局域网所有站点的帧(地址为全1)<br>    多播:一对全体,发送给一部分站点<br>源地址<br>协议:用来标识上一层用的哪种协议,以便把接收到的MAC帧上交给对应协议<br>    0x0800:IP数据报<br>    0x8137:由NovellIPX发送过来<br>数据字段:长度在46-1500字节之间(MAC帧最小长度为64,减去18位的首尾部字节得到数据部分的最小长度)<br>帧检验序列FCS:使用CRC检验的冗余位<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&gt;另外因为以太网发送数据用的是曼彻斯特编码(就是每个码元中间有上下跳级的的),这种编码特点就是在无数据传输后,接口的电压会就无变化了(还有就是以太网在以帧传送数据时,每个帧之间会有一定的间隙).因此在**帧中就不需要长度字段与结束符字段(电压无变化的字段往前回退四个字段就是数据字段)**.					</span><br><span class="line">第二点需要注意的就是在实际传送的比MAC帧要多8个字节,因为**接收方未与传输的比特流**达成同步,会使得帧的前几位不能成功接收到导致成为无用帧.这8个字节由2个字段构成,**前七个字节(同步码 0,1交替,相当于体委领跑时喊的121)**与**帧开始定界符(10101011 最后两个连续的1相当于告速接收端适配器 MAC帧信息马上就到了)**</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### IEEE802.3与 V2 MAC帧差别</span><br></pre></td></tr></table></figure></p>
+<p>1.IEEE802.3规定第三个字段为”长度/类型”,但是以太网采用曼彻斯特编码,所以长度这个字段也无意义<br>2.当第三个字段小于0x600时,必须装入LLC子层(逻辑链路控制)的LLC帧<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 3.4扩展的以太网</span><br><span class="line">物理层扩展以太网：</span><br><span class="line">&gt;在物理层主要是通过主干集线器连接几个以太网,成为更大的以太网</span><br></pre></td></tr></table></figure></p>
+<p>优点：可以跨域进行数据的传输；扩大了以太网的覆盖范围<br>缺点：<br>1.原每个冲突域的吞吐量为10Mbit/s,在经过一个主干集线器连接后变为一个冲突域,最大吞吐量仍然是10Mbit/s,就是说冲突域的两台主机通信,使得其它系的内部这时也不能通信(一发送数据就会碰撞)<br>2.另外,如果不同的系使用的以太网技术不同(数据率不同),那么也不能用集线器将其互连起来,因为集线器只是相当于一个多接口的转发器,并不会将帧进行缓存<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">**为了解决这个问题，于是在链路层扩展以太网**</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">链路层扩展以太网：</span><br><span class="line">&gt;在链路层扩展以太网常用的是**网桥**与**交换机(多接口网桥)**</span><br></pre></td></tr></table></figure></p>
+<p>网桥：<br>    比集线器智商高（会对收到的帧根据其MAC地址进行转发和过滤。检测目的MAC地址–&gt;查找网桥的地址表–&gt;转发到对应接口(转发)/将它丢弃(过滤)<br>交换机:<br>    本质是多接口网桥(10几个或更多),一般工作在全双工模式,主机都是独占信道,无碰撞地进行数据传输</p>
+<p><code>`</code><br>两个网桥把三个网端连接成了一个以太网</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.10.24-image.png" alt="2019-09-09.19.10.24-image.png"></p>
+<p>交换机的优点：</p>
+<blockquote>
+<p>交换机提供给每个用户专用信道,每个用户</p>
+</blockquote>
+<p>集线器组成的以太网成为共享式网络,而交换机组成的以太网称为交换式网络,共享式网络的问题是所有用户共享带宽,随着用户在增加,每个用户实际带宽会减少。而交换式网络的用户在通信时是独占而不是共享带宽，所以10个接口的交换机(传统以太网)总容量为100Mbit/s，对于共享式网络，每个用户的平均带宽就是1Mbit/s</p>
+<p>以太网交换机的两种交换方式：                </p>
+<blockquote>
+<p><strong>存储转发式交换机</strong>与<strong>直通式交换机</strong><br>直通交换不会将整个数据帧缓存再去进行处理,而是只检查前6个字节(目的地址)就立即转发,因而<strong>时延较小</strong>,但是<strong>可靠性低(无差错检测),且无法支持不同速率端口交换</strong>,所以一般选择<strong>存储转发式交换方法</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.34.41-image.png" alt="2019-09-09.19.34.41-image.png"></p>
+<p>以太网交换机的自学习功能:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.20.49.34-image.png" alt="2019-09-09.20.49.34-image.png"></p>
+<blockquote>
+<p>大致过程:A向B发送帧,从接口1进入,交换机收到帧后,检查交换表,没有查到应该从哪个出口发出去,接着交换机将帧的源地址A与接口1写入(表示以后有收到目的地址为A的帧都从接口1发出),最后向除1外的接口广播站这个帧,C,D收到后将丢弃,B会成功收到帧.<br>假定接下来B向A发送帧,查找交换表发现应该从接口1出发,于是将帧从接口1转发出去,且交换机会将(B,3)新加到交换表中                        </p>
+</blockquote>
+<blockquote>
+<p>交换机的这种自学习方法使得交换机能够即插即用,而不用再人工配置.                        </p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.36.28-image.png" alt="2019-09-09.19.36.28-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.39.41-image.png" alt="2019-09-09.19.39.41-image.png"></p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-09.19.45.11-image.png" alt="2019-09-09.19.45.11-image.png"></p>
+<h4 id="广播风暴"><a href="#广播风暴" class="headerlink" title="广播风暴"></a>广播风暴</h4><h4 id="高速以太网"><a href="#高速以太网" class="headerlink" title="高速以太网"></a>高速以太网</h4><blockquote>
+<p>在全双工工作方式下,因为使用了交换机(交换机可以隔离冲突域),所以不再需要CSMA/CD(解决冲突).但是在半双工工作方式下还是需要CSMA/CD的</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-08.20.00.08-image.png" alt="2019-09-08.20.00.08-image.png"></p>
+<hr>
+<p><a href="https://www.jianshu.com/p/b5d5b4bbe9a4" target="_blank" rel="noopener">https://www.jianshu.com/p/b5d5b4bbe9a4</a></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数据链路层"><span class="toc-number">1.</span> <span class="toc-text">数据链路层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么需要链路层"><span class="toc-number">1.1.</span> <span class="toc-text">为什么需要链路层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.2.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#链路-数据链路"><span class="toc-number">1.2.1.</span> <span class="toc-text">链路 + 数据链路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链路层协议共同的三个问题"><span class="toc-number">1.3.</span> <span class="toc-text">链路层协议共同的三个问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#封装成帧"><span class="toc-number">1.3.1.</span> <span class="toc-text">封装成帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#透明传输"><span class="toc-number">1.3.2.</span> <span class="toc-text">透明传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#差错检测"><span class="toc-number">1.3.3.</span> <span class="toc-text">差错检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#广播风暴"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">广播风暴</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#高速以太网"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">高速以太网</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/10/链路层/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/10/链路层/&text=回炉重造-网络部分(数据链路层)"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/10/链路层/&is_video=false&description=回炉重造-网络部分(数据链路层)"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(数据链路层)&body=Check out this article: https://p0rz9.github.io/2019/09/10/链路层/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/10/链路层/&title=回炉重造-网络部分(数据链路层)"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/10/链路层/&name=回炉重造-网络部分(数据链路层)&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+

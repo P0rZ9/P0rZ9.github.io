@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="ysoserial是一个反序列化的payload生成工具,其集成了不同框架的payload,其中有个JDK7u21,利用条件不依赖于第三方库,只需要JRE版本满足条件。在分析Weblogic-CVE-2019-2725时也用到了这个payload,本着知其然更要知其所以然的想法,自己调试一遍记录下               JDK7u21 payload分析 总体思路:最外层使用LinkedH">
-<meta name="keywords" content="Java安全">
+<meta name="keywords" content="工具源码分析,Ysoserial">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Ysoserial之JDK7u21分析">
 <meta property="og:url" content="https://p0rz9.github.io/2019/06/08/Ysoserial之JDK7u21分析/index.html">
@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-09.16.57.22-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-10.11.48.48-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-06-09.20.54.26-image.png">
-<meta property="og:updated_time" content="2019-06-10T06:10:13.010Z">
+<meta property="og:updated_time" content="2019-06-20T07:11:35.122Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ysoserial之JDK7u21分析">
 <meta name="twitter:description" content="ysoserial是一个反序列化的payload生成工具,其集成了不同框架的payload,其中有个JDK7u21,利用条件不依赖于第三方库,只需要JRE版本满足条件。在分析Weblogic-CVE-2019-2725时也用到了这个payload,本着知其然更要知其所以然的想法,自己调试一遍记录下               JDK7u21 payload分析 总体思路:最外层使用LinkedH">
@@ -71,6 +71,8 @@
     <br/>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" href="../../15/Ysoserial之Spring1_2/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" href="../../02/Fatsjson反序列化后续/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -130,7 +132,7 @@
       
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="../../../../tags/Java安全/">Java安全</a>
+        <a class="tag-link" href="../../../../tags/工具源码分析-Ysoserial/">工具源码分析,Ysoserial</a>
     </div>
 
 

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="物理层物理层的作用/任务 物理层的作用就是尽可能地屏蔽掉传输媒体及通信介质的差异,使得上边的链路层感觉不到这些差异,这样链路层只需要做好本层的协议及服务就可以了,而不用去考虑网络中具体的传输媒体及介质了               物理层的任务就是描述和确定与传输媒体的接口有关的一些特性  1234机械特性:接口用的接线器的形状 尺寸 排列及固定方式电气特性:接口电缆的电压范围功能特性:接口某一电">
+<meta name="keywords" content="回炉重造">
+<meta property="og:type" content="article">
+<meta property="og:title" content="回炉重造-网络部分(物理层)">
+<meta property="og:url" content="https://p0rz9.github.io/2019/09/05/物理层/index.html">
+<meta property="og:site_name" content="P0rZ9&#39;s blog">
+<meta property="og:description" content="物理层物理层的作用/任务 物理层的作用就是尽可能地屏蔽掉传输媒体及通信介质的差异,使得上边的链路层感觉不到这些差异,这样链路层只需要做好本层的协议及服务就可以了,而不用去考虑网络中具体的传输媒体及介质了               物理层的任务就是描述和确定与传输媒体的接口有关的一些特性  1234机械特性:接口用的接线器的形状 尺寸 排列及固定方式电气特性:接口电缆的电压范围功能特性:接口某一电">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.13.32.27-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.14.49.47-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.14.51.02-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.19.51.26-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.20.25.05-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.20.17.50-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.20.32.14-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.19.32.23-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.19.13.35-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.18.15.04-image.png">
+<meta property="og:updated_time" content="2019-09-24T04:40:19.948Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="回炉重造-网络部分(物理层)">
+<meta name="twitter:description" content="物理层物理层的作用/任务 物理层的作用就是尽可能地屏蔽掉传输媒体及通信介质的差异,使得上边的链路层感觉不到这些差异,这样链路层只需要做好本层的协议及服务就可以了,而不用去考虑网络中具体的传输媒体及介质了               物理层的任务就是描述和确定与传输媒体的接口有关的一些特性  1234机械特性:接口用的接线器的形状 尺寸 排列及固定方式电气特性:接口电缆的电压范围功能特性:接口某一电">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.13.32.27-image.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="../../../../images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>回炉重造-网络部分(物理层)</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../../../css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="../../10/链路层/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="../../../06/15/Ysoserial之Spring1_2/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/05/物理层/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/05/物理层/&text=回炉重造-网络部分(物理层)"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/05/物理层/&is_video=false&description=回炉重造-网络部分(物理层)"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(物理层)&body=Check out this article: https://p0rz9.github.io/2019/09/05/物理层/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/05/物理层/&name=回炉重造-网络部分(物理层)&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#物理层"><span class="toc-number">1.</span> <span class="toc-text">物理层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#物理层的作用-任务"><span class="toc-number">1.1.</span> <span class="toc-text">物理层的作用/任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通信系统的组成"><span class="toc-number">1.2.</span> <span class="toc-text">通信系统的组成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础术语"><span class="toc-number">1.2.1.</span> <span class="toc-text">基础术语</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信道基本概念"><span class="toc-number">1.3.</span> <span class="toc-text">信道基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#解决信道不能传输低频-直流的方法"><span class="toc-number">1.3.1.</span> <span class="toc-text">解决信道不能传输低频/直流的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信道的极限容量"><span class="toc-number">1.4.</span> <span class="toc-text">信道的极限容量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#信道所能通过的频率范围"><span class="toc-number">1.4.1.</span> <span class="toc-text">信道所能通过的频率范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#信噪比"><span class="toc-number">1.4.2.</span> <span class="toc-text">信噪比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#物理层下面的传输媒体"><span class="toc-number">1.5.</span> <span class="toc-text">物理层下面的传输媒体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分为引导型传输媒体"><span class="toc-number">1.5.1.</span> <span class="toc-text">分为引导型传输媒体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#双绞线"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">双绞线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#同轴电缆"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">同轴电缆</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#光纤通信"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">光纤通信</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非引导型传输媒体"><span class="toc-number">1.5.2.</span> <span class="toc-text">非引导型传输媒体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#无线传输"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">无线传输</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信道复用技术"><span class="toc-number">1.6.</span> <span class="toc-text">信道复用技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#频分复用"><span class="toc-number">1.6.1.</span> <span class="toc-text">频分复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时分复用-统计时分复用"><span class="toc-number">1.6.2.</span> <span class="toc-text">时分复用 + 统计时分复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#波分复用"><span class="toc-number">1.6.3.</span> <span class="toc-text">波分复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单总结码分复用"><span class="toc-number">1.6.4.</span> <span class="toc-text">简单总结码分复用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#过程"><span class="toc-number">1.6.4.1.</span> <span class="toc-text">过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#结果"><span class="toc-number">1.6.4.2.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#细节"><span class="toc-number">1.6.4.3.</span> <span class="toc-text">细节</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.6.4.4.</span> <span class="toc-text">实例</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        回炉重造-网络部分(物理层)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">P0rZ9's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2019-09-05T00:15:41.000Z" itemprop="datePublished">2019-09-05</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/回炉重造/">回炉重造</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h1><h2 id="物理层的作用-任务"><a href="#物理层的作用-任务" class="headerlink" title="物理层的作用/任务"></a>物理层的作用/任务</h2><blockquote>
+<p><strong>物理层的作用</strong>就是尽可能地屏蔽掉<strong>传输媒体</strong>及<strong>通信介质</strong>的差异,使得上边的链路层感觉不到这些差异,这样链路层只需要做好本层的协议及服务就可以了,而不用去考虑网络中具体的传输媒体及介质了            </p>
+</blockquote>
+<blockquote>
+<p><strong>物理层的任务</strong>就是描述和确定与传输媒体的接口有关的一些特性</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">机械特性:接口用的接线器的形状 尺寸 排列及固定方式</span><br><span class="line">电气特性:接口电缆的电压范围</span><br><span class="line">功能特性:接口某一电压的意义</span><br><span class="line">过程特性:各种不同的可能事件的出现顺序</span><br></pre></td></tr></table></figure>
+<h2 id="通信系统的组成"><a href="#通信系统的组成" class="headerlink" title="通信系统的组成"></a>通信系统的组成</h2><p>一个通信系统由3部分组成:<strong>源系统,传输系统,目的系统</strong>    </p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.13.32.27-image.png" alt="2019-09-07.13.32.27-image.png"><br>如上图所示:<br>原系统:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">源点:源点设备产生要传输的数据,如从键盘输入的汉字经过计算机转为数字比特流。</span><br><span class="line">发送器:常见的发送器就是调制器,调制器将计算机传输过来的数字比特流转化为迷你信号,然后发送到传输系统中。现在计算机已经内置调制解调器(同时具有调制及解调功能)</span><br></pre></td></tr></table></figure></p>
+<p>目的系统:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">接收器:接收传输系统传过来的信号,并将它转化为能被目的机器识别处理的信息,i单行的接收器就是解调器,将收到的模拟信号进行解调,提取出消息,还原成比特流.	</span><br><span class="line">终点:终点设备接收数字比特流，然后进行输出(例如打印在屏幕上)</span><br></pre></td></tr></table></figure></p>
+<p>传输系统:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">连接在源系统和目的系统之间可以是传输线或者某些复杂的网络系统</span><br></pre></td></tr></table></figure></p>
+<h3 id="基础术语"><a href="#基础术语" class="headerlink" title="基础术语"></a>基础术语</h3><p>通信的目的是传送<strong>消息</strong>,例如:文字 视频 语音等<br><strong>数据</strong>是运送消息的实体:使用特定方式表示的信息,通常是有意义的符号序列<br><strong>信号</strong>:数据的电气/电磁的表现形式,信号也分为模拟信号与数字信号                </p>
+<h2 id="信道基本概念"><a href="#信道基本概念" class="headerlink" title="信道基本概念"></a>信道基本概念</h2><blockquote>
+<p>信道用来表示向某一方向传送信息的媒体.因此一条电路通常包含一条发送信道,一条接收信道</p>
+</blockquote>
+<p><strong>单向通信</strong>:只能单方向发 eg:有线广播及无线广播<br><strong>双向交替通信</strong>:都可以发,但不能同时发<br><strong>双向同时通信</strong>:双方可以同时发,也可以同时接收</p>
+<h3 id="解决信道不能传输低频-直流的方法"><a href="#解决信道不能传输低频-直流的方法" class="headerlink" title="解决信道不能传输低频/直流的方法"></a>解决信道不能传输低频/直流的方法</h3><blockquote>
+<p>来自于源点的信号被成为<strong>基带信号</strong>,在基带信号中会含有一些低频甚至直流的信号,而很多信道并不能传输这种信号,为了解决这个问题,必须对基带信号进行<strong>调制</strong></p>
+</blockquote>
+<p>调制分为两类:<br>基带调制(编码):仅仅对基带信号的波形进行调制,使得其能够与信道特性相适应.由于变换完的信号还是<strong>基带信号</strong>,所以将这种方式称为基带调制.由于这种基带调制是把数字信号转化为另一种形式的数字信号,所以也被称为<strong>编码</strong>,下面是几种常用编码方式:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.14.49.47-image.png" alt="2019-09-07.14.49.47-image.png"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">不归零制:正电平为1 ,负电平为0</span><br><span class="line">归零制:正脉冲为1,负脉冲为0</span><br><span class="line">曼彻斯特编码:位中心向上跳为1,下跳为0</span><br><span class="line">差分曼彻斯特编码:位开始有跳变为0,无跳变为1</span><br></pre></td></tr></table></figure></p>
+<p>带通调制:</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-07.14.51.02-image.png" alt="2019-09-07.14.51.02-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">调幅:振幅不同</span><br><span class="line">调频:频率不同</span><br><span class="line">调相:初始相位不同</span><br></pre></td></tr></table></figure>
+<h2 id="信道的极限容量"><a href="#信道的极限容量" class="headerlink" title="信道的极限容量"></a>信道的极限容量</h2><p>限制码元在信道上的传输速率的因素:</p>
+<h3 id="信道所能通过的频率范围"><a href="#信道所能通过的频率范围" class="headerlink" title="信道所能通过的频率范围"></a>信道所能通过的频率范围</h3><blockquote>
+<p>在任何信道中,码元的传输速率总是有限的,如果传输速率超过上限,就会出现码间串扰(收到的信号波形的界限不是很明确,判断不出0 1),使得接收端对码元的识别成为不可能                </p>
+</blockquote>
+<p>如果信道的带频越宽,就是可通过高频分量的能力越强,那么就可以用更高的速率传输码元了.                    </p>
+<h3 id="信噪比"><a href="#信噪比" class="headerlink" title="信噪比"></a>信噪比</h3><blockquote>
+<p>噪声存在于所有的电子设备与通信通道中,由于噪声是随机产生的,且会影响到接收端的判断(0判断为1),但是噪声的影响是相对的,只要信号相对较强,影响就相对较小.因此,用信噪比可以衡量:信号的平均功率/噪声的平均功率之比(S/N)</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">信噪比(dB) = 10*log10(S/N)(dB)						</span><br><span class="line">极限传输速率:C = Wlog2(1+S/N)(bit/s)     --香农公式</span><br></pre></td></tr></table></figure>
+<p>在上面的香农公式中,W为信道带宽(HZ);S为信道所传信号的平均功率,N为信道所传信号的噪声功率.香农公式表明<strong>信道的带宽越大或信噪比越大,信息的极限传输速率就越高。</strong>香农公式的意义在于告诉我们<strong>只要传输速率没有超过极限，就一定存在某种方法去实现它</strong>            </p>
+<p>如果在信噪比已确定,频带宽度也确定,码元的传输速率到达极限的情况下,还可以通过<strong>让每一个码元携带更多比特的信息量</strong>            </p>
+<p>如果直接传送<code>1100101001010101</code>,每一个码元携带1bit的内容,我们可以通过将信号的每3个bit进行排列编为一个组进行传送,3个bit组合共8种组合方式,可以使用8种不同的振幅/频率/相位来表示不同的组合,这样原来的18个bit可以减少为6组心得码元进行传送,则同样的时间,传输的速率提高了3倍。                </p>
+<h2 id="物理层下面的传输媒体"><a href="#物理层下面的传输媒体" class="headerlink" title="物理层下面的传输媒体"></a>物理层下面的传输媒体</h2><blockquote>
+<p>传输媒体是发送设备与接收设备之间的物理通路,分为引导型传输媒体与非引导型传输媒体,前者是电磁波沿着固体介质(双绞线,光纤等)进行传输,后者的传输介质可以是空气,真空和海水等</p>
+</blockquote>
+<h3 id="分为引导型传输媒体"><a href="#分为引导型传输媒体" class="headerlink" title="分为引导型传输媒体"></a>分为引导型传输媒体</h3><h4 id="双绞线"><a href="#双绞线" class="headerlink" title="双绞线"></a>双绞线</h4><blockquote>
+<p>又被称为双扭线,形状如其名,由两根互相绝缘的铜导线绞合起来(绞合可减少两根导线之间的电磁干扰)。一般用的比较多的是电话系统,将一定数量的双绞线捆成电缆,在外面包上护套.模拟传输与数字传输都可以使用双绞线,通信距离一般在几到十几公里,距离太长时,对于模拟信号,要使用放大器放大衰弱的信号,对于数字信号,要使用中继器将失真的信号整形修复                    </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">放大器：对于模拟传输,可将衰减的信号放大到合适的数值,然后在接收端再缩小就好了.</span><br><span class="line">中继器：对于数字传输，会有数字信号的传输损耗和失真,中继器用来对失真的数字信号进行整形,使数字信号可以传输的距离更远.相当于一个过度的桥梁作用</span><br></pre></td></tr></table></figure>
+<h4 id="同轴电缆"><a href="#同轴电缆" class="headerlink" title="同轴电缆"></a>同轴电缆</h4><blockquote>
+<p>同轴电缆由导体铜质芯线,绝缘层,网状编制屏蔽层及塑料外壳组成。由于外导体屏蔽层的存在,同轴电缆具有很好的抗干扰性,多用于传输较高速率的数据.                            </p>
+</blockquote>
+<h4 id="光纤通信"><a href="#光纤通信" class="headerlink" title="光纤通信"></a>光纤通信</h4><blockquote>
+<p>光纤通信就是通过光导纤维传递光脉冲来进行通信。有光脉冲表示1,无光脉冲则表示0<br>光发送机将电信号转化成光信号,将生成得光信号注入到光纤中。光发送机一般由光源驱动电路,调制器组成；光接收机将接受的光信号转化为电信号,一般由光电检测器与解调器组成。光纤是传输媒体,由石英玻璃拉成细丝,在传输信道上也有光中继器用来延长光信号的传输距离</p>
+</blockquote>
+<h3 id="非引导型传输媒体"><a href="#非引导型传输媒体" class="headerlink" title="非引导型传输媒体"></a>非引导型传输媒体</h3><h4 id="无线传输"><a href="#无线传输" class="headerlink" title="无线传输"></a>无线传输</h4><p>无线电微波通信:微波在空间中为直线传播,由于微波会透过电离层(简单理解为地球表面层)到达宇宙空间,所以不可以像短波那样经电离层反射到地面上进行传输,一般微波通信方式就有地面微波接力通信(中间有中继站进行修正放大)和卫星通信。<br>卫星通信的特点是:通信距离远与具有较大的传播时延(并不代表时延就大,因为时延是由发送时延,传播时延,排队时延和处理时延组成)。在十分偏远和海洋中只能依赖卫星通信</p>
+<h2 id="信道复用技术"><a href="#信道复用技术" class="headerlink" title="信道复用技术"></a>信道复用技术</h2><h3 id="频分复用"><a href="#频分复用" class="headerlink" title="频分复用"></a>频分复用</h3><blockquote>
+<p>就是将一条信道划分为几条子信道,每个用户使用一条,所以频分复用是所有用户在相同的时间使用不同的带宽资源(这里的带宽不是指数据率而是指频带宽度).后面介绍的波分复用,其本质也是频分复用</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.19.51.26-image.png" alt="2019-09-06.19.51.26-image.png"></p>
+<p>按信道频率的不同,一条主信道分为4条分信道供4个用户使用.复用器将信号搬移到对应的频率范围,分用器将各路信号区别开来</p>
+<p>跟马路上的车道很像,将一条马路划分几个车道让车辆去行驶,车主在相同的时间走不同的车道，实现了马路的频分复用</p>
+<h3 id="时分复用-统计时分复用"><a href="#时分复用-统计时分复用" class="headerlink" title="时分复用 + 统计时分复用"></a>时分复用 + 统计时分复用</h3><blockquote>
+<p>时分复用是采用时间分片的方式来实现信道复用,就是说每个用户在使用时会占用信道全部的带宽,但是它只占用一段时间。就是在不同的时间使用相同的带宽资源。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.20.25.05-image.png" alt="2019-09-06.20.25.05-image.png"></p>
+<p>如上图所示,用户被分配的时间是固定的,但是由于计算机传输数据的突发性质,一个用户对于已分配的信道占用率是不高的,且在空闲时间,其他用户也不能占用这条信道,白浪费资源,下面这幅图说明了问题</p>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.20.17.50-image.png" alt="2019-09-06.20.17.50-image.png"></p>
+<p>可以看到#1的cd #2的ad…都是浪费掉的信道资源。如何解决这个问题,使得信道全部被占满呢。接着<strong>统计时分复用</strong>上场了</p>
+<blockquote>
+<p>这是一种改进的时分复用方法,原理图可看下面</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.20.32.14-image.png" alt="2019-09-06.20.32.14-image.png"></p>
+<p>统计时分方法使用STDM帧来传送数据,它的时隙数(2个)小于用户连接数(4个)。当用户有了数据后就发送到集中器,由集中器进行缓存分配,当一个STDM帧满了后就发送出去。<strong>因此统计时分复用并不是像上面那样固定分配时隙,而是按需动态分配</strong>,可大大提高信道利用率。另外在信道上一个用户占用的时间并不是周期出现的,所以也叫<strong>异步时分复用</strong>,普通的时分复用叫做<strong>同步时分复用</strong>。<br>    此外,因为用户使用的时间并不是固定的,因此每个间隙必须带上用户地址,这是不可避免的<strong>额外开销</strong>。</p>
+<p>同步时分复用跟老师上课分配的教室很像,将教室一天的使用时间分开,同一个教室,每个老师只占用一节课的时间，实现了教室的时分复用。而异步时分复用相当于有一个公共教室,不固定分配时间给老师,而是老师要上课就直接用。</p>
+<h3 id="波分复用"><a href="#波分复用" class="headerlink" title="波分复用"></a>波分复用</h3><blockquote>
+<p>波分复用就是光的频分复用,即能在一根光纤上传输多路光载波信号,可以很有效地扩大光纤的传输能力</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.19.32.23-image.png" alt="2019-09-06.19.32.23-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">图表示原来均为1310nm的光载波经过复用器变为1550-1557nm,然后经过复用器(也称为合波器)后,在一根光纤中传输,总速率就达到了20GB/s,但是光信号隔一段距离后会衰减,所以会加放大器(EDFA)</span><br></pre></td></tr></table></figure>
+<h3 id="简单总结码分复用"><a href="#简单总结码分复用" class="headerlink" title="简单总结码分复用"></a>简单总结码分复用</h3><blockquote>
+<p>在CDMA(码分多址)中,允许所有用户在同一个频带上进行传输,利用码片序列来划分信道,区分用户数据。        </p>
+</blockquote>
+<p>有一些前置规定:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">任意两个站的码分序列内积为0,S站与其他各站的反码内积也是0,与自己的内积为1,与自己反码的内积为-1,反应为公式:</span><br></pre></td></tr></table></figure></p>
+<p>S*S = 1<br>S*$$S_反$$ = -1<br>S*T = 0<br>S*$$T_反$$ = 0</p>
+<p>规格化内积:<br><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.19.13.35-image.png" alt="2019-09-06.19.13.35-image.png"></p>
+<p>就是将两者对应位相乘得到的和/个数</p>
+<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><p><code>站S,T(以码片序列进行区分)三个站点向D发送信息,D收到三者的信息总和</code>($$S_x$$+$$T_x$$)<code>,假设D只想要S的消息,就会用S的码片序列与收到的消息去做运算(内积),公式就是:</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = S*($$S_x$$+$$T_x$$)</span><br></pre></td></tr></table></figure>
+<p><code>而刚开始码片序列取得时候就有规定(任意两个站点的码片序列的规格化内积为0),所以结果就变成了</code><strong>result = S*$$S_x$$</strong>,<code>即结果为1或-1(-1代表0).就可以得到S发的信号了</code></p>
+<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><blockquote>
+<p>尽管收到同一个频段的所有信号的叠加,但是对于其他用户的信号不会对其产生影响</p>
+</blockquote>
+<h4 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">每个用户被指派一个mbit的码片,如果它要发送1,就发送它的码片,若要发送0,则发送它码片的反码。对于每个用户来说,单位时间内发送的数据扩大了m倍,占用的频带也扩大了m倍,也就是说采用了扩频技术。根据香农公式(C=WLog2(1+S/N)),在信道容量不变的情况下,信道带宽增大,信噪比一定会减小,则信号的平均功率减小,会变得很隐蔽,所以刚开始码分复用比较多运用在军事上,不易被敌人发现.		</span><br><span class="line">目的主机如果只想获取用户A的数据,就将得到的信号总和与A的码片序列进行运算得到内积,再除以m,得到的即为用户A发的信号(-1为信号0,1为信号1)</span><br></pre></td></tr></table></figure>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S站的码分序列为00011011(对应向量-1-1-1+1+1-1+1+1),则另一个站T的码分序列为00101110(对应向量-1-1+1-1+1+1+1-1)(任意两个站的码片都是正交的关系,即向量对应位相乘之和为0).假设他们都向C发送110的信息,如图所示：</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-06.18.15.04-image.png" alt="2019-09-06.18.15.04-image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">S站发送比特1的时候,发出的是自己的码分序列,发送比特0的时候,发出的是码分序列的反码,T站也是,当他们两都发送信号110的时候,C收到的是它们发送信号的总和$$S_x$$+$$T_x$$(-2-2+0+0+2+0+2+0...),当C想要接收S站发出的信息时,就将S的码分序列(`00011011`)与得到的总发送信号对应位相乘再相加,再除以m得到的就是`+1+1-1`(即对应S站发出的信号110)</span><br><span class="line">```  </span><br><span class="line">  	</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 其他</span><br><span class="line"></span><br><span class="line">## WIFI&amp;WLAN</span><br></pre></td></tr></table></figure>
+<p>WLAN 无线局域网络<br>WIFI Wireless Fidelity无线保真</p>
+<p>WLAN包括WIFI与WAPI(安全协议),wifi与wlan的区别是:WLAN的覆盖范围更广,一般用在人员密集(5公里左右  医院,车站等),Wifi一般用于家庭,宿舍(100m左右)等地方。此外我国规定,凡事在中国大陆售卖的手机(国行)必须同时支持wifi与wapi,仅仅支持wifi是不能发售的,所以可以通过手机上标识是WIFI还是WLAN(或无线局域网络)来简单判断是否”水货”(显示为wifi 可能是翻新机或其他没有资质的公司搞的)<br><code>`</code></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="../../../../index.html">Home</a></li>
+         
+          <li><a href="../../../../about.html">About</a></li>
+         
+          <li><a href="../../../../archives/">Writing</a></li>
+         
+          <li><a href="../../../../friends.html">Friends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#物理层"><span class="toc-number">1.</span> <span class="toc-text">物理层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#物理层的作用-任务"><span class="toc-number">1.1.</span> <span class="toc-text">物理层的作用/任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通信系统的组成"><span class="toc-number">1.2.</span> <span class="toc-text">通信系统的组成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础术语"><span class="toc-number">1.2.1.</span> <span class="toc-text">基础术语</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信道基本概念"><span class="toc-number">1.3.</span> <span class="toc-text">信道基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#解决信道不能传输低频-直流的方法"><span class="toc-number">1.3.1.</span> <span class="toc-text">解决信道不能传输低频/直流的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信道的极限容量"><span class="toc-number">1.4.</span> <span class="toc-text">信道的极限容量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#信道所能通过的频率范围"><span class="toc-number">1.4.1.</span> <span class="toc-text">信道所能通过的频率范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#信噪比"><span class="toc-number">1.4.2.</span> <span class="toc-text">信噪比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#物理层下面的传输媒体"><span class="toc-number">1.5.</span> <span class="toc-text">物理层下面的传输媒体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分为引导型传输媒体"><span class="toc-number">1.5.1.</span> <span class="toc-text">分为引导型传输媒体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#双绞线"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">双绞线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#同轴电缆"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">同轴电缆</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#光纤通信"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">光纤通信</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非引导型传输媒体"><span class="toc-number">1.5.2.</span> <span class="toc-text">非引导型传输媒体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#无线传输"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">无线传输</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信道复用技术"><span class="toc-number">1.6.</span> <span class="toc-text">信道复用技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#频分复用"><span class="toc-number">1.6.1.</span> <span class="toc-text">频分复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时分复用-统计时分复用"><span class="toc-number">1.6.2.</span> <span class="toc-text">时分复用 + 统计时分复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#波分复用"><span class="toc-number">1.6.3.</span> <span class="toc-text">波分复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单总结码分复用"><span class="toc-number">1.6.4.</span> <span class="toc-text">简单总结码分复用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#过程"><span class="toc-number">1.6.4.1.</span> <span class="toc-text">过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#结果"><span class="toc-number">1.6.4.2.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#细节"><span class="toc-number">1.6.4.3.</span> <span class="toc-text">细节</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.6.4.4.</span> <span class="toc-text">实例</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/05/物理层/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/05/物理层/&text=回炉重造-网络部分(物理层)"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/05/物理层/&is_video=false&description=回炉重造-网络部分(物理层)"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(物理层)&body=Check out this article: https://p0rz9.github.io/2019/09/05/物理层/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/05/物理层/&title=回炉重造-网络部分(物理层)"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/05/物理层/&name=回炉重造-网络部分(物理层)&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> 目录</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> 顶部</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> 菜单</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    版权所有 &copy; 2019 P0rZ9
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <li><a href="../../../../index.html">Home</a></li><li><a href="../../../../about.html">About</a></li><li><a href="../../../../archives/">Writing</a></li><li><a href="../../../../friends.html">Friends</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="../../../../lib/justified-gallery/justifiedGallery.min.css">
+
+
+<!-- jquery -->
+<script src="../../../../lib/jquery/jquery.min.js"></script>
+<script src="../../../../lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="../../../../js/main.js"></script>
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-86660611-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Disqus Comments -->
+
+
