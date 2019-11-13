@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="​                                            回炉重造-网络部分(运输层) 12Author:P0rZ9Blog:https://p0rz9.github.io/ 运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通">
-<meta name="keywords" content="P0rZ9">
+    <meta name="description" content="运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是计算机的一个应用进程与另一台主机的应用进程交换数据.运输层的两个主要协议:用户数据报协议UDP与传输控制协议TCP           端口 端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两">
+<meta name="keywords" content="回炉重造">
 <meta property="og:type" content="article">
-<meta property="og:title" content="P0rZ9&#39;s blog">
+<meta property="og:title" content="回炉重造-网络部分(运输层)">
 <meta property="og:url" content="https://p0rz9.github.io/2019/09/17/运输层/index.html">
 <meta property="og:site_name" content="P0rZ9&#39;s blog">
-<meta property="og:description" content="​                                            回炉重造-网络部分(运输层) 12Author:P0rZ9Blog:https://p0rz9.github.io/ 运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通">
+<meta property="og:description" content="运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是计算机的一个应用进程与另一台主机的应用进程交换数据.运输层的两个主要协议:用户数据报协议UDP与传输控制协议TCP           端口 端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.21.36.09-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.20.38.58-image.png">
@@ -33,10 +33,10 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.53-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.08-image.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.17.19.25-image.png">
-<meta property="og:updated_time" content="2019-11-13T00:19:35.496Z">
+<meta property="og:updated_time" content="2019-11-13T00:26:36.767Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="P0rZ9&#39;s blog">
-<meta name="twitter:description" content="​                                            回炉重造-网络部分(运输层) 12Author:P0rZ9Blog:https://p0rz9.github.io/ 运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通">
+<meta name="twitter:title" content="回炉重造-网络部分(运输层)">
+<meta name="twitter:description" content="运输层 运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是计算机的一个应用进程与另一台主机的应用进程交换数据.运输层的两个主要协议:用户数据报协议UDP与传输控制协议TCP           端口 端口是应用层的各种协议进程与运输实体进行层间交互的一种地址.两">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.21.36.09-image.png">
     
     
@@ -57,7 +57,7 @@
         
     
     <!-- title -->
-    <title>P0rZ9&#39;s blog</title>
+    <title>回炉重造-网络部分(运输层)</title>
     <!-- styles -->
     <link rel="stylesheet" href="../../../../css/style.css">
     <!-- rss -->
@@ -82,7 +82,7 @@
       <ul>
         
         
-        <li><a class="icon" href="../../10/链路层/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="../../15/网络层/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -96,15 +96,15 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/17/运输层/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/17/运输层/&text="><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/17/运输层/&is_video=false&description="><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=&body=Check out this article: https://p0rz9.github.io/2019/09/17/运输层/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/17/运输层/&name=&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/17/运输层/&text=回炉重造-网络部分(运输层)"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/17/运输层/&is_video=false&description=回炉重造-网络部分(运输层)"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(运输层)&body=Check out this article: https://p0rz9.github.io/2019/09/17/运输层/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/17/运输层/&name=回炉重造-网络部分(运输层)&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -121,7 +121,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        
+        回炉重造-网络部分(运输层)
     </h1>
 
 
@@ -132,20 +132,23 @@
       </span>
       
     <div class="postdate">
-        <time datetime="2019-09-17T14:47:46.209Z" itemprop="datePublished">2019-09-17</time>
+        <time datetime="2019-09-17T00:15:41.000Z" itemprop="datePublished">2019-09-17</time>
     </div>
 
 
       
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="../../../../tags/回炉重造/">回炉重造</a>
+    </div>
+
 
     </div>
   </header>
   
 
   <div class="content" itemprop="articleBody">
-    <p>​                                            <font color="red" size="5"><strong>回炉重造-网络部分(运输层)</strong></font></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Author:P0rZ9</span><br><span class="line">Blog:https://p0rz9.github.io/</span><br></pre></td></tr></table></figure>
-<h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a>运输层</h1><blockquote>
+    <h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a>运输层</h1><blockquote>
 <p>运输层向上面的应用层提供通信服务,属于面向通信的最高层,也是用户功能的最底层(当在网络中传输时,只有主机的协议栈才有运输层,网络的核心路由器在转发分组时只用到下三层).运输层端对端的通信是<strong>计算机的一个应用进程与另一台主机的应用进程交换数据</strong>.运输层的两个主要协议:<strong>用户数据报协议UDP与传输控制协议TCP</strong>        </p>
 </blockquote>
 <p><img src="https://raw.githubusercontent.com/P0rZ9/img/master/2019_1/2019-09-19.21.36.09-image.png" alt="2019-09-19.21.36.09-image.png"></p>
@@ -335,15 +338,15 @@
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://p0rz9.github.io/2019/09/17/运输层/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/17/运输层/&text="><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/17/运输层/&is_video=false&description="><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=&body=Check out this article: https://p0rz9.github.io/2019/09/17/运输层/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title="><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/17/运输层/&name=&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://p0rz9.github.io/2019/09/17/运输层/&text=回炉重造-网络部分(运输层)"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://p0rz9.github.io/2019/09/17/运输层/&is_video=false&description=回炉重造-网络部分(运输层)"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=回炉重造-网络部分(运输层)&body=Check out this article: https://p0rz9.github.io/2019/09/17/运输层/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://p0rz9.github.io/2019/09/17/运输层/&title=回炉重造-网络部分(运输层)"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://p0rz9.github.io/2019/09/17/运输层/&name=回炉重造-网络部分(运输层)&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
